@@ -1,5 +1,5 @@
 ___
-layout: default
+layout: post
 title: hello, world
 ___
 # h1
