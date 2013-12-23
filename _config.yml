@@ -6,12 +6,12 @@ pygments: true
 paginate: 4
 
 title : 默默前行
-tagline: 他在哪里？
+tagline: 未来在哪里？
 author :
-  name : cnmahj
-  email : cnmahj@gmail.com
-  github : https://github.com/cnmahj
-  twitter : http://twitter.com/cnmahj
+  name : chenming
+  email : 410063005@410063005.com
+  github : https://github.com/410063005
+  twitter : http://twitter.com/410063005
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 
