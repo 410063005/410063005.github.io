@@ -1,6 +1,6 @@
 ---
 layout: post
-title: LocationManagerService的初始化
+title: Location模块分析(2)_LocationManagerService的初始化
 keywords: Android,Location
 description: Android
 categories: [Android]
