@@ -13,14 +13,14 @@ icon: globe
 + `LocationManagerService` 代码路径为：platform_frameworks\_base\services\java\com\android\server\LocationManagerService.java
 + `LocationProviderProxy` 代码路径为：platform\_frameworks_base\services\java\com\android\server\location\LocationProviderProxy.java
 + `ServiceWatcher` 代码路径为：platform\_frameworks_base\services\java\com\android\serverServiceWatcher.java
-+ `config.xml` 配置文件路径为： platform_frameworks_base\core\res\res\values\config.xml
++ `config.xml` 配置文件路径为： platform\_frameworks_base\core\res\res\values\config.xml
 
 
 我们仍然回到前面提到的 `LocationManagerService.loadProvidersLocked()` 方法。这里重点关注 `NetworkProvider` 的加载过程。
 
 加载的时序如下
 
-![load-nlp]({{ site.url }}/assets/20140108/load-nlp.png)
+![load-nlp]({{ site.url }}/assets/20140108/load-nlp.PNG)
 
 # 1. 绑定远程服务
 # 1.1 config.xml 参数
