@@ -50,3 +50,6 @@ icon: globe
 %Y    | 带世纪部分的十制年份 Year number
 %z，%Z | 时区名称，如果不能得到时区名称则返回空字符。Name of time zone
 %%    | 百分号
+
+参考:
+[Python 常用函数time.strftime()简介 ](http://blog.chinaunix.net/uid-16539-id-2741508.html)
