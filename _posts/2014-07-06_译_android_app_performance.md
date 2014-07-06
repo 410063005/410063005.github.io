@@ -1,10 +1,10 @@
 ---
 layout: post
 title: 译_android_app_performance
-keywords: android
-description: android
-categories: [android]
-tags: [android]
+keywords: Android
+description: Android
+categories: [Android]
+tags: [Android]
 group: archive
 icon: globe
 ---
