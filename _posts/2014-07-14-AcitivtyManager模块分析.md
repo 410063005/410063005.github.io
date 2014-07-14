@@ -28,7 +28,7 @@ icon: globe
 
 其时，`PackageManager` 也是同样的套路，如下图：
 
-![activity_manager](../assets/20140714/package_manager.jpg)
+![activity_manager](../assets/20140714/package_manager.gif)
 
 原文见 [这里][PackageManager分析]
 
