@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
-  <link href="http://www.sunmoonblog.com/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Other | My Octopress Blog]]></title>
+  <link href="http://www.sunmoonblog.com/blog/categories/other/atom.xml" rel="self"/>
   <link href="http://www.sunmoonblog.com/"/>
   <updated>2015-05-14T15:37:49+08:00</updated>
   <id>http://www.sunmoonblog.com/</id>
@@ -32,21 +32,17 @@
 
 <p>公司上网要走代理，<code>gem</code> 也需要设置相应的代理，设置方式</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>set http-proxy=&lt;http proxy&gt;</span></code></pre></td></tr></table></div></figure>
-
+<pre><code>set http-proxy=&lt;http proxy&gt;
+</code></pre>
 
 <h2>1.3 HTTPS问题</h2>
 
 <p>可能遇到无法从 <code>https://rubygems.org/</code> 下载安装的问题。更新源的方式如下</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>gem sources -r https://rubygems.org/
-</span><span class='line'>gem sources -a http://rubygems.org/
-</span><span class='line'>gem sources -l</span></code></pre></td></tr></table></div></figure>
-
+<pre><code>gem sources -r https://rubygems.org/
+gem sources -a http://rubygems.org/
+gem sources -l
+</code></pre>
 
 <p>也可以尝试国内的淘宝镜像 <code>http://ruby.taobao.org/</code>，速度可能快点。</p>
 
@@ -67,13 +63,10 @@
 
 <p><strong>不要忘记</strong> 将源码提交</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>git add .
-</span><span class='line'>git commit -m 'your message'
-</span><span class='line'>git push origin source</span></code></pre></td></tr></table></div></figure>
-
+<pre><code>git add .
+git commit -m 'your message'
+git push origin source
+</code></pre>
 
 <h1>3. 参考资料</h1>
 
@@ -82,17 +75,6 @@
 <li><a href="http://www.cnblogs.com/oec2003/archive/2013/05/27/3100896.html">Windows下搭建Octopress博客</a></li>
 </ol>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[My First Octopress Blog]]></title>
-    <link href="http://www.sunmoonblog.com/blog/2015/05/14/my-first-octopress-blog/"/>
-    <updated>2015-05-14T11:55:39+08:00</updated>
-    <id>http://www.sunmoonblog.com/blog/2015/05/14/my-first-octopress-blog</id>
-    <content type="html"><![CDATA[<h1>中文标题1</h1>
-
-<h1>中文标题2</h1>
 ]]></content>
   </entry>
   
