@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://www.sunmoonblog.com/atom.xml" rel="self"/>
   <link href="http://www.sunmoonblog.com/"/>
-  <updated>2015-05-14T14:36:54+08:00</updated>
+  <updated>2015-05-14T14:54:38+08:00</updated>
   <id>http://www.sunmoonblog.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -18,7 +18,9 @@
     <link href="http://www.sunmoonblog.com/blog/2015/05/14/my-first-octopress-blog/"/>
     <updated>2015-05-14T11:55:39+08:00</updated>
     <id>http://www.sunmoonblog.com/blog/2015/05/14/my-first-octopress-blog</id>
-    <content type="html"><![CDATA[
+    <content type="html"><![CDATA[<h1>中文标题1</h1>
+
+<h1>中文标题2</h1>
 ]]></content>
   </entry>
   
