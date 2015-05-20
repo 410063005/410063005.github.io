@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>AndroidTestCase中getApplicationContext()返回null - My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Android项目单元测试时发现下面代码会打印null。 1
+2
+3
+4
+5
+6
+public class TmpTest extends AndroidTestCase { public void testGetApp() { System.out.println(mContext. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.sunmoonblog.com/blog/2015/05/20/why-does-androidtestcase-dot-mcontext-dot-getapplication-return-null/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="www.sunmoonblog.com">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">AndroidTestCase中getApplicationContext()返回null</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-20T14:33:09+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>20</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:33 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Android项目单元测试时发现下面代码会打印<code>null</code>。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public class TmpTest extends AndroidTestCase {
+</span><span class='line'>
+</span><span class='line'>  public void testGetApp() {
+</span><span class='line'>      System.out.println(mContext.getApplicationContext());
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>找到<a href="http://stackoverflow.com/questions/6516441/why-does-androidtestcase-getcontext-getapplicationcontext-return-null">这篇帖子</a>，提出了如下非常有效的解决方案</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public class TmpTest extends AndroidTestCase {
+</span><span class='line'>
+</span><span class='line'>  @Override
+</span><span class='line'>  public void setContext(Context context) {
+</span><span class='line'>      super.setContext(context);
+</span><span class='line'>      
+</span><span class='line'>      while (null == context.getApplicationContext()) {
+</span><span class='line'>                  SystemClock.sleep(16);
+</span><span class='line'>              }
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>问题来了：</p>
+
+<ol>
+<li>为什么会返回<code>null</code>呢，是否Android的bug？</li>
+<li>为什么这个解决方案是有效的呢？它是什么原理？</li>
+</ol>
+
+
+<p>Android扩展了标准的JUnit测试框架，<code>AndroidTestCase</code>是利用<code>Instrumentation</code>来驱动Android相关的测试用例的。使用<code>Instrumentation</code>，可以在主程序启动之前，创建模拟的系统对象，如<code>Context</code>；控制应用组件的生命周期；发送UI事件给应用程序；在执行期间检查程序状态。</p>
+
+<p>但是，<code>Instrumentation</code>在独立的线程中运行而非主线程，所以它可以在不阻塞或干扰主线程(反之也不会被主线程阻塞)的情况下执行。如果需要跟主线程同步，可以使用<a href="http://developer.android.com/reference/android/app/Instrumentation.html#waitForIdleSync%28%29">Instrumentation.waitForIdleSync()</a></p>
+
+<p>而像<code>Application</code>或<code>Activity</code>等上层应用组件对象是由主线程初始化的。主线程初始化这些对象的同时，<code>Instrumentation</code>所在的线程也在运行。如果在<code>Instrumentation</code>线程中使用这些对象，而又没有线程安全地实现，肯定会出错。很不幸，<code>AndroidTestCase</code>的实现不是线程安全的(API 16 Jelly Bean之前)，可以认为是系统的bug。一种实现线程安全的办法是使用<a href="http://developer.android.com/reference/android/app/Instrumentation.html#runOnMainSync%28java.lang.Runnable%29">Instrumentation.runOnMainSync(java.lang.Runnable)</a>在主线程中运行相关代码。</p>
+
+<p>当然，在<code>AndroidTestCase中</code>不能拿到<code>Instrumentation</code>实例，所以无论<code>Instrumentation.waitForIdleSync()</code>还是<code>Instrumentation.runOnMainSync()</code>都无法被调用。</p>
+
+<p>总结一下，答案就是：</p>
+
+<ol>
+<li>该问题是Android的bug，问题根源在于<code>AndroidTestCase</code>不是线程安全的</li>
+<li>这里的方案修复了<code>Instrumentation</code>线程和主线程的同步问题，可以保证线程安全</li>
+</ol>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-05-20T14:33:09+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>20</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:33 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/android/'>android</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.sunmoonblog.com/blog/2015/05/20/why-does-androidtestcase-dot-mcontext-dot-getapplication-return-null/" data-via="" data-counturl="http://www.sunmoonblog.com/blog/2015/05/20/why-does-androidtestcase-dot-mcontext-dot-getapplication-return-null/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/05/18/android-verfiyerror/" title="Previous Post: VerfiyError浅析">&laquo; VerfiyError浅析</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/05/20/why-does-androidtestcase-dot-mcontext-dot-getapplication-return-null/">AndroidTestCase中getApplicationContext()返回null</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/18/android-verfiyerror/">VerfiyError浅析</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/14/write-blog-using-octpress/">使用Octpress写博客</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/14/my-first-octopress-blog/">My First Octopress Blog</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

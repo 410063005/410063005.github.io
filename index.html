@@ -9,7 +9,13 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="VerifyError是什么 Android开发文档中关于VerifyError是这么介绍的： Thrown when the VM notices that an attempt is made to load a class which does not pass the class &hellip;">
+  <meta name="description" content="Android项目单元测试时发现下面代码会打印null。 1
+2
+3
+4
+5
+6
+public class TmpTest extends AndroidTestCase { public void testGetApp() { System.out.println(mContext. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +71,99 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/20/why-does-androidtestcase-dot-mcontext-dot-getapplication-return-null/">AndroidTestCase中getApplicationContext()返回null</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-20T14:33:09+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>20</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:33 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Android项目单元测试时发现下面代码会打印<code>null</code>。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public class TmpTest extends AndroidTestCase {
+</span><span class='line'>
+</span><span class='line'>  public void testGetApp() {
+</span><span class='line'>      System.out.println(mContext.getApplicationContext());
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>找到<a href="http://stackoverflow.com/questions/6516441/why-does-androidtestcase-getcontext-getapplicationcontext-return-null">这篇帖子</a>，提出了如下非常有效的解决方案</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public class TmpTest extends AndroidTestCase {
+</span><span class='line'>
+</span><span class='line'>  @Override
+</span><span class='line'>  public void setContext(Context context) {
+</span><span class='line'>      super.setContext(context);
+</span><span class='line'>      
+</span><span class='line'>      while (null == context.getApplicationContext()) {
+</span><span class='line'>                  SystemClock.sleep(16);
+</span><span class='line'>              }
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>问题来了：</p>
+
+<ol>
+<li>为什么会返回<code>null</code>呢，是否Android的bug？</li>
+<li>为什么这个解决方案是有效的呢？它是什么原理？</li>
+</ol>
+
+
+<p>Android扩展了标准的JUnit测试框架，<code>AndroidTestCase</code>是利用<code>Instrumentation</code>来驱动Android相关的测试用例的。使用<code>Instrumentation</code>，可以在主程序启动之前，创建模拟的系统对象，如<code>Context</code>；控制应用组件的生命周期；发送UI事件给应用程序；在执行期间检查程序状态。</p>
+
+<p>但是，<code>Instrumentation</code>在独立的线程中运行而非主线程，所以它可以在不阻塞或干扰主线程(反之也不会被主线程阻塞)的情况下执行。如果需要跟主线程同步，可以使用<a href="http://developer.android.com/reference/android/app/Instrumentation.html#waitForIdleSync%28%29">Instrumentation.waitForIdleSync()</a></p>
+
+<p>而像<code>Application</code>或<code>Activity</code>等上层应用组件对象是由主线程初始化的。主线程初始化这些对象的同时，<code>Instrumentation</code>所在的线程也在运行。如果在<code>Instrumentation</code>线程中使用这些对象，而又没有线程安全地实现，肯定会出错。很不幸，<code>AndroidTestCase</code>的实现不是线程安全的(API 16 Jelly Bean之前)，可以认为是系统的bug。一种实现线程安全的办法是使用<a href="http://developer.android.com/reference/android/app/Instrumentation.html#runOnMainSync%28java.lang.Runnable%29">Instrumentation.runOnMainSync(java.lang.Runnable)</a>在主线程中运行相关代码。</p>
+
+<p>当然，在<code>AndroidTestCase中</code>不能拿到<code>Instrumentation</code>实例，所以无论<code>Instrumentation.waitForIdleSync()</code>还是<code>Instrumentation.runOnMainSync()</code>都无法被调用。</p>
+
+<p>总结一下，答案就是：</p>
+
+<ol>
+<li>该问题是Android的bug，问题根源在于<code>AndroidTestCase</code>不是线程安全的</li>
+<li>这里的方案修复了<code>Instrumentation</code>线程和主线程的同步问题，可以保证线程安全</li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -410,6 +509,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/05/20/why-does-androidtestcase-dot-mcontext-dot-getapplication-return-null/">AndroidTestCase中getApplicationContext()返回null</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2015/05/18/android-verfiyerror/">VerfiyError浅析</a>
