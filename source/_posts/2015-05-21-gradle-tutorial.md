@@ -136,6 +136,68 @@ Gradle依赖分为不同的`configurations`。Java Plugin定义了几类标准�
 
 依赖又分不同的情况，一种是`external dependency`。这种依赖是当前构建以外的某种文件，通常保存在某种仓库中，比如Maven中央库或本地目录。使用`group`，`name`和`version`属性来标识依赖。一种简写方式是`"group:name:version"`.
 
+依赖配置也用于发布文件，这些文件称为`publication artifacts`。使用Java Plugin通常不用告诉Gradle发布什么文件，只需要指定`uploadArchives task`的发布路径。
+
+发布地本地目录
+
+```
+uploadArchives {
+    repositories {
+        flatDir {
+            dirs 'repos'
+        }
+    }
+}
+```
+
+发布到Ivy库
+
+```
+uploadArchives {
+    repositories {
+        ivy {
+            credentials {
+                username "username"
+                password "pw"
+            }
+            url "http://repo.mycompany.com"
+        }
+    }
+}
+```
+
+当运行`gradle uploadArchives`时Gradle将编译并上传JAR文件到`repositories`。
+
+# 常用Gradle命令
++ `gradle <task-name>` - 执行指定的task
++ `gradle <task-a> -x <task-b>` - 在忽略指定的task的情况下执行task
++ 运行Gradle命令时不必指定task的全名，只需要提供可区分的缩写即可。比如使用`di`作为`dist`的缩写，或使用`aD`作为`assembleDebug`的缩写
++ `gradle -b <build-file>` - 指定构建脚本
++ `gradle -p <dir>` - 指定项目目录
++ `gradle -q projects` - 输出项目信息
++ `build.gradle`中添加`description = 'Your Description'` - 提供项目描述
++ `gradle tasks` - 输出tasks信息
++ `gradle tasks -all` - 输出项目中全部的tasks信息
++ `gradle help --task <someTask>` - 输出指定task的详细信息
++ `gradle dependencies app:dependencies` - 输出依赖信息
++ `gradle properties` - 输出properties
++ `gradle -q <module>:properties` - 输出指定module的properties
++ `gradle --profile <task>` - 记录构建消耗的时间并输出到`build/reports/profile`目录。文件名以构建时间命名
++ `gradle -m <task>` - 仅查询tasks执行情况而不真正构建
++ `gradle --gui` - 启动Gradle的GUI界面
+
+# Gradle GUI
+Gradle提供一个简单易用的GUI界面。通过`gradle --gui`可以启动Gradle GUI。Gradle GUI主要分为Task Tree、Favorites、Command Line和Setup四个标签页
+
+Task Tree以层级方式显示所有的projects和对应的tasks。双击可以执行相应的task。可以使用filter隐藏不常用的tasks，也可以将将常用的tasks添加到Favorites中。
+
+Favorites用于显示常用的命令。可以非常复杂的命令，还能给它设置名字。比如，可以自定义一个构建命令用于快速编译以忽略单元测试、文档生成等步骤。
+
+Command Line标签页用于直接运行单个的Gradle命令。只用输入'gradle'后的部分。可以在添加自定义命令前在这里进行尝试。
+
+# Gradle脚本
+
+
 # 疑难
 
 ## 代理上网问题
@@ -160,6 +222,19 @@ repositories {
 
 也可以在`gradle.properties`中添加`REPO_URL=<url>`，然后在`build.gradle`中使用`project.REPO_URL`引用这个url
 
+## 其他问题
+错误：`Connection to https://jcenter.bintray.com refused`
+
+原因：没有配置HTTPS代理，在`gradle.properties`上配置HTTPS代理即可
+
+错误：`Could not create plugin of type 'AppPlugin'`
+
+原因：Gradle版本过低。使用独立安装的Gradle(v1.12)会出现这个问题，使用Android Studio自带的Gradle(v2.2.1)完全正常
+
+错误：JDK编译失败
+
+原因：Android Studio自带JDK 7编译，源码中使用了Java 7的语法。命令行中使用Gradle编译时使用JDK 6进行编译，所以报错。`gradle.properties`使用`org.gradle.java.home`属性指定Gradle编译时使用的JDK路径。[官方文档](https://docs.gradle.org/current/userguide/build_environment.html)
+
 ---
 参考资料：
 
@@ -168,3 +243,9 @@ repositories {
 + [使用Gradle构建速度慢的问题](http://www.huangyunkun.com/2014/04/26/libgdx-gradle-change-source/)
 
 [source]: https://docs.gradle.org/1.6/userguide/tutorial_using_tasks.html
+
+To Read:
+
+[Gradle Android插件用户指南]: http://avatarqing.gitbooks.io/gradlepluginuserguidechineseverision/content/
+[201402 Gradle使用笔记]: http://sinojelly.sinaapp.com/2014/02/201402-gradle-use-notes/
+[BUILDING FAST(ER) WITH GRADLE IN ANDROID STUDIO]: http://rileybrewer.com/blog/2013/10/4/building-faster-with-gradle-in-android-studio
