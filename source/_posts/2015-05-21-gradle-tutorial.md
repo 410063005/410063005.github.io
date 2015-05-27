@@ -4,7 +4,7 @@ title: "Gradle学习笔记"
 date: 2015-05-21 12:10:51 +0800
 comments: true
 categories: tools
-published: false
+published: true
 ---
 
 # Gradle简介
@@ -268,6 +268,6 @@ repositories {
 
 To Read:
 
-[Gradle Android插件用户指南]: http://avatarqing.gitbooks.io/gradlepluginuserguidechineseverision/content/
-[201402 Gradle使用笔记]: http://sinojelly.sinaapp.com/2014/02/201402-gradle-use-notes/
-[BUILDING FAST(ER) WITH GRADLE IN ANDROID STUDIO]: http://rileybrewer.com/blog/2013/10/4/building-faster-with-gradle-in-android-studio
++ [Gradle Android插件用户指南]( http://avatarqing.gitbooks.io/gradlepluginuserguidechineseverision/content/)
++ [201402 Gradle使用笔记]( http://sinojelly.sinaapp.com/2014/02/201402-gradle-use-notes/)
++ [BUILDING FAST(ER) WITH GRADLE IN ANDROID STUDIO]( http://rileybrewer.com/blog/2013/10/4/building-faster-with-gradle-in-android-studio)
