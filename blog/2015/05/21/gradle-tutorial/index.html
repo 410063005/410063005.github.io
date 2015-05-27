@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>点点滴滴</title>
+  <title>Gradle学习笔记 - 点点滴滴</title>
   <meta name="author" content="Sunmoon">
 
   
@@ -19,7 +19,7 @@ tasks &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://www.sunmoonblog.com/">
+  <link rel="canonical" href="http://www.sunmoonblog.com/blog/2015/05/21/gradle-tutorial/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="点点滴滴" type="application/atom+xml">
@@ -64,15 +64,12 @@ tasks &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/05/21/gradle-tutorial/">Gradle学习笔记</a></h1>
+      <h1 class="entry-title">Gradle学习笔记</h1>
     
     
       <p class="meta">
@@ -88,7 +85,7 @@ tasks &hellip;">
   </header>
 
 
-  <div class="entry-content"><h1>Gradle简介</h1>
+<div class="entry-content"><h1>Gradle简介</h1>
 
 <h2>Projects和tasks</h2>
 
@@ -431,444 +428,52 @@ tasks - 每个<code>project</code>由一个或多个<code>tasks</code>组成。�
 </ul>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/05/20/why-does-androidtestcase-dot-mcontext-dot-getapplication-return-null/">AndroidTestCase中getApplicationContext()返回null</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-20T14:33:09+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>20</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:33 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Android项目单元测试时发现下面代码会打印<code>null</code>。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>public class TmpTest extends AndroidTestCase {
-</span><span class='line'>
-</span><span class='line'>  public void testGetApp() {
-</span><span class='line'>      System.out.println(mContext.getApplicationContext());
-</span><span class='line'>  }
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p>找到<a href="http://stackoverflow.com/questions/6516441/why-does-androidtestcase-getcontext-getapplicationcontext-return-null">这篇帖子</a>，提出了如下非常有效的解决方案</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>public class TmpTest extends AndroidTestCase {
-</span><span class='line'>
-</span><span class='line'>  @Override
-</span><span class='line'>  public void setContext(Context context) {
-</span><span class='line'>      super.setContext(context);
-</span><span class='line'>      
-</span><span class='line'>      while (null == context.getApplicationContext()) {
-</span><span class='line'>                  SystemClock.sleep(16);
-</span><span class='line'>              }
-</span><span class='line'>  }
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p>问题来了：</p>
-
-<ol>
-<li>为什么会返回<code>null</code>呢，是否Android的bug？</li>
-<li>为什么这个解决方案是有效的呢？它是什么原理？</li>
-</ol>
-
-
-<p>Android扩展了标准的JUnit测试框架，<code>AndroidTestCase</code>是利用<code>Instrumentation</code>来驱动Android相关的测试用例的。使用<code>Instrumentation</code>，可以在主程序启动之前，创建模拟的系统对象，如<code>Context</code>；控制应用组件的生命周期；发送UI事件给应用程序；在执行期间检查程序状态。</p>
-
-<p>但是，<code>Instrumentation</code>在独立的线程中运行而非主线程，所以它可以在不阻塞或干扰主线程(反之也不会被主线程阻塞)的情况下执行。如果需要跟主线程同步，可以使用<a href="http://developer.android.com/reference/android/app/Instrumentation.html#waitForIdleSync%28%29">Instrumentation.waitForIdleSync()</a></p>
-
-<p>而像<code>Application</code>或<code>Activity</code>等上层应用组件对象是由主线程初始化的。主线程初始化这些对象的同时，<code>Instrumentation</code>所在的线程也在运行。如果在<code>Instrumentation</code>线程中使用这些对象，而又没有线程安全地实现，肯定会出错。很不幸，<code>AndroidTestCase</code>的实现不是线程安全的(API 16 Jelly Bean之前)，可以认为是系统的bug。一种实现线程安全的办法是使用<a href="http://developer.android.com/reference/android/app/Instrumentation.html#runOnMainSync%28java.lang.Runnable%29">Instrumentation.runOnMainSync(java.lang.Runnable)</a>在主线程中运行相关代码。</p>
-
-<p>当然，在<code>AndroidTestCase中</code>不能拿到<code>Instrumentation</code>实例，所以无论<code>Instrumentation.waitForIdleSync()</code>还是<code>Instrumentation.runOnMainSync()</code>都无法被调用。</p>
-
-<p>总结一下，答案就是：</p>
-
-<ol>
-<li>该问题是Android的bug，问题根源在于<code>AndroidTestCase</code>不是线程安全的</li>
-<li>这里的方案修复了<code>Instrumentation</code>线程和主线程的同步问题，可以保证线程安全</li>
-</ol>
-
-</div>
-  
   
 
+<span class="byline author vcard">Posted by <span class="fn">Sunmoon</span></span>
 
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/05/18/android-verfiyerror/">VerfiyError浅析</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
 
-<time class='entry-date' datetime='2015-05-18T15:57:04+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:57 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h1>VerifyError是什么</h1>
-
-<p><a href="http://developer.android.com/reference/java/lang/VerifyError.html">Android开发文档</a>中关于<code>VerifyError</code>是这么介绍的：</p>
-
-<blockquote><p>Thrown when the VM notices that an attempt is made to load a class which does not pass the class verification phase.</p></blockquote>
-
-<p>即，Java虚拟机进行类加载时该类无法通过类校验(class verification)。具体来讲</p>
-
-<blockquote><p>这种错误表示JVM中的校验器检测到某个类，虽然格式正确，但内部存在不一致或有安全问题。<code>VerifyError</code>类继承自<code>LinkageError</code>类，后者用于表示一类错误情形：一个类(称为A)依赖于另外的类(称为B)，而类B发生了兼容性上的改变。此外，<code>LinkageError</code>类继承自<code>Error</code>类，<code>Error</code>用于表示应用不应捕获的严重问题。方法不应该在<code>throw</code>子句中声明这些错误，因为它们表示不应发生的异常情况。</p>
-
-<p>JVM包含一个字节码校验器，用于字节码执行前的验证，以保证字节码序列的完整性。验证过程通常包括以下检查：</p>
-
-<ul>
-<li>Branches point to valid locations (跳转分支有效? ) - 类加载时发生</li>
-<li>数据被初始化，引用类型安全 - 类加载时发生</li>
-<li>对私有方法或数据的访问受到控制 - 动态进行, 方法或数据首次被访问时发生</li>
-</ul>
-</blockquote>
-
-<h1>VerifyError何时发生</h1>
-
-<p>工程师实际开发中通常很难碰到<code>VerifyError</code>，而用户使用App时出现的Crash中确实有少量<code>VerifyError</code>。那么<code>VerifyError</code>到底怎么发生的呢。</p>
-
-<p>有一种说法是，在<a href="http://stackoverflow.com/questions/8951666/getting-error-java-lang-verifyerror">低版本的机器上调用不支持的API会造成<code>VerifyError</code>问题</a>。在我的三星S5830(Android 2.3.6)上运行以下代码</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>@Override
-</span><span class='line'>protected void onCreate(Bundle savedInstanceState) {
-</span><span class='line'>  super.onCreate(savedInstanceState);
-</span><span class='line'>  System.out.println("before test");
-</span><span class='line'>  new Location("test").isFromMockProvider(); // Android 4.3中新加的API, 在Android 2.3.6什么后果
-</span><span class='line'>  System.out.println("after test");
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p>的确崩溃了，但不是<code>VerifyError</code>，而是<code>NoSuchMethodError</code>。(不清楚不同机器上异常信息是否会有所不同)</p>
-
-<p>下面找了一些<code>VerifyError</code>的例子。虽然这里的例子都比较简单，但对我们分析用户反馈中的<code>VerifyError</code>应该还是有所帮助的。</p>
-
-<h2>例一</h2>
-
-<p><a href="https://github.com/aectann/android-verify-error-example">例子来源</a></p>
-
-<p>在Android手机(HTC One X, MUI-4.9.5, Android 4.4.4)上，这个例子的确会产生<code>VerifyError</code>。但在PC上(Java版本是1.6.0_13)，这个例子却能正常运行。这个例子不是很容易理解，有些疑惑。</p>
-
-<h2>例二</h2>
-
-<p><a href="https://github.com/aectann/android-verify-error-example">例子来源</a></p>
-
-<p>相于前一个例子，这个容易理解多了，简单来说就是&#8221;将可继承的父类修改为不可继承，而子类保持不变&#8221;。步骤概括如下：</p>
-
-<ol>
-<li>定义<code>TestClassA</code>和<code>TestClassB</code>两个类</li>
-<li><code>javac</code>分别将它们编译成class文件</li>
-<li>修改<code>TestClassA</code>类，将其修改为<code>final</code>(不可继承的类)</li>
-<li>重新编译<code>TestClassA</code>为class文件 (<code>TestClassB</code>仍是之前的class文件)</li>
-<li><code>java</code>运行<code>TestClassB</code></li>
-</ol>
-
-
-<p>错误日志如下</p>
-
-<p><code>java.lang.VerifyError: Cannot inherit from final class</code></p>
-
-<p>除了继承<code>final</code>类会产生<code>VerifyError</code>，类似的办法还包括：</p>
-
-<ol>
-<li>子类覆盖父类中的<code>final</code>方法</li>
-<li>修改继承关系，引起方法参数类型错误。具体见<a href="http://examples.javacodegeeks.com/java-basics/exceptions/java-lang-verifyerror-how-to-solve-verifyerror/">这里</a></li>
-</ol>
-
-
-<h2>实际例子</h2>
-
-<p>有个App使用定位SDK时出现<a href="http://crashes.to/s/0f287e83c35">如下crash</a></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>java.lang.VerifyError: android/location/ILocationListener$Stub
-</span><span class='line'>       at android.location.LocationManager._requestLocationUpdates(LocationManager.java:683)
-</span><span class='line'>       at android.location.LocationManager.requestLocationUpdates(LocationManager.java:593)
-</span><span class='line'>       at ct.bt.a()
-</span><span class='line'>       at ct.bu.a()</span></code></pre></td></tr></table></div></figure>
-
-
-<p>crash的地方对应的代码如下</p>
-
-<pre><code>    try {
-        manager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            millis, 
-            0.0f, 
-            this, 
-            handler.getLooper());
-    } catch (Exception e) {
-    }
-</code></pre>
-
-<p>不清楚错误原因，已有信息总结如下</p>
-
-<ol>
-<li>2015.5.11至2015.5.19，该问题共发生2例</li>
-<li>机型分别是 HUAWEI G520(Android 4.1.1)和HUAWEI Y300(Android 4.1.2)</li>
-</ol>
-
-
-<p>错误日志表明, <code>ILocationListener$Stub</code>通不过检验，看对应的源码，问题大概来自 <code>LocationListener</code> 相关代码。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>private void _requestLocationUpdates(String provider, Criteria criteria, long minTime,
-</span><span class='line'>        float minDistance, boolean singleShot, LocationListener listener, Looper looper) {
-</span><span class='line'>    if (minTime &lt; 0L) {
-</span><span class='line'>        minTime = 0L;
-</span><span class='line'>    }
-</span><span class='line'>    if (minDistance &lt; 0.0f) {
-</span><span class='line'>        minDistance = 0.0f;
-</span><span class='line'>    }
-</span><span class='line'>
-</span><span class='line'>    try {
-</span><span class='line'>        synchronized (mListeners) {
-</span><span class='line'>            ListenerTransport transport = mListeners.get(listener);
-</span><span class='line'>            if (transport == null) {
-</span><span class='line'>                transport = new ListenerTransport(listener, looper);
-</span><span class='line'>            }
-</span><span class='line'>            mListeners.put(listener, transport);
-</span><span class='line'>            mService.requestLocationUpdates(provider, criteria, minTime, minDistance,
-</span><span class='line'>                    singleShot, transport, mContext.getPackageName());
-</span><span class='line'>        }
-</span><span class='line'>    } catch (RemoteException ex) {
-</span><span class='line'>        Log.e(TAG, "requestLocationUpdates: DeadObjectException", ex);
-</span><span class='line'>    }
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这里并没有直接出现<code>ILocationListener$Stub</code>，唯一跟 <code>ILocationListener$Stub</code>有关的是<code>ListenerTransport</code>。<code>ListenerTransport</code>继承自<code>ILocationListener.Stub</code>，<code>ILocationListener</code>及<code>ILocationListener.Stub</code>由<code>ILocationListener.aidl</code>生成。</p>
-
-<p><code>ILocationListener$Stub</code>是编译ROM时就已生成的类，正常来说不可能发生任何改变，也就不应该出现&#8221;版本兼容性&#8221;问题。但如果用户升级ROM出错或刷机呢？<font color="red">理解有限，无法评估了。</font></p>
-
-<p><font color="red">系统代码为什么会出现VerifyError呢?</font></p>
-
-<h1>VerifyError怎么处理</h1>
-
-<p>了解<code>VerifyError</code>发生的原因之后，就不难知道避免<code>VerifyError</code>的办法很简单，那就是使用相同版本的JDK编译全部的类。另外，一旦某个类发生改变，应确保重新编译整个项目。最后，如果应用使用了外部的库，确认版本是正确的。</p>
-
-<p>上面提到的处理方法的前提是我们可以控制源码，而Android平台上多数情况下我们是没有这种能力的，只能尽量保证API版本正确。</p>
-
-<h1>参考资料</h1>
-
-<p><a href="http://examples.javacodegeeks.com/java-basics/exceptions/java-lang-verifyerror-how-to-solve-verifyerror/docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.10">JVM Specification: Chapter 4.10. Verification of class Files.</a></p>
-
-<p><a href="http://www.oracle.com/technetwork/java/security-136118.html">The Byte Code Verification Process.</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time class='entry-date' datetime='2015-05-21T12:10:51+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>12:10 pm</span></time>
       
-  <header>
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/tools/'>tools</a>
+  
+</span>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2015/05/14/write-blog-using-octpress/">使用Octpress写博客</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-14T15:12:48+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>14</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:12 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天试用Octpress，感觉非常不错。安装试用过程记录如下。操作非常简单，基本是按照帮助文档一路 Next，所以这里只记录遇到的问题以及跟帮助文档不符的地方(也许文档过期了)</p>
-
-<h1>1. 安装</h1>
-
-<p>分别要安装 Git，Ruby，DevKit，Python，最后才是 Octpress。</p>
-
-<h2>1.1 版本问题</h2>
-
-<p>安装Ruby和DevKit容易出错，主要问题是版本不对。为减少版本出错可能，还是从<a href="http://rubyinstaller.org/downloads/">RubyInstaller</a>下载Ruby和DevKit吧。一定要注意版本对应关系：操作系统是否64位、支持哪个版本的Ruby。</p>
-
-<h2>1.2 代理问题</h2>
-
-<p>公司上网要走代理，<code>gem</code> 也需要设置相应的代理，设置方式</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>set http-proxy=&lt;http proxy&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>1.3 HTTPS问题</h2>
-
-<p>可能遇到无法从 <code>https://rubygems.org/</code> 下载安装的问题。更新源的方式如下</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>gem sources -r https://rubygems.org/
-</span><span class='line'>gem sources -a http://rubygems.org/
-</span><span class='line'>gem sources -l</span></code></pre></td></tr></table></div></figure>
-
-
-<p>也可以尝试国内的淘宝镜像 <code>http://ruby.taobao.org/</code>，速度可能快点。</p>
-
-<h1>2. 使用</h1>
-
-<p>主要命令如下：</p>
-
-<ul>
-<li><code>rake preview</code> - 通过 <code>http://localhost:4000/</code> 进行预览</li>
-<li><code>rake new_post['my blog']</code> - 添加文章</li>
-<li><code>rake generate</code> - 生成文章。每次执行了添加博客的命令，或是修改了现有博客的内容后都应执行这个命令</li>
-<li><code>rake watch</code> - 检测文件变化,实时生成新内容</li>
-<li><code>rake deploy</code> - 将本地的内容发布到Github上</li>
-</ul>
-
-
-<p>如果将本地内容发布到Github，可以参考<a href="http://octopress.org/docs/deploying/github/">这里</a></p>
-
-<p><strong>不要忘记</strong> 将源码提交</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>git add .
-</span><span class='line'>git commit -m 'your message'
-</span><span class='line'>git push origin source</span></code></pre></td></tr></table></div></figure>
-
-
-<h1>3. 参考资料</h1>
-
-<ol>
-<li><a href="http://www.open-open.com/lib/view/open1423539522764.html">Windows上安装Octopress博客</a></li>
-<li><a href="http://www.cnblogs.com/oec2003/archive/2013/05/27/3100896.html">Windows下搭建Octopress博客</a></li>
-</ol>
-
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.sunmoonblog.com/blog/2015/05/21/gradle-tutorial/" data-via="" data-counturl="http://www.sunmoonblog.com/blog/2015/05/21/gradle-tutorial/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/05/14/my-first-octopress-blog/">My First Octopress Blog</a></h1>
-    
-    
-      <p class="meta">
-        
+        <a class="basic-alignment left" href="/blog/2015/05/20/why-does-androidtestcase-dot-mcontext-dot-getapplication-return-null/" title="Previous Post: AndroidTestCase中getApplicationContext()返回null">&laquo; AndroidTestCase中getApplicationContext()返回null</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-
-
-
-<time class='entry-date' datetime='2015-05-14T11:55:39+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>14</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:55 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h1>中文标题1</h1>
-
-<h1>中文标题2</h1>
 </div>
-  
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -904,6 +509,7 @@ tasks - 每个<code>project</code>由一个或多个<code>tasks</code>组成。�
 
   
 </aside>
+
 
     </div>
   </div>
