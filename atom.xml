@@ -4,7 +4,7 @@
   <title><![CDATA[点点滴滴]]></title>
   <link href="http://www.sunmoonblog.com/atom.xml" rel="self"/>
   <link href="http://www.sunmoonblog.com/"/>
-  <updated>2015-05-27T10:33:04+08:00</updated>
+  <updated>2015-05-27T17:47:24+08:00</updated>
   <id>http://www.sunmoonblog.com/</id>
   <author>
     <name><![CDATA[Sunmoon]]></name>
@@ -12,6 +12,108 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[JSONException分析]]></title>
+    <link href="http://www.sunmoonblog.com/blog/2015/05/27/jsonexception/"/>
+    <updated>2015-05-27T17:22:07+08:00</updated>
+    <id>http://www.sunmoonblog.com/blog/2015/05/27/jsonexception</id>
+    <content type="html"><![CDATA[<p>定位SDK中出现<code>org.json.JSONException: End of input at character 0 of</code>这种异常。完整信息如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>06-19 13:22:32.229: W/System.err(19647): org.json.JSONException: End of input at character 0 of 
+</span><span class='line'>06-19 13:22:32.264: W/System.err(19647):    at org.json.JSONTokener.syntaxError(JSONTokener.java:450)
+</span><span class='line'>06-19 13:22:32.265: W/System.err(19647):    at org.json.JSONTokener.nextValue(JSONTokener.java:97)
+</span><span class='line'>06-19 13:22:32.268: W/System.err(19647):    at org.json.JSONObject.&lt;init&gt;(JSONObject.java:154)
+</span><span class='line'>06-19 13:22:32.269: W/System.err(19647):    at org.json.JSONObject.&lt;init&gt;(JSONObject.java:171)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>非常不解。看字面意思是第0个字符处结束了，推测 <code>character 0 of</code>后面其实有个空白字符(不可见)。</p>
+
+<p>比较赞成<a href="http://stackoverflow.com/questions/24301521/jsonexception-end-of-input-at-character-0">这个解释</a>：</p>
+
+<blockquote><p>You are probably getting a blank response. Its not null but the jsontext is empty. So you are getting this error and not a Nullpointer exception</p></blockquote>
+
+<p>跑下面这个单元测试，果然复现问题</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public void testJson() throws Exception {
+</span><span class='line'>  new JSONObject("");
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>做点小修改，让这个不可见的空白字符显身。修改后的代码如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public void testJson() throws Exception {
+</span><span class='line'>  new MyJSONObject("");
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>static class MyJSONObject extends JSONObject {
+</span><span class='line'>  public MyJSONObject(String json) throws JSONException {
+</span><span class='line'>      super(new MyJSONTokener(json));
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>static class MyJSONTokener extends JSONTokener {
+</span><span class='line'>  private String mIn;
+</span><span class='line'>
+</span><span class='line'>  public MyJSONTokener(String in) {
+</span><span class='line'>      super(in);
+</span><span class='line'>      mIn = in;
+</span><span class='line'>  }
+</span><span class='line'>  
+</span><span class='line'>  @Override
+</span><span class='line'>  public String toString() {
+</span><span class='line'>      String res = super.toString();
+</span><span class='line'>      if ("".equals(mIn)) {
+</span><span class='line'>          res += "'" + mIn + "'";
+</span><span class='line'>      }
+</span><span class='line'>
+</span><span class='line'>      return res;
+</span><span class='line'>  }
+</span><span class='line'>}
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>此时的异常信息更加明确了，<code>org.json.JSONException: End of input at character 0 of ''</code>。</p>
+
+<p>至此疑惑全解，出错的原因就是传入<code>JSONObject()</code>构造方法的字符串为空，空字符串是非法的JSON格式，解析出错很正常。所以问题真正的原因就要从为什么会出现空字符串查找了，这是另一个话题。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Gradle学习笔记]]></title>
