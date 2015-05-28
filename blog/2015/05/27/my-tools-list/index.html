@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>我的效率工具列表 - 点点滴滴</title>
+  <meta name="author" content="Sunmoon">
+
+  
+  <meta name="description" content="编辑器 Pandoc 一个用于将Markdown文档转换成其他格式的命令工具。支持的格式包括HTML，EPUB，docx，PDF等等。Pandoc是用Haskell编写的(貌似非常小众的编程语言)，源码托管在Github上。Pandoc使用UTF-8编码方式来处理输入和输出。注意， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.sunmoonblog.com/blog/2015/05/27/my-tools-list/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="点点滴滴" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">点点滴滴</a></h1>
+  
+    <h2>欢迎访问Sunmoon的博客</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="www.sunmoonblog.com">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">我的效率工具列表</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-27T10:40:57+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:40 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h1>编辑器</h1>
+
+<h2><a href="http://pandoc.org/">Pandoc</a></h2>
+
+<p>一个用于将Markdown文档转换成其他格式的命令工具。支持的格式包括HTML，EPUB，docx，PDF等等。Pandoc是用Haskell编写的(貌似非常小众的编程语言)，<a href="https://github.com/jgm/pandoc">源码</a>托管在Github上。Pandoc使用UTF-8编码方式来处理输入和输出。注意，像HTML之类的文档会在头部加上字符编码信息，只有使用<code>-s/--standalone</code>选项时才会生成这些头部信息。</p>
+
+<p>一些有用选项：</p>
+
+<ul>
+<li><code>--toc</code> - 生成Table Of Content目录列表</li>
+<li><code>-s</code> - 独立模式</li>
+<li><code>-c &lt;css-file&gt;</code> - 指定CSS样式表</li>
+<li><code>--self-contained</code> - 将所有的外部文件保存到单个HTML中</li>
+</ul>
+
+
+<blockquote><p>Pandoc uses the UTF-8 character encoding for both input and output. If your local character encoding is not UTF-8, you should pipe input and output through iconv:
+<code>iconv -t utf-8 input.txt | pandoc | iconv -f utf-8</code>
+Note that in some output formats (such as HTML, LaTeX, ConTeXt, RTF, OPML, DocBook, and Texinfo), information about the character encoding is included in the document header, which will only be included if you use the -s/&ndash;standalone option. <a href="http://pandoc.org/README.html">引用来源</a></p></blockquote>
+
+<p>Pandoc可谓Markdown转换神器，要是能跟Vim结合起来写博客，岂不完美？参考<a href="http://zhouyichu.com/misc/Pandoc.html">这篇博客</a>，做法很简单。在Vim的_vimrc文件中添加以下代码：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>function! ToHtml()
+</span><span class='line'>  exec 'w'
+</span><span class='line'>  exec "!pandoc  -s -S --self-contained -c style.css % -o %&lt;.html "
+</span><span class='line'>endfunction
+</span><span class='line'>
+</span><span class='line'>:nmap &lt;silent&gt; &lt;F5&gt; :call ToHtml()&lt;CR&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上述代码中定义<code>ToHtml</code>函数用来调用pandoc生成HTML文档，映射<code>&lt;F5&gt;</code>去调用<code>ToHtml</code>函数。可以直接在Vim中<code>&lt;F5&gt;</code>生成HTML，避免了命令行的繁琐。
+(比如octopress的<code>rake generate</code>, <code>rake preview</code>也简单多了)。</p>
+
+<h2>Vundle</h2>
+
+<p>Vim虽好，但是没有默认的插件管理器，配置Vim插件相当繁琐。可以试试<a href="http://zuyunfei.com/2013/04/12/killer-plugin-of-vim-vundle/">Vim的vundle插件</a>，它是用来Vim管理插件的。</p>
+
+<h1>快捷键</h1>
+
+<h2>WinHotKey</h2>
+
+<p>可以在Windows上自定义各种快捷键打开应用或目录，非常方便</p>
+
+<h2><a href="https://chrome.google.com/webstore/detail/vimium/dbepggeogbaibhgnhhndojpepiihcmeb">Vimium</a></h2>
+
+<p>Chrome中的插件，快捷键的使用非常类似于Vim。习惯使用&#8221;J&#8221;和&#8221;K&#8221;翻页后，鼠标简直是多余的。关于插件的介绍以及快捷键的用法可以看<a href="http://www.chromein.com/crx_5411.html">这里</a></p>
+
+<h2><a href="http://jingyan.baidu.com/article/359911f516583d57fe0306ae.html">Chrome自带快捷键</a></h2>
+
+<h1>文档管理</h1>
+
+<h2>Everything</h2>
+
+<p>搜索本地文档非常方便，再也不用担心记不清文件放哪了</p>
+
+<h1>在线工具</h1>
+
+<p><a href="https://tinypng.com/">TinyPNG</a>可以用于压缩PNG图片的大小。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Sunmoon</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-05-27T10:40:57+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:40 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/tools/'>tools</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.sunmoonblog.com/blog/2015/05/27/my-tools-list/" data-via="" data-counturl="http://www.sunmoonblog.com/blog/2015/05/27/my-tools-list/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/05/21/gradle-tutorial/" title="Previous Post: Gradle学习笔记">&laquo; Gradle学习笔记</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/05/27/jsonexception/" title="Next Post: JSONException分析">JSONException分析 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/05/28/vim-pandoc-tutorial/">Vim-pandoc基本用法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/27/jsonexception/">JSONException分析</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/27/my-tools-list/">我的效率工具列表</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/21/gradle-tutorial/">Gradle学习笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/20/why-does-androidtestcase-dot-mcontext-dot-getapplication-return-null/">AndroidTestCase中getApplicationContext()返回null</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Sunmoon -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

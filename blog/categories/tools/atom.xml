@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tools | 点点滴滴]]></title>
   <link href="http://www.sunmoonblog.com/blog/categories/tools/atom.xml" rel="self"/>
   <link href="http://www.sunmoonblog.com/"/>
-  <updated>2015-05-28T15:02:43+08:00</updated>
+  <updated>2015-05-28T17:08:49+08:00</updated>
   <id>http://www.sunmoonblog.com/</id>
   <author>
     <name><![CDATA[Sunmoon]]></name>
@@ -120,6 +120,72 @@ Plugin 'vim-pandoc/vim-pandoc-syntax'
 <li><a href="https://github.com/vim-pandoc/vim-pandoc">vim-pandoc</a></li>
 </ul>
 
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[我的效率工具列表]]></title>
+    <link href="http://www.sunmoonblog.com/blog/2015/05/27/my-tools-list/"/>
+    <updated>2015-05-27T10:40:57+08:00</updated>
+    <id>http://www.sunmoonblog.com/blog/2015/05/27/my-tools-list</id>
+    <content type="html"><![CDATA[<h1>编辑器</h1>
+
+<h2><a href="http://pandoc.org/">Pandoc</a></h2>
+
+<p>一个用于将Markdown文档转换成其他格式的命令工具。支持的格式包括HTML，EPUB，docx，PDF等等。Pandoc是用Haskell编写的(貌似非常小众的编程语言)，<a href="https://github.com/jgm/pandoc">源码</a>托管在Github上。Pandoc使用UTF-8编码方式来处理输入和输出。注意，像HTML之类的文档会在头部加上字符编码信息，只有使用<code>-s/--standalone</code>选项时才会生成这些头部信息。</p>
+
+<p>一些有用选项：</p>
+
+<ul>
+<li><code>--toc</code> - 生成Table Of Content目录列表</li>
+<li><code>-s</code> - 独立模式</li>
+<li><code>-c &lt;css-file&gt;</code> - 指定CSS样式表</li>
+<li><code>--self-contained</code> - 将所有的外部文件保存到单个HTML中</li>
+</ul>
+
+
+<blockquote><p>Pandoc uses the UTF-8 character encoding for both input and output. If your local character encoding is not UTF-8, you should pipe input and output through iconv:
+<code>iconv -t utf-8 input.txt | pandoc | iconv -f utf-8</code>
+Note that in some output formats (such as HTML, LaTeX, ConTeXt, RTF, OPML, DocBook, and Texinfo), information about the character encoding is included in the document header, which will only be included if you use the -s/&ndash;standalone option. <a href="http://pandoc.org/README.html">引用来源</a></p></blockquote>
+
+<p>Pandoc可谓Markdown转换神器，要是能跟Vim结合起来写博客，岂不完美？参考<a href="http://zhouyichu.com/misc/Pandoc.html">这篇博客</a>，做法很简单。在Vim的_vimrc文件中添加以下代码：</p>
+
+<pre><code>function! ToHtml()
+    exec 'w'
+    exec "!pandoc  -s -S --self-contained -c style.css % -o %&lt;.html "
+endfunction
+
+:nmap &lt;silent&gt; &lt;F5&gt; :call ToHtml()&lt;CR&gt;
+</code></pre>
+
+<p>上述代码中定义<code>ToHtml</code>函数用来调用pandoc生成HTML文档，映射<code>&lt;F5&gt;</code>去调用<code>ToHtml</code>函数。可以直接在Vim中<code>&lt;F5&gt;</code>生成HTML，避免了命令行的繁琐。
+(比如octopress的<code>rake generate</code>, <code>rake preview</code>也简单多了)。</p>
+
+<h2>Vundle</h2>
+
+<p>Vim虽好，但是没有默认的插件管理器，配置Vim插件相当繁琐。可以试试<a href="http://zuyunfei.com/2013/04/12/killer-plugin-of-vim-vundle/">Vim的vundle插件</a>，它是用来Vim管理插件的。</p>
+
+<h1>快捷键</h1>
+
+<h2>WinHotKey</h2>
+
+<p>可以在Windows上自定义各种快捷键打开应用或目录，非常方便</p>
+
+<h2><a href="https://chrome.google.com/webstore/detail/vimium/dbepggeogbaibhgnhhndojpepiihcmeb">Vimium</a></h2>
+
+<p>Chrome中的插件，快捷键的使用非常类似于Vim。习惯使用&#8221;J&#8221;和&#8221;K&#8221;翻页后，鼠标简直是多余的。关于插件的介绍以及快捷键的用法可以看<a href="http://www.chromein.com/crx_5411.html">这里</a></p>
+
+<h2><a href="http://jingyan.baidu.com/article/359911f516583d57fe0306ae.html">Chrome自带快捷键</a></h2>
+
+<h1>文档管理</h1>
+
+<h2>Everything</h2>
+
+<p>搜索本地文档非常方便，再也不用担心记不清文件放哪了</p>
+
+<h1>在线工具</h1>
+
+<p><a href="https://tinypng.com/">TinyPNG</a>可以用于压缩PNG图片的大小。</p>
 ]]></content>
   </entry>
   
