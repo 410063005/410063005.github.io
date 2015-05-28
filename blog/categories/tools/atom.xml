@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tools | 点点滴滴]]></title>
   <link href="http://www.sunmoonblog.com/blog/categories/tools/atom.xml" rel="self"/>
   <link href="http://www.sunmoonblog.com/"/>
-  <updated>2015-05-27T17:47:24+08:00</updated>
+  <updated>2015-05-28T15:02:43+08:00</updated>
   <id>http://www.sunmoonblog.com/</id>
   <author>
     <name><![CDATA[Sunmoon]]></name>
@@ -12,6 +12,116 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Vim-pandoc基本用法]]></title>
+    <link href="http://www.sunmoonblog.com/blog/2015/05/28/vim-pandoc-tutorial/"/>
+    <updated>2015-05-28T10:45:20+08:00</updated>
+    <id>http://www.sunmoonblog.com/blog/2015/05/28/vim-pandoc-tutorial</id>
+    <content type="html"><![CDATA[<p><code>vim-pandoc</code>可以集成Vim和Pandoc，用于写Markdown文档非常方便。</p>
+
+<blockquote><p><code>vim-pandoc</code> provides facilities to integrate Vim with the pandoc document converter
+<code>vim-pandoc</code>&rsquo;s goals are 1) to provide advanced integration with pandoc, 2) a comfortable document writing environment, and 3) great configurability.</p></blockquote>
+
+<p>今天试用了一下，操作过程记录如下。</p>
+
+<h1>安装Vundle</h1>
+
+<p>平常主要在Windows上工作和写博客，下面主要讲<a href="https://github.com/gmarik/Vundle.vim/wiki/Vundle-for-Windows">Windows上如何安装Vundle</a>。(Linux平台上安装应该更简单)</p>
+
+<p>安装Vundle要求先安装如下软件：</p>
+
+<ul>
+<li>Git</li>
+<li>Curl</li>
+</ul>
+
+
+<p>通常在Windows上我们是使用<a href="http://msysgit.github.io/">msysgit</a>。安装msysgit后，Git和Curl都会安装好。我的电脑上安装情况如下。</p>
+
+<pre><code>C:\&gt;git --version
+git version 1.9.0.msysgit.0
+
+C:\&gt;d:\Git\bin\curl.exe --version
+curl 7.30.0 (i386-pc-win32) libcurl/7.30.0 OpenSSL/0.9.8y zlib/1.2.7
+Protocols: dict file ftp ftps gopher http https imap imaps ldap ldaps pop3 pop3s
+ rtsp smtp smtps telnet tftp
+Features: AsynchDNS GSS-Negotiate IPv6 Largefile NTLM SPNEGO SSL SSPI libz
+</code></pre>
+
+<h2>下载Vundle</h2>
+
+<pre><code>cd &lt;vim dir&gt;
+git clone https://github.com/gmarik/Vundle.vim.git vimfiles/bundle/Vundle.vim
+gvim _vimrc
+</code></pre>
+
+<h2>修改vim配置</h2>
+
+<p>参考<a href="https://github.com/gmarik/Vundle.vim/wiki/Vundle-for-Windows">官网配置</a>在<code>_vimrc</code>中开始部分添加如下代码：</p>
+
+<pre><code>set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=$VIM/vimfiles/bundle/Vundle.vim/
+let path='$VIM/vimfiles/bundle'
+call vundle#begin(path)
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+
+" The following are examples of different formats supported.
+" Keep Plugin commands between vundle#begin/end.
+" plugin on GitHub repo
+Plugin 'vim-pandoc/vim-pandoc'
+Plugin 'vim-pandoc/vim-pandoc-syntax' 
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+</code></pre>
+
+<p><font color="red">注意：&#8217;set rtp&#8217;部分的配置跟官网上有所不同。</font>按官网配置VIM一直出错，提示<code>Unknown function:</code>。了解了下<a href="http://vimdoc.sourceforge.net/htmldoc/options.html#%27runtimepath%27">什么是VIM rtp</a>(rtp, runtimepath)，修改为<code>set rtp+=$VIM/vimfiles/bundle/Vundle.vim/</code>后正常。</p>
+
+<h1>安装vim-pandoc</h1>
+
+<p>以下代码指定了我们需要安装的插件</p>
+
+<pre><code>Plugin 'vim-pandoc/vim-pandoc'
+Plugin 'vim-pandoc/vim-pandoc-syntax'
+</code></pre>
+
+<p>运行<code>:PluginInstall</code>安装插件。</p>
+
+<p>安装后运行<code>:Pandoc</code>生成指定格式的文档。我电脑上装了Python但没有加入到PATH环境变量中，结果一直出现<code>WindowError</code>。参考<a href="https://github.com/vim-pandoc/vim-pandoc/issues/29">这个帖子</a>将Python加到PATH环境变量，问题解决。</p>
+
+<h1>总结</h1>
+
+<p>终于安装成功了，但是悲剧地发现vim-pandoc似乎并不比在<a href="http://zhouyichu.com/misc/Pandoc.html">Vim自定义函数</a>方便多少(不过它的<code>:TOC</code>命令确实不错，VIM编辑Markdown时文档内导航相当方便)。可能我是vim-pandoc新手，它的强大功能还没发现。后面慢慢体会吧。</p>
+
+<h1>参考</h1>
+
+<ul>
+<li><a href="https://github.com/gmarik/Vundle.vim">Vundle</a></li>
+<li><a href="https://github.com/vim-pandoc/vim-pandoc">vim-pandoc</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Gradle学习笔记]]></title>
