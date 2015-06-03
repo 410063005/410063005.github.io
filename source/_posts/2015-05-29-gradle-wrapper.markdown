@@ -56,3 +56,12 @@ simple/
 配置Wrapper的详细方法可以参考[Wrapper](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.wrapper.Wrapper.html)类的API文档。
 
 如果通过`gradlew`构建项目时不想下载Gradle，可以将Gradle zip包提交到版本控制系统，并在配置文件中指定路径。可以使用相对路径。使用wrapper构建时，本地已安装的Gradle会被忽略。
+
+通过修改gradle-wrapper.properties中的`distributionUrl`属性来配置Gradle zip包的下载路径，比如我本地D盘根目录下有一个已下载好的gradle-2.2.1-all.zip文件，使用gradlew时不想从官网下载，可以这样配置(注意转义字符)：
+
+```
+distributionUrl=file\:/d:/gradle-2.2.1-all.zip
+```
+
+---
+
