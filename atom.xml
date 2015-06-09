@@ -4,7 +4,7 @@
   <title><![CDATA[点点滴滴]]></title>
   <link href="http://www.sunmoonblog.com/atom.xml" rel="self"/>
   <link href="http://www.sunmoonblog.com/"/>
-  <updated>2015-06-05T19:45:14+08:00</updated>
+  <updated>2015-06-09T17:12:38+08:00</updated>
   <id>http://www.sunmoonblog.com/</id>
   <author>
     <name><![CDATA[Sunmoon]]></name>
@@ -12,6 +12,1669 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Gradle学习笔记(Android)]]></title>
+    <link href="http://www.sunmoonblog.com/blog/2015/06/05/gradle-tutorial-android/"/>
+    <updated>2015-06-05T11:53:42+08:00</updated>
+    <id>http://www.sunmoonblog.com/blog/2015/06/05/gradle-tutorial-android</id>
+    <content type="html"><![CDATA[<p>原文来自<a href="http://tools.android.com/tech-docs/new-build-system/user-guide">这里</a>。基本上是对其翻译，挑选关键内容以及并加上自己的一些理解。</p>
+
+<h1>介绍</h1>
+
+<p>新编译系统的目标：</p>
+
+<ul>
+<li>代码和资源易重用</li>
+<li>易创建应用的多版本</li>
+<li>构建过程易配置</li>
+<li>良好的IDE集成</li>
+</ul>
+
+
+<h2>为什么选择Gradle</h2>
+
+<p>Gradle是种高级的构建系统，也是个允许通过插件创建自定义逻辑的构建工具。以下特征让我们选择Gradle：</p>
+
+<ul>
+<li>DSL用于描述和操作构建逻辑</li>
+<li>构建文件基于Groovy，允许使用DSL描述性元素和使用代码操作DSL元素来提供自定义逻辑</li>
+<li>内置的依赖管理(Maven和Ivy)</li>
+<li>非常灵活。允许最佳实践，但不限制使用方式</li>
+<li>插件可以暴露自己的DSL和API用于构建文件</li>
+<li>良好的工具API供IDE集成</li>
+</ul>
+
+
+<h1>安装要求</h1>
+
+<ul>
+<li>Gradle 1.10以上，Gradle插件0.11.1以上</li>
+<li>SDK with Build Tools 19.0.0以上</li>
+</ul>
+
+
+<h1>基本项目</h1>
+
+<p>Gradle项目在根目录的<code>build.gradle</code>文件中描述其构建。</p>
+
+<h2>简单构建文件</h2>
+
+<p>最简单的Java项目使用以下<code>build.gradle</code>，这里使用Java插件，它跟Gradle一起安装。这个插件供Java项目构建和测试。</p>
+
+<pre><code>apply plugin: 'java'
+</code></pre>
+
+<p>最简单的Android项目使用以下<code>build.gradle</code>：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>buildscript {
+</span><span class='line'>    repositories {
+</span><span class='line'>        mavenCentral()
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    dependencies {
+</span><span class='line'>        classpath 'com.android.tools.build:gradle:0.11.1'
+</span><span class='line'>    }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>apply plugin: 'android'
+</span><span class='line'>
+</span><span class='line'>android {
+</span><span class='line'>    compileSdkVersion 19
+</span><span class='line'>    buildToolsVersion "19.0.0"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个Android构建脚本中有三个主要部分：</p>
+
+<p><code>buildscript { ... }</code> 驱动构建。buildscript声明使用Maven中央库，对Manven库的Gradle插件(版本为v0.11.1)有依赖。注意：这里的依赖仅影响运行构建的代码而不影响项目。项目需要声明自己的库和依赖。</p>
+
+<p>然后是类似之前Java插件的<code>android</code>插件。</p>
+
+<p>最后，<code>android { ... }</code>设置所有的Android构建参数。它是Android DSL的入口点。缺省时只需要配置编译目标(<code>compileSdkVersion</code>)以及构建工具版本(<code>buildToolsVersion</code>)。编译目标跟旧的编译系统中<code>project.properties</code>的<code>target</code>属性是一样的。可以使用整型值(api level)或字符串给新的属性赋值。</p>
+
+<p><strong>重要：</strong> 你应该只使用<code>android</code>插件。同时还使用<code>java</code>插件会引起构建错误。</p>
+
+<p><strong>注意：</strong> 在新的构建系统中同样也需要一个<code>local.properties</code>文件，用于<code>sdk.dir</code>属性设置SDK的位置。另外，也可以设置<code>ANDROID_HOME</code>环境变量。两种方式没有区别。</p>
+
+<h2>项目结构</h2>
+
+<p>上面这种最基本的构建文件需要使用缺省的目录结构。Gradle遵循约定优于配置的原则，尽可能提供合理的默认值。</p>
+
+<p>基本的项目中两个称为&#8221;source sets&#8221;的组件，分别是源码和测试代码。分别位于：</p>
+
+<ul>
+<li>src/main/</li>
+<li>src/androidTest/</li>
+</ul>
+
+
+<p>每个目录下存放的是源码组件。对Java和Android插件，Java代码和Java资源文件分别位于：</p>
+
+<ul>
+<li>java/</li>
+<li>resources/</li>
+</ul>
+
+
+<p>对Android插件，还有些额外的文件：</p>
+
+<ul>
+<li>AndroidManifest.xml</li>
+<li>res/</li>
+<li>assets/</li>
+<li>aidl/</li>
+<li>rs/</li>
+<li>jni/</li>
+</ul>
+
+
+<p>注意：<code>src/androidTest/AndroidManifest.xml</code>不是必须的，这个文件自动生成。</p>
+
+<p>当缺省的项目结构不满足要求时，可以重新配置。根据Gradle文档，可以使用如下方式重新配置<code>sourceSets</code>：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sourceSets {
+</span><span class='line'>    main {
+</span><span class='line'>        java {
+</span><span class='line'>            srcDir 'src/java'
+</span><span class='line'>        }
+</span><span class='line'>        resources {
+</span><span class='line'>            srcDir 'src/resources'
+</span><span class='line'>        }
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：<code>srcDir</code>会添加指定的目录到已有的源码目录中(Gradle文档中没有提到这点，但确实是这样)。想替换掉缺省的源码目录，可以使用<code>srcDirs</code>，这个属性接收一组路径。下面演示了这种使用方式：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sourceSets {
+</span><span class='line'>    main.java.srcDirs = ['src/java']
+</span><span class='line'>    main.resources.srcDirs = ['src/resources']
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>更多详细信息参考Gradle文档中<a href="http://gradle.org/docs/current/userguide/java_plugin.html">关于Java插件的部分</a>。</p>
+
+<p>Android插件使用类似的语法，但由于是我们自己的<code>sourceSets</code>，所以应该对<code>android</code>对象执行这些操作。下面是例子，使用旧的项目结构，并将<code>androidTest</code>这个sourceSet映射到<code>tests</code>目录：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    sourceSets {
+</span><span class='line'>        main {
+</span><span class='line'>            manifest.srcFile 'AndroidManifest.xml'
+</span><span class='line'>            java.srcDirs = ['src']
+</span><span class='line'>            resources.srcDirs = ['src']
+</span><span class='line'>            aidl.srcDirs = ['src']
+</span><span class='line'>            renderscript.srcDirs = ['src']
+</span><span class='line'>            res.srcDirs = ['res']
+</span><span class='line'>            assets.srcDirs = ['assets']
+</span><span class='line'>        }
+</span><span class='line'>
+</span><span class='line'>        androidTest.setRoot('tests')
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：由于旧的结构将所有的源码(java, aidl, renderscript以及java resources)放到同一个目录，所以需要将sourceSet中所有这些组件重新映射到同一个<code>src</code>目录。</p>
+
+<p>注意：<code>setRoots()</code>将整个sourceSet(以及其子目录)移动到新的目录。这里会将<code>src/androidTest/*</code>移动到<code>tests/*</code>。这里Android特有的，Java项目的sourceSets并不支持。</p>
+
+<h2>构建任务</h2>
+
+<h3>通用任务</h3>
+
+<p>在构建文件中使用插件会自动创建一些构建任务。Java插件和Android插件都如此。</p>
+
+<p>通常的tasks包括：</p>
+
+<ul>
+<li><code>assemble</code> - 编译输出</li>
+<li><code>check</code> - 运行所有校验</li>
+<li><code>build</code> - 运行<code>assemble</code>和<code>check</code></li>
+<li><code>clean</code> - 清除编译输出</li>
+</ul>
+
+
+<p><code>assemble</code>，<code>check</code>和<code>build</code>并没有做任何实际工作。它们是anchor tasks，用于插件来添加实际task来完成工作。</p>
+
+<p>上述anchor tasks允许你无论是什么类型的项目、无论什么插件，都可以使用相同的tasks。比如，使用<code>findbugs</code>插件会创建新的task并让<code>check</code>依赖于它，无论<code>check</code>何时被调用这个新的task都会被调用。</p>
+
+<p>在命令行中可以通过如下命令得到high level tasks：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gradle tasks</span></code></pre></td></tr></table></div></figure>
+
+
+<p>想得到全部的tasks，运行以下命令：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gradle tasks --all</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：Gradle自动监视task的输入和输出。重复运行<code>build</code>时Gradle会输出<code>UP-TO-DATE</code>，指已是最新。这样可以避免没必要地重新构建。</p>
+
+<h3>Java任务</h3>
+
+<p>Java插件主要创建两种任务，它们是anchor task的主要依赖：</p>
+
+<ul>
+<li><code>assemble</code></li>
+<li><code>jar</code> 这个task创建output</li>
+<li><code>check</code></li>
+<li><code>test</code> 这个task运行测试</li>
+</ul>
+
+
+<p><code>jar</code> task 本身直接和间接依赖于其他 tasks，比如依赖<code>classes</code>以编译Java代码。<code>testClasses</code>用于编译测试代码，但直接调用这个task没什么意义，<code>test</code>依赖于<code>testClasses</code>和<code>classes</code>。</p>
+
+<p>通常，你会调用<code>assemble</code>或<code>check</code>，而忽略其他tasks。可以在<a href="http://gradle.org/docs/current/userguide/java_plugin.html">这里</a>找到完整的tasks描述。</p>
+
+<h3>Android任务</h3>
+
+<p>Android插件使用相同的惯例，保持跟其他插件兼容。Android插件添加以下anchor task：</p>
+
+<ul>
+<li><code>assemble</code> - 编译输出</li>
+<li><code>check</code> - 运行所有校验</li>
+<li><code>connectedCheck</code> - 运行所有需要有已连接设备或模拟器的检验</li>
+<li><code>deviceCheck</code> - 使用API连接远程设备(用于持续集成服务器)</li>
+<li><code>build</code> - 运行<code>assemble</code>和<code>check</code></li>
+<li><code>clean</code> - 清除编译输出</li>
+</ul>
+
+
+<p>Android插件有必要添加新的anchor tasks，以便能在没有连接设备的情况下运行所有常规校验。注意<code>build</code>并不依赖<code>deviceCheck</code>或<code>connectedCheck</code>。</p>
+
+<p>Android项目至少有两个输出：一个debug APK和一个release APK。每种都有自己的anchor tasks，以独立构建：</p>
+
+<ul>
+<li><code>assemble</code></li>
+<li><code>assembleDebug</code></li>
+<li><code>assembleRelease</code></li>
+</ul>
+
+
+<p>它们都依赖于其他构建APK必需的tasks。<code>assemble</code>依赖于<code>assembleDebug</code>和<code>assembleRelease</code>。</p>
+
+<p>小贴士：Gradle支持命令行中的驼峰命名法。比如：<code>gradle aR</code>跟<code>gradle assembleRelease</code>是一样的，只要没有其他的task能跟<code>aR</code>匹配。</p>
+
+<p><code>check</code> anchor task有其自己的依赖：</p>
+
+<ul>
+<li><code>check</code></li>
+<li><code>lint</code></li>
+<li><code>connectedCheck</code></li>
+<li><code>connctedAndroidTest</code></li>
+<li><code>connectedUiAutomatorTest</code> (尚未实现)</li>
+<li><code>deviceCheck</code> This depends on tasks created when other plugins implement test extension points.</li>
+</ul>
+
+
+<p>最后，Android插件还针对所有构建类型(<code>debug</code>, <code>release</code>,<code>test</code>)创建了用于安装和卸载的任务，只要它们可被安装(需要签名)。</p>
+
+<h2>基本自定义</h2>
+
+<p>Android插件提供DSL用于从构建系统中直接配置大部分参数。</p>
+
+<h3>Manifest条目</h3>
+
+<p>通过DSL可以配置如下Manifest条目：</p>
+
+<ul>
+<li>minSdkVersion</li>
+<li>targetSdkVersion</li>
+<li>versionCode</li>
+<li>versionName</li>
+<li>applicationId (实际就是包名, 见 <a href="http://tools.android.com/tech-docs/new-build-system/applicationid-vs-packagename">ApplicationId versus PackageName</a>)</li>
+<li>测试程序的package name</li>
+<li>Instrumentation test runner</li>
+</ul>
+
+
+<p>示例：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    compileSdkVersion 19
+</span><span class='line'>    buildToolsVersion "19.0.0"
+</span><span class='line'>
+</span><span class='line'>    defaultConfig {
+</span><span class='line'>        versionCode 12
+</span><span class='line'>        versionName "2.0"
+</span><span class='line'>        minSdkVersion 16
+</span><span class='line'>        targetSdkVersion 16
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>android</code>元素内的<code>defaultConfig</code>元素定义了所有的配置。</p>
+
+<p>前一个版本的Android插件使用 packageName 来配置manifest中的&#8217;packageName&#8217;属性。从Gradle插件v0.11.0开始，使用 applicationId 来配置manifest中的&#8217;packageName&#8217;属性。改名主要是为了消除应用包名(即ID)跟Java包名之间的歧义。</p>
+
+<p>在构建文件内描述各种属性的威力在于它是动态的。比如，可以从文件读取或使用某种自定义逻辑计算出version name：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>def computeVersionName() {
+</span><span class='line'>    ...
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>android {
+</span><span class='line'>    compileSdkVersion 19
+</span><span class='line'>    buildToolsVersion "19.0.0"
+</span><span class='line'>
+</span><span class='line'>    defaultConfig {
+</span><span class='line'>        versionCode 12
+</span><span class='line'>        versionName computeVersionName()
+</span><span class='line'>        minSdkVersion 16
+</span><span class='line'>        targetSdkVersion 16
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：不要使用可能跟当前范围内已有的 getters 的名字冲突的函数名。比如，<code>defaultConfig {...}</code>调用<code>getVersionName()</code>，将会自动使用<code>defaultConfig.getVersionName()</code>而不是自定义<code>getVersionName()</code>函数。</p>
+
+<p>如果没有通过DSL定义属性，将使用缺省值。见下表</p>
+
+<table>
+<thead>
+<tr>
+<th>Property Name</th>
+<th>Default value in DSL object</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>versionCode</code></td>
+<td>-1</td>
+<td>如果manifest中有，则使用manifest中的值</td>
+</tr>
+<tr>
+<td><code>versionName</code></td>
+<td>null</td>
+<td>如果manifest中有，则使用manifest中的值</td>
+</tr>
+<tr>
+<td><code>minSdkVersion</code></td>
+<td>-1</td>
+<td>如果manifest中有，则使用manifest中的值</td>
+</tr>
+<tr>
+<td><code>targetSdkVersion</code></td>
+<td>-1</td>
+<td>如果manifest中有，则使用manifest中的值</td>
+</tr>
+<tr>
+<td><code>applicationId</code></td>
+<td>null</td>
+<td>如果manifest中有，则使用manifest中的值</td>
+</tr>
+<tr>
+<td><code>testApplicationId</code></td>
+<td>null</td>
+<td>applicationId + &ldquo;.test&rdquo;</td>
+</tr>
+<tr>
+<td><code>testInstrumentationRunner</code></td>
+<td>null</td>
+<td>android.test.InstrumentationTestRunner</td>
+</tr>
+<tr>
+<td><code>signingConfig</code></td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td><code>proguardFile</code></td>
+<td>N/A(set only)</td>
+<td>N/A(set only)</td>
+</tr>
+<tr>
+<td><code>proguardFiles</code></td>
+<td>N/A(set only)</td>
+<td>N/A(set only)</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>第2列的值在你想在构建脚本中使用自定义逻辑查询这些属性时非常重要，比如，你可以这样写：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>if (android.defaultConfig.testInstrumentationRunner == null) {
+</span><span class='line'>    // assign a better default...
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果返回null，将在构建时使用第3列的实际缺省值替换。但DSL元素不包含这个缺省值所以不能查询。(注：原文是 If the value remains null, then it is replaced at build time by the actual default from column 3, but the DSL element does not contain this default value so you can&rsquo;t query against it.
+This is to prevent parsing the manifest of the application unless it’s really needed. )</p>
+
+<h3>构建类型</h3>
+
+<p>缺省时，Android插件会自动将项目设置为能同时编译debug和release版本。这两种构建类型生成不同版本的应用，它们在非开发手机上的调试能力及APK如何被签名上所区别。</p>
+
+<p>debug版本使用已知的用户名/密码(不必在构建时提示输入)自动创建的key/certificate来签名。构建过程中并不给自动release版本的APK签名，需要后续操作。</p>
+
+<p>通过一个称为<code>BuildType</code>的对象进行这些配置。缺省时，两个实例被创建，一个是<code>debug</code>，一个是<code>release</code>。Android插件允许自定义这两个对象，也允许创建别的构建类型。使用 <code>buildTypes</code> DSL容器创建：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    buildTypes {
+</span><span class='line'>        debug {
+</span><span class='line'>            applicationIdSuffix ".debug"
+</span><span class='line'>        }
+</span><span class='line'>
+</span><span class='line'>        jnidebug.initWith(buildTypes.debug)
+</span><span class='line'>        jnidebug {
+</span><span class='line'>            packageNameSuffix ".jnidebug"
+</span><span class='line'>            jniDebuggable true
+</span><span class='line'>        }
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面代码达到以下目的：</p>
+
+<ul>
+<li>配置缺省的<code>debug</code>构建类型：</li>
+<li>将它的包名设置为<code>&lt;app applicationId&gt;.debug</code>，允许在一台设备上同时安装debug和release版本的APK</li>
+<li>使用debug实例创建一个名为<code>jnidebug</code>的新的构建类型，这个新实例使用<code>debug</code>相同的配置</li>
+<li>继续配置<code>jnidebug</code>，打开<code>jniDebuggable</code>开关，并添加不同的后缀</li>
+</ul>
+
+
+<p>调用<code>initWith()</code>或使用闭包配置，在<code>buildTypes</code>容器内创建新的构建类型跟使用新的元素一样容易。</p>
+
+<p>下面是属性列表及缺省值：</p>
+
+<table>
+<thead>
+<tr>
+<th>Property Name</th>
+<th>Default value for debug</th>
+<th>Default value for release/other</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>debuggable</code></td>
+<td>true</td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>jniDebuggable</code></td>
+<td>false</td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>renderscriptDebuggable</code></td>
+<td>false</td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>renderscriptOptimLevel</code></td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>applicationIdSuffix</code></td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td><code>versionNameSuffix</code></td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td><code>signingConfig</code></td>
+<td>android.signingConfigs.debug</td>
+<td>null</td>
+</tr>
+<tr>
+<td><code>zipAlignEnabled</code></td>
+<td>false</td>
+<td>true</td>
+</tr>
+<tr>
+<td><code>minifyEnabled</code></td>
+<td>false</td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>proguardFile</code></td>
+<td>N/A(set only)</td>
+<td>N/A(set only)</td>
+</tr>
+<tr>
+<td><code>proguardFiles</code></td>
+<td>N/A(set only)</td>
+<td>N/A(set only)</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>除了这些属性，构建类型还能提供代码和资源。对每个构建类型，会有相应的 <code>sourceSet</code> 创建，其缺省位置是<code>src/&lt;buildtypename&gt;</code>。这意味着构建类型的名字不能是main或androidTest，且必须唯一。</p>
+
+<p>跟其他的source sets一样，构建类型的source set也可以使用新的位置：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    sourceSets.jnidebug.setRoot('foo/jnidebug')
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外，对每个构建类型，会有一个<code>assemble&lt;BuildTypeName&gt;</code> task被创建。</p>
+
+<p>之前提到过<code>assembleDebug</code>和<code>assembleRelease</code>，这就是它们的由来。当<code>debug</code>和<code>release</code>构建类型被创建后，会自动创建对应的<code>assemble</code> task。</p>
+
+<p>上面的<code>build.gradle</code>代码片断同样会生成一个<code>assembleJnidebug</code> task，而<code>assemble</code>会像依赖<code>assembleDebug</code>及<code>assembleRelease</code>一样依赖<code>assembleJnidebug</code>。</p>
+
+<p>小贴士：记住，可以输入<code>gradle aJ</code>来运行<code>assembleJnidebug</code> task。</p>
+
+<p>可能的使用场景：</p>
+
+<ul>
+<li>仅在debug模式下才能使用的权限，而release版本中不行</li>
+<li>用于debugging的自定义实现</li>
+<li>debug模式时提供不同的资源(比如当resource value跟signing certificate绑定时)</li>
+</ul>
+
+
+<p>BuildType的code和resources有以下使用方式：</p>
+
+<ul>
+<li>合并manifest到app的manifest</li>
+<li>The code acts as just another source folder</li>
+<li>resources覆盖main resources，替换已存在的值</li>
+</ul>
+
+
+<h3>签名配置</h3>
+
+<p>给应用签名需要以下条件：</p>
+
+<ul>
+<li>keystore</li>
+<li>keystore password</li>
+<li>key alias name</li>
+<li>key password</li>
+<li>store type</li>
+</ul>
+
+
+<p>文件位置，key name以及password和 store type一起组成Signing Configuration(type SigningConfig)</p>
+
+<p>缺省时，有一个<code>debug</code>配置用于使用debug keystore，它使用已知的password以及一个使用已知密码的key。debug keystore位于<code>$HOME/.android/debug.keystore</code>，不存在时自动创建。</p>
+
+<p><code>debug</code>构建类型自动使用<code>debug</code> SigningConfig。也可以创建其他的配置，使用修改缺省内置的配置。通过<code>signingConfigs</code> DSL容器完成：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    signingConfigs {
+</span><span class='line'>        debug {
+</span><span class='line'>            storeFile file("debug.keystore")
+</span><span class='line'>        }
+</span><span class='line'>
+</span><span class='line'>        myConfig {
+</span><span class='line'>            storeFile file("other.keystore")
+</span><span class='line'>            storePassword "android"
+</span><span class='line'>            keyAlias "androiddebugkey"
+</span><span class='line'>            keyPassword "android"
+</span><span class='line'>        }
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    buildTypes {
+</span><span class='line'>        foo {
+</span><span class='line'>            debuggable true
+</span><span class='line'>            jniDebuggable true
+</span><span class='line'>            signingConfig signingConfigs.myConfig
+</span><span class='line'>        }
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上述代码修改debug keystore的为项目根目录。这会自动影响任何使用它的构建类型。这里还创建了一个新的 Signing Config 以及一个新的将用到该 Signing Config的构建类型。</p>
+
+<p>注意：只有缺省位置的debug keystores会自动被创建。修改debug keystore的位置后，它不会自动被创建。使用不同的名字创建 一个会用到debug keystore的SigningConfig，会导致debug keystore被自动创建。In other words, it’s tied to the location of the keystore, not the name of the configuration.</p>
+
+<p>注意：keystores的位置通常是相对于项目的根目录，也可以是绝对路径。但不建议使用绝对路径(除非使用自动生成的debug keystore)。</p>
+
+<p><strong>注意：当把这些文件提交到版本控制系统后，你可能不想将密码保存在文件中。下面这个来自Stack Overflow的帖子演示如何读取控制台输入或从环境变量。<a href="http://stackoverflow.com/questions/18328730/how-to-create-a-release-signed-apk-file-using-gradle">参考</a>。我们后续会在这份指导中提供更多的详细信息。</strong></p>
+
+<h3>ProGuard</h3>
+
+<p>ProGuard is supported through the Gradle plugin for ProGuard version 4.10。ProGuard插件会自动被使用，如果将<code>minfyEnabled</code>属性设置为true，构建类型将会运行ProGuard，相应的tasks也会被创建。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    buildTypes {
+</span><span class='line'>        release {
+</span><span class='line'>            minifyEnabled true
+</span><span class='line'>            proguardFile getDefaultProguardFile('proguard-android.txt')
+</span><span class='line'>        }
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    productFlavors {
+</span><span class='line'>        flavor1 {
+</span><span class='line'>        }
+</span><span class='line'>        flavor2 {
+</span><span class='line'>            proguardFile 'some-other-rules.txt'
+</span><span class='line'>        }
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>不同版本使用各自的规则文件。有两个缺省的规则文件：</p>
+
+<ul>
+<li>proguard-android.txt</li>
+<li>proguard-android-optimize.txt</li>
+</ul>
+
+
+<p>它们包含在SDK中。使用<code>getDefaultProguardFile()</code>会返回完整的文件路径。除是否开启优化外，它们完全相同。</p>
+
+<h3>压缩资源</h3>
+
+<p>也可以在构建时去掉无用的资源。更多信息参见<a href="http://tools.android.com/tech-docs/new-build-system/resource-shrinking">Resources压缩</a>。</p>
+
+<h1>依赖管理和库项目/多项目设置</h1>
+
+<p>Gradle项目会依赖其他组件。这些组件可能是外部的二进制包或其他Gradle项目。</p>
+
+<h2>二进制依赖</h2>
+
+<h3>本地包</h3>
+
+<p>当依赖外部库时，需要给<code>compile</code>配置添加依赖：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dependencies {
+</span><span class='line'>    compile files('libs/foo.jar')
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>android {
+</span><span class='line'>    ...
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：<code>dependencies</code>DSL元素是标准的Gradle API，不属于<code>android</code>元素。</p>
+
+<p><code>compile</code>配置用于编译主应用。 <code>compile</code>指定的二进制包会添加到编译时的classpath时且会打包到最终的APK中。其他可能需要依赖的配置包括：</p>
+
+<ul>
+<li><code>compile</code> - 主应用</li>
+<li><code>androidTestCompile</code> - 测试应用</li>
+<li><code>debugCompile</code> - debug构建类型</li>
+<li><code>releaseCompile</code> - release构建类型</li>
+</ul>
+
+
+<p>不可能构建一个不跟构建类型关联的APK，所以APK通常使用<code>compile</code>和<code>&lt;buildtype&gt;Compile</code>配置。创建新的构建类型将基于它的名字自动创建新的配置。</p>
+
+<p>这个特性在某些时候非常有用，比如在debug版本需要使用自定义库(比如上报异常)而release版本时，或者依赖不同版本的库时。</p>
+
+<h3>远程文件</h3>
+
+<p>Gradle可以从Maven和Ivy库下载文件。首先，必须添加相应的仓库。然后，必须以Maven或Ivy支持的方式声明所依赖的文件。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>repositories {
+</span><span class='line'>    mavenCentral()
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>dependencies {
+</span><span class='line'>    compile 'com.google.guava:guava:11.0.2'
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>android {
+</span><span class='line'>    ...
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：<code>mavenCentral()</code>是指定仓库URL的快捷方式。Gradle支持远程和本地仓库。Gradle will follow all dependencies transitively. 即，某个项目依赖又依赖别的文件时，这个文件也会一起被下载。(This means that if a dependency has dependencies of its own, those are pulled in as well.)</p>
+
+<p>关于设置依赖的更多信息，可以参考<a href="http://gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html">Gradle user guide</a>，和<a href="http://gradle.org/docs/current/dsl/org.gradle.api.artifacts.dsl.DependencyHandler.html">DSL文档</a>。</p>
+
+<h2>多项目设置</h2>
+
+<p>通过设置&#8217;multi-project&#8217;，Gradle项目也可以依赖其他Gradle项目。所有项目作为某个指定的根目录的子目录就可以支持multi-project。</p>
+
+<p>比如，下面的目录结构：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>MyProject/
+</span><span class='line'> + app/
+</span><span class='line'> + libraries/
+</span><span class='line'>    + lib1/
+</span><span class='line'>    + lib2/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我们指定3个项目。Gradle可以通过以下名字引用它们：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>:app
+</span><span class='line'>:libraries:lib1
+</span><span class='line'>:libraries:lib2</span></code></pre></td></tr></table></div></figure>
+
+
+<p>每个项目可以有自己的build.gradle来指定如何构建。另外，根目录下有个叫<code>settings.gradle</code>的文件。完整结构如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>MyProject/
+</span><span class='line'> | settings.gradle
+</span><span class='line'> + app/
+</span><span class='line'>    | build.gradle
+</span><span class='line'> + libraries/
+</span><span class='line'>    + lib1/
+</span><span class='line'>       | build.gradle
+</span><span class='line'>    + lib2/
+</span><span class='line'>       | build.gradle</span></code></pre></td></tr></table></div></figure>
+
+
+<p>settings.gradle文件内容非常简单：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>include ':app', ':libraries:lib1', ':libraries:lib2'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上述内容定义哪个目录是Gradle项目。</p>
+
+<p><code>:app</code>项目依赖于库项目(在这里是libraries下的lib1)，通过下面的方式声明依赖：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dependencies {
+</span><span class='line'>    compile project(':libraries:lib1')
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>关于multi-project可以参考<a href="http://gradle.org/docs/current/userguide/multi_project_builds.html">这里</a></p>
+
+<h2>库项目</h2>
+
+<p>在上面的multi-project设置中，<code>:libraries:lib1</code>和<code>:libraries:lib2</code>可以是Java项目，而<code>:app</code>这个Android项目会使用它们编译输出的jar文件。</p>
+
+<p>如果你想共享需要访问Android API的代码或使用Android风格的资源，则库项目不能是常规的Java项目，它们必须是Android Library项目。</p>
+
+<h3>创建库项目</h3>
+
+<p>库项目跟常规的Android项目有少量不同。构建库跟构建应用不同，所以使用不同的插件。在内部这两个插件共享大部分代码(由相同的<code>com.android.tools.build.gradle jar</code>提供)。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>buildscript {
+</span><span class='line'>    repositories {
+</span><span class='line'>        mavenCentral()
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    dependencies {
+</span><span class='line'>        classpath 'com.android.tools.build:gradle:0.5.6'
+</span><span class='line'>    }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>apply plugin: 'android-library'
+</span><span class='line'>
+</span><span class='line'>android {
+</span><span class='line'>    compileSdkVersion 15
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的代码创建一个库项目，使用API level 15的SDK来编译。库项目使用相同的方式处理SourceSets以及依赖，也可使用相同的方式自定义。</p>
+
+<h3>常规项目跟库项目的差异</h3>
+
+<p>库项目的主要输出是<code>.aar</code>包(代表Android archive)。它由编译后的代码(jar文件或.so文件)以及资源文件(manifest, res, assets)组成。库项目也可以产生一个测试apk用于独立测试库。</p>
+
+<p>库项目使用相同的anchor tasks(<code>assembleDebug</code>和<code>assembleRelease</code>)，所以在命令行编译库项目跟常规项目没有任何区别。除此之外，库项目跟应用项目完全一样。它们也有构建类型和product flavors，也可以生成不同版本的aar文件。</p>
+
+<p>注意：构建类型的大部分配置都不能应用于库项目。但是你可以根据库项目是被其他项目使用还是在测试，使用自定义的<code>sourceSet</code>来修改库的内容。</p>
+
+<h3>Referencing a Library</h3>
+
+<p>引用库跟引用其他项目一样：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dependencies {
+</span><span class='line'>    compile project(':libraries:lib1')
+</span><span class='line'>    compile project(':libraries:lib2')
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：如果你有多个库项目的话，那么这里的顺序非常重要。跟旧的编译系统中<code>project.properties</code>文件中依赖项的顺序很重要类似。</p>
+
+<h3>发布Library</h3>
+
+<p>缺省时只发布库的<code>release variant</code>版本。这个版本用于其他项目引用本库，其他版本会被忽略。这是Gradle目前的限制，很快就被解除。</p>
+
+<p>你可以控制发布哪个版本：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    defaultPublishConfig "debug"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意这里的publishing配置引用完整的variant name。没有其他flavor时只可使用release和debug。如果想使用flavor来修改缺省的发布版本，可以这么写：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    defaultPublishConfig "flavor1Debug"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>也可以一次发布所有版本的库。We are planning to allow this while using a normal project-to-project dependency (like shown above), but this is not possible right now due to limitations in Gradle (we are working toward fixing those as well).缺省不开启这个功能，使用如下代码打开：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    publishNonDefault true
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>应该明白发布多个版本指的是发布多个aar文件，而不是一个aar文件包含多个版本。每个aar文件包含单个版本。发布aar表示让其作为Gradle项目的输出文件。这个文件既可以发布到Maven库，也可以作为另的项目的依赖。</p>
+
+<p>Gradle has a concept of default&#8221; artifact. This is the one that is used when writing:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>compile project(':libraries:lib2')</span></code></pre></td></tr></table></div></figure>
+
+
+<p>依赖另一个项目的发布版本时，需要指定使用哪个：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dependencies {
+</span><span class='line'>    flavor1Compile project(path: ':lib1', configuration: 'flavor1Release')
+</span><span class='line'>    flavor2Compile project(path: ':lib1', configuration: 'flavor2Release')
+</span><span class='line'>}
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>重要：</strong> Note that the published configuration is a full variant, including the build type, and needs to be referenced as such.</p>
+
+<p><strong>重要：</strong> 发布非缺省版本时，Maven发布插件会将其他版本输出额外的包(带修饰名)。它跟发布到Maven库不完全兼容。要么发布一个版本到Maven库，要么为内部项目依赖发布所有版本。</p>
+
+<h1>测试</h1>
+
+<p>构建测试程序也已集成到项目中。没必要再建立专门的独立测试项目。</p>
+
+<h2>单元测试</h2>
+
+<p>Android Studio v1.1中开始支持单元测试(作为试验功能)，具体见<a href="http://tools.android.com/tech-docs/unit-testing-support">这里</a>。</p>
+
+<p>Android Studio v1.2中正式支持单元测试。 <a href=""></a></p>
+
+<p>下面部分讲的是&#8221;instrmentation test&#8221;，它需要在设备或模拟器上运行，也需要构建一个用于测试的APK。</p>
+
+<h2>Instrumentation测试</h2>
+
+<h2>基础</h2>
+
+<p>前面提到过，<code>main</code> sourceSet后面是 <code>androidTest</code> sourceSet，缺省位于<code>src/androidTest</code>。这个sourceSet会创建一个用于测试的APK。它可以包含单元测试，instrumentation测试(以后还包括uiautomator测试)。</p>
+
+<p>测试应用manifest中的<code>&lt;instrmentation&gt;</code>节点自动生成，但你也可以创建<code>src/androidTest/AndroidManifest.xml</code>文件以增加其他组件。</p>
+
+<p>可以为测试应用配置少量参数：</p>
+
+<ul>
+<li><code>testPackageName</code></li>
+<li><code>testInstrumentationRunner</code></li>
+<li><code>testHandleProfiling</code></li>
+<li><code>testFunctionalTest</code></li>
+</ul>
+
+
+<p>如前面看到的那样，通过<code>defaultConfig</code>对象配置：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    defaultConfig {
+</span><span class='line'>        testPackageName "com.test.foo"
+</span><span class='line'>        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+</span><span class='line'>        testHandleProfiling true
+</span><span class='line'>        testFunctionalTest true
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>即使通过<code>defaultConfig</code>或Build Type对象配置， 测试应用的manifest中<code>instrmentation</code>节点的<code>targetPackage</code>属性还是会自动使用被测应用的包名填充。另外，<code>sourceSet</code>可以有自己的依赖。缺省时，应用以及它的依赖会添加到测试应用的路径，还可以通过下面的方式扩展</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dependencies {
+</span><span class='line'>    androidTestCompile 'com.google.guava:guava:11.0.2'
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试应用使用<code>assembleTest</code>构建。<code>assemble</code>并不依赖于它。<code>assembleTest</code>在测试运行时自动执行。目前只会测试一个Build Type。缺省时是<code>debug</code> Build Type，也可以重新配置：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    ...
+</span><span class='line'>    testBuildType "staging"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>运行测试</h2>
+
+<p>前面提到过，需要在连接的设备上使用<code>connectedCheck</code>这个anchor task发起检验。它依赖于<code>androidTest</code>。<code>connectedCheck</code>执行以下操作：</p>
+
+<ul>
+<li>确保app和test app被构建(分别依赖于<code>assembleDebug</code>和<code>assembleTest</code>)</li>
+<li>安装app和test app</li>
+<li>运行测试</li>
+<li>卸载app和test app</li>
+</ul>
+
+
+<p>如果一个以上的设备连接，所有的测试将在已连接的设备上同时运行。如果任一个设备上的测试失败，构建将失败。所有的测试结果以XML文件形式保存在<code>build/androidTest-results</code>。(跟常规的JUnit测试结果保存在build/test-results类似)。可以进行配置：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    ...
+</span><span class='line'>
+</span><span class='line'>    testOptions {
+</span><span class='line'>        resultsDir = "$project.buildDir/foo/results"
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用<code>Project.file(String)</code>对<code>android.testOptions.resultsDir</code>进行求值。</p>
+
+<h2>测试Android库</h2>
+
+<p>测试Android库项目跟应用完全一样。唯一不同的是整个库以及其依赖会自动作为test app的库依赖。结果是测试APK不仅包含自己的代码，还包括库本身以及其依赖。库项目的manifest合并到test app的manifest(就跟任何项目引用这个库一样)。</p>
+
+<p><code>androidTest</code>仅安装和卸载test APK(因为没有其他APK可安装)。</p>
+
+<h2>测试报告</h2>
+
+<p>运行单元测试，Gradle输出HTML报告以便查看结果。Android插件构建基于此，并从所有已连接设备统计HTML报告。</p>
+
+<h3>单个项目</h3>
+
+<p>缺省位置是<code>build/reports/androidTests</code>。跟JUnit的<code>build/reports/tests</code>类似。其他报告通常在<code>build/reports/&lt;plugin&gt;/</code>。可以对位置进行配置：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    ...
+</span><span class='line'>
+</span><span class='line'>    testOptions {
+</span><span class='line'>        reportDir = "$project.buildDir/foo/report"
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报告统计了不同设备的运行结果。</p>
+
+<h3>多项目</h3>
+
+<p>在既有应用也有库的多项目中，当同时运行所有测试时，在同一个报告中统计所有测试结果可能很有用。可以使用Gradle包中的另一个插件实现这一目的：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>buildscript {
+</span><span class='line'>    repositories {
+</span><span class='line'>        mavenCentral()
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    dependencies {
+</span><span class='line'>        classpath 'com.android.tools.build:gradle:0.5.6'
+</span><span class='line'>    }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>apply plugin: 'android-reporting'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在根项目中的build.gradle使用该配置。然后在根项目中，执行以下命令：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gradle deviceCheck mergeAndroidReports --continue</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：<code>--continue</code>参数保证运行所有测试，就算某个测试失败。如果不使用这个参数，第一个运行失败的测试会中断整个过程。</p>
+
+<h2>Lint报告</h2>
+
+<p>从v0.7.0开始，可以为某个特定的版本或所有版本运行lint。也可以通过添加如下<code>lintOptions</code>(下面显示了所有的可选项，而通常只需修改其中的某几个)：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    lintOptions {
+</span><span class='line'>        // set to true to turn off analysis progress reporting by lint
+</span><span class='line'>        quiet true
+</span><span class='line'>        // if true, stop the gradle build if errors are found
+</span><span class='line'>        abortOnError false
+</span><span class='line'>        // if true, only report errors
+</span><span class='line'>        ignoreWarnings true
+</span><span class='line'>        // if true, emit full/absolute paths to files with errors (true by default)
+</span><span class='line'>        //absolutePaths true
+</span><span class='line'>        // if true, check all issues, including those that are off by default
+</span><span class='line'>        checkAllWarnings true
+</span><span class='line'>        // if true, treat all warnings as errors
+</span><span class='line'>        warningsAsErrors true
+</span><span class='line'>        // turn off checking the given issue id's
+</span><span class='line'>        disable 'TypographyFractions','TypographyQuotes'
+</span><span class='line'>        // turn on the given issue id's
+</span><span class='line'>        enable 'RtlHardcoded','RtlCompat', 'RtlEnabled'
+</span><span class='line'>        // check *only* the given issue id's
+</span><span class='line'>        check 'NewApi', 'InlinedApi'
+</span><span class='line'>        // if true, don't include source code lines in the error output
+</span><span class='line'>        noLines true
+</span><span class='line'>        // if true, show all locations for an error, do not truncate lists, etc.
+</span><span class='line'>        showAll true
+</span><span class='line'>        // Fallback lint configuration (default severities, etc.)
+</span><span class='line'>        lintConfig file("default-lint.xml")
+</span><span class='line'>        // if true, generate a text report of issues (false by default)
+</span><span class='line'>        textReport true
+</span><span class='line'>        // location to write the output; can be a file or 'stdout'
+</span><span class='line'>        textOutput 'stdout'
+</span><span class='line'>        // if true, generate an XML report for use by for example Jenkins
+</span><span class='line'>        xmlReport false
+</span><span class='line'>        // file to write report to (if not specified, defaults to lint-results.xml)
+</span><span class='line'>        xmlOutput file("lint-report.xml")
+</span><span class='line'>        // if true, generate an HTML report (with issue explanations, sourcecode, etc)
+</span><span class='line'>        htmlReport true
+</span><span class='line'>        // optional path to report (default will be lint-results.html in the builddir)
+</span><span class='line'>        htmlOutput file("lint-report.html")
+</span><span class='line'>
+</span><span class='line'>   // set to true to have all release builds run lint on issues with severity=fatal
+</span><span class='line'>   // and abort the build (controlled by abortOnError above) if fatal issues are found
+</span><span class='line'>   checkReleaseBuilds true
+</span><span class='line'>        // Set the severity of the given issues to fatal (which means they will be
+</span><span class='line'>        // checked during release builds (even if the lint target is not included)
+</span><span class='line'>        fatal 'NewApi', 'InlineApi'
+</span><span class='line'>        // Set the severity of the given issues to error
+</span><span class='line'>        error 'Wakelock', 'TextViewEdits'
+</span><span class='line'>        // Set the severity of the given issues to warning
+</span><span class='line'>        warning 'ResourceAsColor'
+</span><span class='line'>        // Set the severity of the given issues to ignore (same as disabling the check)
+</span><span class='line'>        ignore 'TypographyQuotes'
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Build Variants</h1>
+
+<p>新构建系统的一个目标就是允许创建同一个应用的不同版本。</p>
+
+<p>这里有两种使用场景：</p>
+
+<ol>
+<li>同一个应用的不同版本。比如，分免费/演示版本和专业付费版本。</li>
+<li>Same application packaged differently for multi-apk in Google Play Store. 更多信息参见<a href="http://developer.android.com/google/play/publishing/multiple-apks.html">这里</a></li>
+</ol>
+
+
+<p>目标是从同一个项目输出不同的APK，而需要使用同一库项目的两个项目。</p>
+
+<h2>Product flavors</h2>
+
+<p>product flavor定义同一项目构建的不同版本的应用。一个项目可以用不同的flavors，生成不同的应用。</p>
+
+<p>这个新的概念用于解决版本差异很小的问题。问&#8221;是否同一个项目&#8221;，如果答案是&#8221;是&#8221;，那flavor可以就是比库项目更好的方式。</p>
+
+<p>Product flavor使用<code>productFlavors</code> DSL容器声明：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    ....
+</span><span class='line'>
+</span><span class='line'>    productFlavors {
+</span><span class='line'>        flavor1 {
+</span><span class='line'>            ...
+</span><span class='line'>        }
+</span><span class='line'>
+</span><span class='line'>        flavor2 {
+</span><span class='line'>            ...
+</span><span class='line'>        }
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面代码创建了两个flavor，分别是<code>flavor1</code>和<code>flavor2</code>。注意，flavor的名字不能跟已存在的Build Type名字，或<code>androidTest</code> sourceSet名字冲突。</p>
+
+<h2>Build Type + Product Flavor = Build Variant</h2>
+
+<p>前面知道，每个Build Type会产生一个新的APK。Product Flavor也是：每个项目的输出是Build Type和Product Flavor(如果可用的话)的所有组合。每种(Build Type, Product Flavor)组合是一个Build Variant。比如，使用缺省的<code>debug</code>和<code>release</code> Build Type，上面的例子将产生四个Build Variants：</p>
+
+<ul>
+<li>Flavor1 - debug</li>
+<li>Flavor1 - release</li>
+<li>Flavor2 - debug</li>
+<li>Flavor2 - release</li>
+</ul>
+
+
+<p>没有flavor的项目同样也有Build Variants，但是会使用缺省的flavor/config，没名字，所以Variants列表跟Build Types列表完全一样。</p>
+
+<h2>Product Flavor配置</h2>
+
+<p>每个flavor均使用闭包配置：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    ...
+</span><span class='line'>
+</span><span class='line'>    defaultConfig {
+</span><span class='line'>        minSdkVersion 8
+</span><span class='line'>        versionCode 10
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    productFlavors {
+</span><span class='line'>        flavor1 {
+</span><span class='line'>            packageName "com.example.flavor1"
+</span><span class='line'>            versionCode 20
+</span><span class='line'>        }
+</span><span class='line'>
+</span><span class='line'>        flavor2 {
+</span><span class='line'>            packageName "com.example.flavor2"
+</span><span class='line'>            minSdkVersion 14
+</span><span class='line'>        }
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：<code>android.productFlavors.*</code>对象类型跟<code>android.defaultConfig</code>对象类型一样，均为ProductFlavor。所有它们有相同的属性。</p>
+
+<p><code>defaultConfig</code>提供所有flavors的基本配置，每个flavor可以覆盖这些值。上面的例子中：</p>
+
+<ul>
+<li><code>flavor1</code></li>
+<li><code>packageName</code>: com.example.flavor1</li>
+<li><code>minSdkVersion</code>: 8</li>
+<li><code>versionCode</code>: 20</li>
+<li><code>flavor2</code></li>
+<li><code>packageName</code>: com.example.flavor2</li>
+<li><code>minSdkVersion</code>: 14</li>
+<li><code>versionCode</code>: 10</li>
+</ul>
+
+
+<p>通常Build Type配置会覆盖其他配置。比如，Build Type的<code>packageNameSuffix</code>会添加到<code>packageName</code>。</p>
+
+<p>有些时候可能一个配置既可以在Build Type也可以在Product Flavor中进行。In this case, it’s is on a case by case basis.</p>
+
+<p>For instance, <code>signingConfig</code> is one of these properties.
+This enables either having all release packages share the same SigningConfig, by setting <code>android.buildTypes.release.signingConfig</code>, or have each release package use their own SigningConfig by setting each <code>android.productFlavors.*.signingConfig</code> objects separately.</p>
+
+<h2>SourceSets和依赖</h2>
+
+<p>跟Build Types类似，Product Flavors也可以通过sourceSets提供代码和资源。上面的例子创建以下四个sourceSets：</p>
+
+<ul>
+<li><code>android.sourceSets.flavor1</code> - 位于 <code>src/flavor1/</code></li>
+<li><code>android.sourceSets.flavor2</code> - 位于 <code>src/flavor2/</code></li>
+<li><code>android.sourceSets.androidTestFlavor1</code> - 位于 <code>src/androidTestFlavor1/</code></li>
+<li><code>android.sourceSets.androidTestFlavor2</code> - 位于 <code>src/androidTestFlavor2/</code></li>
+</ul>
+
+
+<p>这些sourceSets以及<code>android.sourceSets.main</code>和Build Type的sourceSet用于构建APK。以下规则用于处理所有用于构建单个APK的sourceSets：</p>
+
+<ul>
+<li>所有源码(<code>src/*/java</code>)用于生成单个输出</li>
+<li>所有manifest用于合并到单个manifest。这个特点允许不同Product Flavor有不同组件或权限(跟Build Type类似)。</li>
+<li>所有资源(Android res和assets)遵守覆盖优先级，Build Type覆盖Product Flavor，而Product Flavor又可覆盖<code>main</code> sourceSet。</li>
+<li>每个Build Variant从相应的资源生成自己的R类文件(以及其他的自动生成代码)</li>
+</ul>
+
+
+<p>最后，跟Build Types很像，Product Flavors也可以有自己的依赖。比如，如果flavor用于生成有广告的免费app和无广告的付费app，那其中有个flavor会依赖Ads SDK，而另一个则不依赖。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dependencies {
+</span><span class='line'>    flavor1Compile "..."
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个例子中，<code>src/flavor1/AndroidManifest.xml</code>很可能需要包含internet权限。每个variant还会产生其他的sourceSet：</p>
+
+<ul>
+<li><code>android.sourceSets.flavor1Debug</code> - 位于 <code>src/flavor1Debug/</code></li>
+<li><code>android.sourceSets.flavor1Release</code> - 位于 <code>src/flavor1Release/</code></li>
+<li><code>android.sourceSets.flavor2Debug</code> - 位于 <code>src/flavor2Debug/</code></li>
+<li><code>android.sourceSets.flavor2Release</code> - 位于 <code>src/flavor2Release/</code></li>
+</ul>
+
+
+<p>它们的优先级比build type sourceSets高，允许在variant级别上配置。</p>
+
+<h2>构建和任务</h2>
+
+<p>之前看到，每个Build Type创建自己的<code>assemble&lt;name&gt;</code>任务，但Build Variants是Build Type和Product Flavor的组合。使用Product Flavors时，会创建多个 assemble-task。它们是：</p>
+
+<ol>
+<li>assemble<Variant Name> - 直接构建单个variant，比如<code>assembleFlavor1Debug</code></li>
+<li>assemble<Build Type Name> - 构建某个Build Type的所有APK，比如<code>assembleDebug</code>将构建<code>Flavor1Debug</code>和<code>Flavor2Debug</code></li>
+<li>assemble<Product Flavor Name> - 构建某个Flavor的所有APK，比如<code>Flavor1Debug</code>和<code>Flavor1Release</code></li>
+</ol>
+
+
+<p>而<code>assemble</code>将构建所有可能的variant</p>
+
+<h2>测试</h2>
+
+<p>测试multi-flavors项目跟测试简单工程类似。<code>androidTest</code> sourceSet用于所有flavor的通用测试，每个flavor可以有自己的测试。前面提到，用于测试每个flavor的sourceSets将创建：</p>
+
+<ul>
+<li><code>android.sourceSets.androidTestFlavor1</code> - 位于 <code>src/androidTestFlavor1/</code></li>
+<li><code>android.sourceSets.androidTestFlavor2</code> - 位于 <code>src/androidTestFlavor2/</code></li>
+</ul>
+
+
+<p>类似的，它们也可以有自己的依赖：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dependencies {
+</span><span class='line'>    androidTestFlavor1Compile "..."
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以通过<code>deviceCheck</code>运行测试，或者，当flavor被使用时<code>androidTest</code>将作为一个anchor task。每个flavor可以运行自己的测试：<code>androidTest&lt;VariantName&gt;</code>。比如：</p>
+
+<ul>
+<li><code>androidTestFlavor1Debug</code></li>
+<li><code>androidTestFlavor2Debug</code></li>
+</ul>
+
+
+<p>类似地，每个variant也有各自的test apk构建任务和install/uninstall任务：</p>
+
+<ul>
+<li><code>assembleFlavor1Test</code></li>
+<li><code>installFlavor1Debug</code></li>
+<li><code>installFlavor1Test</code></li>
+<li><code>uninstallFlavor1Debug</code></li>
+</ul>
+
+
+<p>最后，HTML报告也可以根据flavor统计。测试结果和报告位置如下，首先是每个flavor版本的，然后是总的统计结果：</p>
+
+<ul>
+<li><code>build/androidTest-results/flavors/&lt;FlavorName&gt;</code></li>
+<li><code>build/androidTest-results/all/</code></li>
+<li><code>build/reports/androidTests/flavors&lt;FlavorName&gt;</code></li>
+<li><code>build/reports/androidTests/all/</code></li>
+</ul>
+
+
+<h1>高级构建配置</h1>
+
+<h2>构建选项</h2>
+
+<h3>Java编译选项</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    compileOptions {
+</span><span class='line'>        sourceCompatibility = "1.6"
+</span><span class='line'>        targetCompatibility = "1.6"
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>缺省值是&#8221;1.6&#8221;。这个会影响所有的编译Java源码的任务。</p>
+
+<h3>appt选项</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    aaptOptions {
+</span><span class='line'>        noCompress 'foo', 'bar'
+</span><span class='line'>        ignoreAssetsPattern "!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir&gt;_*:!CVS:!thumbs.db:!picasa.ini:!*~"
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个会影响所有使用<code>aapt</code>的任务。</p>
+
+<h3>dex选项</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    dexOptions {
+</span><span class='line'>        incremental false
+</span><span class='line'>        preDexLibraries = false
+</span><span class='line'>        jumboMode = false
+</span><span class='line'>        javaMaxHeapSize "2048M"
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>操作多任务</h2>
+
+<p>基本Java项目只有有限的task用于创建输出。<code>classes</code> task用于编译Java源码。It’s easy to access from build.gradle by simply using classes in a script. This is a shortcut for project.tasks.classes.</p>
+
+<p>在Android项目中，由于名字基于Build Types和Product Flavor会有大量相同的task。为了避免这个问题，<code>android</code>对象有以下属性：</p>
+
+<ul>
+<li><code>applicationVariants</code> (仅用于app plugin)</li>
+<li><code>libraryVariants</code> (仅用于library plugin)</li>
+<li><code>testVariants</code> (用于app plugin和library plugin)</li>
+</ul>
+
+
+<p>以上三者分别返回 <code>ApplicationVariant</code>, <code>LibraryVariant</code>和<code>TestVariant</code>的<a href="http://www.gradle.org/docs/current/javadoc/org/gradle/api/DomainObjectCollection.html">DomainObjectCollection</a>。</p>
+
+<p>(略)</p>
+
+<h2>BuildType和Product Flavor引用</h2>
+
+<p>coming soon.</p>
+
+<h2>使用sourceCompatibility 1.7</h2>
+
+<p>从Android KitKat(buildToolsVersion 19)开始可以使用>操作符，multi-catch, strings in switches, try with resources等等。要支持这些新特性，在构建文件中添加如下代码：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>android {
+</span><span class='line'>    compileSdkVersion 19
+</span><span class='line'>    buildToolsVersion "19.0.0"
+</span><span class='line'>
+</span><span class='line'>    defaultConfig {
+</span><span class='line'>        minSdkVersion 7
+</span><span class='line'>        targetSdkVersion 19
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    compileOptions {
+</span><span class='line'>        sourceCompatibility JavaVersion.VERSION_1_7
+</span><span class='line'>        targetCompatibility JavaVersion.VERSION_1_7
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：<code>minSdkVersion</code>使用小于19的值时，可以使用除 try with resources 以外的所有语言特性。如果想使用 try with resources，必须让 minSdkVersion至少为19。当然，还必须保证Gradle是使用JDK 1.7或更新版本(Android Gradle插件为0.6.1或更新)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Vim-pandoc基本用法]]></title>
