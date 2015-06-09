@@ -4,7 +4,7 @@ title: "Gradle学习笔记(Android)"
 date: 2015-06-05 11:53:42 +0800
 comments: true
 categories: tools android
-published: false
+published: true
 ---
 原文来自[这里](http://tools.android.com/tech-docs/new-build-system/user-guide)。基本上是对其翻译，挑选关键内容以及并加上自己的一些理解。
 
@@ -696,30 +696,395 @@ android {
 }
 ```
 
+即使通过`defaultConfig`或Build Type对象配置， 测试应用的manifest中`instrmentation`节点的`targetPackage`属性还是会自动使用被测应用的包名填充。另外，`sourceSet`可以有自己的依赖。缺省时，应用以及它的依赖会添加到测试应用的路径，还可以通过下面的方式扩展
+
+```
+dependencies {
+    androidTestCompile 'com.google.guava:guava:11.0.2'
+}
+```
+
+测试应用使用`assembleTest`构建。`assemble`并不依赖于它。`assembleTest`在测试运行时自动执行。目前只会测试一个Build Type。缺省时是`debug` Build Type，也可以重新配置：
+
+```
+android {
+    ...
+    testBuildType "staging"
+}
+```
 
 ## 运行测试
+前面提到过，需要在连接的设备上使用`connectedCheck`这个anchor task发起检验。它依赖于`androidTest`。`connectedCheck`执行以下操作：
+
++ 确保app和test app被构建(分别依赖于`assembleDebug`和`assembleTest`)
++ 安装app和test app
++ 运行测试
++ 卸载app和test app
+
+如果一个以上的设备连接，所有的测试将在已连接的设备上同时运行。如果任一个设备上的测试失败，构建将失败。所有的测试结果以XML文件形式保存在`build/androidTest-results`。(跟常规的JUnit测试结果保存在build/test-results类似)。可以进行配置：
+
+```
+android {
+    ...
+
+    testOptions {
+        resultsDir = "$project.buildDir/foo/results"
+    }
+}
+```
+
+使用`Project.file(String)`对`android.testOptions.resultsDir`进行求值。
+
 ## 测试Android库
+测试Android库项目跟应用完全一样。唯一不同的是整个库以及其依赖会自动作为test app的库依赖。结果是测试APK不仅包含自己的代码，还包括库本身以及其依赖。库项目的manifest合并到test app的manifest(就跟任何项目引用这个库一样)。
+
+`androidTest`仅安装和卸载test APK(因为没有其他APK可安装)。
+
 ## 测试报告
+运行单元测试，Gradle输出HTML报告以便查看结果。Android插件构建基于此，并从所有已连接设备统计HTML报告。
+
+### 单个项目
+缺省位置是`build/reports/androidTests`。跟JUnit的`build/reports/tests`类似。其他报告通常在`build/reports/<plugin>/`。可以对位置进行配置：
+
+```
+android {
+    ...
+
+    testOptions {
+        reportDir = "$project.buildDir/foo/report"
+    }
+}
+```
+
+报告统计了不同设备的运行结果。
+
+### 多项目
+在既有应用也有库的多项目中，当同时运行所有测试时，在同一个报告中统计所有测试结果可能很有用。可以使用Gradle包中的另一个插件实现这一目的：
+
+```
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.6'
+    }
+}
+
+apply plugin: 'android-reporting'
+```
+
+在根项目中的build.gradle使用该配置。然后在根项目中，执行以下命令：
+
+```
+gradle deviceCheck mergeAndroidReports --continue
+```
+
+注意：`--continue`参数保证运行所有测试，就算某个测试失败。如果不使用这个参数，第一个运行失败的测试会中断整个过程。
+
 ## Lint报告
+从v0.7.0开始，可以为某个特定的版本或所有版本运行lint。也可以通过添加如下`lintOptions`(下面显示了所有的可选项，而通常只需修改其中的某几个)：
+
+```
+android {
+    lintOptions {
+        // set to true to turn off analysis progress reporting by lint
+        quiet true
+        // if true, stop the gradle build if errors are found
+        abortOnError false
+        // if true, only report errors
+        ignoreWarnings true
+        // if true, emit full/absolute paths to files with errors (true by default)
+        //absolutePaths true
+        // if true, check all issues, including those that are off by default
+        checkAllWarnings true
+        // if true, treat all warnings as errors
+        warningsAsErrors true
+        // turn off checking the given issue id's
+        disable 'TypographyFractions','TypographyQuotes'
+        // turn on the given issue id's
+        enable 'RtlHardcoded','RtlCompat', 'RtlEnabled'
+        // check *only* the given issue id's
+        check 'NewApi', 'InlinedApi'
+        // if true, don't include source code lines in the error output
+        noLines true
+        // if true, show all locations for an error, do not truncate lists, etc.
+        showAll true
+        // Fallback lint configuration (default severities, etc.)
+        lintConfig file("default-lint.xml")
+        // if true, generate a text report of issues (false by default)
+        textReport true
+        // location to write the output; can be a file or 'stdout'
+        textOutput 'stdout'
+        // if true, generate an XML report for use by for example Jenkins
+        xmlReport false
+        // file to write report to (if not specified, defaults to lint-results.xml)
+        xmlOutput file("lint-report.xml")
+        // if true, generate an HTML report (with issue explanations, sourcecode, etc)
+        htmlReport true
+        // optional path to report (default will be lint-results.html in the builddir)
+        htmlOutput file("lint-report.html")
+
+   // set to true to have all release builds run lint on issues with severity=fatal
+   // and abort the build (controlled by abortOnError above) if fatal issues are found
+   checkReleaseBuilds true
+        // Set the severity of the given issues to fatal (which means they will be
+        // checked during release builds (even if the lint target is not included)
+        fatal 'NewApi', 'InlineApi'
+        // Set the severity of the given issues to error
+        error 'Wakelock', 'TextViewEdits'
+        // Set the severity of the given issues to warning
+        warning 'ResourceAsColor'
+        // Set the severity of the given issues to ignore (same as disabling the check)
+        ignore 'TypographyQuotes'
+    }
+}
+```
 
 # Build Variants
+新构建系统的一个目标就是允许创建同一个应用的不同版本。
+
+这里有两种使用场景：
+
+1. 同一个应用的不同版本。比如，分免费/演示版本和专业付费版本。
+2. Same application packaged differently for multi-apk in Google Play Store. 更多信息参见[这里](http://developer.android.com/google/play/publishing/multiple-apks.html)
+
+目标是从同一个项目输出不同的APK，而需要使用同一库项目的两个项目。
+
 ## Product flavors
+product flavor定义同一项目构建的不同版本的应用。一个项目可以用不同的flavors，生成不同的应用。
+
+这个新的概念用于解决版本差异很小的问题。问"是否同一个项目"，如果答案是"是"，那flavor可以就是比库项目更好的方式。
+
+Product flavor使用`productFlavors` DSL容器声明：
+
+```
+android {
+    ....
+
+    productFlavors {
+        flavor1 {
+            ...
+        }
+
+        flavor2 {
+            ...
+        }
+    }
+}
+```
+
+上面代码创建了两个flavor，分别是`flavor1`和`flavor2`。注意，flavor的名字不能跟已存在的Build Type名字，或`androidTest` sourceSet名字冲突。
+
 ## Build Type + Product Flavor = Build Variant
+前面知道，每个Build Type会产生一个新的APK。Product Flavor也是：每个项目的输出是Build Type和Product Flavor(如果可用的话)的所有组合。每种(Build Type, Product Flavor)组合是一个Build Variant。比如，使用缺省的`debug`和`release` Build Type，上面的例子将产生四个Build Variants：
+
++ Flavor1 - debug
++ Flavor1 - release
++ Flavor2 - debug
++ Flavor2 - release
+
+没有flavor的项目同样也有Build Variants，但是会使用缺省的flavor/config，没名字，所以Variants列表跟Build Types列表完全一样。
+
 ## Product Flavor配置
+每个flavor均使用闭包配置：
+
+```
+android {
+    ...
+
+    defaultConfig {
+        minSdkVersion 8
+        versionCode 10
+    }
+
+    productFlavors {
+        flavor1 {
+            packageName "com.example.flavor1"
+            versionCode 20
+        }
+
+        flavor2 {
+            packageName "com.example.flavor2"
+            minSdkVersion 14
+        }
+    }
+}
+```
+
+注意：`android.productFlavors.*`对象类型跟`android.defaultConfig`对象类型一样，均为ProductFlavor。所有它们有相同的属性。
+
+`defaultConfig`提供所有flavors的基本配置，每个flavor可以覆盖这些值。上面的例子中：
+
++ `flavor1`
+ + `packageName`: com.example.flavor1
+ + `minSdkVersion`: 8
+ + `versionCode`: 20
++ `flavor2`
+ + `packageName`: com.example.flavor2
+ + `minSdkVersion`: 14
+ + `versionCode`: 10
+ 
+通常Build Type配置会覆盖其他配置。比如，Build Type的`packageNameSuffix`会添加到`packageName`。
+
+有些时候可能一个配置既可以在Build Type也可以在Product Flavor中进行。In this case, it’s is on a case by case basis.
+
+For instance, `signingConfig` is one of these properties.
+This enables either having all release packages share the same SigningConfig, by setting `android.buildTypes.release.signingConfig`, or have each release package use their own SigningConfig by setting each `android.productFlavors.*.signingConfig` objects separately.
+
 ## SourceSets和依赖
+跟Build Types类似，Product Flavors也可以通过sourceSets提供代码和资源。上面的例子创建以下四个sourceSets：
+
++ `android.sourceSets.flavor1` - 位于 `src/flavor1/`
++ `android.sourceSets.flavor2` - 位于 `src/flavor2/`
++ `android.sourceSets.androidTestFlavor1` - 位于 `src/androidTestFlavor1/`
++ `android.sourceSets.androidTestFlavor2` - 位于 `src/androidTestFlavor2/`
+
+这些sourceSets以及`android.sourceSets.main`和Build Type的sourceSet用于构建APK。以下规则用于处理所有用于构建单个APK的sourceSets：
+
++ 所有源码(`src/*/java`)用于生成单个输出
++ 所有manifest用于合并到单个manifest。这个特点允许不同Product Flavor有不同组件或权限(跟Build Type类似)。
++ 所有资源(Android res和assets)遵守覆盖优先级，Build Type覆盖Product Flavor，而Product Flavor又可覆盖`main` sourceSet。
++ 每个Build Variant从相应的资源生成自己的R类文件(以及其他的自动生成代码)
+
+最后，跟Build Types很像，Product Flavors也可以有自己的依赖。比如，如果flavor用于生成有广告的免费app和无广告的付费app，那其中有个flavor会依赖Ads SDK，而另一个则不依赖。
+
+```
+dependencies {
+    flavor1Compile "..."
+}
+```
+
+这个例子中，`src/flavor1/AndroidManifest.xml`很可能需要包含internet权限。每个variant还会产生其他的sourceSet：
+
++ `android.sourceSets.flavor1Debug` - 位于 `src/flavor1Debug/`
++ `android.sourceSets.flavor1Release` - 位于 `src/flavor1Release/`
++ `android.sourceSets.flavor2Debug` - 位于 `src/flavor2Debug/`
++ `android.sourceSets.flavor2Release` - 位于 `src/flavor2Release/`
+
+它们的优先级比build type sourceSets高，允许在variant级别上配置。
+
 ## 构建和任务
+之前看到，每个Build Type创建自己的`assemble<name>`任务，但Build Variants是Build Type和Product Flavor的组合。使用Product Flavors时，会创建多个 assemble-task。它们是：
+
+1. assemble<Variant Name> - 直接构建单个variant，比如`assembleFlavor1Debug`
+2. assemble<Build Type Name> - 构建某个Build Type的所有APK，比如`assembleDebug`将构建`Flavor1Debug`和`Flavor2Debug`
+3. assemble<Product Flavor Name> - 构建某个Flavor的所有APK，比如`Flavor1Debug`和`Flavor1Release`
+
+而`assemble`将构建所有可能的variant
+
 ## 测试
-## Multi-flavor variants
+测试multi-flavors项目跟测试简单工程类似。`androidTest` sourceSet用于所有flavor的通用测试，每个flavor可以有自己的测试。前面提到，用于测试每个flavor的sourceSets将创建：
+
++ `android.sourceSets.androidTestFlavor1` - 位于 `src/androidTestFlavor1/`
++ `android.sourceSets.androidTestFlavor2` - 位于 `src/androidTestFlavor2/`
+
+类似的，它们也可以有自己的依赖：
+
+```
+dependencies {
+    androidTestFlavor1Compile "..."
+}
+```
+
+可以通过`deviceCheck`运行测试，或者，当flavor被使用时`androidTest`将作为一个anchor task。每个flavor可以运行自己的测试：`androidTest<VariantName>`。比如：
+
++ `androidTestFlavor1Debug`
++ `androidTestFlavor2Debug`
+
+类似地，每个variant也有各自的test apk构建任务和install/uninstall任务：
+
++ `assembleFlavor1Test`
++ `installFlavor1Debug`
++ `installFlavor1Test`
++ `uninstallFlavor1Debug`
+
+最后，HTML报告也可以根据flavor统计。测试结果和报告位置如下，首先是每个flavor版本的，然后是总的统计结果：
+
++ `build/androidTest-results/flavors/<FlavorName>`
++ `build/androidTest-results/all/`
++ `build/reports/androidTests/flavors<FlavorName>`
++ `build/reports/androidTests/all/`
 
 # 高级构建配置
 ## 构建选项
+###Java编译选项
+
+```
+android {
+    compileOptions {
+        sourceCompatibility = "1.6"
+        targetCompatibility = "1.6"
+    }
+}
+```
+
+缺省值是"1.6"。这个会影响所有的编译Java源码的任务。
+
+### appt选项
+
+```
+android {
+    aaptOptions {
+        noCompress 'foo', 'bar'
+        ignoreAssetsPattern "!.svn:!.git:!.ds_store:!*.scc:.*:<dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }
+}
+```
+
+这个会影响所有使用`aapt`的任务。
+
+### dex选项
+
+```
+android {
+    dexOptions {
+        incremental false
+        preDexLibraries = false
+        jumboMode = false
+        javaMaxHeapSize "2048M"
+    }
+}
+```
 
 ## 操作多任务
+基本Java项目只有有限的task用于创建输出。`classes` task用于编译Java源码。It’s easy to access from build.gradle by simply using classes in a script. This is a shortcut for project.tasks.classes.
+
+在Android项目中，由于名字基于Build Types和Product Flavor会有大量相同的task。为了避免这个问题，`android`对象有以下属性：
+
++ `applicationVariants` (仅用于app plugin)
++ `libraryVariants` (仅用于library plugin)
++ `testVariants` (用于app plugin和library plugin)
+
+以上三者分别返回 `ApplicationVariant`, `LibraryVariant`和`TestVariant`的[DomainObjectCollection](http://www.gradle.org/docs/current/javadoc/org/gradle/api/DomainObjectCollection.html)。
+
+(略)
 
 ## BuildType和Product Flavor引用
+coming soon.
 
 ## 使用sourceCompatibility 1.7
+从Android KitKat(buildToolsVersion 19)开始可以使用>操作符，multi-catch, strings in switches, try with resources等等。要支持这些新特性，在构建文件中添加如下代码：
 
+```
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 19
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+```
+
+注意：`minSdkVersion`使用小于19的值时，可以使用除 try with resources 以外的所有语言特性。如果想使用 try with resources，必须让 minSdkVersion至少为19。当然，还必须保证Gradle是使用JDK 1.7或更新版本(Android Gradle插件为0.6.1或更新)
 
 
 
