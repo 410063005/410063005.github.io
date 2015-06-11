@@ -75,7 +75,7 @@ Android测试基于JUnit。Android测试可以分为两类：
 ## Instrumented测试
 Instrumented测试用于测试使用了Android API的Java类。测试使用了Android API的类，需要在Android设备上运行这些测试。不幸地是，这种测试执行时间较长。
 
-因为`android.jar`文件并不包含Android框架代码，而只是对应的Stub(调用`android.jar`中的方法会抛出`RuntimeException("Stub!")`。`android.jar`文件在应用部署到Android设备前用于Java编译器编译代码。它不会跟应用一起打包。一旦应用部署到设置，它会使用Android设备上的`android.jar`。所以没有额外库的支持，无法在JVM上测试依赖Android框架的类。
+因为`android.jar`文件并不包含Android框架代码，而只是对应的Stub(调用`android.jar`中的方法会抛出`RuntimeException("Stub!")`。`android.jar`文件在应用部署到Android设备前用于Java编译器编译代码。它不会跟应用一起打包。一旦应用部署到设备，它会使用Android设备上的`android.jar`。所以如果没有额外库的支持的话，将无法在JVM上测试依赖Android框架的类。
 
 # Android项目结构
 ## Android项目结构
@@ -257,7 +257,7 @@ test runner还启动时还调用应用以及activity的`onCreate()`方法。
 
 # Instrumented测试
 ## 在Android中使用Instrumented测试
-Instrumented测试在Android设备或模拟器上运行而非JVM。这些测试会访问真实设备以及其资源，对那些无法轻易被模拟的功能测试非常有用。还可以用来测试系统功能是否正常，比如验证`Parelable`的实现是否正确。
+Instrumented测试在Android设备或模拟器上运行而非JVM。这些测试会访问真实设备以及其资源，对那些无法轻易被模拟的功能测试非常有用。还可以用来测试系统功能是否正常，比如验证`Parcelable`的实现是否正确。
 
 Mockito等mocking框架仍然可以被用来模拟那些那测试没影响的Android System部分。(Mockito as mocking framework can still be used to mock the parts of the Android system which are not interesting for the test.)
 
@@ -456,7 +456,7 @@ Android中的动作有时跟时间相关。使用`@FlakyTest`注解重复某个�
 
 # 跨应用UI测试
 ## 使用UI Automator
-使用UI Automator跨应用测试。功能或墨盒UI测试会测试到整个应用，而不是应用中的单个组件。
+使用UI Automator跨应用测试。功能或黑盒UI测试会测试到整个应用，而不是应用中的单个组件。
 
 Android SDK包含 *uiautomator* Java库用于创建UI测试，并提供用于运行测试的引擎。这两个工具都只在API 16以上才能运行。
 
