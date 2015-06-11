@@ -304,7 +304,7 @@ This is to prevent parsing the manifest of the application unless it’s really 
 ### 构建类型
 缺省时，Android插件会自动将项目设置为能同时编译debug和release版本。这两种构建类型生成不同版本的应用，它们在非开发手机上的调试能力及APK如何被签名上所区别。
 
-debug版本使用已知的用户名/密码(不必在构建时提示输入)自动创建的key/certificate来签名。构建过程中并不给自动release版本的APK签名，需要后续操作。
+debug版本使用已知的用户名/密码(不必在构建时提示输入)自动创建的key/certificate来签名。构建过程中并不自动给release版本的APK签名，需要后续操作。
 
 通过一个称为`BuildType`的对象进行这些配置。缺省时，两个实例被创建，一个是`debug`，一个是`release`。Android插件允许自定义这两个对象，也允许创建别的构建类型。使用 `buildTypes` DSL容器创建：
 
@@ -369,7 +369,7 @@ android {
 
 可能的使用场景：
 
-+ 仅在debug模式下才能使用的权限，而release版本中不行
++ 仅在debug模式下才能使用的权限，而release版本中不需要这些权限
 + 用于debugging的自定义实现
 + debug模式时提供不同的资源(比如当resource value跟signing certificate绑定时)
 
@@ -419,7 +419,7 @@ android {
 }
 ```
 
-上述代码修改debug keystore的为项目根目录。这会自动影响任何使用它的构建类型。这里还创建了一个新的 Signing Config 以及一个新的将用到该 Signing Config的构建类型。
+上述代码修改debug keystore的位置修改为项目根目录。这会自动影响任何使用它的构建类型。这里还创建了一个新的 Signing Config 以及一个新的将用到该 Signing Config的构建类型。
 
 注意：只有缺省位置的debug keystores会自动被创建。修改debug keystore的位置后，它不会自动被创建。使用不同的名字创建 一个会用到debug keystore的SigningConfig，会导致debug keystore被自动创建。In other words, it’s tied to the location of the keystore, not the name of the configuration.
 
@@ -640,7 +640,7 @@ android {
 
 应该明白发布多个版本指的是发布多个aar文件，而不是一个aar文件包含多个版本。每个aar文件包含单个版本。发布aar表示让其作为Gradle项目的输出文件。这个文件既可以发布到Maven库，也可以作为另的项目的依赖。
 
-Gradle has a concept of default" artifact. This is the one that is used when writing:
+Gradle has a concept of "default" artifact. This is the one that is used when writing:
 
 ```
 compile project(':libraries:lib2')
@@ -850,7 +850,7 @@ android {
 1. 同一个应用的不同版本。比如，分免费/演示版本和专业付费版本。
 2. Same application packaged differently for multi-apk in Google Play Store. 更多信息参见[这里](http://developer.android.com/google/play/publishing/multiple-apks.html)
 
-目标是从同一个项目输出不同的APK，而需要使用同一库项目的两个项目。
+目标是从同一个项目输出不同的APK，而不再需要使用同一库项目的两个项目。
 
 ## Product flavors
 product flavor定义同一项目构建的不同版本的应用。一个项目可以用不同的flavors，生成不同的应用。
