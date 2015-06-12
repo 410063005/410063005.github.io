@@ -14,6 +14,7 @@ Android项目的构建由Gradle构建系统完成。Android项目从结构上可
 Gradle经配置后可以支持这两种结构。
 
 > 注意：用于开发Android的Eclipse工具仅支持基于Eclipse的项目结构
+
 ## Gradle构建系统的目标
 Gradle用于支持创建Android应用时可能出现的复杂场景：
 
@@ -21,6 +22,7 @@ Gradle用于支持创建Android应用时可能出现的复杂场景：
 + 多APK - 重用部分代码以支持不同设备类型上的多APK
 ## Gradle的设置
 如果直接在Android Studio中创建项目，会自动创建Gradle脚本。Android Studio自带Gradle运行时，所以不必事先安装Gradle。也可以使用Gradle创建的wrapper脚本，它允许直接从命令行运行而不必事先安装Gradle。
+
 # 使用Gradle构建Android应用
 想从命令行使用Gradle构建Android项目，从项目根目录执行下面的命令：
 
