@@ -255,7 +255,13 @@ repositories {
 
 错误：JDK编译失败
 
-原因：Android Studio自带JDK 7编译，源码中使用了Java 7的语法。命令行中使用Gradle编译时使用JDK 6进行编译，所以报错。`gradle.properties`使用`org.gradle.java.home`属性指定Gradle编译时使用的JDK路径。[官方文档](https://docs.gradle.org/current/userguide/build_environment.html)
+原因：Android Studio自带JDK 7编译，源码中使用了Java 7的语法。命令行中使用Gradle编译时使用JDK 6进行编译，所以报错。`gradle.properties`使用`org.gradle.java.home`属性指定Gradle编译时使用的JDK路径。[官方文档](https://docs.gradle.org/current/userguide/build_environment.html)。假设JDK安装在D盘，可以这么设置`org.gradle.java.home=D\:\\Java\\jdk1.7.0_71`
+
+错误：Execution failed for task ':Campus:compileDebugJava'. 无效的源版本： 1.7
+
+原因：`compileOptions`中指定了`sourceCompatibility`和`targetCompatibility`为`JavaVersion.VERSION_1_7`, 而Gradle构建时使用的是JDK 6，所以出错。`gradle.properties`使用`org.gradle.java.home`属性指定为JDK 7即可
+
+注：按照官方建议，设置`org.gradle.java.home`的话，最好同时设置`org.gradle.daemon=true`
 
 ---
 参考资料：
