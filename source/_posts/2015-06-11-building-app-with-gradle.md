@@ -5,7 +5,9 @@ date: 2015-06-11 15:13:48 +0800
 comments: true
 categories: tools
 ---
-原文来自[这里](http://www.vogella.com/tutorials/AndroidBuild/article.html)。
+本文介绍如何使用Gradle构造Android应用，其最强大的功能在于使用Build flavor支持多版本构建。原文来自[这里](http://www.vogella.com/tutorials/AndroidBuild/article.html)。
+
+<!--more-->
 
 # 简介
 ## 使用Gradle构建Android应用

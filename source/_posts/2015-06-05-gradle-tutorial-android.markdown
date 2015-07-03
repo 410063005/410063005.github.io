@@ -6,7 +6,9 @@ comments: true
 categories: tools android
 published: true
 ---
-原文来自[这里](http://tools.android.com/tech-docs/new-build-system/user-guide)。基本上是对其翻译，挑选关键内容以及并加上自己的一些理解。
+介绍如何使用Gradle编译Android应用，包括Gradle功能特点、基本项目结构、构建任务、构建类型、依赖管理、测试、Build Variant等。原文来自[这里](http://tools.android.com/tech-docs/new-build-system/user-guide)。基本上是对其翻译，挑选关键内容以及并加上自己的一些理解。
+
+<!--more-->
 
 # 介绍
 新编译系统的目标：

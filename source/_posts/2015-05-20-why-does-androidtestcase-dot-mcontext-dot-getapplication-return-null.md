@@ -5,6 +5,10 @@ date: 2015-05-20 14:33:09 +0800
 comments: true
 categories: android
 ---
+分析为什么AndroidTestCase中getApplicationContext()返回null。
+
+<!--more-->
+
 Android项目单元测试时发现下面代码会打印`null`。
 
 ```

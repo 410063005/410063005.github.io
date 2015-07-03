@@ -7,6 +7,10 @@ categories: tools
 ---
 `vim-pandoc`可以集成Vim和Pandoc，用于写Markdown文档非常方便。
 
+(2015-07-03 Update: 试用一段时间后，发现会严重拖慢Vim速度。好吧，还是用Notepad++写Markdown了)
+
+<!--more-->
+
 > `vim-pandoc` provides facilities to integrate Vim with the pandoc document converter 
 > `vim-pandoc`'s goals are 1) to provide advanced integration with pandoc, 2) a comfortable document writing environment, and 3) great configurability.
 

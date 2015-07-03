@@ -5,15 +5,16 @@ date: 2015-05-14 15:12:48 +0800
 comments: true
 categories: other
 ---
-
 今天试用Octpress，感觉非常不错。安装试用过程记录如下。操作非常简单，基本是按照帮助文档一路 Next，所以这里只记录遇到的问题以及跟帮助文档不符的地方(也许文档过期了)
+
+<!--more-->
 
 # 1. 安装
 分别要安装 Git，Ruby，DevKit，Python，最后才是 Octpress。
 
 DevKit解压后，需要运行`ruby dk.rb init`初始化。初始化应检查config.yml中正确配置了Ruby的安装路径，若无可手动添加。之后运行`ruby dk.rb install`进行安装。
 
-注意：如果没有正确安装DevKit，运行`bundle install`时出错。错误提示`Please update your PATH to include build tools or download the DevKit`
+注意：如果没有正确安装DevKit，运行`bundle install`时[出错](http://stackoverflow.com/questions/10694997/gem-install-json-v-1-7-3-gives-please-update-your-path-to-include-build-tools)。错误提示`Please update your PATH to include build tools or download the DevKit`
 
 步骤总结如下：
 

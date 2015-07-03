@@ -5,6 +5,9 @@ date: 2015-05-18 15:57:04 +0800
 comments: true
 categories: android java
 ---
+本文分析VerifyError原因并提供解决方法。
+
+<!--more-->
 
 # VerifyError是什么
 [Android开发文档][VerifyError]中关于`VerifyError`是这么介绍的：

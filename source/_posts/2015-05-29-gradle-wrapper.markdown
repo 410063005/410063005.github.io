@@ -3,11 +3,12 @@ layout: post
 title: "Gradle wrapper"
 date: 2015-05-29 10:43:34 +0800
 comments: true
-categories: gradle
-published: false
+categories: tools
+published: true
 ---
+Gradle Wrapper是更好的启动Gradle构建的方式，本文介绍如何使用Gradle Wrapper。原文来自[这里](https://docs.gradle.org/current/userguide/gradle_wrapper.html)。
 
-[source](https://docs.gradle.org/current/userguide/gradle_wrapper.html)
+<!--more-->
 
 Gradle Wrapper(后面称为"wrapper")是更好的启动Gradle构建的方式。这个wrapper在Windows上是一个batch脚本，在其他操作系统上是一个shell脚本。当你通过wrapper启动Gradle时，Gradle会自动被下载并用于构建。
 

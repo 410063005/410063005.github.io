@@ -5,6 +5,10 @@ date: 2015-05-27 10:40:57 +0800
 comments: true
 categories: tools
 ---
+我的常用效率工具，合理使用这些工具可以大大提高工作效率。
+
+<!--more-->
+
 # 编辑器
 ## [Pandoc](http://pandoc.org/)
 一个用于将Markdown文档转换成其他格式的命令工具。支持的格式包括HTML，EPUB，docx，PDF等等。Pandoc是用Haskell编写的(貌似非常小众的编程语言)，[源码](https://github.com/jgm/pandoc)托管在Github上。Pandoc使用UTF-8编码方式来处理输入和输出。注意，像HTML之类的文档会在头部加上字符编码信息，只有使用`-s/--standalone`选项时才会生成这些头部信息。

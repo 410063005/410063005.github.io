@@ -6,6 +6,9 @@ comments: true
 categories: tools
 published: true
 ---
+本文可作为Gradle入门指导，也可作为Gralde参考手册。
+
+<!--more-->
 
 # Gradle简介
 ## Projects和tasks

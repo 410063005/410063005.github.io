@@ -6,7 +6,9 @@ comments: true
 categories: android
 published: true
 ---
-原文来自[Android Testing](http://www.vogella.com/tutorials/AndroidTesting/article.html)
+本文介绍了如何测试Android应用，包括Unit Test和Android Test。原文来自[Android Testing](http://www.vogella.com/tutorials/AndroidTesting/article.html)
+
+<!--more-->
 
 # 为什么Android应用测试很重要
 ## 被测试应用
