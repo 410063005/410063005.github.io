@@ -11,6 +11,22 @@ categories: other
 # 1. 安装
 分别要安装 Git，Ruby，DevKit，Python，最后才是 Octpress。
 
+DevKit解压后，需要运行`ruby dk.rb init`初始化。初始化应检查config.yml中正确配置了Ruby的安装路径，若无可手动添加。之后运行`ruby dk.rb install`进行安装。
+
+注意：如果没有正确安装DevKit，运行`bundle install`时出错。错误提示`Please update your PATH to include build tools or download the DevKit`
+
+步骤总结如下：
+
+	Install Git, Python, Ruby
+	解压DevKit
+	ruby dk.rb init
+	ruby dk.rb install
+	配置Path环境变量
+	git clone git://github.com/imathis/octopress.git octopress
+	更新gem sources
+	gem install bundle
+	(在octopress目录中)bundle install
+
 ## 1.1 版本问题
 安装Ruby和DevKit容易出错，主要问题是版本不对。为减少版本出错可能，还是从[RubyInstaller](http://rubyinstaller.org/downloads/)下载Ruby和DevKit吧。一定要注意版本对应关系：操作系统是否64位、支持哪个版本的Ruby。
 
@@ -54,3 +70,4 @@ git push origin source
 # 3. 参考资料
 1. [Windows上安装Octopress博客](http://www.open-open.com/lib/view/open1423539522764.html)
 2. [Windows下搭建Octopress博客](http://www.cnblogs.com/oec2003/archive/2013/05/27/3100896.html)
+3. [重装系统后恢复Octopress博客](http://ju.outofmemory.cn/entry/109363)
