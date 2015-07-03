@@ -1,11 +1,15 @@
 ---
 layout: post
-title: "my-experience-list"
+title: "开发经验记录"
 date: 2015-06-15 11:59:17 +0800
 comments: true
 categories: tools
 published: true
 ---
+记录开发过程遇到的问题以及解决方法。备忘，以免再次遇到时到处乱翻。
+
+<!--more-->
+
 # Android相关
 ## X86模拟器
 [BIOS中开启VT](http://blog.csdn.net/zklth/article/details/7921061)
