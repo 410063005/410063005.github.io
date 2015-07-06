@@ -24,7 +24,7 @@ published: true
 2. 发布前修改可能引起潜在风险，比如误操作
 3. 不利于自动化构建和持续集成
 
-个人认为"发布前修改代码不如修改配置，修改配置又不如什么都不改"。目前项目我们只做到了不修改代码、但需要修改配置，利用Gradle的Product Flavors特性可以做到不必修改配置，从而有效避免上述发布方式存在的问题。
+个人认为"发布前修改代码不如修改配置，修改配置又不如什么都不改"。目前项目我们发布前不修改代码、但需要修改配置，利用Gradle的Product Flavors特性可以做到不必修改配置，从而有效避免上述发布方式存在的问题。
 
 # 2. Gradle知识
 
@@ -93,7 +93,7 @@ productFlavors {
 
 ![buildvariants](/images/buildvariants.png)
 
-Product Flavors的强大之处在于，可为不同的Flavor提供不同的资源！可以理解为，跟App提供`drawable-hdpi`, `values-v14`等资源非常类似，只不过Android系统是在运行时选择这些资源，而这里是Gradle在构建时选择相应Flavor资源。
+Product Flavors的强大之处在于，可为不同的Flavor提供不同的资源！可以理解为，跟Android app提供`drawable-hdpi`, `values-v14`等资源非常类似，只不过Android系统是在运行时选择这些资源，而这里是Gradle在构建时选择相应Flavor资源。
 
 假定项目结构如下：
 
@@ -267,9 +267,9 @@ public class Env {
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 开发环境 -->
 <resources>
-    <string name="ip">"113.108.78.115"</string>
+    <string name="ip">"1.1.1.1"</string>
     <integer name="port">5740</integer>
-    <string name="http_host">"http://113.108.78.115:8080/app/"</string>
+    <string name="http_host">"http://1.1.1.1:8080/app/"</string>
     <bool name="debuggable">true</bool>
 </resources>
 ```
@@ -424,7 +424,7 @@ AndroidManifest.xml
 AndroidManifest-release.xml
 ```
 
-各个`env_config.xml`中的配置项跟`res\values\env_config.xml`完全一样，根据实际情况设置参数即可。`res-xxx`中的`env_config.xml`会覆盖res中的`env_config.xml`，这是Product Flavors的关键。
+各个`env_config.xml`中的配置项跟`res\values\env_config.xml`完全一样，根据实际情况(参考修改前的`Env.java`)设置参数即可。`res-xxx`中的`env_config.xml`会覆盖res中的`env_config.xml`，这是Product Flavors的关键。
 
 新建`AndroidManifest-release.xml`文件，文件内容如下：
 
@@ -459,7 +459,7 @@ AndroidManifest-release.xml
 
 跟资源文件会被覆盖不同，manifest是合并的关系。即`AndroidManifest-release.xml`会跟`AndroidManifest.xml`合并成一个最终的`AndroidManifest.xml`，编译APK时使用这个最终生成的文件。
 
-最终生成的`AndroidManifest.xml`可以在`build\intermediates\manifests\full`中找到，如果合并出错，可以拿这里的文件分析详细错误。
+最终生成的`AndroidManifest.xml`可以在`build\intermediates\manifests\full`中找到，如果合并出错，可以拿这里的文件分析详细错误。更多关于manifest合并的内容见[这里](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger)。
 
 # 4.4 构建并安装
 
@@ -496,10 +496,10 @@ Total time: 6 mins 7.973 secs
 
 ![app-variants](/images/app-variants.png)
 
-注：同时安装了四个APK，它们名字各不相同，原因是为不同的Product Flavors配置了不同的`app_name`。需要的话，完全可以给不同的Product Flavors提供不同的Icon。个人是完全赞同这种做法的，想想项目中服务器配置参数分5种情况，编译个长得一模一样的APK包出来，谁知道到底什么配置。
+注：同时安装了四个APK，它们名字各不相同，原因是为不同的Product Flavors配置了不同的`app_name`。需要的话，完全可以给不同的Product Flavors提供不同的Icon。个人是完全赞同这种做法的。试想：项目中服务器配置参数分5种情况，但每种条件编译的APK却长得一模一样，不是给自己排查问题设置障碍？
 
 # 5. 总结
-使用Product Flavors的好处是明显的，发布前不必再修改配置了！
+使用Product Flavors的好处是明显的，发布前不必再修改配置了，使用对应的task进行构建即可！
 
 1. manifest中不必添加名为`APP_ENV`的meta-data。当前的开发环境相关配置直接跟当前Product Flavor关联
 2. 发布前不必修改manifest中名为`APPKEY_DENGTA`和`TA_APPKEY`等SDK的Key。正式Key跟开发用的Key直接跟当前Product Flavor关联
