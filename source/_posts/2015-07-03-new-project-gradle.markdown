@@ -445,13 +445,13 @@ AndroidManifest-release.xml
         <!-- release key -->
         <meta-data
              android:name="TA_APPKEY"
-             android:value="AV4ZDV182HN4"
+             android:value="----------"
 			 tools:node="replace"/>
 
         <!-- release key -->
         <meta-data
              android:name="APPKEY_DENGTA"
-             android:value="0I200UNE171ED9K5"
+             android:value="----------"
 			 tools:node="replace"/>
 	</application>
 </manifest>
