@@ -16,7 +16,7 @@ published: true
 
 [Android x86模拟器Intel Atom x86 System Image配置](http://www.eoeandroid.com/thread-192847-1-1.html)
 
-![how_to_enable_vt](/images/how_to_enable_vt.png)
+![how_to_enable_vt](http://7xn5nf.com1.z0.glb.clouddn.com/image/blog/2015/11/how_to_enable_vt.png)
 
 ## Library项目
 Eclipse下的Android项目跟Android Library项目区别在于`project.properties`中`android.library`属性取值。在使用Ant构建项目时，可以动态指定`android.library`属性
