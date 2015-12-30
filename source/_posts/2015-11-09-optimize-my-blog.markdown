@@ -33,3 +33,9 @@ http://fonts.useso.com/css?family=PT+Serif:regular,italic,bold,bolditalic
 ---
 
 有张255KB的大图片，下载时间2秒多。PNGoo压缩到141KB，更新。
+
+---
+
+[参考][ref]
+
+[ref]: http://droidyue.com/blog/2014/06/22/fix-octopress-slow-loading-speed-issue-in-china-mainland/

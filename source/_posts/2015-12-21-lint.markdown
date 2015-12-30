@@ -1,0 +1,227 @@
+---
+layout: post
+title: "Improving Your Code with lint"
+date: 2015-12-21 15:20:06 +0800
+comments: true
+categories: android 翻译
+published: true
+---
+本文介绍了如何使用Lint来改进代码。翻译自[Improving Your Code with lint](http://developer.android.com/intl/zh-cn/tools/debugging/improving-w-lint.html)
+<!--more-->
+
+除了要测试应用是否满足功能需求外，还要确保代码没有结构上的问题。糟糕的代码结构会影响可读性和应用的运行效率，导致代码不好维护。比如，如果你的XML资源文件中包含未使用的命名空间，它们会占用空间并导致无意义的处理过程。其他结构上的问题，比如使用过时的元素或不支持的API可能导致代码运行错误。
+
+# 概述
+Android SDK中提供名为Lint的代码扫描工具，它可以在不需要执行应用或编写测试用例的情况下轻松找出代码结构上的问题。每个被Lint检查到的问题会被报告出来，包括问题描述和严重等级，so that you can quickly prioritize the critical improvements that need to be made.还可以配置问题的严重性以忽略那些跟项目不相关的问题，甚至还可以提升问题的严重性。Lint还提供命令行接口，可以轻松跟集成到自动化过程中。
+
+`Lint`工具检查源文件中潜在的bug，以及可能的优化，包括正确性、安全性、性能、可用性、易用性以及国际化。可以在命令行或AS中运行Lint。
+
+> 注意：在Android Studio中，编译代码时还会执行[IntelliJ code inspections][IntelliJ code inspections]以提高代码review效率。
+
+图1展示了`lint`工具如何处理应用的源码
+
+![lint](http://7xn5nf.com1.z0.glb.clouddn.com/image/blog/2015/12/lint.png)
+
+图1 - `lint`工具的代码扫描流程
+
++ 应用源码  - 源码包括Java和XML文件，图标和ProGuard配置文件
++ `lint.xml`文件 - 配置文件，用于指定某些排除的`lint`检查，或自定义问题严重性
++ `lint`工具 - 可以从命令行或Android Studio运行的静态代码扫描工具。`lint`工具检查代码中可能影响应用质量和性能的问题。强烈建议你在发布应用前修复`lint`检查到所有错误。
++ `lint`检查结果 - 可以从控制台或Android Studio的 **Event Log** 查看`lint`结果。Each issue is identified by the location in the source files where it occurred and a description of the issue.
+
+从Android SDK Tools revision 16开始，`lint`作为SDK的一部分被安装。
+
+# 从AS运行Lint
+Android Studio中，已配置的`lint`及IDE自带的代码检查会在每次编译应用后自动运行。The IDE inspections are configured along with the lint checks to run IntelliJ code inspections to streamline code review.
+
+> 注意：想查看和修改检查的严重等级，通过"File > Settings > Project Settings"菜单打开 *Inspection Configuration* 配置页。
+
+在Android Studio中，你可以在`build.gradle`中为某个特定的构建版本运行`lint`检查，或者为所有的构建版本运行`lint`检查。在构建文件中添加`lintOptions`属性到`android`设置中。下面的代码演示了如何将`quiet`选项设置为`true`，`abortOnError`选项设置为`false`。
+
+```
+android {
+    lintOptions {
+       // set to true to turn off analysis progress reporting by lint
+       quiet true
+       // if true, stop the gradle build if errors are found
+       abortOnError false
+       // if true, only report errors
+       ignoreWarnings true
+       }
+       ...
+    }
+```
+
+想在Android Studio中手动运行代码检查，右击，选择 "Analyze > Inspect Code"。可以在 *Specify Inspections Scope*对话框中指定配置及检查的范围。
+
+# 从命令行运行Lint
+使用如下命令检查目录中的文件：
+
+```
+lint [flags] <project directory>
+```
+
+比如，你可以使用下面的命令扫描`myproject`目录及其子目录下的文件。`MissingPrefix`让`lint`只扫描那些缺少Android命名空间前缀的XML属性。
+
+```
+lint --check MissingPrefix myproject
+```
+
+使用`lint --help`可以查看完整的用法。
+
+## lint输出示例
+下面的例子演示了对名为Earthquake的项目运行`lint`命令后控制台的输出。
+
+```
+$ lint Earthquake
+
+Scanning Earthquake: ...............................................................................................................................
+Scanning Earthquake (Phase 2): .......
+AndroidManifest.xml:23: Warning: <uses-sdk> tag appears after <application> tag [ManifestOrder]
+  <uses-sdk android:minSdkVersion="7" />
+  ^
+AndroidManifest.xml:23: Warning: <uses-sdk> tag should specify a target API level (the highest verified version; when running on later versions, compatibility behaviors may be enabled) with android:targetSdkVersion="?" [UsesMinSdkAttributes]
+  <uses-sdk android:minSdkVersion="7" />
+  ^
+res/layout/preferences.xml: Warning: The resource R.layout.preferences appears to be unused [UnusedResources]
+res: Warning: Missing density variation folders in res: drawable-xhdpi [IconMissingDensityFolder]
+0 errors, 4 warnings
+```
+
+上面的输出列出项目中的了4个警告(无错误)。其中的3个错误(`ManifestOrder`, `UsesMinSdkAttributes`, `UnusedResources`)是在项目的`AndroidManifest.xml`文件中发现的。剩下的那个警告(IconMissingDensityFolder)是在`Preferences.xml`布局文件中发现的。
+
+# 配置Lint
+缺省情况下当你运行`lint`检查时，该工具会检查所有的问题。你也可以限制`lint`检查的问题的类别，并给问题设置严重性。比如，你可以禁止`lint`检查某些特定的跟你的项目无关的问题，还可以配置`lint`将不严重的问题以低严重性输出。
+
+你可以在不同级别上配置`lint`：
+
++ 全局，即整个项目
++ 项目中的每个模块
++ 项目中的每个产品模块
++ 项目中的每个测试模块
++ 每个打开状态下的文件
++ 每个类结构
++ 整个版本控制系统范围内
+
+## 在AS可配置Lint
+Android Studio允许你启用或禁用单个的`lint`检查，还可以为整个项目，特定目录，特定文件配置lint。
+
+在Android Studio中使用"File > Settings > Project Settings"菜单打开 *Inspections* 页面来管理检查设置及配置问题的严重性。
+
+![config-inspections](http://7xn5nf.com1.z0.glb.clouddn.com/image/blog/2015/12/studio-inspections-config.png)
+
+图2 - Inspection Configuration
+
++ 全局设置
+ 1. 在Project视图中，右击项目目录并选择"Analyze > Inspect Code"
+ 2. 设置检查范围和设置，点击OK
+ 以上设置下会按指定方式运行`lint`检查。每次你构建Android项目或模块时也会运行`lint`检查。
++ 模块或文件相关的设置
+ 1. 在Project视图中，右击模块目录或文件，选择"Analyze > Inspect Code"可以运行`lint`工具。它将会以问题列表的形式显示`lint`在模块中发现的问题。
+ 2. 在"Lint Warnings"视图中，使用工具条选项为每个模块和文件配置`lint`，并可设置显示选项
+
+## 配置Lint文件
+可以以`lint.xml`中设置`lint`参数。如果你手动创建这个文件，将其放在Android项目的根目录。如果你在Android Studio中配置`lint`，将自动创建`lint.xml`并添加到项目中。
+
+`lint.xml`文件由闭合的`<lint>`标签和一个或多个`<issue>`子标签构成。每个`<issue>`有一个唯一的`id`属性值，这个值由`lint`定义。
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+        <!-- list of issues to configure -->
+</lint>
+```
+
+通过设置`<issue>`标签的severity属性值，你可以禁止对某些问题进行`lint`检查或者调整severity等级。
+
+> Tip: 运行`lint --list`命令可以得到`lint`支持的完整的issue列表及对应的ID。
+
+### lint.xml文件示例
+下面的例子显示了`lint.xml`文件的内容。
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Disable the given check in this project -->
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+
+    <!-- Ignore the ObsoleteLayoutParam issue in the specified files -->
+    <issue id="ObsoleteLayoutParam">
+        <ignore path="res/layout/activation.xml" />
+        <ignore path="res/layout-xlarge/activation.xml" />
+    </issue>
+
+    <!-- Ignore the UselessLeaf issue in the specified file -->
+    <issue id="UselessLeaf">
+        <ignore path="res/layout/main.xml" />
+    </issue>
+
+    <!-- Change the severity of hardcoded strings to "error" -->
+    <issue id="HardcodedText" severity="error" />
+</lint>
+```
+
+## 在Java和XML源码中配置lint
+可以从Java和XML源码中禁用`lint`检查。
+
+> Tip: If you are using Android Studio, you can use the File > Settings > Project Settings > Inspections feature to manage the lint checking to your Java or XML source files.
+
+### 在Java代码中配置lint
+想为某个Java类关闭`lint`检查，可以在Java代码中添加`@SuppressLint`注解。
+
+下面的例子演示了如何为`onCreate`方法关闭`lint`的`NewApi`检查。`lint`工具还会在该类的其他方法中继续检查`NewApi`问题。
+
+```
+@SuppressLint("NewApi")
+@Override
+public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.main);
+```
+
+下面的例子演示了如何在`FeedProvider`类中关闭`lint`的`ParserError`检查：
+
+```
+@SuppressLint("ParserError")
+public class FeedProvider extends ContentProvider {
+```
+
+想在Java文件中禁止所有的`lint`检查，可以使用`all`关键字，像这样：
+
+```
+@SuppressLint("all")
+```
+
+### 在XML中配置lint
+可以使用`tools:ignore`属性来为XML文件的特定部分关闭`lint`检查。为了让这个属性被`lint`工具识别到，需要在XML文件中添加以下命名空间：
+
+```
+namespace xmlns:tools="http://schemas.android.com/tools"
+```
+
+下面的例子演示了如何在XML布局文件中为`LinearLayout`元素关闭`lint`的`UnusedResources`检查。`ignore`属性会被子元素继承。在这个例子中，`<TextView>`元素上的`lint`检查也会关闭。
+
+```
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedResources" >
+
+    <TextView
+        android:text="@string/auto_update_prompt" />
+</LinearLayout>
+```
+
+想关闭多个检查，可以以逗号分隔。例如：
+
+```
+tools:ignore="NewApi,StringFormatInvalid"
+```
+
+想在XML元素上禁止所有的`lint`检查，可以使用`all`关键字：
+
+```
+tools:ignore="all"
+```
+
+[IntelliJ code inspections]: https://www.jetbrains.com/idea/help/meet-intellij-idea.html
