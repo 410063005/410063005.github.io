@@ -56,3 +56,6 @@ Chrome中的插件，快捷键的使用非常类似于Vim。习惯使用"J"和"K
 
 # 在线工具
 [TinyPNG](https://tinypng.com/)可以用于压缩PNG图片的大小。
+
+# Others
+[Pixie](http://www.ithome.com/html/soft/13504.htm) - 屏幕取色工具, [官方地址](http://www.nattyware.com/bin/pixie.zip)

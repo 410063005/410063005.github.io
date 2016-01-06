@@ -3,7 +3,7 @@ layout: post
 title: "getItemViewType的用法"
 date: 2015-12-30 14:48:06 +0800
 comments: true
-categories: android
+categories: android view
 published: true
 ---
 本文介绍了`getItemViewType()`方法的用法。

@@ -24,6 +24,7 @@ categories: android
 # 构架篇
 1. [Android简洁架构设计](http://android.jobbole.com/81153/)
 2. [Android体系架构和开发库](http://android.jobbole.com/60202/)
+3. [微信Android客户端架构演进之路](http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=402023042&idx=1&sn=0c64c9db380410e58c097ee65708ff11&scene=0#wechat_redirect)
 
 # 工具篇
 1. [Android打包的那些事](http://android.jobbole.com/82062/)
