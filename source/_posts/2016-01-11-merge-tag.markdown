@@ -1,0 +1,254 @@
+---
+layout: post
+title: "merge tag"
+date: 2016-01-11 18:15:06 +0800
+comments: true
+categories: android view
+published: true
+---
+本文介绍了`merge`标签的用法。
+<!--more-->
+`<merge/>`标签在去掉无用ViewGroup时非常有用。比如，某些用于包裹其他view的layout，而这些layout自身无任何作用。
+
+比如，当你使用`<include/>`包含一个另一个没有使用merge的布局，两个布局分别如下：
+
+layout1.xml
+
+```
+<FrameLayout>
+   <include layout="@layout/layout2"/>
+</FrameLayout>
+```
+
+layout2.xml
+
+```
+<FrameLayout>
+   <TextView />
+</FrameLayout>
+```
+
+它们的作用跟下面布局完全一样：
+
+```
+<FrameLayout>
+   <FrameLayout>
+      <TextView />
+   </FrameLayout>
+</FrameLayout>
+```
+
+layout2.xml中的FrameLayout没有作用。`<merge />`有助于去掉它。使用merge是这个样子的(layout1.xml没有变化)：
+
+```
+<merge>
+   <TextView />
+</merge>
+```
+
+现在的效果跟下面布局一样：
+
+```
+<FrameLayout>
+   <TextView />
+</FrameLayout>
+```
+
+---
+## include标签
+使用`<include>`标签可以将布局分成多个文件：这有助于处理 *复杂或过长* 的用户界面。假设你将复杂的界面分成以下两个部分：
+
+**top_level_activity.xml**
+
+```
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout1" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- First include file -->
+    <include layout="@layout/include1.xml" />
+
+    <!-- Second include file -->
+    <include layout="@layout/include2.xml" />
+
+</LinearLayout>
+```
+
+接下来你需要写两个布局文件，`include1.xml`和`include2.xml`
+
+记住include file是在渲染时导入到`top_level_activity`布局的(有点像C语言中的`#INCLUDE`宏)
+
+include file是普通的布局xml文件。
+
+**include1.xml**
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textView1"
+    android:text="First include"
+    android:textAppearance="?android:attr/textAppearanceMedium"/>
+```
+
+**include2.xml**
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/button1"
+    android:text="Button" />
+```
+
+明白没有？没有什么神奇的。注意，仍然需要使用`xmlns:android="http://schemas.android.com/apk/res/android`声明android命名空间。
+
+这回渲染后的 **top_level_activity.xml** 变成：
+
+```
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout1" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- First include file -->
+    <TextView
+        android:id="@+id/textView1"
+        android:text="First include"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <!-- Second include file -->
+    <Button
+        android:id="@+id/button1"
+        android:text="Button" />
+
+</LinearLayout>
+```
+
+Java代码中，所有的这些都是透明的：Activity类中调用`findViewById(R.id.textView1)`会返回正确的widget(就算widget是在不同于activity布局的另一个文件中声明的)。
+
+更妙的是： **visual editor**也可以轻松处理这种用法。上层的布局可以跟被包含的xml一起渲染出来。
+
+## 变得复杂
+include file是一个典型的布局文件，它意味着必须有一个顶层元素。当你需要使用一个以上的widget时，必须使用layout：
+
+假如`include1.xml`有两个`TextView`：必须声明一个layout。我们选择`LinearLayout`
+
+**include1.xml**
+
+```
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout2" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:text="Second include"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:text="More text"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+</LinearLayout>
+```
+
+**top_level_activity.xml** 渲染结果如下：
+
+```
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout1" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- First include file -->
+    <LinearLayout 
+        android:id="@+id/layout2" 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+       <TextView
+            android:id="@+id/textView1"
+            android:text="Second include"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+       <TextView
+            android:id="@+id/textView2"
+            android:text="More text"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+   </LinearLayout>
+
+     <!-- Second include file -->
+   <Button
+        android:id="@+id/button1"
+        android:text="Button" />
+
+</LinearLayout>
+```
+
+但是使用两层`LinearLayout`是完全多余的。
+
+事实上两层嵌套`LinearLayout`没什么作用，因为两个`TextView`被嵌套到id为`layout1`的layout中最终渲染效果完全一样。
+
+那我们能做什么呢？
+
+## 使用merge标签
+`<merge>`标签只是一个哑标签，用于提供一个上层元素以应对这类冗余问题。现在 **include1.xml** 成这样子了：
+
+```
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/textView1"
+        android:text="Second include"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:text="More text"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+</merge>
+```
+
+而 **top_level_activity.xml** 被渲染成这样：
+
+```
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout1" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- First include file --> 
+    <TextView
+        android:id="@+id/textView1"
+        android:text="Second include"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:text="More text"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <!-- Second include file -->
+    <Button
+        android:id="@+id/button1"
+        android:text="Button" />
+
+</LinearLayout>
+```
+
+节约了一个层级，避免了无用的View。
+
+参见[官方文档][doc]
+
+[doc]: http://developer.android.com/training/improving-layouts/reusing-layouts.html
+[ref]: http://stackoverflow.com/questions/8834898/what-is-the-purpose-of-androids-merge-tag-in-xml-layouts
