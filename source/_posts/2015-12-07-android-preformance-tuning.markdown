@@ -7,7 +7,7 @@ categories: android
 published: true
 ---
 尝试对正在开发的Android App进行性能调优，优化过程总结记录如下。
-
+<!--more-->
 # 如何衡量性能
 首先遇到的是问题如何衡量性能。一开始我们只选取一个最简单的指标，应用及Activity页面(后面简称为页面)的启动速度。
 

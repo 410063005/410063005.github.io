@@ -7,7 +7,7 @@ categories: mac
 published: true
 ---
 收集了一些关于Mac的文章，备忘。
-
+<!--more-->
 # 手势
 [Magic Mouse测评](http://piebbs.pconline.com.cn/topic-1954.html)
 [BetterTouchTool 里定义了哪些常用手势](http://www.v2ex.com/t/165827)

@@ -6,6 +6,8 @@ comments: true
 categories: gradle
 published: true
 ---
+本文介绍通过动态生成productFlavors的方式构建多渠道包
+<!--more-->
 最近项目有打渠道包的需求。一开始的想法是，既然我们的项目已经在RDM上用gradle构建，而RDM是支持多渠道构建的，直接使用RDM提供的打渠道包功能不就行了。至于使用方式，应该是启动RDM构建时填入渠道号列表就可以了，见下图。
 ![rdm-channel-apk](http://7xn5nf.com1.z0.glb.clouddn.com/image/blog/2015/11/rdm-channel-apk.PNG)
 但满心欢喜点"帮助"却发现打不开链接。又找到官方的帮助链接[RDM持续集成之 渠道包打包 功能说明][rdm]，发现没权限打开。大家能打开吗？好吧，我没权限不折腾了。不折腾的另一个原因是，KM上找到关于RDM上如何打渠道包的文章大多是一年前的，不太详细，不好操作。
