@@ -68,7 +68,10 @@ git commit -m 'your message'
 git push origin source
 ```
 
-# 3. 参考资料
+# 3. 代码高亮
+[Jekyll 中的语法高亮](http://havee.me/internet/2013-08/support-pygments-in-jekyll.html)
+
+# 4. 参考资料
 1. [Windows上安装Octopress博客](http://www.open-open.com/lib/view/open1423539522764.html)
 2. [Windows下搭建Octopress博客](http://www.cnblogs.com/oec2003/archive/2013/05/27/3100896.html)
 3. [重装系统后恢复Octopress博客](http://ju.outofmemory.cn/entry/109363)

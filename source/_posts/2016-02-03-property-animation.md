@@ -4,7 +4,7 @@ title: "android property animation"
 date: 2016-02-03 20:28:06 +0800
 comments: true
 categories: android view
-published: true
+published: false
 ---
 本文介绍了属性动画的用法，翻译自[官方文档][ref]。
 <!--more-->

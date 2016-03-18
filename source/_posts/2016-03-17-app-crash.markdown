@@ -1,0 +1,16 @@
+---
+layout: post
+title: "一个惨痛的Bug"
+date: 2016-03-17 21:36:58 +0800
+comments: true
+categories: android
+published: false
+---
+
+数据：crash率升到9%以上
+
+Feed类型增加
+
+一种处理方式：FeedAdapter中处理，根据view type创建不同的view，但应避免null
+
+另一种处理方式：
