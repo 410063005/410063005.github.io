@@ -1,9 +1,11 @@
 ---
 title: Bug系列之onFailedToRecycleView引发的血案
-tags: 
-- android
-- bug
+tags:
+  - android
+  - bug
+date: 2017-02-21 20:15:11
 ---
+
 
 # 问题现象
 页面结构如下
