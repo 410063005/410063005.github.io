@@ -166,7 +166,7 @@ public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType
 # 解决办法
 找到原因后问题其实就解决了一半。重写`WrapAdapter.onFailedToRecycleView()`方法，代码如下：
 
-```
+```java
 @Override
 public boolean onFailedToRecycleView(ViewHolder holder) {
     if (holder instanceof WrapAdapter.SimpleViewHolder) {
