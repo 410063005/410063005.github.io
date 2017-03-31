@@ -6,6 +6,9 @@ tags:
 date: 2017-02-21 20:15:11
 ---
 
+本文记录了关于RecyclerView.onFailedToRecycleView()方法的一些用法。
+
+<!--more-->
 
 # 问题现象
 页面结构如下：
