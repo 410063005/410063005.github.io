@@ -12,6 +12,11 @@ tags:
 
 语法 https://github.com/joelittlejohn/jsonschema2pojo/wiki/Reference
 
+https://github.com/joelittlejohn/jsonschema2pojo
+
+https://github.com/joelittlejohn/jsonschema2pojo/wiki/Reference#items
+
+https://github.com/joelittlejohn/jsonschema2pojo/issues/678
 
 # jsonschema2pojo
 研究了下[jsonschema][jsonschema], 发现太复杂。我需要的不过是避免手写pojo代码，使用jsonschema有些杀鸡用牛刀的感觉。
