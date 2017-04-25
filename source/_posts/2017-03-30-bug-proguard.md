@@ -17,7 +17,7 @@ date: 2017-03-30 21:29:50
 想起之前Android Studio对相关代码检查时，提示礼物的model类中某些字段未被用到，可删除。所以第一反应是：会不会proguard也认为这个字段未用到，所以给删除了。检查proguard的输出文件`usage.txt`中是否存在删除model类的记录，发现并没有。但`mapping.txt`中却有如下记录：
 
 ```
-com.tencent.PmdCampus.api.GiftsService$InnerGift -> com.tencent.PmdCampus.c.f$a:
+com.tencent.xx.api.GiftsService$InnerGift -> com.tencent.xx.c.f$a:
     int num -> a
     java.lang.String content -> b
     java.lang.String receiver -> c
@@ -32,7 +32,7 @@ com.tencent.PmdCampus.api.GiftsService$InnerGift -> com.tencent.PmdCampus.c.f$a:
 
 ```
 # Application classes that will be serialized/deserialized over Gson
--keep class com.tencent.PmdCampus.model.** { *; }
+-keep class com.tencent.xx.model.** { *; }
 ```
 
 # 问题二
@@ -67,7 +67,7 @@ com.tencent.upload.network.b.c.d(Unknown Source)
 
 ---
 
-为什么这么多的混淆问题之前没有发现呢？不得不说一样腾讯云IM SDK的包结构非常坑，很多类放在`com.tencent`包下，而它的[官网]给出的混淆配置居然是这样：
+为什么这么多的混淆问题之前没有发现呢？不得不说一样腾讯云IM SDK的包结构非常坑，很多类放在`com.tencent`包下，而它的[官网][ref]给出的混淆配置居然是这样：
 
 ```
 -keep class com.tencent.** {*;}
