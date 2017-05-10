@@ -273,3 +273,5 @@ ReactiveX operators documentation: Zip
 ```
 
 [zip图示](http://reactivex.io/documentation/operators/zip.html)
+
+[zip]: https://juejin.im/entry/575691bb5bbb50006456a771
