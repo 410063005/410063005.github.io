@@ -157,3 +157,6 @@ public class ArgbEvaluatorDemo extends AppCompatActivity {
     }
 }
 ```
+
+[ref]: http://blog.csdn.net/kuangxiaoguo0123/article/details/52805553
+[ref2]: http://www.jianshu.com/p/c9bbf9f4bf06
