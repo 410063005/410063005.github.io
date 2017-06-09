@@ -30,5 +30,8 @@ http://toolbelt.readthedocs.io/en/latest/uploading-data.html
 
 http://toolbelt.readthedocs.io/en/latest/user.html
 
+SDK
+
+https://github.com/tencentyun/cos-python-sdk/tree/3.3/qcloud_cos
 
 
