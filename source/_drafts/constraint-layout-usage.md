@@ -145,14 +145,172 @@ compile 'com.android.support.constraint:constraint-layout:1.0.2'
 + 在布局阶段，这些widget的宽高被认为是0
 + 如果这些widget对其他widget有约束，这些约束仍然生效，但所有的margin都认为是0
 
+![](https://developer.android.com/reference/android/support/constraint/resources/images/visibility-behavior.png)
 
+这里的特殊行为可以构建临时将widget设置为`GONE`的布局，这对实现简单的布局动画非常有用。
 
+**注意:** 上图中A隐藏后将使用B中定义的margin。而有时，这可能不是你想要的结果。比如，A相对它的parent有100dp的margin，而B有相对于A的16dp的margin，当隐藏A之后，B相对于parent的margin是16dp。基于此，B相对于A、但A被设置为`GONE`这一情形指定一个特别的margin。
+
+## 宽高约束
+### ConstraintLayout最小宽高
+可以为`ConstraintLayout`自身指定最小尺寸
+
++ `android:minWidth`指定布局的最小宽度
++ `android:minHeight`指定布局的最小高度
+
+当ConstraintLayout的宽高被设置为`WRAP_CONTENT`时上述宽高将被使用。
+
+### Widget宽高约束
+
++ 使用固定的尺寸(比如123dp这样的字面量)
++ 使用`WRAP_CONTENT`，让widget自行计算尺寸
++ 使用`0dp`，等价于`MATCH_CONSTRAINT`
+
+![](https://developer.android.com/reference/android/support/constraint/resources/images/dimension-match-constraints.png)
+
+前两者跟其他布局类似。而后者将根据设置的约束来调整widget的大小。见上图，(a)是wrap_content (b)是0dp。如果设置了margin，则margin也参与计算。见(c)
+
+**重要:** `ConstraintLayout`中的widget不支持`match_parent`
+
+### 比例
+也可以使用定义widget某一边相对于另一边的比例来规定尺寸。要使用比例，必须至少将一个尺寸约束设置为0dp，并设置属性`layout_constraintDimentionRatio`为指定的值。例如：
+
+```xml
+<Button android:layout_width="wrap_content"
+                   android:layout_height="0dp"
+                   app:layout_constraintDimensionRatio="1:1" />
+```
+
+以上代码将按钮的高度和宽度设置为相同。
+
+比例可以使用两种方式表示：
+
++ 一个浮点数，表示宽度和高度之间的比例
++ 一个"width:height"形式的比例
+
+当宽高都为0dp时也可以使用比例。这种情况下系统会让较大的边满足所有的约束，并保证指定的比例。想以另一个边约束指定的边，可以添加`W`或`H`前缀，它们分别用来限制宽度和高度。比如，如果一个尺寸被两个条件约束(宽度为0dp，且居中)，可以使用前缀来指定哪个边需要被限制。
+
+```xml
+<Button android:layout_width="0dp"
+                   android:layout_height="0dp"
+                   app:layout_constraintDimensionRatio="H,16:9"
+                   app:layout_constraintBottom_toBottomOf="parent"
+                   app:layout_constraintTop_toTopOf="parent"/>
+```
+
+以上代码会按16:9的比例设置高度，并且让宽度满足约束条件。
+
+## Chain
+链接在单个方向上(水平方向或垂直方向)提供分组的行为。另一个方向上可以单独地约束。
+
+### 创建链
+通过双向约束连接在一起的一组widget称为链。下图是一个最小的链，只有两个widget
+
+![](https://developer.android.com/reference/android/support/constraint/resources/images/chains.png)
+
+### 链头
+一组链中的第一个元素控制这条链。
+
+![](https://developer.android.com/reference/android/support/constraint/resources/images/chains-head.png)
+
+水平链中最左边的widget是链头，而垂直链中的最上边的widget是链头。
+
+### 链中的margin
+
+If margins are specified on connections, they will be taken in account. In the case of spread chains, margins will be deducted from the allocated space.
+
+### 链的样式
+通过在链头中设置`layout_constraintHorizontal_chainStyle `或`layout_constraintVertical_chainStyle`来控制链的行为。链的行为会依据指定的风格而改变(缺省的风格是`CHAIN_SPREAD`)。
+
++ `CHAIN_SPREAD` - 所有元素都会扩展
++ 带权重的链 - `CHAIN_SPREAD`模式中，如果某些widget设置为0dp，它们会平分剩下的空间
++ `CHAIN_SPREAD_INSIDE` - 与上面的类似，但链两端的元素不会扩展
++ `CHAIN_PACKED` - 链中的元素会排列到一起。水平方向或垂直方向的bias属性会影响packed元素的位置
+
+![](https://developer.android.com/reference/android/support/constraint/resources/images/chains-styles.png)
+
+权重链中各个元素以相同比例占据可用空间。如果一个或多个元素为0dp，它们会使用剩余的空间(平均分配)。`layout_constraintHorizontal_weight`或`layout_constraintVertical_weight`用于控制那些0dp的元素如何分配空间。比如，如果一个链中有两个元素，都是0dp，第一个元素权重为2，第二个元素权重为1，则前者占据的空间是后者的两倍。
+
+## 视觉辅助对象
+除了上述内容外，还可以在`ConstraintLayout`中使用特殊的辅助元素来帮助定位。可以创建水平或垂直的guideline，它们的位置约束相对于parent。接着可以使用这些guideline来定位widget。
+
+[guideline][guideline]不会显示出来(它们的可见性是`View.GONE`)，仅仅用于布局，且只在`ConstraintLayout`中起作用。
+
+Guideline可以是水平或垂直的：
+
++ 垂直guideline宽度为0且高度跟parent一致
++ 水平guideline高度为0且宽度跟parent一致
+
+使用guideline定位有三种不同的方式：
+
++ 指定跟左边或上边的距离(`layout_constraintGuide_begin`)
++ 指定跟右边或下边的距离(`layout_constraintGuide_end`)
++ 指定占宽度或高度的百分比(`layout_constraintGuide_percent`)
+
+widget可以由guideline来约束，多个widget可以由同一个guideline约束。而百分比定位则可实现响应式布局。
+
+下面代码演示了如休使用垂直guideline对一个button进行约束：
+
+```xml
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <android.support.constraint.Guideline
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/guideline"
+            app:layout_constraintGuide_begin="100dp"
+            android:orientation="vertical"/>
+
+    <Button
+            android:text="Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            app:layout_constraintLeft_toLeftOf="@+id/guideline"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
+```
+
+# 总结
+好用的地方
+
+左右拉力相同时居中
+
+链 - 同时控制一组元素的布局
+
+guideline - 根据百分比精确定位，响应式布局
+
+bias - 响应式布局
+
+ratio属性 - 图片自适应
+
+## 案例
+例1
+什么时候使用比较合适?
+
+![视觉图1](demo1.png)
+
+第一个区域适合使用ConstraintLayout实现
+
+例2
+banner位图片自适应问题
+
+例3
+动画效果 见[官方demo][官方demo]
 
 # 参考资料
 [相关视频](https://www.youtube.com/watch?v=sO9aX87hq9c)
-
 [Guideline的用法][evenly-spacing-views-using-constraintlayout]
+[官方demo](https://github.com/googlesamples/android-ConstraintLayoutExamples)
 
+[guideline]: https://developer.android.com/reference/android/support/constraint/Guideline.html
 [ref]: http://km.oa.com/group/29501/articles/show/307370?kmref=search&from_page=1&no=2
 [ref2]: http://km.oa.com/group/21869/articles/show/280008?kmref=search&from_page=1&no=4
 [evenly-spacing-views-using-constraintlayout]: https://stackoverflow.com/questions/37518745/evenly-spacing-views-using-constraintlayout
