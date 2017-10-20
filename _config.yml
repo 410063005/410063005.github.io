@@ -8,7 +8,7 @@ subtitle: 点点滴滴
 description: 移动开发 Android 生活
 keywords: android
 author: Sunmoon
-language:
+language: zh-cn
 timezone:
 
 # URL
@@ -29,7 +29,7 @@ i18n_dir: :lang
 skip_render:
 
 # Writing
-new_post_name: :title.md # File name of new posts
+new_post_name: :year-:month-:day-:title.md # File name of new posts
 default_layout: post
 titlecase: false # Transform title into titlecase
 external_link: true # Open external links in new tab
@@ -64,14 +64,14 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: indigo
+theme: tranquilpeak
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-- type: git
-  repo: https://git.oschina.net/hask/hask.git
-  branch: gh-pages
+#- type: git
+#  repo: https://git.oschina.net/hask/hask.git
+#  branch: gh-pages
 - type: git
   repo: https://github.com/410063005/410063005.github.io.git
   branch: master
