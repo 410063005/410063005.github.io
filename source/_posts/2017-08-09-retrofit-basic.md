@@ -1,10 +1,12 @@
 ---
 title: Retrofit如何支持TCP
 tags:
-  - android
+  - Android
 date: 2017-08-09 16:25:55
+toc: true
 ---
-本文介绍了如何让Retrofit支持TCP接口
+Retrofit通常用于处理HTTP接口，那它是否能支持TCP接口呢？答案是肯定的，本文提供了一种不必修改Retrofit源码就可支持访问TCP接口的文案。
+
 <!--more-->
 # 背景
 [Retrofit][github]号称是"Type-safe HTTP client for Android and Java"，它使用Java接口来定义HTTP API，并且支持JSON、Protobuf、XML等各种数据格式 ，使用非常方便。

@@ -1,12 +1,13 @@
 ---
-title: Bug系列之onFailedToRecycleView引发的血案
+title: Bug系列之onFailedToRecycleView引发的诡异问题
 tags:
-  - android
-  - bug
+  - Android
+  - Bug
 date: 2017-02-21 20:15:11
+toc: true
 ---
 
-本文记录了关于RecyclerView.onFailedToRecycleView()方法的一些用法。
+项目中遇到了一个`RecyclerView`相关的诡异问题，跟到最后发现是`View`复用失败引起的。`RecyclerView.onFailedToRecycleView()`方法用于处理`View`复用失败的情况，本文介绍了其用法。
 
 <!--more-->
 

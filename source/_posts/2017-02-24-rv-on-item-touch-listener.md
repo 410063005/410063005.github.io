@@ -1,11 +1,12 @@
 ---
 title: RecyclerView.OnItemTouchListener的用法
 tags:
-  - android
-  - ui
+  - Android
+  - UI
 date: 2017-02-24 19:37:58
+toc: true
 ---
-介绍RecyclerView.OnItemTouchListener的用法及遇到的问题。
+如何给`RecyclerView`中的Item添加点击事件呢？本文介绍了几种不同的方法。
 <!--more-->
 
 # 介绍

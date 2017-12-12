@@ -1,11 +1,13 @@
 ---
 title: 内存泄露分析
 tags:
-  - android
+ - Android
+ - 性能 
 date: 2017-06-09 18:08:49
+toc: true
 ---
 
-记录并分析了几个内存泄露的例子。
+Android应用中很容易出现内存泄漏，而泄漏的主要原因归根结底是应用组件生命周期方法处理不当。本文使用[LeakCanary](https://github.com/square/leakcanary)分析了几个内存泄露的例子，记录如下。
 <!-- more -->
 
 # Context泄露

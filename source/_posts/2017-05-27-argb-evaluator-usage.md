@@ -1,11 +1,11 @@
 ---
 title: ArgbEvaluator的用法
 tags:
-  - android
+  - Android
 date: 2017-05-27 17:02:37
 ---
 
-介绍了ArgbEvaluator用法。
+安卓微信滑动Tab页时底部栏背景色有一个平滑的渐变效果，这个渐变效果是使用`ArgbEvaluator`实现的。本文介绍了`ArgbEvaluator`的用法。
 <!-- more -->
 
 [这篇文章](https://github.com/jiang111/awesome-android-tips)提到了ArgbEvaluator 

@@ -1,7 +1,7 @@
 ---
 title: Javascript中的getter和setter
 tags:
-  - javascript
+  - Javascript
 date: 2017-07-13 14:13:33
 ---
 

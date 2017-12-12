@@ -1,10 +1,11 @@
 ---
 title: Kotlin代理
-tags: kotlin
+tags: Kotlin
 date: 2017-10-20 10:38:40
+toc: true
 ---
 
-本文介绍了Kotlin的用法。
+Java中的代理很烦很繁，而Kotlin中的代理却看起来很简单。我们来学学Kotlin中代理的用法吧。
 
 <!--more-->
 本文整理自[Delegated Properties][ref]。
