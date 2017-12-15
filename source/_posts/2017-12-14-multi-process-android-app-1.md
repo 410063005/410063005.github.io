@@ -2,6 +2,7 @@
 title: (译)Android多进程应用
 tags:
   - Android
+  - 翻译
 date: 2017-12-14 10:13:02
 ---
 
