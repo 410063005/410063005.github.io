@@ -1,0 +1,62 @@
+01-12 17:50:25.177 9101-9101 D/cm-perf: App.attachBaseContext(): begin
+01-12 17:50:25.177 9101-9101 D/cm-perf: App.attachBaseContext():      1 ms, MultiDex.install
+01-12 17:50:25.177 9101-9101 D/cm-perf: App.attachBaseContext():      2 ms, Beta.installTinker
+01-12 17:50:25.177 9101-9101 D/cm-perf: App.attachBaseContext(): end, 3 ms
+01-12 17:50:25.787 9149-9149 D/cm-perf: App.attachBaseContext(): begin
+01-12 17:50:25.787 9149-9149 D/cm-perf: App.attachBaseContext():      1 ms, MultiDex.install
+01-12 17:50:25.787 9149-9149 D/cm-perf: App.attachBaseContext():      2 ms, Beta.installTinker
+01-12 17:50:25.787 9149-9149 D/cm-perf: App.attachBaseContext(): end, 3 ms
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate(): begin
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate():      14 ms, ReservoirHelper.init
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate():      12 ms, ShareUtils.registerToWX
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate():      397 ms, LoginHelper.getInstance
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate():      102 ms, QbSdk.initX5Environment
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate():      3 ms, PrefProvider.storeData
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate():      1 ms, lazyInitNetWorkService
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate():      1 ms, Foregrounds.getInstance().init
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate():      0 ms, BuildConfig.DEBUG
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate():      91 ms, Bugly.init
+01-12 17:50:25.807 9101-9101 D/cm-perf: App.onCreate(): end, 621 ms
+01-12 17:50:25.837 9149-9149 D/cm-perf: App.onCreate2(): begin
+01-12 17:50:25.837 9149-9149 D/cm-perf: App.onCreate2():      39 ms, ChannelUtils.initChannel
+01-12 17:50:25.837 9149-9149 D/cm-perf: App.onCreate2():      8 ms, StatUtils.getQIMEI
+01-12 17:50:25.837 9149-9149 D/cm-perf: App.onCreate2():      1 ms, Logger.setDebuggable
+01-12 17:50:25.837 9149-9149 D/cm-perf: App.onCreate2():      0 ms, Env.initEnv
+01-12 17:50:25.837 9149-9149 D/cm-perf: App.onCreate2(): end, 48 ms
+01-12 17:50:25.877 9101-9101 D/cm-perf: App.onCreate2(): begin
+01-12 17:50:25.877 9101-9101 D/cm-perf: App.onCreate2():      72 ms, ChannelUtils.initChannel
+01-12 17:50:25.877 9101-9101 D/cm-perf: App.onCreate2():      1 ms, StatUtils.getQIMEI
+01-12 17:50:25.877 9101-9101 D/cm-perf: App.onCreate2():      0 ms, Logger.setDebuggable
+01-12 17:50:25.877 9101-9101 D/cm-perf: App.onCreate2():      0 ms, Env.initEnv
+01-12 17:50:25.877 9101-9101 D/cm-perf: App.onCreate2(): end, 73 ms
+01-12 17:50:26.237 9101-9101 D/cm-perf: SplashActivity.onCreate(): begin
+01-12 17:50:26.237 9101-9101 D/cm-perf: SplashActivity.onCreate():      13 ms, setContentView
+01-12 17:50:26.237 9101-9101 D/cm-perf: SplashActivity.onCreate():      1 ms, Looper.setMessageLogging
+01-12 17:50:26.237 9101-9101 D/cm-perf: SplashActivity.onCreate():      25 ms, StatUtils.startApp
+01-12 17:50:26.237 9101-9101 D/cm-perf: SplashActivity.onCreate():      1 ms, AppIconUpdate.addNumShortCut
+01-12 17:50:26.237 9101-9101 D/cm-perf: SplashActivity.onCreate():      28 ms, setupView
+01-12 17:50:26.237 9101-9101 D/cm-perf: SplashActivity.onCreate():      29 ms, initData
+01-12 17:50:26.237 9101-9101 D/cm-perf: SplashActivity.onCreate(): end, 97 ms
+01-12 17:50:27.027 9313-9313 D/cm-perf: App.attachBaseContext(): begin
+01-12 17:50:27.027 9313-9313 D/cm-perf: App.attachBaseContext():      1 ms, MultiDex.install
+01-12 17:50:27.027 9313-9313 D/cm-perf: App.attachBaseContext():      3 ms, Beta.installTinker
+01-12 17:50:27.027 9313-9313 D/cm-perf: App.attachBaseContext(): end, 4 ms
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate(): begin
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      87 ms, setSubContentView
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      48 ms, startLocation
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      0 ms, setNeedLogin
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      0 ms, UserPref.getUserCheating
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      1 ms, IMManger.forceLogout
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      81 ms, mMyPresenter.attach
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      246 ms, setupView
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      2 ms, updateMessageNew
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      6 ms, BusProvider.register
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      1 ms, checkUpgrade
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate():      13 ms, mMyPresenter.loadTaskConfig
+01-12 17:50:27.067 9101-9101 D/cm-perf: IndexActivity.onCreate(): end, 485 ms
+01-12 17:50:27.087 9313-9313 D/cm-perf: App.onCreate2(): begin
+01-12 17:50:27.087 9313-9313 D/cm-perf: App.onCreate2():      45 ms, ChannelUtils.initChannel
+01-12 17:50:27.087 9313-9313 D/cm-perf: App.onCreate2():      8 ms, StatUtils.getQIMEI
+01-12 17:50:27.087 9313-9313 D/cm-perf: App.onCreate2():      1 ms, Logger.setDebuggable
+01-12 17:50:27.087 9313-9313 D/cm-perf: App.onCreate2():      0 ms, Env.initEnv
+01-12 17:50:27.087 9313-9313 D/cm-perf: App.onCreate2(): end, 54 ms
