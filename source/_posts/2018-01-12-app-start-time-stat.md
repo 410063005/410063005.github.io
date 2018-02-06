@@ -15,7 +15,7 @@ date: 2018-01-12 21:49:41
 ## Displayed关键字
 一个简单的统计启动时间的办法是在logcat日志中搜索`Displayed`关键字，可以看到类似这样的日志：
 
-![](/images/1515746480768.png)
+![](/images/1515746480768.webp)
 
 这里可以看到我们应用首页的启动时间。测试是在在x86模拟器进行的，使用的是关闭了debug模式的包，一共测试了三次，每次都是杀死进程后重启启动的(冷启动)
 
@@ -29,7 +29,7 @@ com.example.app/.MainActivity
 -a android.intent.action.MAIN
 ```
 
-![](/images/1515747098555.png)
+![](/images/1515747098555.webp)
 
 + ThisTime - 当前Activity启动的耗时，这个时间跟上文说到的logat `Displayed`日志中的第一个时间是对应的
 + TotalTime - 总的耗时，从App进程启动开始算起

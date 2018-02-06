@@ -111,7 +111,7 @@ http://www.jianshu.com/p/0e78168da7ab
 ## Automator自动化
 原本打算使用Alfred自动化生成图片引用，但发现利用Mac自带的Automator也可改进贴图流程。只需要在Automator中配置好`clipboard2.py`这个脚本，我们可以非常便捷地向markdown贴图：
 
-![](/images/1513241525096.png)
+![](/images/1513241525096.webp)
 
 完整的操作流程如下：
 

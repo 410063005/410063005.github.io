@@ -12,9 +12,9 @@ Android应用中很容易出现内存泄漏，而泄漏的主要原因归根结�
 
 # Context泄露
 ## 例一
-![](case_1.jpg)
+![](case_1.webp)
 
-![](case_1_code.jpg)
+![](case_1_code.webp)
 
 分析
 
@@ -36,9 +36,9 @@ StatService.trackCustomEndEvent(
 不过从业务上来讲这段统计代码没有意义，所以干脆去掉。
 
 ## 例二
-![](case_2.jpg)
+![](case_2.webp)
 
-![](case_2_code.jpg)
+![](case_2_code.webp)
 
 分析
 
@@ -53,9 +53,9 @@ StatService.trackCustomEndEvent(
 
 # 线程泄露
 
-![](case_3.jpg)
+![](case_3.webp)
 
-![](case_3_code.jpg)
+![](case_3_code.webp)
 
 分析
 

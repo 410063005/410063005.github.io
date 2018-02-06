@@ -13,7 +13,7 @@ Retrofit通常用于处理HTTP接口，那它是否能支持TCP接口呢？答�
 
 实践中，我们的项目后台接口由原有的TCP接口 + Protobuf协议切换到HTTP接口 + JSON协议之后，Android客户端相应地引入Retrofit，大大地简化了接口访问代码的开发工作。配合使用[Postman][chrome postman](Postman独立版本见[这里][postman app])，原来让人抓狂容易扯皮的接口联调过程变得轻松愉快。
 
-![postman截图](chrome_2017-08-09_10-42-23.png)
+![postman截图](chrome_2017-08-09_10-42-23.webp)
 
 最近加入到另一个项目，发现后台接口也是TCP接口 + Protobuf协议，于是接口联调过程又回到以前状态，变得较为困难：一是PB二进制数据不可读，且难以像JSON文本数据一样可快速手工构造；二是TCP协议上进行私有加解密，导致没有类似Postman现成可用的接口测试工具。
 
@@ -107,7 +107,7 @@ Retrofit支持HTTP，而HTTP是基于TCP的。实际上HTTP虽然是应用层协
 
 后者是更通用的形式，前者只是一个特例。是的，`OkHttpClient`也是一个`Call.Factory`，代码为证。
 
-![OkHttpClient](okhttpclient.jpg)
+![OkHttpClient](okhttpclient.webp)
 
 明白了吧，只要我们实现`Call.Factory`接口，就可以基于`HttpURLConnection`写一个"KoHttpClient"，或是基于Apache HttpClient写一个"NotOkHttpClient"，然后替换Retrofit缺省依赖的OkHttpClient。所谓解耦或是扩展性，说的也许就是这个。那`Call.Factory`到底何方神圣？
 

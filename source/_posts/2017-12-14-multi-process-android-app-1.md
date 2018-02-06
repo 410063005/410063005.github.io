@@ -34,7 +34,7 @@ Android会不时杀死进程回收内存，以提供给更重要的进程。Andr
 ## 单例
 单例是在Android应用中跨组件共享状态信息和数据的简单办法。可以使用`synchronized`关键字保证单例的方法是线程安全的。但如果在多进程应用中使用单例，可能生成的单例对象数量跟进程数量一样多。因为进程并不共享地址空间，所以一个进程中的单例对象对其他进程并不可见。如果使用shared preferences，数据库或文件中的数据初始化单例，要让(不同进程中的)每个单例对象保持一致的数据非常困难，而且很可能它们在运行时有不同的数据状态。另外，`synchronized`对这种情况不起作用。看看代码中单例的通常用法。
 
-![](http://engineering.life360.com/images/android-multiproc-singletons.png)
+![](http://engineering.life360.com/images/android-multiproc-singletons.webp)
 
 假设我们有一个单例类，不妨称之为`SubscriptionManager`，它会跟踪用户订阅。在这个类中更新订阅内容。同时你将数据保存到文件以供离线访问。如果数据文件存在的话，由这些文件初始化单例。有两个进程：主进程和后台进程。在一个工具类中检查用户是否订阅了某个内容，该类会被主进程和后台进程调用。用户调用`SubscriptionManager.getInstance(context).updateSubscription(feature, subscription);`从主进程订阅。这个调用更新了订阅内容，发送到后台并且更新了文件。
 
@@ -46,7 +46,7 @@ Android通过`Binder`接口提供进程间通信(IPC)。[Content providers](http
 ## Content Provider
 ContentProvider用于管理对结构化数据的访问。它们封装数据并且提供数据安全机制。ContentProvider是在当前进程的数据跟其他进程的代码之间建立联系的标准接口。(Content providers are the standard interface that connects data in one process with code running in another process)
 
-![](http://engineering.life360.com/images/android-multiproc-content-providers.jpg)
+![](http://engineering.life360.com/images/android-multiproc-content-providers.webp)
 
 尽管ContentProvider本是用于应用间共享数据，它也可以用于在多进程之间共享数据。Android保证跨进程时ContentProvider的单一性。[ContentResolver](https://developer.android.com/reference/android/content/ContentResolver.html)提供易用的接口，所以应用代码不必担心IPC细节。
 
@@ -64,7 +64,7 @@ Bundle result = resolver.call(“SubcriptionCheck”, arg, extras);
 ## Bound Service
 Bound service是客户端-服务器接口中的服务器端。Bound service允许组件(比如activity)绑定到service，发送请求，接收响应，甚至执行IPC
 
-![](http://engineering.life360.com/images/android-multiproc-bound-service.jpg)
+![](http://engineering.life360.com/images/android-multiproc-bound-service.webp)
 
 有两种方式实现IPC：Messengers和AIDL。Messenger方式更简单一些。两种方式中Android框架都做好了IPC底层工作(marshalling, unmarshalling, RPC)，IPC对调用方是透明的。跟service通信的步骤如下：
 
@@ -83,7 +83,7 @@ Bound service是客户端-服务器接口中的服务器端。Bound service允�
 
 要注意的是，应用中启动的每一个进程都会执行上述初始化。不幸的是，并不能为不同的进程指定不同的Application类。
 
-![](http://engineering.life360.com/images/android-multiproc-application.jpg)
+![](http://engineering.life360.com/images/android-multiproc-application.webp)
 
 如果你使用Application类，很可能你会在它的`onCreate()`方法中做一些初始化工作。 **请确保这些初始化工作对进程是恰当且必要的**  也在`Application.onCreate()`中使用下面的代码确定进程上下文：
 

@@ -15,28 +15,28 @@ FitNesse用于集成测试，非常适用于测试接口。但感觉使用并不
 
 命令行中使用`java  -jar fitnesse-standalone.jar -p 9999`启动fitnesse server。
 
-![](/images/1515405168646.png)
+![](/images/1515405168646.webp)
 
 fitnesse server启动后，我们可以通过浏览器访问，截图如下：
 
-![](/images/1515405277765.png)
+![](/images/1515405277765.webp)
 
 # 用法简介
 感觉FitNesse文档过于简单，不过它提供了[A Two-Minute Example](http://fitnesse.org/FitNesse.UserGuide.TwoMinuteExample)的例子。我们直接看例子。
 
 例子用于测试一个计算器程序中的除法运算。比如，对于10除以2，你期望返回5。FitNesse中使用 **input** 和 **expected output** 数据表来表示 test。类似这样：
 
-![](/images/1515413862042.png)
+![](/images/1515413862042.webp)
 
 FitNesse中这里的表格称为[Decision Table](http://localhost:9999/FitNesse.UserGuide.WritingAcceptanceTests.SliM.DecisionTable)，例子中的每行数据代表一个完整的场景。"numerator"和"denominator"列表示input，而"quotient?"的问号告诉FitNesse这一列表示是 expected output(期望的输出值)。以"10/2 = 5.0"为例，可将其理解为一个问句："如果使用10除以2，我能否得到5?"
 
 如何运行测试呢，很简单。点击FitNesse logo旁边的 **Test** 按钮即可。
 
-![](/images/1515462902359.png)
+![](/images/1515462902359.webp)
 
 运行后结果如下：
 
-![](/images/1515462989612.png)
+![](/images/1515462989612.webp)
 
 红色表示代码返回了正确的期望值。而红色表示代码返回了跟期望值不同的值，这里可以看到两个值，分别是 **expected value** 和 **actual value**
 
@@ -78,7 +78,7 @@ public class Division {
 } 
 ```
 
-![](/images/1515413862042.png)
+![](/images/1515413862042.webp)
 
 + `eg` - Java包名
 + `Division` - Java类
@@ -113,7 +113,7 @@ Slim运行fixture代码的流程是这样的：
 
 上面的标记文本可生成如下表格：
 
-![](/images/1515413862042.png)
+![](/images/1515413862042.webp)
 
 # Hello FitNesse
 现在我们自己动手添加一个FitNesse测试。
@@ -158,7 +158,7 @@ public class CalculatorDemo {
 }
 ```
 
-![](/images/1515465864078.png)
+![](/images/1515465864078.webp)
 
 代码路径`/Users/kc/wd/unitTest/lib1/out/production/classes`
 
@@ -177,7 +177,7 @@ public class CalculatorDemo {
 |100   |4            |104 |
 ```
 
-![](/images/1515466040741.png)
+![](/images/1515466040741.webp)
 
 + 第1行`!path`指定了类路径
 + 第2行`!define`指定当前为slim测试

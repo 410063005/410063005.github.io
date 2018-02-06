@@ -128,7 +128,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 # 问题
 最开始的需求如下面的截图，它只是一个好友列表。点击列表中的每一个item要求跳转到个人主页。可以看到，这里非常适合使用上述的RecyclerItemClickListener方案，可以避免每次绑定数据时创建listener的问题，简直跟ListView的OnItemClickListener一样好用。
 
-![](rv_demo1.jpg)
+![](rv_demo1.webp)
 
 ```java
 RecyclerView recyclerView = findViewById(R.id.recycler);
@@ -147,8 +147,8 @@ recyclerView.addOnItemTouchListener(
 
 一开始上面的做法的确非常不错。不幸的是，最近需求发生了变化。该页面除了是好友列表，还要求在某些条件下会出来以下两种情形。
 
-![](rv_demo2.jpg)
-![](rv_demo3.jpg)
+![](rv_demo2.webp)
+![](rv_demo3.webp)
 
 注意：这里的绿色方框中的内容是由RecyclerView的特殊item来实现的。
 
@@ -256,8 +256,8 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
 具体到我们的例子，`view type 1`和`view type 2`就是所谓的特殊viewType，我们不应在`onSingleTapUp()`方法中拦截那些会分发到它们的touch事件。修改后问题完美解决。
 
-![](rv_demo2.jpg)
-![](rv_demo3.jpg)
+![](rv_demo2.webp)
+![](rv_demo3.webp)
 
 [RecyclerView onClick]: http://stackoverflow.com/questions/24471109/recyclerview-onclick
 [better]: http://stackoverflow.com/questions/24471109/recyclerview-onclick/26196831#26196831

@@ -13,11 +13,11 @@ date: 2017-12-13 13:20:06
 
 使用`RecyclerView`，很容易实现如下Grid效果：
 
-![](recyclerview.png)
+![](recyclerview.webp)
 
 但视觉对此不满意，认为更理想的效果应该是这样：
 
-![](recyclerview-and-linearlayout.png)
+![](recyclerview-and-linearlayout.webp)
 
 注意看红色区域，它是 **居中** 而非靠左
 
@@ -72,7 +72,7 @@ date: 2017-12-13 13:20:06
 # 支持选中态
 需求发生变化了。在视觉要求Grid中最后一个item居中的基础上， 交互要求Grid中的item支持选中状态，如下图：
 
-![](recyclerview-can-be-selected.png)
+![](recyclerview-can-be-selected.webp)
 
 问题来了：<font color="red">原来耍小聪明的方案变得不很适用了，因为在`RecyclerView`和`tail`之间保持选中态的不好同步，写代码比较麻烦</font>
 
@@ -98,7 +98,7 @@ rv.setLayoutManager(layoutManager);
 
 这个方案只是调整`GridLayoutManager`，并不需要额外的"假"item，自然也就不存在选中状态同步的问题，代码写起来方便不易出错。截图如下：
 
-![](recyclerview-span-size-looup.png)
+![](recyclerview-span-size-looup.webp)
 
 上图跟我们期望的效果还有点差距，但已经解决了居中的关键问题。
 

@@ -17,7 +17,7 @@ tags:
 # 没人喜欢OOM
 在Square的注册界面，我们在Bitmap cache上绘制用户签名。该Bitmap的尺寸大小跟屏幕大小一致，创建该Bitmap时出现很多OOM(OutOfMemoryError)。
 
-![](https://cdn-images-1.medium.com/max/2000/0*TpsPt3DHu_aMeoa2.png)
+![](https://cdn-images-1.medium.com/max/2000/0*TpsPt3DHu_aMeoa2.webp)
 
 我们尝试以上解决方法，没有一个能解决问题：
 
@@ -96,13 +96,13 @@ public class ExampleApplication extends Application {
 
 你会看到Notification提示框以及图形化的展示：
 
-![](https://cdn-images-1.medium.com/max/2000/0*5zhG12WlfCp1nIlc.png)
+![](https://cdn-images-1.medium.com/max/2000/0*5zhG12WlfCp1nIlc.webp)
 
 # 结论
 启用LeakCanary后我们发现并修复了我们应用当中许多内存泄漏。我们甚至发现少量[Android SDK中的内存泄漏]([leaks in the Android SDK](https://github.com/square/leakcanary/blob/master/library/leakcanary-android/src/main/java/com/squareup/leakcanary/AndroidExcludedRefs.java))
 
 结果让人吃惊。我们将OOM crash降低了94%。
 
-![](https://cdn-images-1.medium.com/max/2000/0*8DpD5hZX4R4O4Vvr.png)
+![](https://cdn-images-1.medium.com/max/2000/0*8DpD5hZX4R4O4Vvr.webp)
 
 如果你想消除OOM崩溃，赶紧[现在就安装LeakCanary](https://github.com/square/leakcanary)吧！
