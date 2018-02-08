@@ -70,3 +70,7 @@ public abstract class BaseFragment extends Fragment {
 5. `HeapAnalyzer`在使用key在heap dump中找到`KeyedWeakReference`，定位到泄漏的引用
 6. `HeapAnalyzer`计算 *到GC根节点的最短强引用* 以确定是否有内存泄漏，然后重新构建导致内存泄漏的引用链
 7. 分析结果发送到应用进程的`DisplayLeakService`，并且通过notification进行提示
+
+
+<!-- Dalvik Other  http://km.oa.com/group/16523/articles/show/331466?kmref=related_post -->
+<!-- Dalvik Other http://km.oa.com/group/16523/articles/show/331465?kmref=home_recommend_read --> 
