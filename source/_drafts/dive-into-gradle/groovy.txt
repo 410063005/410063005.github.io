@@ -1,0 +1,29 @@
+groovy
+	GDK为数字添加的方法
+	String与GString
+		GString的延迟赋值
+		<<=操作符
+		单引号与双引号
+	集合
+		range
+			..及边界
+			range的方法
+		list
+			list定义
+			list索引及方法
+		map
+			each的两种闭包形式
+			map定义, map的key类型
+			map的方法
+	正则式
+		/正则式/
+		=~, ==~, ~String
+		String.eachMatch()
+	闭包
+		方法作为闭包
+		闭包解决的问题
+		it变量
+		调用闭包
+		curry, grep操作
+	IO
+		XML解析
