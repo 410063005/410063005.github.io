@@ -6,10 +6,10 @@ tags:
  - Gradle
 ---
 
-使用Gradle构建工具非常方便，我们可以快速地添加第三方库依赖。那么我们如何发布自己的库？
+使用Gradle构建工具非常方便，我们可以快速地添加第三方库依赖。那么如何发布自己的库？
 
 <!--more-->
-实际项目中又分成两种情况。一种是将自己的库发布到第三方搭建的Maven库(比如公司内部Maven库)，另一种情况是发布到官网。下面分别讨论。
+实际项目中又分成两种情况。一种是将自己的库发布到第三方搭建的Maven库(比如公司内部Maven库)，另一种情况是发布到官网(比如jCenter)。下面分别讨论。
 
 # 发布到第三方库
 这里以发布到我们公司内部的Maven库为例，发布到其他第三方Maven库应该类似。
@@ -18,7 +18,7 @@ tags:
 ### 使用maven-publish插件发布
 在待发布的module的`build.gradle`中添加配置：
 
-```
+```groovy
 // 1. 添加maven-publish plugin
 apply plugin: 'maven-publish'
 
@@ -76,7 +76,7 @@ BUILD SUCCESSFUL in 3s
 
 注意：不要忘记在`gradle.properties`中配置Maven库的用户名密码:
 
-```
+```groovy
 mavenUser=your_username
 mavenPassword=your_password
 ```
@@ -96,13 +96,13 @@ Execution failed for task ':publishMavenJavaPublicationToMavenRepository'.
 
 首先在module的`build.gradle`中添加maven plugin。
 
-```
+```groovy
 apply plugin: 'maven-publish'
 ```
 
 然后在`build.gradle`中添加一个新的task`uploadArchives`。
 
-```
+```groovy
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -123,7 +123,7 @@ uploadArchives {
 在`repositories`中添加了Maven库地址后，我们就可以像使用第三方库一样引用自己发布的库了。
 
 添加仓库：
-```
+```groovy
 allprojects {
     repositories {
         maven {
@@ -139,10 +139,10 @@ allprojects {
 compile 'com.yourcompany.yourpackage:yourart:1.0.0-SNAPSHOT'
 ```
 
-# 发布到jcenter
+# 发布到jCenter
 jCenter是由bintray.com维护的Maven仓库。
 
-[如何使用Android Studio把自己的Android library分发到jCenter和Maven Central | 开发技术前线](http://www.devtf.cn/?p=760)一文中有比较详情的描述，但是我按照文中提到的方法尝试很久仍然不能成功将自己的库发布到jcenter。所以建议直接使用[bintray-plugin](https://github.com/bintray/bintray-examples)提供的例子来实践，但操作前一定要把[README](https://github.com/bintray/gradle-bintray-plugin#readme)多看几遍，否则可能踩坑。
+[如何使用Android Studio把自己的Android library分发到jCenter和Maven Central | 开发技术前线](http://www.devtf.cn/?p=760)一文中有比较详情的描述，但是我按照文中提到的方法尝试很久仍然不能成功将自己的库发布到jCenter。所以建议直接使用[bintray-plugin](https://github.com/bintray/bintray-examples)提供的例子来实践，但操作前一定要把[README](https://github.com/bintray/gradle-bintray-plugin#readme)多看几遍，否则可能踩坑。
 
 ## 下载代码
 首先下载[bintray-examples](https://github.com/bintray/bintray-examples/blob/master/gradle-aar-example/build.gradle)代码。
@@ -154,7 +154,7 @@ git clone https://github.com/bintray/bintray-examples.git
 注意，官方的例子更新并不及时。以examples中的`gradle-aar-example`为例，它使用的gradle版本是2.2.1，所以按照[官网说明](https://github.com/bintray/gradle-bintray-plugin#step-2-apply-the-plugin-to-your-gradle-build-script)我们应当将对`build.gradle`脚本的buildscript部分用到`bintray-plugin`的地方进行修改，否则后续操作可能失败。
 
 修改前的代码
-```
+```groovy
 buildscript {
     repositories {
         jcenter()
@@ -171,7 +171,7 @@ buildscript {
 ```
 
 修改后的代码
-```
+```groovy
 buildscript {
     repositories {
         jcenter()
@@ -200,7 +200,7 @@ plugins {
 ## 配置bintray插件
 修改`build.gradle`中的`bintray`部分。
 
-```
+```groovy
 bintray {
     user = "chen410063005"
     key = "**************"
@@ -241,7 +241,7 @@ bintray {
 ## 使用
 
 添加仓库：
-```
+```groovy
 repositories {
     maven {
         url  "https://sunmoon.bintray.com/tt" 

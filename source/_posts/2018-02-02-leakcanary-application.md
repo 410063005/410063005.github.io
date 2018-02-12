@@ -341,8 +341,9 @@ HeapDump文件，即hprof文件，保存的位置是`Environment.getExternalStor
   }
 ```
 
-<img src="/images/1517369532736.webp" width="30%" height="30%" > 
-<img src="/images/1517369491050.webp" width="30%" height="30%">
+<div align="center">
+<img src="/images/1517369532736.webp" width="30%" height="30%" ><img src="/images/1517369491050.webp" width="30%" height="30%">
+</div>
 
 1. 两张图中的保存位置分别是`Download\leakcanary\detected_leaks`和`Download\leakcanary-<包名>\`
 2. 上面第一张图中的hprof大小居然是170MB，暗示该应用可能存在比较严重的内存泄漏
