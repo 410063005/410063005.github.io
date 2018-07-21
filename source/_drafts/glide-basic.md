@@ -32,11 +32,11 @@ Glide.with(context).asBitmap().apply().load(model).into(target)
 
 一个看似简单的调用，包含了相当丰富的信息量：
 
-with(context) - 生命周期
-asBitmap() - 解码数据为Resource
-apply(requestOptions) - 缓存策略，...
-load(model) - 加载模型
-into(target) - 给Target设置Resource
++ with(context) - 生命周期
++ asBitmap() - 解码数据为Resource
++ apply(requestOptions) - 缓存策略，...
++ load(model) - 加载模型
++ into(target) - 给Target设置Resource
 
 什么是Target呢？Target可以理解为Resource的最终载体，比如ImageView就是一个Target。Glide中Target是一个接口。
 
@@ -141,9 +141,9 @@ public interface Resource<Z> {
 
 ![](resource-arch.png)
 
-# Model
+# Model和ModelLoader
 
-RequestBuilder.loadXXX()方法
+Model可以理解为待加载的数据。比如网络图片的url地址或者Android工程的图片id，都抽象成Model。由于Model类型简单，所以Glide没有将其封装成新的类，而是直接使用已有的数据类型，包括：
 
 + String
 + Uri
@@ -151,6 +151,40 @@ RequestBuilder.loadXXX()方法
 + int (resourceId)
 + URL
 + byte[]
+
+对应每一种类型都有一个`RequestBuilder.loadXXX()`方法
+
+Model很简单，但对应的ModelLoader可不简单。在Glide中ModleLoader是一个接口
+
+/**
+ * A factory interface for translating an arbitrarily complex data model into a concrete data type
+ * that can be used by an {@link DataFetcher} to obtain the data for a resource represented by the
+ * model.
+ *
+ * <p> This interface has two objectives: 1. To translate a specific model into a data type that can
+ * be decoded into a resource.
+ *
+ * 2. To allow a model to be combined with the dimensions of the view to fetch a resource of a
+ * specific size.
+ *
+ * This not only avoids having to duplicate dimensions in xml and in your code in order to determine
+ * the size of a view on devices with different densities, but also allows you to use layout weights
+ * or otherwise programmatically put the dimensions of the view without forcing you to fetch a
+ * generic resource size.
+ *
+ * The smaller the resource you fetch, the less bandwidth and battery life you use, and the lower
+ * your memory footprint per resource. </p>
+ 
+ ModleLoader用于将任意复杂的数据模型转换成具体的数据类型，以便DataFetcher可以获取为Resource获取代表Model的数据。该接口有两个作用： 1. 用于将特定的Model转换成可解码为Resource的数据， 2. 允许Model根据View的大小获取特定尺寸的Resource。
+ 
+这么做有两个好处。一是可以不必强制让你获取通用大小的Resource，二是获取的资源越小，消耗的带宽、电量越小，而且占用的内存也小。
+
+```java
+public interface ModelLoader<Model, Data> {
+  LoadData<Data> buildLoadData(Model model, int width, int height, Options options);
+  boolean handles(Model model);
+}
+```
 
 
 # 参考
