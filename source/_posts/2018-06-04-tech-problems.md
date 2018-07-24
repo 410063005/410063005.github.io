@@ -4,13 +4,12 @@ tags: 'kotlin, android'
 toc: true
 date: 2018-06-04 20:14:13
 ---
-
-公司技术分享上被问到的两个方法，简单整理了一下，记录之。
+最近一次技术分享中遗留的两个疑问。分享时并不完全了解，下来后简单整理了一下，记录之。
 <!--more-->
 
 # Java中调用Kotlin的扩展方法
 
-Kotlin中分别给Int和String添加如下扩展函数`cm()`。[代码](https://github.com/410063005/FragmentLifeCircle/blob/master/demo-arch/src/test/java/com/example/cm/demo_arch/ExtensionDemoTest.java)
+Kotlin中分别给Int和String添加如下扩展函数`cm()`。完整代码见[这里](https://github.com/410063005/FragmentLifeCircle/blob/master/demo-arch/src/test/java/com/example/cm/demo_arch/ExtensionDemoTest.java)
 
 ```kotlin
 // ExtensionDemo.kt
@@ -27,9 +26,9 @@ fun String.toInt(): Int {
 }
 ```
 
-如何在Java代码中调用呢，形式是否能像Kotlin中那样简洁？
+如何在Java代码中调用？形式是否能像Kotlin中那样简洁？
 
-答案是否。Java代码调用方式如下：
+**答案是否**。Java代码调用方式如下：
 
 ```java
 public void test() {
@@ -38,7 +37,7 @@ public void test() {
 }
 ```
 
-为什么要这样调用，看看Kotlin生成的Java代码就容易明白。
+看看Kotlin生成的Java代码就容易明白为什么要这样调用。
 
 ```java
 @Metadata(
@@ -71,11 +70,11 @@ public final class ExtensionDemoKt {
 }
 ```
 
-总结：Kotlin的扩展函数本质上是生成以被扩展类的对象作为"receiver"参数的一个static方法。所以，在Java中调用Kotlin扩展函数就只能以调用static方法的方式进行。
+总结：Kotlin的扩展函数本质上是生成以被扩展类的对象作为"receiver"参数的static方法。所以，在Java中调用Kotlin扩展函数就只能以调用普通static方法的方式进行。
 
 # Lifecycle的顺序问题
 
-这段代码在Activity.onCreate()期间执行addObserver()，会输出"test5: ON_CREATE"吗？ [代码](https://github.com/410063005/FragmentLifeCircle/blob/master/demo-arch/src/main/java/com/example/cm/demo_arch/lifecycle/MyLifecycleObserver.java)
+有一个LifecycleObserver，它的`test5()`响应`Lifecycle.Event.ON_CREATE`事件。在Activity.onCreate()期间执行addObserver()添加这个LifecycleObserver，`test5()`会被正确执行吗(能否输出"test5: ON_CREATE"吗) 完整代码见[这里](https://github.com/410063005/FragmentLifeCircle/blob/master/demo-arch/src/main/java/com/example/cm/demo_arch/lifecycle/MyLifecycleObserver.java)
 
 ```java
 public class LifecycleOwnerActivity extends AppCompatActivity {
@@ -98,7 +97,7 @@ public class MyLifecycleObserver implements LifecycleObserver {
 }
 ```
 
-答案是可以正确输出。`getLifecycle().addObserver()`最终会执行到`android.arch.lifecycle.LifecycleRegistry.addObserver()`方法，对该方法源码进行分析。
+答案是 **可以正确输出**。由于`getLifecycle().addObserver()`最终会执行到`android.arch.lifecycle.LifecycleRegistry.addObserver()`方法，所以对`LifecycleRegistry.addObserver()`源码进行分析。
 
 
 ```java
@@ -155,13 +154,15 @@ static class ObserverWithState {
 }
 ```
 
-首先，会将原始的observer包装成带状态的statefulObserver。由于是在Activity.onCreate()方法调用addObserver()，所以statefulObserver的状态是`INITIALIZED`。
+首先，addObserver()会将原始的observer包装成带状态的statefulObserver。由于是在Activity.onCreate()方法调用addObserver()，所以statefulObserver的当前状态是`INITIALIZED`。
 
-`upEvent(statefulObserver.mState)`根据当前状态生成Event对象，这个对象被`statefulObserver.dispatchEvent()`方法分发给mLifecycleObserver(这是另一个对原始observer的包装)。分发Event后statefulObserver进入下一状态，`CREATED`。更多状态变化见下图。
+`upEvent(statefulObserver.mState)`根据当前状态生成Event对象，这个对象被`statefulObserver.dispatchEvent()`方法分发给mLifecycleObserver(注意它是另一个对原始observer的包装)。
+
+分发Event后statefulObserver进入下一状态，`CREATED`。更多状态变化见下图。
 
 ![](lifecycle-states.png)
 
-`ObserverWithState.mLifecycleObserver`是通过`Lifecycling.getCallback()`静态方法获取到的，
+而`ObserverWithState.mLifecycleObserver`是通过`Lifecycling.getCallback()`静态方法获取到的，
 
 ```java
 GenericLifecycleObserver mLifecycleObserver = Lifecycling.getCallback(observer)
@@ -177,7 +178,7 @@ GenericLifecycleObserver mLifecycleObserver = Lifecycling.getCallback(observer)
 + CompositeGeneratedAdaptersObserver
 + ReflectiveGenericLifecycleObserver
 
-`Lifecycling.getCallback(observer)`将原始的observer包装成ReflectiveGenericLifecycleObserver，ReflectiveGenericLifecycleObserver的关键在于CallbackInfo和ClassesInfoCache。
+对于我们的`MyLifecycleObserver`，`Lifecycling.getCallback(observer)`方法将其包装成ReflectiveGenericLifecycleObserver。而ReflectiveGenericLifecycleObserver的关键在于CallbackInfo和ClassesInfoCache。代码如下。
 
 ```java
 class ReflectiveGenericLifecycleObserver implements GenericLifecycleObserver {
@@ -201,9 +202,11 @@ static class CallbackInfo {
 }
 ```
 
-`ClassesInfoCache.createInfo(Class klass, @Nullable Method[] declaredMethods)`方法的作用是：解析其klass参数，找到带有`OnLifecycleEvent`注解的方法，将这些方法包装成`MethodReference`。最后，MethodReference会保存在mEventToHandlers。
+不难理解`ClassesInfoCache.createInfo(Class klass, @Nullable Method[] declaredMethods)`方法的作用是：
 
-梳理一下，整理调用顺序是这样的：
+解析其klass参数，找到带有`OnLifecycleEvent`注解的方法，将这些方法包装成`MethodReference`。最后，MethodReference会保存在mEventToHandlers。
+
+最后梳理一下，整个调用顺序是这样的：
 
 ```
 LifecycleRegistry.addObserver()
@@ -219,7 +222,7 @@ MethodReference.invokeCallback()
 Method.invoke()
 ```
 
-而这里的Method，正是`MyLifecycleObserver.test5()`方法。
+这里的Method，正是`MyLifecycleObserver.test5()`方法，它以反射的方法被lifecycle库调用。
 
 # 补充知识
 

@@ -5,16 +5,17 @@ toc: true
 date: 2018-06-21 15:14:03
 ---
 
-去掉不必要的背景是减少过度绘制的一种简单的方式。那么如何在实际项目中使用这个技巧呢？
+去掉不必要的背景是减少过度绘制的一种简单的方式。如何在实际项目应该该技巧呢？
 <!-- more -->
 
-减少过度绘制的几个[常见策略](https://developer.android.com/topic/performance/rendering/overdraw?hl=zh-cn#fixing)如下：
+# 简介
+[官方](https://developer.android.com/topic/performance/rendering/overdraw?hl=zh-cn#fixing)提供了几个减少过度绘制的常见策略：
 
 + Removing unneeded backgrounds in layouts.
 + Flattening the view hierarchy.
 + Reducing transparency.
 
-其中第一个策略简单易用，主要涉及到的工具有
+其中第一个策略简单易用，主要涉及到的开发工具包括：
 
 + GPU呈现模式分析 (Profile GPU Rendering)
 + 调试GPU过度绘制
@@ -22,11 +23,11 @@ date: 2018-06-21 15:14:03
 
 # 问题描述
 
-分析app过度绘制问题时发现我负责的一个页面过度绘制次数比预期中的多一次。见下图中的蓝色区域。
+分析app过度绘制问题时发现应用中的某个页面过度绘制次数比预期中的多一次。见下图中的蓝色区域。
 
 ![](merc-1-overdraw.png)
 
-多次检查该页面未发现问题原因。于是重新写一个完全为空的页面，不妨称之EmptyActivity。有如下现象：
+多次检查该页面未发现问题原因。于是重新写一个完全为空的页面，不妨称之EmptyActivity，发现有如下现象：
 
 + 如果EmptyActivity直接继承自AppCompatActivity，过度绘制次数为0，符合预期。
 + 如果EmptyActivity继承自我们自定义的BaseActivity，过度绘制次数为1，比预期中多一次。
@@ -37,9 +38,7 @@ date: 2018-06-21 15:14:03
 <img src="no-overdraw.png" width="50%" alt="图片说明" /><img src="1-overdraw.png" width="50%" alt="图片说明" />
 </div>
 
-预期应该是左图，没有过度绘制(无颜色)。实际却是右图，有一次过度绘制(蓝色)。
-
-所以推测问题是由BaseActivity引起。
+预期应该是左图，没有过度绘制(无颜色)。但实际却是右图，有一次过度绘制(蓝色)。推测问题是由BaseActivity引起。
 
 # 问题分析
 
@@ -84,7 +83,6 @@ Window的背景色和根布局的背景色，我们可以只取其一。考虑�
 <img src="layout-inspector.png" width="50%" alt="图片说明" /><img src="layout-inspector2.png" width="50%" alt="图片说明" />
 </div>
 
-**去掉了根布局的背景色，为App整体上减少一次不必要的过度绘制。**
 
 还记得过度绘制的颜色规则么？参考自[官网](https://developer.android.com/studio/profile/inspect-gpu-rendering?hl=zh-cn)
 
@@ -94,10 +92,7 @@ Window的背景色和根布局的背景色，我们可以只取其一。考虑�
 + 粉色： 过度绘制 3 次
 + 红色： 过度绘制 4 次或更多
 
-现在你会发现我们app里原先的蓝色变成了无色，绿色变成了蓝色，粉色变成了绿色！
+**去掉了根布局的背景色，为App整体上减少一次不必要的过度绘制。** 所以你会发现优化后app里原先的蓝色变成了无色，绿色变成了蓝色，粉色变成了绿色。
 
 ![](merc-1-overdraw.png)
 ![](merc-0-overdraw.png)
-
-
-
