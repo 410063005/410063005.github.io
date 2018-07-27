@@ -33,6 +33,15 @@ Glide.with(context).asBitmap().apply().load(model).into(target)
 |load(model)   |数据加载                                        |ModelLoader, ModelLoaderFactory, DataFetcher|
 |into(target)    |资源的显示                                     |Target              |
 
+
+Resouce, Data, Source的区分
+
++ Resouce (Data) - 已解码的资源(已解码，采样，或转换)
++ (Source) Data - 原始的数据(未解码), ResourceDecoder.decode(data)得到Resource
++ Source - 原始的数据源，ModelLoad.load(model)得到(Source) Data
+
+如何理解Encode操作？ TODO, load, fetch, cache, decode, transcode都好理解
+
 ## 包结构视角
 Glide作为图片加载库，其工作分为核心部分和其他部分。Glide清晰的包结构体现了这种划分：
 
@@ -257,11 +266,7 @@ public interface DataFetcher<T> {
 
 # 配置
 
-ResourceDecoderRegistry
-
-ModelLoaderRegistry
-
-TODO
+见[Glide的Registry和GlideModule](glide-registry)
 
 # 参考
 
