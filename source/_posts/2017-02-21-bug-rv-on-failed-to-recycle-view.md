@@ -2,7 +2,6 @@
 title: Bug系列之onFailedToRecycleView引发的诡异问题
 tags:
   - Android
-  - Bug
 date: 2017-02-21 20:15:11
 toc: true
 ---

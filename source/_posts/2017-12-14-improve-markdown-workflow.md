@@ -3,7 +3,7 @@ title: Markdown之贴图小技巧
 toc: true
 date: 2017-12-14 17:22:21
 tags:
- - favorite
+ - 博客技巧
 ---
 
 最近使用Markdown写博客比较勤，发现Markdown中贴图十分烦琐。而作为程序员又经常有博客中贴代码截图的需求，那么如何快速贴图呢？
@@ -120,3 +120,9 @@ http://www.jianshu.com/p/0e78168da7ab
 3. 在Markdown文件中`Command + V`，以`![]()`这种格式粘贴刚才的截图
 
 比手工操作方便快捷多了吧?
+
+# 工具
+
+## 截图
++ Gifox
++ [Jietu](https://jietu.qq.com/)

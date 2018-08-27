@@ -2,7 +2,6 @@
 title: 使用RecyclerView实现居中的GridView
 tags:
   - Android
-  - UI
 toc: false
 date: 2017-12-13 13:20:06
 ---

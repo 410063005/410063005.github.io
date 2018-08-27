@@ -2,7 +2,6 @@
 title: RecyclerView.OnItemTouchListener的用法
 tags:
   - Android
-  - UI
 date: 2017-02-24 19:37:58
 toc: true
 ---

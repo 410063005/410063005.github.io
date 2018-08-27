@@ -2,7 +2,6 @@
 title: Bug系列之proguard的坑
 tags:
   - Android
-  - Bug
 date: 2017-03-30 21:29:50
 ---
 
