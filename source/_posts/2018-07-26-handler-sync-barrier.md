@@ -1,6 +1,6 @@
 ---
 title: Handler问题记录
-tags: android
+tags: Android
 toc: true
 date: 2018-07-26 16:45:49
 ---

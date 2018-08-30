@@ -1,6 +1,6 @@
 ---
 title: 记support库兼容性相关的一个bug
-tags: android
+tags: Android
 toc: true
 date: 2018-05-31 19:31:42
 ---

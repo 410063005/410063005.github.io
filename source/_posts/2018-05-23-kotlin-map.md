@@ -1,6 +1,6 @@
 ---
 title: 谈谈Kotlin中的Map
-tags: kotlin
+tags: Kotlin
 toc: true
 date: 2018-05-23 21:05:14
 ---

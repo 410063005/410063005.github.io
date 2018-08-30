@@ -1,7 +1,7 @@
 ---
 title: 理解Groovy闭包委托
 date: 2018-03-08 17:14:21
-tags: gradle
+tags: Gradle
 ---
 [TODO]
 <!--more-->

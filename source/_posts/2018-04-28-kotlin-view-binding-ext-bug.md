@@ -1,7 +1,7 @@
 ---
 title: 使用Kotlin Android Extensions时碰到的一个问题
 date: 2018-04-28 16:30:27
-tags: android
+tags: Android
 toc: true
 ---
 本文记录了使用kotlin android extions时遇到的小问题以及对应的解决方法。

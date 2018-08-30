@@ -2,7 +2,7 @@
 title: Markdown之使用技巧收集
 date: 2017-12-14 11:11:19
 tags:
-  - favorite
+  - 读写
 ---
 本文收集了一些Markdown使用技巧。
 <!--more-->

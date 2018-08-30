@@ -2,7 +2,7 @@
 title: 记一个多线程并发读写HashMap时遇到的问题
 toc: true
 date: 2018-03-30 15:37:38
-tags:
+tags: Java
 ---
 
 HashMap并非线程安全的。多线程中使用HashMap时，应当注意数据同步问题。本文记录并分析了我在实际项目中遇到的一个关于HashMap数据不同步问题。

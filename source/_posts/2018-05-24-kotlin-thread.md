@@ -1,6 +1,6 @@
 ---
 title: Kotlin中thread的用法
-tags: kotlin
+tags: Kotlin
 toc: true
 date: 2018-05-24 20:29:46
 ---

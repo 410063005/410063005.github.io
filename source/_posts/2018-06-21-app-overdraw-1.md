@@ -1,6 +1,6 @@
 ---
 title: 记一次减少过度绘制实战
-tags: android
+tags: Android
 toc: true
 date: 2018-06-21 15:14:03
 ---

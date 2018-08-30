@@ -1,6 +1,6 @@
 ---
 title: Glide的Registry和GlideModule
-tags: android
+tags: Android
 toc: true
 date: 2018-07-24 18:01:27
 ---

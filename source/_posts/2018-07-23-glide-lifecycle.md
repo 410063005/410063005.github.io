@@ -1,6 +1,6 @@
 ---
 title: Glide生命周期绑定
-tags: android
+tags: Android
 toc: true
 date: 2018-07-23 16:17:37
 ---

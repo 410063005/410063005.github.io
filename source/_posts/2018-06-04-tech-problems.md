@@ -1,6 +1,8 @@
 ---
 title: 两个小的技术问题
-tags: 'kotlin, android'
+tags:
+ - Kotlin
+ - Android
 toc: true
 date: 2018-06-04 20:14:13
 ---

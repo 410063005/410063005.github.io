@@ -1,5 +1,5 @@
 ---
-title: javac命令source参数的作用
+title: 如何使用Javac的source参数
 date: 2018-08-27 10:38:13
 tags:
 ---
@@ -90,3 +90,6 @@ public class Hello {
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 ```
+
+# 参考
+[javac命令详解](https://www.cnblogs.com/JeffChen/archive/2008/01/16/1041783.html)

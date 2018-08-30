@@ -1,6 +1,6 @@
 ---
 title: Gradle学习笔记
-tags: gradle
+tags: Gradle
 toc: true
 date: 2018-03-20 16:58:08
 ---

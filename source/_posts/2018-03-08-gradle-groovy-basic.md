@@ -1,6 +1,6 @@
 ---
 title: Gradle之Groovy基础
-tags: gradle
+tags: Gradle
 date: 2018-03-08 16:53:54
 toc: true
 ---

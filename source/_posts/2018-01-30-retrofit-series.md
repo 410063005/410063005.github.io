@@ -1,7 +1,7 @@
 ---
 title: 玩转Retrofit
 date: 2018-01-30 11:18:07
-tags:
+tags: Android
 ---
 [TODO] 总结了Retrofit原理和用法，讨论了如果添加TCP支持、自定义Converter和自定义CallAdapter。
 <!--more-->

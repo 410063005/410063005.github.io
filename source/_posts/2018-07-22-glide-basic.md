@@ -1,6 +1,6 @@
 ---
 title: Glide基础
-tags: android
+tags: Android
 toc: true
 date: 2018-07-22 21:57:50
 ---
