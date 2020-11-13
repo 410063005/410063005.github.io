@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="使用Gradle构建工具非常方便，我们可以快速地添加第三方库依赖。那么如何发布自己的库？">
+<meta name="keywords" content="Gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何发布自己的Java库">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/02/08/how-to-publish-your-lib/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="使用Gradle构建工具非常方便，我们可以快速地添加第三方库依赖。那么如何发布自己的库？">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1518062768362.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1518063073227.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1518063238354.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1518063711773.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1518063762982.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1518064033209.webp">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.865Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何发布自己的Java库">
+<meta name="twitter:description" content="使用Gradle构建工具非常方便，我们可以快速地添加第三方库依赖。那么如何发布自己的库？">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/1518062768362.webp">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/02/08/how-to-publish-your-lib/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>如何发布自己的Java库 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/02/08/how-to-publish-your-lib/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          如何发布自己的Java库
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-02-08 15:27:54" itemprop="dateCreated datePublished" datetime="2018-02-08T15:27:54+08:00">2018-02-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>使用Gradle构建工具非常方便，我们可以快速地添加第三方库依赖。那么如何发布自己的库？</p>
+<a id="more"></a>
+<p>实际项目中又分成两种情况。一种是将自己的库发布到第三方搭建的Maven库(比如公司内部Maven库)，另一种情况是发布到官网(比如jCenter)。下面分别讨论。</p>
+<h1 id="发布到第三方库"><a href="#发布到第三方库" class="headerlink" title="发布到第三方库"></a>发布到第三方库</h1><p>这里以发布到我们公司内部的Maven库为例，发布到其他第三方Maven库应该类似。</p>
+<h2 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h2><h3 id="使用maven-publish插件发布"><a href="#使用maven-publish插件发布" class="headerlink" title="使用maven-publish插件发布"></a>使用maven-publish插件发布</h3><p>在待发布的module的<code>build.gradle</code>中添加配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 添加maven-publish plugin</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'maven-publish'</span></span><br><span class="line"></span><br><span class="line">publishing &#123;</span><br><span class="line">    publications &#123;</span><br><span class="line">        <span class="comment">// 2. 指定要发布的内容</span></span><br><span class="line">        mavenJava(MavenPublication) &#123;</span><br><span class="line">            from components.java</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            <span class="comment">// 3. 指定Maven库的用户名密码</span></span><br><span class="line">            credentials &#123;</span><br><span class="line">                username <span class="string">"$mavenUser"</span></span><br><span class="line">                password <span class="string">"$mavenPassword"</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// change to point to your repo, e.g. http://my.org/repo</span></span><br><span class="line">            url &#123;</span><br><span class="line">                <span class="comment">// 4. 指定Maven库的地址 你甚至可以在这里指定为本地文件 "$buildDir/repo"</span></span><br><span class="line">                <span class="string">"http://my.org/repo"</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第3点，<a href="https://docs.gradle.org/current/userguide/publishing_maven.html" target="_blank" rel="noopener">参考</a> <a href="https://stackoverflow.com/questions/12749225/where-to-put-gradle-configuration-i-e-credentials-that-should-not-be-committe" target="_blank" rel="noopener">参考</a></li>
+<li>第4点，<a href="http://km.oa.com/group/29073/articles/show/299976" target="_blank" rel="noopener">参考</a></li>
+</ul>
+<p>配好之后运行<code>gradle publish</code>即可将生成的内容上传到指定的Maven库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">gradlew publish</span><br><span class="line">Parallel execution is an incubating feature.</span><br><span class="line"></span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/viky-test-1.0-20180206.111742-6.jar</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/viky-test-1.0-20180206.111742-6.jar.sha1</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/viky-test-1.0-20180206.111742-6.jar.md5</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/viky-test-1.0-20180206.111742-6.pom</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/viky-test-1.0-20180206.111742-6.pom.sha1</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/viky-test-1.0-20180206.111742-6.pom.md5</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/maven-metadata.xml</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/maven-metadata.xml.sha1</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/maven-metadata.xml.md5</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/maven-metadata.xml</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/maven-metadata.xml.sha1</span><br><span class="line">Upload http://my.org/repo/com/test/viky-test/maven-metadata.xml.md5</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL in 3s</span><br><span class="line">4 actionable tasks: 4 executed</span><br></pre></td></tr></table></figure>
+<p>注意：不要忘记在<code>gradle.properties</code>中配置Maven库的用户名密码:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mavenUser=your_username</span><br><span class="line">mavenPassword=your_password</span><br></pre></td></tr></table></figure>
+<p>否则可能出现类似下面这样的未授权问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">* What went wrong:</span><br><span class="line">Execution failed for task &apos;:publishMavenJavaPublicationToMavenRepository&apos;.</span><br><span class="line">&gt; Failed to publish publication &apos;mavenJava&apos; to repository &apos;maven&apos;</span><br><span class="line">   &gt; Could not write to resource &apos;http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/viky-test-1.0-20180206.093919-5.jar&apos;.</span><br><span class="line">      &gt; Could not PUT &apos;http://my.org/repo/com/test/viky-test/1.0-SNAPSHOT/viky-test-1.0-20180206.093919-5.jar&apos;. Received status code 401 from server: Unauthorized</span><br></pre></td></tr></table></figure>
+<h3 id="使用maven插件发布"><a href="#使用maven插件发布" class="headerlink" title="使用maven插件发布"></a>使用maven插件发布</h3><p>也可以直接使用maven插件而不是maven-publish插件。maven插件配置起来可能相对更简单。</p>
+<p>首先在module的<code>build.gradle</code>中添加maven plugin。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'maven-publish'</span></span><br></pre></td></tr></table></figure>
+<p>然后在<code>build.gradle</code>中添加一个新的task<code>uploadArchives</code>。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">uploadArchives &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        mavenDeployer &#123;</span><br><span class="line">            repository(<span class="string">url:</span> <span class="string">'http://my.org/repo'</span>)&#123;</span><br><span class="line">                authentication(<span class="string">userName:</span> <span class="string">'your_username'</span>, <span class="string">password:</span> <span class="string">'your_password'</span>)</span><br><span class="line">                pom.groupId = <span class="string">'com.yourcompany.yourpackage'</span></span><br><span class="line">                pom.artifactId = <span class="string">'yourart'</span></span><br><span class="line">                pom.version = <span class="string">'1.0.0-SNAPSHOT'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行<code>gradle uploadArchives</code>将生成的内容上传到指定的Maven库。</p>
+<h2 id="使用自己发布的库"><a href="#使用自己发布的库" class="headerlink" title="使用自己发布的库"></a>使用自己发布的库</h2><p>在<code>repositories</code>中添加了Maven库地址后，我们就可以像使用第三方库一样引用自己发布的库了。</p>
+<p>添加仓库：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            <span class="comment">// 注意, 这里的地址仅用于演示, 实际的下载地址可能跟上传时指定的地址有所不同</span></span><br><span class="line">            url <span class="string">"http://my.org/repo"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>添加依赖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;com.yourcompany.yourpackage:yourart:1.0.0-SNAPSHOT&apos;</span><br></pre></td></tr></table></figure></p>
+<h1 id="发布到jCenter"><a href="#发布到jCenter" class="headerlink" title="发布到jCenter"></a>发布到jCenter</h1><p>jCenter是由bintray.com维护的Maven仓库。</p>
+<p><a href="http://www.devtf.cn/?p=760" target="_blank" rel="noopener">如何使用Android Studio把自己的Android library分发到jCenter和Maven Central | 开发技术前线</a>一文中有比较详情的描述，但是我按照文中提到的方法尝试很久仍然不能成功将自己的库发布到jCenter。所以建议直接使用<a href="https://github.com/bintray/bintray-examples" target="_blank" rel="noopener">bintray-plugin</a>提供的例子来实践，但操作前一定要把<a href="https://github.com/bintray/gradle-bintray-plugin#readme" target="_blank" rel="noopener">README</a>多看几遍，否则可能踩坑。</p>
+<h2 id="下载代码"><a href="#下载代码" class="headerlink" title="下载代码"></a>下载代码</h2><p>首先下载<a href="https://github.com/bintray/bintray-examples/blob/master/gradle-aar-example/build.gradle" target="_blank" rel="noopener">bintray-examples</a>代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/bintray/bintray-examples.git</span><br></pre></td></tr></table></figure>
+<p>注意，官方的例子更新并不及时。以examples中的<code>gradle-aar-example</code>为例，它使用的gradle版本是2.2.1，所以按照<a href="https://github.com/bintray/gradle-bintray-plugin#step-2-apply-the-plugin-to-your-gradle-build-script" target="_blank" rel="noopener">官网说明</a>我们应当将对<code>build.gradle</code>脚本的buildscript部分用到<code>bintray-plugin</code>的地方进行修改，否则后续操作可能失败。</p>
+<p>修改前的代码<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:1.0.0'</span></span><br><span class="line">        classpath <span class="string">'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'</span></span><br><span class="line">        classpath <span class="string">'com.github.dcendents:android-maven-plugin:1.2'</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// <span class="doctag">NOTE:</span> Do not place your application dependencies here; they belong</span></span><br><span class="line">        <span class="comment">// in the individual module build.gradle files</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>修改后的代码<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:1.0.0'</span></span><br><span class="line">        classpath <span class="string">'com.github.dcendents:android-maven-plugin:1.2'</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// <span class="doctag">NOTE:</span> Do not place your application dependencies here; they belong</span></span><br><span class="line">        <span class="comment">// in the individual module build.gradle files</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">"com.jfrog.bintray"</span> version <span class="string">"1.7.3"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="申请bintray账号"><a href="#申请bintray账号" class="headerlink" title="申请bintray账号"></a>申请bintray账号</h2><p>具体步骤在些略过，可以参考<a href="http://www.devtf.cn/?p=760" target="_blank" rel="noopener">如何使用Android Studio把自己的Android library分发到jCenter和Maven Central | 开发技术前线</a>第一部分。</p>
+<p>我们会用到bintray的账号名以及API Key。可以在 Edit Profit 中找到 API Key：</p>
+<p><img src="/images/1518062768362.webp" alt></p>
+<h2 id="配置bintray插件"><a href="#配置bintray插件" class="headerlink" title="配置bintray插件"></a>配置bintray插件</h2><p>修改<code>build.gradle</code>中的<code>bintray</code>部分。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">bintray &#123;</span><br><span class="line">    user = <span class="string">"chen410063005"</span></span><br><span class="line">    key = <span class="string">"**************"</span></span><br><span class="line"></span><br><span class="line">    configurations = [<span class="string">'archives'</span>] <span class="comment">//When uploading configuration files</span></span><br><span class="line">    pkg &#123;</span><br><span class="line">        repo = <span class="string">'tt'</span></span><br><span class="line">        name = <span class="string">'wee'</span></span><br><span class="line">        userOrg = <span class="string">'sunmoon'</span></span><br><span class="line">        desc = <span class="string">'Bintray aar publishing example'</span></span><br><span class="line">        websiteUrl = siteUrl</span><br><span class="line">        issueTrackerUrl = <span class="string">'https://github.com/bintray/bintray-examples/issues'</span></span><br><span class="line">        vcsUrl = gitUrl</span><br><span class="line">        licenses = [<span class="string">'Apache-2.0'</span>]</span><br><span class="line">        labels = [<span class="string">'aar'</span>, <span class="string">'android'</span>, <span class="string">'example'</span>]</span><br><span class="line">        publicDownloadNumbers = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>user - 你的bintray用户名</li>
+<li>key - 你的API Key</li>
+<li>repo - Repo name</li>
+<li>name - Package name</li>
+<li>userOrg - 你的bintray账号所属的组织</li>
+</ul>
+<p>以上几个字段需要跟你的bintray账号相对应。以我的账号为例，截图如下：</p>
+<p><img src="/images/1518063073227.webp" alt></p>
+<h2 id="发布-1"><a href="#发布-1" class="headerlink" title="发布"></a>发布</h2><p>配置无误后<code>gradle bintrayUpload</code>即可将aar文件上传到bintray</p>
+<p><img src="/images/1518063238354.webp" alt></p>
+<p>记得要在bintray中将新上传的文件状态修改为发布状态才能正常下载。</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>添加仓库：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    maven &#123;</span><br><span class="line">        url  <span class="string">"https://sunmoon.bintray.com/tt"</span> </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>添加依赖：<br><code>compile &#39;com.bintray.example:gradle-aar-example:1.1&#39;</code></p>
+<p>容易忘记如何添加仓库和添加依赖。不用担心，bintray网站中有详情的引导告诉我们如何操作，见这里的截图。</p>
+<ul>
+<li>添加仓库。点”set me up” -&gt; “Resolving artifacts using Gradle”</li>
+</ul>
+<p><img src="/images/1518063711773.webp" alt></p>
+<ul>
+<li>添加依赖。在”Maven build settings”中将Maven切换到Gradle<br><img src="/images/1518063762982.webp" alt></li>
+</ul>
+<p>这个进度条是不是很熟悉？<code>build.gradle</code>脚本变动后gradle正在下载我自己上传的库文件，说明我们可以从jCenter找到自己发布的库了！</p>
+<p><img src="/images/1518064033209.webp" alt></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="http://www.devtf.cn/?p=760" target="_blank" rel="noopener">如何使用Android Studio把自己的Android library分发到jCenter和Maven Central | 开发技术前线</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/gradle/" rel="tag"># Gradle</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/02/02/leakcanary-application/" rel="prev" title="LeakCanary实战">
+      <i class="fa fa-chevron-left"></i> LeakCanary实战
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/03/08/gradle-groovy-basic/" rel="next" title="Gradle之Groovy基础">
+      Gradle之Groovy基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#发布到第三方库"><span class="nav-number">1.</span> <span class="nav-text">发布到第三方库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#发布"><span class="nav-number">1.1.</span> <span class="nav-text">发布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用maven-publish插件发布"><span class="nav-number">1.1.1.</span> <span class="nav-text">使用maven-publish插件发布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用maven插件发布"><span class="nav-number">1.1.2.</span> <span class="nav-text">使用maven插件发布</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用自己发布的库"><span class="nav-number">1.2.</span> <span class="nav-text">使用自己发布的库</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#发布到jCenter"><span class="nav-number">2.</span> <span class="nav-text">发布到jCenter</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#下载代码"><span class="nav-number">2.1.</span> <span class="nav-text">下载代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#申请bintray账号"><span class="nav-number">2.2.</span> <span class="nav-text">申请bintray账号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置bintray插件"><span class="nav-number">2.3.</span> <span class="nav-text">配置bintray插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发布-1"><span class="nav-number">2.4.</span> <span class="nav-text">发布</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">2.5.</span> <span class="nav-text">使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

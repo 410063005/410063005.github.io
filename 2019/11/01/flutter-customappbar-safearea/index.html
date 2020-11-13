@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="我们的 Flutter 项目中自定义 AppBar 时 SafeArea 误用导致出现一个奇怪的 UI 问题。本文从这个问题出发，简单梳理了 Android 和 iOS 平台在 AppBar 视觉规范上的差异，然后使用 Dart DevTools 分析并成功解决问题。">
+<meta name="keywords" content="Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter UI 问题分析小结">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/11/01/flutter-customappbar-safearea/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="我们的 Flutter 项目中自定义 AppBar 时 SafeArea 误用导致出现一个奇怪的 UI 问题。本文从这个问题出发，简单梳理了 Android 和 iOS 平台在 AppBar 视觉规范上的差异，然后使用 Dart DevTools 分析并成功解决问题。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/ezgif1e54ad03a7341.gif">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725848702985.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15726104959036.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15726105059869.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725908638519.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725911634410.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725930597849.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15730062923455.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725942471237.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725908638519.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725956009978.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725954425771.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/safeareacustomappbarisok.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725961591573.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725963633326.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15730072986793.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725981523931.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725908638519.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.044Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flutter UI 问题分析小结">
+<meta name="twitter:description" content="我们的 Flutter 项目中自定义 AppBar 时 SafeArea 误用导致出现一个奇怪的 UI 问题。本文从这个问题出发，简单梳理了 Android 和 iOS 平台在 AppBar 视觉规范上的差异，然后使用 Dart DevTools 分析并成功解决问题。">
+<meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/ezgif1e54ad03a7341.gif">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/11/01/flutter-customappbar-safearea/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Flutter UI 问题分析小结 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/11/01/flutter-customappbar-safearea/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Flutter UI 问题分析小结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-11-01 11:28:59" itemprop="dateCreated datePublished" datetime="2019-11-01T11:28:59+08:00">2019-11-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>我们的 Flutter 项目中自定义 AppBar 时 SafeArea 误用导致出现一个奇怪的 UI 问题。本文从这个问题出发，简单梳理了 Android 和 iOS 平台在 AppBar 视觉规范上的差异，然后使用 Dart DevTools 分析并成功解决问题。</p>
+<a id="more"></a>
+<p>[TOC]</p>
+<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><h2 id="需求描述"><a href="#需求描述" class="headerlink" title="需求描述"></a>需求描述</h2><p>最近我们项目接入 Flutter 并重写一些简单页面。项目中很多 Native 页面的 AppBar (为简单起见，本文将 Android 的 ActionBar/Toolbar 以及 iOS 的 Navigation Bar 统称为 AppBar)有类似这样的交互效果，</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/ezgif1e54ad03a7341.gif" alt="组队排行榜"></p>
+<p>Flutter 页面也需要实现这种交互。一种做法是 Flutter 页面中保留原有的 Native AppBar，在 Flutter 列表滚动时通过 <code>MethodChannel</code> 通知 Native AppBar 更新其背景。不妨称这个方案为 Native 方案。另外一种做法是隐藏原有 Native AppBar，直接在 Flutter 层实现相同交互。这个方案称为 Flutter 方案。</p>
+<p>显然，Native 方案实现起来较为繁琐，且似乎偏离了 <code>MethodChannel</code> 的合理使用场景。而 Flutter 方案可以避免跟 Native 层不必要的通信，所以我们选择了该方案。</p>
+<h2 id="Flutter-方案"><a href="#Flutter-方案" class="headerlink" title="Flutter 方案"></a>Flutter 方案</h2><p><a href="https://github.com/flutter/flutter/tree/master/examples/flutter_gallery/lib/demo/fortnightly" target="_blank" rel="noopener">FortnightlyDemo</a> (Flutter 官方 example)实现了自定义的 <code>ShortAppBar</code>：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725848702985.jpg" alt="ShortAppBar -w396"></p>
+<p><code>ShortAppBar</code> 简化后的代码如下。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FortnightlyDemo</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">const</span> <span class="built_in">String</span> routeName = <span class="string">'/fortnightly'</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> MaterialApp(</span><br><span class="line">      title: <span class="string">'Fortnightly Demo'</span>,</span><br><span class="line">      theme: _fortnightlyTheme,</span><br><span class="line">      home: Scaffold(</span><br><span class="line">        body: Stack(</span><br><span class="line">          children: &lt;Widget&gt;[ FruitPage(), SafeArea(child: ShortAppBar()),],</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ShortAppBar</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> ShortAppBar(&#123; <span class="keyword">this</span>.onBackPressed &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> VoidCallback onBackPressed;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> SizedBox(</span><br><span class="line">      height: <span class="number">56</span>,</span><br><span class="line">      ...</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意这里一个细节，从视觉效果上来看这里的 <code>ShortAppBar</code> 并没有延伸到 Status Bar 下方，</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15726104959036.jpg" alt="ShortAppBar 没有延伸到 Status Bar 下方"></p>
+<p>参考 <code>ShortAppBar</code> 的代码并加上必要的交互，我很快就实现了 <code>CustomAppBar</code>。<br>而我们项目中要求 <code>CustomAppBar</code> 能延伸 Status Bar 下方。给 <code>SafeArea</code> 套上一个 <code>Container</code> 就可以实现这种效果。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Container(</span><br><span class="line">  color: appBarColor,</span><br><span class="line">  child: SafeArea(child: CustomAppBar())</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15726105059869.jpg" alt="ShortAppBar 延伸到 Status Bar 下方"></p>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><p><code>CustomAppBar</code> 在 Android 上的效果还不错，在 iPhone 7 上也能接受(高度偏大一点点)，但在 iPhone 11 上的实际效果显得很违和了：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725908638519.jpg" alt="CustomAppBar 在 iPhone 11 上偏高 -w301"></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725911634410.jpg" alt="CustomAppBar 比原生应用的 AppBar 要高 -w331"></p>
+<p>如上图，<code>CustomAppBar</code> 在 iPhone 11 上比原生应用的 AppBar 严重偏高。</p>
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>为什么 <code>CustomAppBar</code> 在 Android 机器上看起来很好，在 iOS (尤其是 iPhone 11)上却严重偏高？</p>
+<p>Flutter 可以在 Android 平台和 iOS 平台上在像素级别无差别地进行绘制，这是它的强大之处。但不容忽视的是，Android 视觉规范天生跟 iOS 有差异，如果不考虑并尊重这些差异而强行无差别绘制，肯定会导致某一端看起来怪怪的。</p>
+<p>所以很显然问题的一个原因是 <code>CustomAppBar</code> 的实现没有考虑平台差异。另一个原因则是 <code>SafeArea</code> 的误用导致 <code>CustomAppBar</code> 进一步偏高。接下来就这两个原因分别展开。</p>
+<h2 id="视觉规范的差异"><a href="#视觉规范的差异" class="headerlink" title="视觉规范的差异"></a>视觉规范的差异</h2><p>首先得承认 Android 和 iOS 视觉上天生存在某些不一致。 (这也是 Flutter 分别提供 material 和 cupertino 风格控件的原因)</p>
+<p>根据 <a href="https://developer.apple.com/design/human-interface-guidelines/ios/bars/navigation-bars/" target="_blank" rel="noopener">iOS Navigation Bar 设计规范</a>，标准的 AppBar 高度是 44pt (不包括 Status Bar)。</p>
+<p>根据 <a href="https://material.io/develop/android/" target="_blank" rel="noopener">Android Material Design 设计规范</a>，Status Bar 高度是 24dp，标准的 AppBar(Action Bar) 高度是 56dp。</p>
+<p><a href="https://github.com/flutterchina/gitme" target="_blank" rel="noopener">Gitme</a> 是用 Flutter 实现的应用，不过它是 Material Design 风格的，在 iOS 上看起来是这样：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725930597849.jpg" alt="Gitme -w359"></p>
+<p>总觉得哪里怪是不是？没错，这里的 AppBar 太高！</p>
+<p>所以第一个改进就是根据当前系统为 <code>CustomAppBar</code> 选择合适的高度。修改后的示意代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomAppBar</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> CustomAppBar(&#123; <span class="keyword">this</span>.onBackPressed &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> VoidCallback onBackPressed;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> SizedBox(</span><br><span class="line">      height: isAndroid ? <span class="number">56</span> : <span class="number">44</span>,</span><br><span class="line">      ...</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>事实上，Flutter 分别为 material 和 cupertino 提供了符合各自设计规范的 <a href="https://flutter.dev/docs/catalog/samples/basic-app-bar" target="_blank" rel="noopener">AppBar</a> 和 <a href="https://api.flutter.dev/flutter/cupertino/CupertinoNavigationBar-class.html" target="_blank" rel="noopener">CupertinoNavigationBar</a>，以简化应用开发。</p>
+<p>你可能会问，既然有了 AppBar 和 CupertinoNavigationBar，能不能这样处理？</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AnotherCustomAppBar</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">if</span> (isAndroid) &#123;</span><br><span class="line">        <span class="keyword">return</span> AppBar();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isIOS) &#123;</span><br><span class="line">        <span class="keyword">return</span> CupertinoNavigationBar();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>AnotherCustomAppBar</code> 理论上更简单优雅，但实践发现有以下问题：</p>
+<ul>
+<li><code>AppBar</code> 的高度是 56dp，而我们Android端应用的规范是 50dp，所以需要调整 <code>AppBar</code> 高度</li>
+<li><code>AppBar</code> 在 Android 端缺并不是沉浸式风格(status bar 和 AppBar 背景色不同)，所以需要对其进行适配</li>
+<li><code>CupertinoNavigationBar</code> 背景色设置成透明仍然会遮挡背景图片 (why?)</li>
+</ul>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15730062923455.jpg" alt="Android 上 status bar 有不同背景色 -w295"></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725942471237.jpg" alt="iOS 上背景图被 AppBar 遮挡 -w770"></p>
+<p>再考虑到后期可能还会给自定义的 AppBar 添加更多功能，直接使用 Flutter SDK 提供的 <code>AppBar</code> 和 <code>CupertinoNavigationBar</code> 相对不可控，所以放弃了 <code>AnotherCustomAppBar</code> 方案。</p>
+<hr>
+<h2 id="SafeArea-的误用"><a href="#SafeArea-的误用" class="headerlink" title="SafeArea 的误用"></a>SafeArea 的误用</h2><p>视觉规范差异能在一定程度解释 <code>CustomAppBar</code> 在 iOS 上高度过大的问题。但考虑到其实这个差异不太大 (56-44=12，应该只相差12个逻辑单位)，跟视觉上看到的高度偏差有所不符，所以仍然让人疑惑是否存在其他问题。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725908638519.jpg" alt="AppBar 过高 -w301"></p>
+<p>肉眼感觉这里的 AppBar 怕不止 56pt 吧? 不过肉眼不靠谱，还是上工具实测。</p>
+<h3 id="UI-分析"><a href="#UI-分析" class="headerlink" title="UI 分析"></a>UI 分析</h3><p><a href="https://flutter.dev/docs/development/tools/devtools/overview" target="_blank" rel="noopener">DevTools</a> 是 Dart 和 Flutter 下的性能测试与 bug 调试的工具。它的功能包括：</p>
+<ul>
+<li>检查 Flutter UI 布局</li>
+<li>检查 Flutter app 性能问题</li>
+<li>源码调试</li>
+<li>内存诊断</li>
+</ul>
+<p>我们这里重点关注检查 Flutter UI 布局的功能。用法如下：</p>
+<p>第一步，通过 <code>flutter attach</code> 连上 App 后，从 IDE 打开 DevTools。VS Code 使用 ⇧⌘P 调出如下窗口然后选择 “Open DevTools”</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725956009978.jpg" alt="Dart DevTools -w629"></p>
+<p>第二步，在打开的浏览器窗口中按以下步骤操作就可以检查目标 Widget。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725954425771.jpg" alt="Select Widget Mode -w1421"></p>
+<p>我们感兴趣的 Widget 是 <code>CustomAppBar</code>。以下三张图从不同角度近距离观察它。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/safeareacustomappbarisok.jpg" alt="CustomAppBar 真实高度"></p>
+<p>图一，从图中可以看出 <code>CustomAppBar</code> 的高度其实没有问题，正是预期中的 44pt (<code>CustomAppBar</code> 高度由 <code>CustomAppBarSize</code> 限制)</p>
+<hr>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725961591573.jpg" alt="CustomAppBar 可见高度 -w1117"></p>
+<p>图二，从图中可以看出 <code>CustomAppBar</code> 的高度看似偏高很多。</p>
+<ul>
+<li>可以看到红色框中的 <code>SafeArea</code> 为 <code>CustomAppBar</code> 添加了一个不正常的 <code>Padding</code>，bottom padding 为 34</li>
+<li><code>Padding</code> 本身是不可见的，所以通常不会有影响。不过 <code>SafeArea</code> 的父节点是一个可见的 <code>Container</code>，所以看起来 AppBar 偏高</li>
+</ul>
+<hr>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725963633326.jpg" alt="CustomAppBar 高度受 padding 影响 -w1096"></p>
+<p>图三，图中的 <code>CustomAppBar</code> 的高度正常。</p>
+<ul>
+<li><code>SafeArea</code> 同样为 <code>CustomAppBar</code> 添加了 <code>Padding</code>。不过这一回，bottom padding 为0</li>
+<li><code>SafeArea</code> 的父节点同样是一个可见的 <code>Container</code>，但由于 bottom padding 为0，所以看起来 AppBar 高度正常</li>
+</ul>
+<p>至此可以初步定位到问题跟 <code>SafeArea</code> 有关(我们使用 <code>SafeArea</code> 来适配刘海屏设备)。继续分析前先快速了解下 <a href="https://api.flutter.dev/flutter/widgets/SafeArea-class.html" target="_blank" rel="noopener">SafeArea</a>。如果你熟悉这个 Widget 建议直接略过下一节。</p>
+<h3 id="SafeArea-介绍"><a href="#SafeArea-介绍" class="headerlink" title="SafeArea 介绍"></a>SafeArea 介绍</h3><p>再来说说 SafeArea。iPhone X 首次使用刘海屏，并且屏幕的可显示区域也不再是方方正正的了。这就带来如下一个问题：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15730072986793.jpg" alt="异形屏导致内容显示不全 -w345"></p>
+<p>所以也就有了 SafeArea。这个<a href="https://www.youtube.com/watch?v=lkF0TQJO0bA" target="_blank" rel="noopener">视频</a>简单生动地介绍了  <a href="https://api.flutter.dev/flutter/widgets/SafeArea-class.html" target="_blank" rel="noopener">SafeArea</a>。</p>
+<p><code>SafeArea</code> 的代码很少，所以这里就直接贴上来了。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// A widget that insets its child by sufficient padding to avoid intrusions by</span></span><br><span class="line"><span class="comment">/// the operating system.</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SafeArea</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// Whether to avoid system intrusions on the left.</span></span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">bool</span> left;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// Whether to avoid system intrusions at the top of the screen, typically the</span></span><br><span class="line">  <span class="comment">/// system status bar.</span></span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">bool</span> top;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// Whether to avoid system intrusions on the right.</span></span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">bool</span> right;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// Whether to avoid system intrusions on the bottom side of the screen.</span></span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">bool</span> bottom;</span><br><span class="line">  <span class="keyword">final</span> Widget child;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">assert</span>(debugCheckHasMediaQuery(context));</span><br><span class="line">    <span class="keyword">final</span> MediaQueryData data = MediaQuery.of(context);</span><br><span class="line">    EdgeInsets padding = data.padding;</span><br><span class="line">    <span class="comment">// Bottom padding has been consumed - i.e. by the keyboard</span></span><br><span class="line">    <span class="keyword">if</span> (data.padding.bottom == <span class="number">0.0</span> &amp;&amp; data.viewInsets.bottom != <span class="number">0.0</span> &amp;&amp; maintainBottomViewPadding)</span><br><span class="line">      padding = padding.copyWith(bottom: data.viewPadding.bottom);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Padding(</span><br><span class="line">      padding: EdgeInsets.only(</span><br><span class="line">        left: math.max(left ? padding.left : <span class="number">0.0</span>, minimum.left),</span><br><span class="line">        top: math.max(top ? padding.top : <span class="number">0.0</span>, minimum.top),</span><br><span class="line">        right: math.max(right ? padding.right : <span class="number">0.0</span>, minimum.right),</span><br><span class="line">        bottom: math.max(bottom ? padding.bottom : <span class="number">0.0</span>, minimum.bottom),</span><br><span class="line">      ),</span><br><span class="line">      child: MediaQuery.removePadding(</span><br><span class="line">        context: context,</span><br><span class="line">        removeLeft: left,</span><br><span class="line">        removeTop: top,</span><br><span class="line">        removeRight: right,</span><br><span class="line">        removeBottom: bottom,</span><br><span class="line">        child: child,</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本质上来说，<code>SafeArea</code> 会主动为其 child 加上 <code>Padding</code> 以避免 UI 超出屏幕。</p>
+<ul>
+<li><code>SafeArea</code> 的四个属性 <code>left</code>,<code>top</code>,<code>right</code>, <code>bottom</code> 分别用于控制是否对 child 的各个边界做 safe 处理</li>
+<li>需要特别注意的是，<strong>这四个属性默认是 <code>true</code></strong>。</li>
+</ul>
+<h3 id="问题小节"><a href="#问题小节" class="headerlink" title="问题小节"></a>问题小节</h3><p>为了适配 iPhone X 等设备，我们会为 <code>CustomAppBar</code> 给添加 <code>SafeArea</code> 以避免内容显示不全。为了保证 <code>CustomAppBar</code> 能延伸到 Status Bar 下方，又在最外层加上了 <code>Container</code> 。适配代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Container(</span><br><span class="line">  child: SafeArea(</span><br><span class="line">    child: CustomAppBar())</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p><code>SafeArea</code> 底层调用 <code>MediaQuery.of</code> 来构建合理的 <code>Padding</code> 对象。一开始我并没有注意到 <code>MediaQuery.of(context).padding.bottom</code> 的返回值在不同机型上有区别。比如，由于是带圆角的屏幕，在 iPhone 11 上 <code>MediaQuery.of(context).padding.bottom</code> 返回值为 <code>34pt</code>。而在方形屏幕上该值为 <code>0pt</code>。见下图：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725981523931.jpg" alt="iPhone 11 上 padding.bottom 的返回值 -w908"></p>
+<p>另一方面，我没有注意到 <code>SafeArea.bottom</code> 值默认为 <code>true</code>。所以这里的 <code>padding.bottom</code> 返回的 <code>34pt</code> 被错误地用作 <code>CustomAppBar</code> 的 bottom padding，而最外层带红色背景的 <code>Container</code> 会让 <code>Padding</code> 占据的区域变得可见。</p>
+<p>最终，各种因素的综合影响导致 <code>CustomAppBar</code> 高度看起来严重偏大，如下图：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/06/15725908638519.jpg" alt="CustomAppBar 偏高 -w301"></p>
+<p>找到原因后，对代码进行第二个改进：指定 <code>SafeArea.bottom</code> 为 <code>false</code>。至此，问题解决！</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SafeArea(</span><br><span class="line">  bottom: <span class="keyword">false</span>,  </span><br><span class="line">  child: CustomAppBar()</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<hr>
+<p><strong>补充</strong>：为什么 <code>CupertinoNavigationBar</code> 不会有高度问题，它是怎么处理的？</p>
+<p>我翻了下源码，果然也是将 <code>bottom</code> 设置为 <code>false</code>。<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// flutter/packages/flutter/lib/src/cupertino/nav_bar.dart</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">return</span> SizedBox(</span><br><span class="line">  height: _kNavBarPersistentHeight + MediaQuery.of(context).padding.top,</span><br><span class="line">  child: SafeArea(</span><br><span class="line">    bottom: <span class="keyword">false</span>,</span><br><span class="line">    child: paddedToolbar,</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p>这从另一个角度印证了前面的分析以及解决方法是正确的。</p>
+<hr>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文记录了 Flutter 项目中自定义 AppBar 时遇到的一个 UI 问题。问题主要原因在于：</p>
+<ul>
+<li>Android 和 iOS 视觉规范的差异</li>
+<li><code>SafeArea</code> 的误用</li>
+</ul>
+<p>先从讨论了Android 和 iOS 视觉规范的差异对 Flutter UI 开发可能存在的影响，并使用 <a href="https://flutter.dev/docs/development/tools/devtools/overview" target="_blank" rel="noopener">Dart DevTools</a> 对 <code>SafeArea</code> 误用问题进行分析。</p>
+<p>再梳理了 <code>SafeArea</code> 的误用是如何影响 <code>CustomAppBar</code> 的高度的。</p>
+<ul>
+<li>首先，<code>SafeArea</code> 缺省的 <code>bottom</code> 为 <code>true</code></li>
+<li>第二，iPhone 11 上 <code>MediaQuery.of(context).padding.bottom</code> 返回值为 <code>34pt</code></li>
+<li>最后，<code>Container</code> 导致由 <code>SafeArea</code> 添加的 <code>Padding</code> 占据的区域可见</li>
+</ul>
+<p>基于上述分析对 <code>CustomAppBar</code> 的进行两处改进，</p>
+<ul>
+<li>根据当前系统为 <code>CustomAppBar</code> 选择合适的高度</li>
+<li>确保正确使用 <code>SafeArea</code>，避免产生不正确的可见区域。记住这两点，<ul>
+<li><code>SafeArea</code> 会为内层的 child 添加 <code>Padding</code></li>
+<li><code>SafeArea</code> 外层的 <code>Container</code> 会导致 <code>Padding</code> 占据的区域可见</li>
+</ul>
+</li>
+</ul>
+<p>通过这两处改进，成功解决自定义 AppBar 高度过大的问题，完美适配 iPhone 11。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/28/why-i-moved-from-java-to-dart/" rel="prev" title="(译)为什么我从 Java 迁移到 Dart">
+      <i class="fa fa-chevron-left"></i> (译)为什么我从 Java 迁移到 Dart
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/11/flutter-dont-fear-the-garbage-collector/" rel="next" title="(译) Flutter：不要担心垃圾收集器">
+      (译) Flutter：不要担心垃圾收集器 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#需求描述"><span class="nav-number">1.1.</span> <span class="nav-text">需求描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flutter-方案"><span class="nav-number">1.2.</span> <span class="nav-text">Flutter 方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到的问题"><span class="nav-number">1.3.</span> <span class="nav-text">遇到的问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题分析"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#视觉规范的差异"><span class="nav-number">2.1.</span> <span class="nav-text">视觉规范的差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SafeArea-的误用"><span class="nav-number">2.2.</span> <span class="nav-text">SafeArea 的误用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UI-分析"><span class="nav-number">2.2.1.</span> <span class="nav-text">UI 分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SafeArea-介绍"><span class="nav-number">2.2.2.</span> <span class="nav-text">SafeArea 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题小节"><span class="nav-number">2.2.3.</span> <span class="nav-text">问题小节</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

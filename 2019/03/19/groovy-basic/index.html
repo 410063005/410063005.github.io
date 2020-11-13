@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="总结一下 Groovy 和 Gradle。">
+<meta name="keywords" content="Gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Groovy与Gradle">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/03/19/groovy-basic/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="总结一下 Groovy 和 Gradle。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/03/19/groovy-basic/groovy-repo.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/03/19/groovy-basic/groovy-core.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/03/19/groovy-basic/groovy-tool.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/03/19/groovy-basic/what-is-closure.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/03/19/groovy-basic/groovy.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/03/19/groovy-basic/building-tools.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.010Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Groovy与Gradle">
+<meta name="twitter:description" content="总结一下 Groovy 和 Gradle。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2019/03/19/groovy-basic/groovy-repo.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/03/19/groovy-basic/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Groovy与Gradle | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/03/19/groovy-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Groovy与Gradle
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-03-19 12:20:09" itemprop="dateCreated datePublished" datetime="2019-03-19T12:20:09+08:00">2019-03-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>总结一下 Groovy 和 Gradle。<br><a id="more"></a></p>
+<h1 id="Groovy"><a href="#Groovy" class="headerlink" title="Groovy"></a>Groovy</h1><p>Github 上搜索热门的 groovy 项目，发现屈指可数。star 数大于 2000 的项目才 7 个。</p>
+<p><img src="groovy-repo.png" alt></p>
+<p>看来它的热度实在不怎么样。但考虑到 Gradle 的影响力，还是有必要粗略地了解一下这门语言。</p>
+<p>先上要点(排名分先后)：</p>
+<p><img src="groovy-core.png" alt></p>
+<h2 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h2><p>之所以要把工具放在第一个讲，是因为只要你打开了 Android Studio，其实是很容易尝试写 groovy 代码的。</p>
+<p>Android Studio &gt; Tools &gt; Groovy Console</p>
+<p><img src="groovy-tool.png" alt></p>
+<p>Tips：</p>
+<ul>
+<li>你也可以在 Groovy Console 写 Java 代码，所以如果下次想验证某个 Java API 的用法不如先在 Groovy Console 下先试一下</li>
+<li>找不到 Groovy Console 入口的话，双击 Shift 搜索 groovy console</li>
+</ul>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包是 groovy 最为强大的功能。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><img src="what-is-closure.png" alt></p>
+<p>你其实使用过闭包，只是没有意识到而已。比如<code>java.io.File.list(FilenameFilter)</code>，<code>FilenameFilter</code>接口只有一个<code>filter()</code>方法，这个方法对list()返回的列表进行过滤。而<code>FilenameFilter</code>接口存在的唯一意义就在于定义<code>filter()</code>方法。这是一种设计模式：方法对象模式(Method-Object pattern)。这种设计模式通常用来模拟一个行为：为一个目的定义一个独立的方法接口，这个接口的实例能够传递一组参数给方法，然后调用这个接口方法。相当繁琐，且导致非常多的类。虽然可以使用Java匿名类，但是会让代码更难理解。</p>
+<p>看看 Groovy 中是怎么做的。第一种是 Java 的处理方式，第二种是 Groovy 的处理方式。后一种方式是不是简单很多？</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].forEach(<span class="keyword">new</span> Consumer&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> accept(Integer integer) &#123;</span><br><span class="line">        println <span class="string">"for each "</span> + integer</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].each &#123; println <span class="string">"each "</span> + it &#125;</span><br></pre></td></tr></table></figure>
+<p><a href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/Closure.html" target="_blank" rel="noopener">Closure</a>定义如下。Closure 表示 Groovy 中的闭包对象，它是一个普通的 Java 类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Closure</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>Groovy 允许 Closure 以如下形式被调用：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> a = <span class="number">1</span></span><br><span class="line"><span class="keyword">def</span> c = &#123; a &#125;</span><br><span class="line"><span class="keyword">assert</span> c() == <span class="number">1</span></span><br><span class="line"><span class="keyword">assert</span> c.call() == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>简单来说，一个闭包是被包装为一个对象的代码块，见如下代码：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">log = <span class="string">''</span></span><br><span class="line"><span class="comment">// 使用赋值的方式声明闭包</span></span><br><span class="line">Closure c = &#123; counter -&gt; log += counter&#125;</span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each(c)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 直接声明闭包</span></span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each(&#123; counter -&gt; log += counter &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 闭包的缩写定义，省略了方法调用时的括号</span></span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each &#123; counter -&gt; log += counter&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 闭包的缩写定义，使用隐式参数it</span></span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each &#123; log += it &#125;</span><br></pre></td></tr></table></figure>
+<p>这里使用 Groovy 写个 Visitor 模式：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Shape</span> &#123;</span></span><br><span class="line">    <span class="keyword">def</span> accept(Closure yield) &#123;</span><br><span class="line">        yield(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Square</span> <span class="keyword">extends</span> <span class="title">Shape</span> &#123;</span></span><br><span class="line">    <span class="keyword">def</span> width</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> area() &#123;</span><br><span class="line">        width**<span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> <span class="keyword">extends</span> <span class="title">Shape</span> &#123;</span></span><br><span class="line">    <span class="keyword">def</span> radius</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> area() &#123;</span><br><span class="line">        Math.PI * (radius**<span class="number">2</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Drawing</span> &#123;</span></span><br><span class="line">    List&lt;Shape&gt; shapes</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> accept(Closure yield) &#123;</span><br><span class="line">        shapes.each &#123; it.accept(yield) &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> drawing = <span class="keyword">new</span> Drawing(</span><br><span class="line"><span class="symbol">        shapes:</span> [<span class="keyword">new</span> Square(<span class="string">width:</span> <span class="number">1</span>), <span class="keyword">new</span> Circle(<span class="string">radius:</span> <span class="number">2</span>)]</span><br><span class="line">)</span><br><span class="line"><span class="keyword">def</span> total = <span class="number">0</span></span><br><span class="line">drawing.accept &#123; total += it.area() &#125;</span><br><span class="line">println(<span class="string">"total is $total"</span>)</span><br></pre></td></tr></table></figure>
+<p>你能找出谁是 Visitor 吗？</p>
+<h3 id="理解闭包"><a href="#理解闭包" class="headerlink" title="理解闭包"></a>理解闭包</h3><p>Closure 有三个属性，分别是 this, owner, delegate, 通常delegate被设置为 owner  <a href="https://stackoverflow.com/questions/8120949/what-does-delegate-mean-in-groovy" target="_blank" rel="noopener">来源</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">def testClosure(closure) &#123;</span><br><span class="line">    closure()</span><br><span class="line">&#125;</span><br><span class="line">testClosure() &#123;</span><br><span class="line">    println &quot;this is &quot; + this + &quot;, super:&quot; + this.getClass().superclass.name</span><br><span class="line">    println &quot;owner is &quot; + owner + &quot;, super:&quot; + owner.getClass().superclass.name</span><br><span class="line">    println &quot;delegate is &quot; + delegate + &quot;, super:&quot; + delegate.getClass().superclass.name</span><br><span class="line"></span><br><span class="line">    testClosure() &#123;</span><br><span class="line">        println &quot;this is &quot; + this + &quot;, super:&quot; + this.getClass().superclass.name</span><br><span class="line">        println &quot;owner is &quot; + owner + &quot;, super:&quot; + owner.getClass().superclass.name</span><br><span class="line">        println &quot;delegate is &quot; + delegate + &quot;, super:&quot; + delegate.getClass().superclass.name</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">this is ideaGroovyConsole@610f7aa, super:groovy.lang.Script</span><br><span class="line">owner is ideaGroovyConsole@610f7aa, super:groovy.lang.Script</span><br><span class="line">delegate is ideaGroovyConsole@610f7aa, super:groovy.lang.Script</span><br><span class="line">this is ideaGroovyConsole@610f7aa, super:groovy.lang.Script</span><br><span class="line">owner is ideaGroovyConsole$_run_closure1@2b4bac49, super:groovy.lang.Closure</span><br><span class="line">delegate is ideaGroovyConsole$_run_closure1@2b4bac49, super:groovy.lang.Closure</span><br></pre></td></tr></table></figure>
+<p>每个闭包都有一个委托对象，Groovy 使用它来查找变量和方法的引用，而不是作为闭包的局部变量或参数。Gradle 在配置闭包中使用到它，把委托对象设置为被配置的对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    assert delegate == project.dependencies // 这一行证明了将dependencies的委托对象设置为被配置的对象</span><br><span class="line">    compile(&apos;junit:junit:4.11&apos;)</span><br><span class="line">    delegate.compile(&apos;junit:junit:4.11&apos;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="GString"><a href="#GString" class="headerlink" title="GString"></a>GString</h2><p>GString 中可以使用占用位，格式化字符串时特别方便。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def name = &apos;cm&apos;</span><br><span class="line">def hello = &quot;hello $name&quot;</span><br></pre></td></tr></table></figure>
+<p>举例说明 GString 的用法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">4.times &#123;</span><br><span class="line">     task &quot;task$it&quot; &lt;&lt; &#123;</span><br><span class="line">         println &quot;I&apos;m task number $it&quot;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p>Java 中无法直接表示 List 字面量和 Map 字面量，非常不便。Groovy 解决了这个痛点：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">def</span> map = [<span class="number">200</span>: <span class="string">'OK'</span>, <span class="number">400</span>: <span class="string">'BAD REQUEST'</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="def-类型"><a href="#def-类型" class="headerlink" title="def 类型"></a>def 类型</h2><p>Groovy 中 <code>def</code> 关键字表示动态类型(或者说是没有类型，但内部实际上是 Object 类型)。</p>
+<h2 id="其他话题"><a href="#其他话题" class="headerlink" title="其他话题"></a>其他话题</h2><h3 id="参数类型"><a href="#参数类型" class="headerlink" title="参数类型"></a>参数类型</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> oracle(Object o) &#123; <span class="keyword">return</span> <span class="string">'object'</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> oracle(String o) &#123; <span class="keyword">return</span> <span class="string">'string'</span> &#125;</span><br><span class="line"></span><br><span class="line">Object x = <span class="number">1</span></span><br><span class="line">Object y = <span class="string">'foo'</span></span><br><span class="line">println(oracle(x))</span><br><span class="line">println(oracle(y))</span><br></pre></td></tr></table></figure>
+<p>以上这段 Groovy 代码输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">object</span><br><span class="line">string</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">oracle</span><span class="params">(Object o)</span> </span>&#123; <span class="keyword">return</span> <span class="string">"object"</span>; &#125;</span><br><span class="line">    <span class="function">String <span class="title">oracle</span><span class="params">(String o)</span> </span>&#123; <span class="keyword">return</span> <span class="string">"string"</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">t1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Object x = <span class="number">1</span>;</span><br><span class="line">        Object y = <span class="string">"foo"</span>;</span><br><span class="line">        System.out.println(oracle(x));</span><br><span class="line">        System.out.println(oracle(y));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上这段 Java 代码输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">object</span><br><span class="line">object</span><br></pre></td></tr></table></figure>
+<p>对比可以发现，Groovy 使用参数的动态类型来查找方法，而 Java 使用参数的静态类型来查找方法。Java 这种做法有问题，以 <code>equals()</code> 方法为例，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (obj == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (!(obj <span class="keyword">instanceof</span> E)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    E e = (E) obj;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Java 这种做法似乎是主动丢失掉类型信息。</p>
+<h3 id="MetaClass"><a href="#MetaClass" class="headerlink" title="MetaClass"></a>MetaClass</h3><p>在 Groovy 中，所有的对象都实现了 GroovyObject 接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GroovyObject</span> </span>&#123;</span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">invokeMethod</span><span class="params">(String name, Object args)</span></span>; <span class="function"><span class="keyword">public</span> Object <span class="title">getProperty</span><span class="params">(String property)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setProperty</span><span class="params">(String property, Object newValue)</span></span>; <span class="function"><span class="keyword">public</span> MetaClass <span class="title">getMetaClass</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMetaClass</span><span class="params">(MetaClass metaClass)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MetaClass 是 Groovy 元概念的核心，它提供了一个 Groovy 类的所有的元数据，如可用的方法、属性列表。</p>
+<p>GroovyObject 的 invokeMethod 方法默认实现总是转到相应的 MetaClass。</p>
+<p>MetaClass 被存储在一个名称为 MetaClassRegistry 的中心存储器中。</p>
+<h3 id="Groovy-代理与委托"><a href="#Groovy-代理与委托" class="headerlink" title="Groovy 代理与委托"></a>Groovy 代理与委托</h3><p><a href="http://www.flysnow.org/2016/05/22/groovy-basis.html" target="_blank" rel="noopener">Groovy基础 | 飞雪无情的博客</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">task configClosure &lt;&lt; &#123;</span><br><span class="line">    person &#123;</span><br><span class="line">        personName = &quot;张三&quot;</span><br><span class="line">        personAge = 20</span><br><span class="line">        dumpPerson()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">   </span><br><span class="line">class Person &#123;</span><br><span class="line">    String personName</span><br><span class="line">    int personAge</span><br><span class="line">   </span><br><span class="line">    def dumpPerson()&#123;</span><br><span class="line">        println &quot;name is $&#123;personName&#125;,age is $&#123;personAge&#125;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">   </span><br><span class="line">def person(Closure&lt;Person&gt; closure)&#123;</span><br><span class="line">    Person p = new Person();</span><br><span class="line">    closure.delegate = p</span><br><span class="line">    //委托模式优先</span><br><span class="line">    closure.setResolveStrategy(Closure.DELEGATE_FIRST);</span><br><span class="line">    closure(p)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="完整内容"><a href="#完整内容" class="headerlink" title="完整内容"></a>完整内容</h2><p><img src="groovy.png" alt></p>
+<h1 id="Gradle-DSL"><a href="#Gradle-DSL" class="headerlink" title="Gradle DSL"></a>Gradle DSL</h1><p><a href="https://docs.gradle.org/current/dsl/" target="_blank" rel="noopener">Gradle DSL</a> 对 DSL 有详细的描述。</p>
+<p>先来看几个基本概念。</p>
+<ul>
+<li>Gradle脚本是配置脚本。当脚本执行时，它会配置一个特定类型的对象。比如构建脚本会配<a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html" target="_blank" rel="noopener">Project</a>对象。它是脚本的 <em>代理对象</em></li>
+<li>每种Gradle脚本都实现了<a href="https://docs.gradle.org/current/dsl/org.gradle.api.Script.html" target="_blank" rel="noopener">Script</a>接口。</li>
+</ul>
+<p>下表显示了每种Gradle脚本的代理对象。可以在脚本中使用代码对象的属性和方法。</p>
+<table>
+<thead>
+<tr>
+<th>script类型</th>
+<th>代理对象</th>
+<th>对应文件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>构建脚本</td>
+<td>Project</td>
+<td>build.gradle</td>
+</tr>
+<tr>
+<td>初始化脚本</td>
+<td>Gradle</td>
+<td>init.gradle?</td>
+</tr>
+<tr>
+<td>设置脚本</td>
+<td>Settings</td>
+<td>setting.gradle</td>
+</tr>
+</tbody>
+</table>
+<h2 id="脚本结构"><a href="#脚本结构" class="headerlink" title="脚本结构"></a>脚本结构</h2><ul>
+<li>构建脚本由零个语句或脚本块组成<ul>
+<li>语句</li>
+<li>方法调用</li>
+<li>属性赋值</li>
+<li>本地变量声明</li>
+<li>脚本块，实质上是一个接收闭包作为参数的方法调用。顶层的常用脚本块包括：</li>
+<li><a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:allprojects(groovy.lang.Closure" target="_blank" rel="noopener">allprojects { }</a>) - 对项目及子项目进行配置</li>
+<li><a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:buildscript(groovy.lang.Closure" target="_blank" rel="noopener">buildscript { }</a>) - 构建脚本的类路径</li>
+<li><a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:dependencies(groovy.lang.Closure" target="_blank" rel="noopener">dependencies { }</a>) - 当前项目的依赖</li>
+<li><a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:repositories(groovy.lang.Closure" target="_blank" rel="noopener">repositories { }</a>) - 当前项目的中央库</li>
+</ul>
+</li>
+<li>构建脚本是Groovy脚本，可以包含方法定义和类定义</li>
+</ul>
+<h2 id="主要类型"><a href="#主要类型" class="headerlink" title="主要类型"></a>主要类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html" target="_blank" rel="noopener">Project</a></td>
+<td>Gradle的主要API接口</td>
+</tr>
+<tr>
+<td><a href="https://docs.gradle.org/current/dsl/org.gradle.api.Task.html" target="_blank" rel="noopener">Task</a></td>
+<td>构建中最小的工作单元</td>
+</tr>
+<tr>
+<td><a href="https://docs.gradle.org/current/dsl/org.gradle.api.invocation.Gradle.html" target="_blank" rel="noopener">Gradle</a></td>
+<td>代表对Gradle的一次调用</td>
+</tr>
+<tr>
+<td><a href="https://docs.gradle.org/current/dsl/org.gradle.api.initialization.Settings.html" target="_blank" rel="noopener">Settings</a></td>
+<td>用于配置和初始化Project实例</td>
+</tr>
+<tr>
+<td><a href="https://docs.gradle.org/current/dsl/org.gradle.api.Script.html" target="_blank" rel="noopener">Script</a></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html" target="_blank" rel="noopener">SourceSet</a></td>
+<td>Java代码和资源</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Project"><a href="#Project" class="headerlink" title="Project"></a>Project</h2><p>通过 project 对象，可以访问到 gradle.properties 里的属性。如果此类文件中的属性有一个systemProp.的前缀，该属性和它的值会被添加到系统属性。你可以通过使用方法 hasProperty(‘propertyName’) 来进行检查属性是否存在，它返回 true 或 false</p>
+<p><code>Project.configure(Object, Closure)</code>用于配置任意对象，</p>
+<h2 id="常见-Task"><a href="#常见-Task" class="headerlink" title="常见 Task"></a>常见 Task</h2><p>常见的包括 copy, delete, jar, test, upload。 每个 Task 都是一个脚本的属性(更准确地说，Task 是 Project 的属性)。</p>
+<p>定义一个名为 <code>hello</code> 的 Task：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">task hello</span><br><span class="line">println tasks.hello.name</span><br><span class="line">println tasks[&apos;hello&apos;].name</span><br></pre></td></tr></table></figure>
+<p>每个任务都有一个 inputs 和 outputs 的属性，用来声明任务的输入和输出。任务的 inputs 属性是 TaskInputs 类型。任务的 outputs 属性是 TaskOutputs 类型。 一个没有定义输出的任务将永远不会被当作是最新的。</p>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><p><code>gradle tasks</code> 查看默认tasks</p>
+<p><code>gradle tasks --all</code> 查看全部tasks</p>
+<p><code>gradle properties</code> 查看插件添加的属性以及默认值</p>
+<p><code>gradle projects</code> 列出子项目名称列表</p>
+<p><code>gradle help --task someTask</code> 显示指定任务的详细信息</p>
+<p><code>--profile</code> 收集构建期信息并保存到 build/reports/profile 目录下并且以构建时间命名这些文件。</p>
+<h1 id="Gradle-疑难"><a href="#Gradle-疑难" class="headerlink" title="Gradle 疑难"></a>Gradle 疑难</h1><p>Gradle 的核心在于基于 Groovy 的丰富而可扩展的域描述语言(DSL)。 但同时也带来了一些理解上的障碍。</p>
+<p>障碍主要是语法层面的。以Android 项目的 Gradle 构建脚本为例：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根目录的 build.gradle 文件</span></span><br><span class="line">buildscript &#123;</span><br><span class="line">    ext.kotlin_version = <span class="string">'1.1.51'</span></span><br><span class="line">	</span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:3.0.1'</span></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task clean(<span class="string">type:</span> Delete) &#123;</span><br><span class="line">    delete rootProject.buildDir</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 子目录的 build.gradle 文件 </span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">26</span></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">"com.example.kingcmchen.myapplication"</span></span><br><span class="line">        minSdkVersion <span class="number">15</span></span><br><span class="line">        ...</span><br><span class="line">        vectorDrawables.useSupportLibrary = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="literal">false</span></span><br><span class="line">            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation fileTree(<span class="string">dir:</span> <span class="string">'libs'</span>, <span class="string">include:</span> [<span class="string">'*.jar'</span>])</span><br><span class="line">    implementation <span class="string">'com.android.support:appcompat-v7:26.1.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际使用过程中我大概知道使用 <code>implementation</code> 如何添加更多依赖，但仍然有以下问题：</p>
+<ul>
+<li>问题一：<code>buildscript {}</code>，<code>allprojects {}</code>，<code>android {}</code>，<code>dependencies {}</code>的含义是什么？</li>
+<li>问题二：<code>buildscript {}</code>中的<code>ext.kotlin_version = &#39;1.1.51&#39;</code>是在赋值吗？<code>ext</code>又是什么？</li>
+<li>问题三：<code>google()</code>和<code>jcenter()</code>是函数调用吗？</li>
+<li>问题四：<code>defaultConfig {}</code>中<code>minSdkVersion 15</code>和<code>vectorDrawables.useSupportLibrary = true</code>，一个有”=”一个没有”=”，有什么区别？</li>
+<li>问题五：如何理解<code>apply plugin: &#39;com.android.application&#39;</code></li>
+</ul>
+<p>弄明白这几个问题前先要了解 Groovy 的几个知识点：</p>
+<ul>
+<li>如果闭包是方法的最后一个参数，可以放在括号外</li>
+<li>方法调用的括号可以省略</li>
+<li>Groovy map 通常使用字符串作为 key，key 的引号可以省略</li>
+</ul>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> testClosure(Closure closure) &#123;</span><br><span class="line">    closure()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 原始语法</span></span><br><span class="line">testClosure(&#123; println <span class="string">'Hello World'</span>&#125;)</span><br><span class="line"><span class="comment">// 支持的语法</span></span><br><span class="line">testClosure() &#123; println <span class="string">'Hello World'</span> &#125;</span><br><span class="line"><span class="comment">// 简化后的语法</span></span><br><span class="line">testClosure &#123; println <span class="string">'Hello World'</span> &#125;</span><br></pre></td></tr></table></figure>
+<p>map 的原始形式与简化形式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// Map literal,  apply from: &apos;other.gradle&apos;与此类似</span><br><span class="line">apply plugin: &apos;java&apos;</span><br><span class="line"></span><br><span class="line">Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;()</span><br><span class="line">map.put(&apos;plugin&apos;, &apos;java&apos;)</span><br><span class="line">apply(map)</span><br></pre></td></tr></table></figure>
+<h2 id="问题一"><a href="#问题一" class="headerlink" title="问题一"></a>问题一</h2><p><code>buildscript {}</code> 是在调用 <code>Project</code> 类的方法，方法原型是 <code>void buildscript(Closure configureClosure)</code>。这个方法会对当前 Project 的 <code>ScriptHandler</code> 执行指定的闭包。</p>
+<p><code>allprojects {}</code> 也是在调用 <code>Project</code> 类的方法，方法原型是 <code>void allprojects(Closure configureClosure)</code></p>
+<p><code>dependencies {}</code> 则是调用 <code>ScriptHandler</code> 类的方法，方法原型是 <code>void dependencies(Closure configureClosure)</code></p>
+<p>但 <code>android {}</code> 不是方法，而一个名为 “android” 的插件，相关的类有：</p>
+<ul>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/master/build-system/gradle/src/main/groovy/com/android/build/gradle/AppExtension.java" target="_blank" rel="noopener">com.android.build.gradle.AppExtension</a></li>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/master/build-system/gradle/src/main/groovy/com/android/build/gradle/AppPlugin.groovy" target="_blank" rel="noopener">com.android.build.gradle.AppPlugin</a></li>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/master/build-system/gradle/src/main/groovy/com/android/build/gradle/BasePlugin.java" target="_blank" rel="noopener">com.android.build.gradle.BasePlugin</a></li>
+</ul>
+<p>关键代码如下(如果你了解 Gradle 插件开发的话，应该不会对这个代码感到陌生)：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Base class for all Android plugins</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BasePlugin</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">abstract</span> Class&lt;? extends BaseExtension&gt; getExtensionClass();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createExtension</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        extension = project.getExtensions().create(<span class="string">"android"</span>, getExtensionClass(),</span><br><span class="line">                project, instantiator, androidBuilder, sdkHandler,</span><br><span class="line">                buildTypeContainer, productFlavorContainer, signingConfigContainer,</span><br><span class="line">                extraModelInfo, isLibrary());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AppPlugin</span> <span class="keyword">extends</span> <span class="title">BasePlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="问题二"><a href="#问题二" class="headerlink" title="问题二"></a>问题二</h2><h2 id="问题三"><a href="#问题三" class="headerlink" title="问题三"></a>问题三</h2><p><code>google()</code> 和 <code>jcenter()</code> 都是 <code>RepositoryHandler</code> 接口的方法，原型分别为：</p>
+<ul>
+<li><code>MavenArtifactRepository google()</code></li>
+<li><code>MavenArtifactRepository jcenter()</code></li>
+</ul>
+<h2 id="问题四"><a href="#问题四" class="headerlink" title="问题四"></a>问题四</h2><p><code>defaultConfig {}</code> 是在调用 <code>BaseExtension.defaultConfig(Action&lt;ProductFlavor&gt; action)</code> 方法。其中</p>
+<ul>
+<li><code>minSdkVersion 15</code> 是方法调用，它是 <code>minSdkVersion(15)</code> 的简写形式。方法原型是 <code>BaseFlavor.minSdkVersion(int minSdkVersion)</code></li>
+<li><code>vectorDrawables.useSupportLibrary = true</code> 也是方法调用，它的完整形式见以下代码</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VectorDrawablesOptions opt = ProductFlavor.getVectorDrawables();</span><br><span class="line">opt.setUseSupportLibrary(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="问题五"><a href="#问题五" class="headerlink" title="问题五"></a>问题五</h2><p>至于 <code>apply plugin: &#39;com.android.application&#39;</code>，它是方法调用，完整形式是 <code>Project.apply([&#39;plugin&#39;: &#39;com.android.application&#39;])</code>。</p>
+<p>调用方法时括号是可选的。类似的例子还有 <code>include()</code> 及 <code>dependsOn()</code>。 以 <code>include()</code> 为例：</p>
+<ul>
+<li>简写形式：<code>include &#39;:lib1&#39;, &#39;:lib2&#39;, &#39;:lib3&#39;</code></li>
+<li>完整形式：<code>include(&#39;:lib1&#39;, &#39;:lib2&#39;, &#39;:lib3&#39;)</code></li>
+</ul>
+<h1 id="零碎知识"><a href="#零碎知识" class="headerlink" title="零碎知识"></a>零碎知识</h1><h2 id="构建工具发展"><a href="#构建工具发展" class="headerlink" title="构建工具发展"></a>构建工具发展</h2><p><a href="http://blog.csdn.net/yanquan345/article/details/46710869" target="_blank" rel="noopener">构建工具的发展及Android Gradle快速上手</a>介绍了构建工具的产生背景及其发展，我用一张图稍加总结一下。</p>
+<div align="center"><br><img src="building-tools.png" width="60%" height="60%"><br></div>
+
+<h2 id="修改-APK-名"><a href="#修改-APK-名" class="headerlink" title="修改 APK 名"></a>修改 APK 名</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">android.applicationVariants.all &#123; variant -&gt;</span><br><span class="line">    variant.outputs.all&#123; output -&gt;</span><br><span class="line">        def file = output.outputFile</span><br><span class="line">        output.outputFileName = file.name.replace(&quot;.apk&quot;, &quot;-modify.apk&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="transitive-dependencies"><a href="#transitive-dependencies" class="headerlink" title="transitive dependencies"></a>transitive dependencies</h2><p>transitive dependencies 见<a href="https://docs.gradle.org/current/userguide/multi_project_builds.html#sec:project_jar_dependencies" target="_blank" rel="noopener">官方文档</a></p>
+<h2 id="compile-api-implementation"><a href="#compile-api-implementation" class="headerlink" title="compile, api, implementation"></a>compile, api, implementation</h2><p>TODO</p>
+<p>## </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">task hello1 &#123; println &apos;hello1&apos; &#125;</span><br><span class="line">task hello2 &lt;&lt; &#123; println &apos;hello2&apos; &#125;</span><br></pre></td></tr></table></figure>
+<p><code>gradle tasks</code> 时前者后打印 <code>hello1</code> 但不会打印 <code>hello2</code>。如何解释？</p>
+<p>TODO</p>
+<h2 id="allprojects-与-subprojects"><a href="#allprojects-与-subprojects" class="headerlink" title="allprojects 与 subprojects"></a>allprojects 与 subprojects</h2><p>这里两个hello有什么区别？</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">    task hello &#123;</span><br><span class="line">        doLast &#123; task -&gt;</span><br><span class="line">            println <span class="string">"I'm $task.project.name"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">subprojects &#123;</span><br><span class="line">    hello &#123;</span><br><span class="line">        doLast &#123;</span><br><span class="line">            println <span class="string">"- I depend on water"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Configuration-on-demand"><a href="#Configuration-on-demand" class="headerlink" title="Configuration on demand"></a>Configuration on demand</h2><p>编译IGame时为什么还会检查GameLife</p>
+<h2 id="如何理解-ext"><a href="#如何理解-ext" class="headerlink" title="如何理解 ext"></a>如何理解 ext</h2><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://share.weiyun.com/5ICjqlI" target="_blank" rel="noopener">Groovy In Action</a></p>
+<p><a href="https://www.processon.com/view/link/5c908d7de4b0c996d368845b" target="_blank" rel="noopener">Groovy In Action 思维导图总结</a></p>
+<p><a href="http://blog.csdn.net/yanquan345/article/details/46710869" target="_blank" rel="noopener">构建工具的发展及Android Gradle快速上手</a></p>
+<p><a href="https://www.zhihu.com/question/30432152" target="_blank" rel="noopener">如何通俗地理解Gradle</a></p>
+<p><a href="https://developer.android.com/studio/build/index.html?hl=zh-cn" target="_blank" rel="noopener">https://developer.android.com/studio/build/index.html?hl=zh-cn</a></p>
+<p><a href="https://dongchuan.gitbooks.io/gradle-user-guide-/" target="_blank" rel="noopener">https://dongchuan.gitbooks.io/gradle-user-guide-/</a> </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/gradle/" rel="tag"># Gradle</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/10/2019-02-10-leakcanary-bug/" rel="prev" title="LeakCanary 的几个 bug">
+      <i class="fa fa-chevron-left"></i> LeakCanary 的几个 bug
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/19/learn-jetpack-nav-1/" rel="next" title="Android Jetpack 学习笔记之 Navigation">
+      Android Jetpack 学习笔记之 Navigation <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Groovy"><span class="nav-number">1.</span> <span class="nav-text">Groovy</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#工具"><span class="nav-number">1.1.</span> <span class="nav-text">工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#闭包"><span class="nav-number">1.2.</span> <span class="nav-text">闭包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.2.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用法"><span class="nav-number">1.2.2.</span> <span class="nav-text">用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解闭包"><span class="nav-number">1.2.3.</span> <span class="nav-text">理解闭包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GString"><span class="nav-number">1.3.</span> <span class="nav-text">GString</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集合"><span class="nav-number">1.4.</span> <span class="nav-text">集合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#def-类型"><span class="nav-number">1.5.</span> <span class="nav-text">def 类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他话题"><span class="nav-number">1.6.</span> <span class="nav-text">其他话题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数类型"><span class="nav-number">1.6.1.</span> <span class="nav-text">参数类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MetaClass"><span class="nav-number">1.6.2.</span> <span class="nav-text">MetaClass</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Groovy-代理与委托"><span class="nav-number">1.6.3.</span> <span class="nav-text">Groovy 代理与委托</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完整内容"><span class="nav-number">1.7.</span> <span class="nav-text">完整内容</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Gradle-DSL"><span class="nav-number">2.</span> <span class="nav-text">Gradle DSL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#脚本结构"><span class="nav-number">2.1.</span> <span class="nav-text">脚本结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主要类型"><span class="nav-number">2.2.</span> <span class="nav-text">主要类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Project"><span class="nav-number">2.3.</span> <span class="nav-text">Project</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见-Task"><span class="nav-number">2.4.</span> <span class="nav-text">常见 Task</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用命令"><span class="nav-number">2.5.</span> <span class="nav-text">常用命令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Gradle-疑难"><span class="nav-number">3.</span> <span class="nav-text">Gradle 疑难</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题一"><span class="nav-number">3.1.</span> <span class="nav-text">问题一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题二"><span class="nav-number">3.2.</span> <span class="nav-text">问题二</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题三"><span class="nav-number">3.3.</span> <span class="nav-text">问题三</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题四"><span class="nav-number">3.4.</span> <span class="nav-text">问题四</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题五"><span class="nav-number">3.5.</span> <span class="nav-text">问题五</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#零碎知识"><span class="nav-number">4.</span> <span class="nav-text">零碎知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#构建工具发展"><span class="nav-number">4.1.</span> <span class="nav-text">构建工具发展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改-APK-名"><span class="nav-number">4.2.</span> <span class="nav-text">修改 APK 名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#transitive-dependencies"><span class="nav-number">4.3.</span> <span class="nav-text">transitive dependencies</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#compile-api-implementation"><span class="nav-number">4.4.</span> <span class="nav-text">compile, api, implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#allprojects-与-subprojects"><span class="nav-number">4.5.</span> <span class="nav-text">allprojects 与 subprojects</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Configuration-on-demand"><span class="nav-number">4.6.</span> <span class="nav-text">Configuration on demand</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何理解-ext"><span class="nav-number">4.7.</span> <span class="nav-text">如何理解 ext</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

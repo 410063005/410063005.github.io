@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="FitNesse用于集成测试，非常适用于测试接口。但感觉使用并不广泛。试用一下，并记录用法。">
+<meta name="keywords" content="测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FitNesse试用">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/01/09/fitnesse-demo/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="FitNesse用于集成测试，非常适用于测试接口。但感觉使用并不广泛。试用一下，并记录用法。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515405168646.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515405277765.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515413862042.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515462902359.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515462989612.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515413862042.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515413862042.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515465864078.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515466040741.webp">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.858Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FitNesse试用">
+<meta name="twitter:description" content="FitNesse用于集成测试，非常适用于测试接口。但感觉使用并不广泛。试用一下，并记录用法。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/1515405168646.webp">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/01/09/fitnesse-demo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>FitNesse试用 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/01/09/fitnesse-demo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FitNesse试用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-01-09 11:11:13" itemprop="dateCreated datePublished" datetime="2018-01-09T11:11:13+08:00">2018-01-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>FitNesse用于集成测试，非常适用于测试接口。但感觉使用并不广泛。试用一下，并记录用法。<br><a id="more"></a></p>
+<h1 id="安装和运行"><a href="#安装和运行" class="headerlink" title="安装和运行"></a>安装和运行</h1><p>从<a href="http://fitnesse.org/FitNesseDownload" target="_blank" rel="noopener">FitNesseDownload</a>下载jar包。目前最新包是release 20161106。</p>
+<p>命令行中使用<code>java  -jar fitnesse-standalone.jar -p 9999</code>启动fitnesse server。</p>
+<p><img src="/images/1515405168646.webp" alt></p>
+<p>fitnesse server启动后，我们可以通过浏览器访问，截图如下：</p>
+<p><img src="/images/1515405277765.webp" alt></p>
+<h1 id="用法简介"><a href="#用法简介" class="headerlink" title="用法简介"></a>用法简介</h1><p>感觉FitNesse文档过于简单，不过它提供了<a href="http://fitnesse.org/FitNesse.UserGuide.TwoMinuteExample" target="_blank" rel="noopener">A Two-Minute Example</a>的例子。我们直接看例子。</p>
+<p>例子用于测试一个计算器程序中的除法运算。比如，对于10除以2，你期望返回5。FitNesse中使用 <strong>input</strong> 和 <strong>expected output</strong> 数据表来表示 test。类似这样：</p>
+<p><img src="/images/1515413862042.webp" alt></p>
+<p>FitNesse中这里的表格称为<a href="http://localhost:9999/FitNesse.UserGuide.WritingAcceptanceTests.SliM.DecisionTable" target="_blank" rel="noopener">Decision Table</a>，例子中的每行数据代表一个完整的场景。”numerator”和”denominator”列表示input，而”quotient?”的问号告诉FitNesse这一列表示是 expected output(期望的输出值)。以”10/2 = 5.0”为例，可将其理解为一个问句：”如果使用10除以2，我能否得到5?”</p>
+<p>如何运行测试呢，很简单。点击FitNesse logo旁边的 <strong>Test</strong> 按钮即可。</p>
+<p><img src="/images/1515462902359.webp" alt></p>
+<p>运行后结果如下：</p>
+<p><img src="/images/1515462989612.webp" alt></p>
+<p>红色表示代码返回了正确的期望值。而红色表示代码返回了跟期望值不同的值，这里可以看到两个值，分别是 <strong>expected value</strong> 和 <strong>actual value</strong></p>
+<p>另外注意这里用于比较的符号：</p>
+<ul>
+<li>22/7 ~= 3.14 22/7约等于3.14</li>
+<li>9/3 &lt; 5      9/3的结果小于5</li>
+<li>11/2 4&lt;_6    11/2的结果在4和6之间</li>
+</ul>
+<h1 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h1><p>当用户点击Test按钮时发生什么呢？</p>
+<ul>
+<li>首先，FitNesse将test表格提交到<a href="http://fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM" target="_blank" rel="noopener">Slim</a>，即底层的测试系统(该系统包含实际执行测试所需要的代码)</li>
+<li>Slim找到跟test表格对应的fixture代码并运行</li>
+<li>fixture代码调用应用代码，得到运行结果</li>
+<li>Slim向FitNesse返回fixture代码的运行结果</li>
+<li>FitNesse根据运行结果给test表格中标记相应的颜色</li>
+</ul>
+<p>那Fixture Code又是什么呢？下面是一个例子。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> eg;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Division</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">double</span> numerator, denominator;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNumerator</span><span class="params">(<span class="keyword">double</span> numerator)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.numerator = numerator;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDenominator</span><span class="params">(<span class="keyword">double</span> denominator)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.denominator = denominator;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">quotient</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> numerator/denominator;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/1515413862042.webp" alt></p>
+<ul>
+<li><code>eg</code> - Java包名</li>
+<li><code>Division</code> - Java类</li>
+</ul>
+<p>Slim运行fixture代码的流程是这样的：</p>
+<ul>
+<li>Slim从左到右处理表格中的每一行数据</li>
+<li>对每一行，Slim调用对应的setter将输入数据保存到对应字段中。比如对”numerator”会调用<code>Division.setNumerator()</code></li>
+<li>然后，Slim会调用<code>Decision.quotient()</code>方法得到输出数据</li>
+</ul>
+<p>以第一行测试数据为例，几个方法调用的顺序如下：</p>
+<ol>
+<li>division.setNumerator(10)</li>
+<li>division.setDenominator(2)</li>
+<li>division.quotient()</li>
+</ol>
+<p>如果返回值和期望值匹配，FitNesse将格子显示为绿色。如果返回值和期望值不匹配，FitNesse将格子显示为红色并显示期望值和返回值。如果Slim遇到异常或者找不到fixture代码，FitNesse将格子显示为黄色并显示相应的堆栈信息。</p>
+<p>实际中的fixture代码不应当做任何实际操作，而是代理到应用代码。即，fixture代码应当 <strong>越”薄”越好</strong> ， 最好是充当FitNesse表格和实际应用代码之间的 <strong>管道</strong> 。更多关于fixture代码的内容请参考<a href="http://fitnesse.org/FitNesse.FullReferenceGuide.UserGuide.WritingAcceptanceTests.FixtureCode" target="_blank" rel="noopener">这里</a>。</p>
+<h1 id="Decision-Table"><a href="#Decision-Table" class="headerlink" title="Decision Table"></a>Decision Table</h1><p>使用一种简单的标记语言创建上文中提到的Decision Table，包括表头，文本加粗，下划线，斜体，无序列表，以及其他一些简单的格式化。具体参考<a href="http://fitnesse.org/FitNesse.UserGuide.FitNesseWiki" target="_blank" rel="noopener">FitNesse.UserGuide.FitNesseWiki</a>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">|eg.Division|</span><br><span class="line">|numerator|denominator|quotient?|</span><br><span class="line">|10       |2          |5        |</span><br><span class="line">|12.6     |3          |4.2      |</span><br><span class="line">|100      |4          |33       |</span><br></pre></td></tr></table></figure>
+<p>上面的标记文本可生成如下表格：</p>
+<p><img src="/images/1515413862042.webp" alt></p>
+<h1 id="Hello-FitNesse"><a href="#Hello-FitNesse" class="headerlink" title="Hello FitNesse"></a>Hello FitNesse</h1><p>现在我们自己动手添加一个FitNesse测试。</p>
+<h2 id="应用代码"><a href="#应用代码" class="headerlink" title="应用代码"></a>应用代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Calculator</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> i + j;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Fixture代码"><a href="#Fixture代码" class="headerlink" title="Fixture代码"></a>Fixture代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CalculatorDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> anotherNumber;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> sum;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNumber</span><span class="params">(<span class="keyword">int</span> number)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.number = number;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAnotherNumber</span><span class="params">(<span class="keyword">int</span> anotherNumber)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.anotherNumber = anotherNumber;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">sum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Calculator().add(number, anotherNumber);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">""</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/1515465864078.webp" alt></p>
+<p>代码路径<code>/Users/kc/wd/unitTest/lib1/out/production/classes</code></p>
+<h2 id="添加FitNesse测试页面"><a href="#添加FitNesse测试页面" class="headerlink" title="添加FitNesse测试页面"></a>添加FitNesse测试页面</h2><p>点击”Add”下拉菜单，选择”Test Page”，并在页面中添加以下内容并保存</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">!path /Users/kc/wd/unitTest/lib1/out/production/classes</span><br><span class="line">!define TEST_SYSTEM &#123;slim&#125;</span><br><span class="line"></span><br><span class="line">|demo.CalculatorDemo      |</span><br><span class="line">|number|anotherNumber|sum?|</span><br><span class="line">|1     |1            |2   |</span><br><span class="line">|0     |3            |3   |</span><br><span class="line">|100   |4            |104 |</span><br></pre></td></tr></table></figure>
+<p><img src="/images/1515466040741.webp" alt></p>
+<ul>
+<li>第1行<code>!path</code>指定了类路径</li>
+<li>第2行<code>!define</code>指定当前为slim测试</li>
+<li>第4行<code>demo.CalculatorDemo</code>指定了完整的类名</li>
+<li>第5行指定了输入数据和输出数据</li>
+<li>第6行及以后为实际测试数据</li>
+</ul>
+<h2 id="运行测试"><a href="#运行测试" class="headerlink" title="运行测试"></a>运行测试</h2><video src="fitnesse.mp4" type="video/mp4" controls="controls" width="100%" height="100%"><br></video>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>整个试用感觉FitNesse还不错，wiki形式的测试易理解易于团队成员间沟通，非常适用于后台接口测试。后续我将用FitNesse对后台接口进行测试，看看效果如何。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/测试/" rel="tag"># 测试</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/12/21/app-launch-time/" rel="prev" title="(译)Android之应用启动速度">
+      <i class="fa fa-chevron-left"></i> (译)Android之应用启动速度
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/01/11/tips-on-action-bar/" rel="next" title="如何在ActionBar上显示引导提示">
+      如何在ActionBar上显示引导提示 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装和运行"><span class="nav-number">1.</span> <span class="nav-text">安装和运行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用法简介"><span class="nav-number">2.</span> <span class="nav-text">用法简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#工作原理"><span class="nav-number">3.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Decision-Table"><span class="nav-number">4.</span> <span class="nav-text">Decision Table</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hello-FitNesse"><span class="nav-number">5.</span> <span class="nav-text">Hello FitNesse</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#应用代码"><span class="nav-number">5.1.</span> <span class="nav-text">应用代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fixture代码"><span class="nav-number">5.2.</span> <span class="nav-text">Fixture代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加FitNesse测试页面"><span class="nav-number">5.3.</span> <span class="nav-text">添加FitNesse测试页面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行测试"><span class="nav-number">5.4.</span> <span class="nav-text">运行测试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

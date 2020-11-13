@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="感觉这个是特别令人困惑的属性，不仅我，网上也有很多人也类似感受。时间一久我常常容易忘记 fitsSystemWindows 的具体作用，所以今天复习一遍。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="重温 fitsSystemWindows">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/06/06/fits-system-windows/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="感觉这个是特别令人困惑的属性，不仅我，网上也有很多人也类似感受。时间一久我常常容易忘记 fitsSystemWindows 的具体作用，所以今天复习一遍。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/06/06/fits-system-windows/fitsystemwindows.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/06/06/fits-system-windows/no-fitsystemwindows.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/06/06/fits-system-windows/no-fitsystemwindows.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/06/06/fits-system-windows/fitsystemwindows-bug.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/06/06/fits-system-windows/drawer-layout.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.039Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="重温 fitsSystemWindows">
+<meta name="twitter:description" content="感觉这个是特别令人困惑的属性，不仅我，网上也有很多人也类似感受。时间一久我常常容易忘记 fitsSystemWindows 的具体作用，所以今天复习一遍。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2019/06/06/fits-system-windows/fitsystemwindows.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/06/06/fits-system-windows/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>重温 fitsSystemWindows | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/06/06/fits-system-windows/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          重温 fitsSystemWindows
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-06-06 10:53:04" itemprop="dateCreated datePublished" datetime="2019-06-06T10:53:04+08:00">2019-06-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>感觉这个是特别令人困惑的属性，不仅我，网上也有很多人也类似感受。时间一久我常常容易忘记 fitsSystemWindows 的具体作用，所以今天复习一遍。<br><a id="more"></a></p>
+<p>官方文档 <a href="https://developer.android.com/training/system-ui/status" target="_blank" rel="noopener">Hide the status bar  |  Android Developers</a> 中提到：</p>
+<blockquote>
+<p>Android 4.1 开始，可以将 app 的内容绘制在状态栏的下一层 (behind the status bar)，并且 app 的内容区域的大小不会随着状态栏的出现和消失而自动。使用 <a href="https://developer.android.com/reference/android/view/View.html#SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN" target="_blank" rel="noopener">SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN</a> 即可实现这种效果。<br>将 app 的内容绘制在状态栏的下一层时，app 自己负责保证 UI 中的重要内容不被状态栏遮挡(例如，地图应用中的控件不应被状态档遮挡)。否则可能导致应用不可用。大部分时候通过在 XML 文件中添加 <code>android:fitsSystemWindows=true</code> 可以解决这个被遮挡导致不可用的问题。这个属性用于告知父节点要为 system windows 保留一些 padding。</p>
+</blockquote>
+<p>关于 system window：</p>
+<blockquote>
+<p>System windows are the parts of the screen where the system is drawing either non-interactive (in the case of the status bar) or interactive (in the case of the navigation bar) content.</p>
+</blockquote>
+<p>文档中的内容并不难理解：这个属性用于告知父节点要为 system windows 保留一些 padding。通过截图说明一下使用 <code>fitsSystemWindows=true</code> 和使用 <code>fitsSystemWindows=false</code> 的区别。</p>
+<p><img src="fitsystemwindows.png" alt></p>
+<p><img src="no-fitsystemwindows.png" alt></p>
+<p>显然第一张图是我们期望的效果。如果真实情况这么简单，就没有什么让人困惑的了。下面来看问题。</p>
+<hr>
+<p>补充知识</p>
+<p><a href="https://developer.android.com/reference/android/view/View.html#setFitsSystemWindows(boolean" target="_blank" rel="noopener">setFitsSystemWindows</a>) 方法是跟 <code>fitsSystemWindows</code> 属性对应的方法。这个方法的作用描述如下：</p>
+<blockquote>
+<p>Sets whether or not this view should account for system screen decorations such as the status bar and inset its content; that is, controlling whether the default implementation of fitSystemWindows(android.graphics.Rect) will be executed. </p>
+</blockquote>
+<hr>
+<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>测试机是华为 Nova 2 (Android 8.0)，Android 8.0。</p>
+<p>Activity 使用的主题中将 <code>windowTranslucentStatus</code> 设置如 true。内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">"AppTheme"</span> <span class="attr">parent</span>=<span class="string">"BaseAppTheme"</span>&gt;</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:windowTranslucentStatus"</span>&gt;</span>true<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果 Activity 布局文件的根布局是 <code>DrawerLayout</code>，<code>fitsSystemWindows</code> 表现正常。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">androidx.drawerlayout.widget.DrawerLayout</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:id</span>=<span class="string">"@+id/drawer_layout"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:fitsSystemWindows</span>=<span class="string">"true"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>但如果 Activity 布局文件的根布局是 <code>LinearLayout</code>，<code>fitsSystemWindows</code> 表现就很诡异了。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">LinearLayout</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:fitsSystemWindows</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:orientation</span>=<span class="string">"vertical"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>怎么个诡异法呢。如果 <code>fitsSystemWindows=false</code>，效果如下，跟预期一致：</p>
+<p><img src="no-fitsystemwindows.png" alt></p>
+<p>如果 <code>fitsSystemWindows=true</code>，效果如下，状态栏变成白色的了：</p>
+<p><img src="fitsystemwindows-bug.png" alt></p>
+<ul>
+<li>为什么 <code>DrawerLayout</code> 中使用 <code>fitsSystemWindows=true</code> 是正常，而 <code>LinearLayout</code> 中使用 <code>fitsSystemWindows=true</code> 不正常</li>
+<li>为什么 <code>fitsSystemWindows=true</code> 似乎跟 <code>windowTranslucentStatus=true</code> 有冲突</li>
+</ul>
+<p><a href="https://stackoverflow.com/questions/31761046/what-exactly-does-fitssystemwindows-do" target="_blank" rel="noopener">android - What exactly does fitsSystemWindows do? - Stack Overflow</a> 这个帖子为上面第一个问题提供了一些线索。Material 包中的很多类，比如 <code>DrawerLayout</code>、<code>CoordinatorLayout</code>及<code>AppBarLayout</code>等等，并不是仅仅将 <code>fitsSystemWindows</code> 用于控制是否让父节点要为 system windows 保留一些 padding，还用来控制是否修改状态栏背景！</p>
+<p>比如，<code>DrawerLayout.java</code> 源码中可以看到如下用法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (ViewCompat.getFitsSystemWindows(<span class="keyword">this</span>)) &#123;</span><br><span class="line">        IMPL.configureApplyInsets(<span class="keyword">this</span>);</span><br><span class="line">        mStatusBarBackground = IMPL.getDefaultStatusBarBackground(context);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以推测，<code>LinearLayout</code> 并没有类似处理，所以看起来状态栏变白了。可以断定第一个问题的原因正是这种对 <code>fitsSystemWindows</code> 处理上的不一致性。也正是这种不一致性导致 <code>fitsSystemWindows</code> 让人困惑。<a href="https://www.jianshu.com/p/5cc3bd23be7b" target="_blank" rel="noopener">令人困惑的fitsSystemWindows属性 - 简书</a> 也提到这种不一致问题，称这种不一致为个性化(似乎也有一定道理，官方并没有说只能用一种固定的方式处理 fitsSystemWindows)。</p>
+<h1 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h1><p>知道了问题原因，解决办法就简单了。</p>
+<ul>
+<li>从主题中去掉 <code>windowTranslucentStatus=true</code></li>
+<li>或者在使用 <code>LinearLayout</code> 等时主动设置状态栏颜色</li>
+</ul>
+<hr>
+<p><a href="https://medium.com/androiddevelopers/why-would-i-want-to-fitssystemwindows-4e26d9ce1eec?linkId=19685562" target="_blank" rel="noopener">Why would I want to fitsSystemWindows? – Android Developers – Medium</a> 这篇文章讲得不错。翻译一下。</p>
+<p>首先说说什么是 system window。system window 即 Android 系统本身进行绘制的区域，既可以是无交互的(状态栏)，也可以是有交互的(导航栏)。</p>
+<p>大部分时候你的应用不需要在状态栏或导航栏的底部进行绘制，但如果一定要这样做的时候，你应该保证应用中的可交互元素不会被状态栏或导航栏遮挡。这就是 <code>android:fitsSystemWindows=true</code> 的缺省行为：它让 View 有足够的 padding， 保证内容不会被 system window 遮拦。</p>
+<p>记住这几点：</p>
+<ul>
+<li><code>fitsSystemWindows</code> 是深度优先的。顺序很重要，it’s the first View that consumes the insets that makes a difference</li>
+<li>Insets are always relative to the full window - 布局前就添加了 inset，所以在为父节点添加 padding 时其实并不知道 view 的位置</li>
+<li>padding 会被 <code>fitsSystemWindows=true</code> 覆盖 - 同一个 view 上使用 <code>fitsSystemWindows=true</code> 后 padding 相关的属性无效</li>
+</ul>
+<p>以上所说的对多数应用场景是足够的，比如视频播放。</p>
+<p>如果想让 <code>RecyclerView</code> 在透明的导航栏底部滚动，使用 <code>android:fitsSystemWindows=&quot;true&quot;</code> 和 <code>android:clipToPadding=&quot;false&quot;</code> 即可。</p>
+<p>关于如何自定义 fitsSystemWindows。</p>
+<p>在 KitKat 及以下，自定义 View 可以覆盖 <code>fitsSystemWindows()</code> 方法。如果消费了 inset，让 <code>fitsSystemWindows()</code> 返回 <code>true</code>，否则就返回 <code>false</code>。</p>
+<p>在 Lollipop 及以上版本，添加了一些新的 API 以便更容易实现 <code>fitsSystemWindows()</code>，并且跟 View 的其他行为保持一致。你可以覆盖 <code>onApplyWindowInsets()</code> 方法，这个方法允许 View 消费掉指定大小的 inset，也可以根据需要让子节点调用 <code>dispatchApplyWindowInsets()</code>。</p>
+<p>更方便的是，甚至可以不用继承 View 就能在 Lollipop 及以上版本中实现自定义的行为，只需使用 <code>ViewCompat.setOnApplyWindowInsetsListener()</code>。这个方法优先于 <code>View.onApplyWindowInsets()</code> 来调用。<code>ViewCompat</code> 还提供辅助方法用于调用 <code>onApplyWindowInsets()</code> 和 <code>dispatchApplyWindowInsets()</code>。</p>
+<p>自定义 fitsSystemWindows 示例</p>
+<p><code>FrameLayout</code> 和 <code>LinearLayout</code> 等基本布局实现了缺省的 fitsSystemWindows 行为，另外一些布局则为特定的使用场景实现了自定义 fitsSystemWindows 行为。</p>
+<p>一个例子是 <a href="http://www.google.com/design/spec/patterns/navigation-drawer.html" target="_blank" rel="noopener">navigation drawer</a>。</p>
+<p><img src="drawer-layout.png" alt></p>
+<p>上图中的 DrawerLayout 使用了 <code>fitsSystemWindows=true</code>。这个属性让 DrawerLayout 了子节点有 inset，但仍然会按照 material design 规范绘制状态栏的背景(缺省使用<code>colorPrimaryDark</code>)。</p>
+<p>Lollipop 及以上版本中，<code>DrawerLayout</code> 为每个子节点调用 <code>dispatchApplyWindowInsets()</code>，以允许每个子节点也可以有 <code>fitsSystemWindows</code>，这跟缺省的行为有所不同(缺省行为中父节点会消费 <code>fitsSystemWindows</code>，子节点收不到 <code>fitsSystemWindows</code>)。</p>
+<p>CoordinatorLayout also takes advantage of overriding how it handles window insets, allowing the Behavior set on child Views to intercept and change how Views react to window insets, before calling dispatchApplyWindowInsets() on each child themselves. It also uses the fitsSystemWindows flag to know if it needs to paint the status bar background.</p>
+<p>Similarly, CollapsingToolbarLayout looks for fitsSystemWindows to determine when and where to draw the content scrim — a full-bleed scrim which overlays the status bar area when the CollapsingToolbarLayout is scrolled sufficiently off the screen.</p>
+<p>If you’re interested in seeing some of the common cases that accompany the <a href="http://android-developers.blogspot.com/2015/05/android-design-support-library.html" target="_blank" rel="noopener">Design Library</a>, check out the <a href="https://github.com/chrisbanes/cheesesquare" target="_blank" rel="noopener">cheesesquare sample app</a>。</p>
+<p>Use the system, don’t fight it<br>One thing to keep in mind is that it isn’t called fitsStatusBar or fitsNavigationBar. What constitutes system windows, their dimensions, and location may certainly change with different platform releases — for a perfect example, look at the differences between Honeycomb and Ice Cream Sandwich.</p>
+<p>Just rest assured that the insets you do get from fitsSystemWindows will be correct on all platform versions to ensure your content does not overlap with system provided UI components — make sure to avoid any assumptions on their availability or size if you customize the behavior.</p>
+<hr>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://stackoverflow.com/questions/31761046/what-exactly-does-fitssystemwindows-do" target="_blank" rel="noopener">android - What exactly does fitsSystemWindows do? - Stack Overflow</a></li>
+<li><a href="https://www.jianshu.com/p/5cc3bd23be7b" target="_blank" rel="noopener">令人困惑的fitsSystemWindows属性 - 简书</a></li>
+<li><a href="https://medium.com/androiddevelopers/why-would-i-want-to-fitssystemwindows-4e26d9ce1eec?linkId=19685562" target="_blank" rel="noopener">Why would I want to fitsSystemWindows? – Android Developers – Medium</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/04/fake-dlopen/" rel="prev" title="Android dlopen 方法的使用限制及解决方案">
+      <i class="fa fa-chevron-left"></i> Android dlopen 方法的使用限制及解决方案
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/12/kotlin-nothing/" rel="next" title="(译)Kotlin 之 Nothing">
+      (译)Kotlin 之 Nothing <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题"><span class="nav-number">1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决办法"><span class="nav-number">2.</span> <span class="nav-text">解决办法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

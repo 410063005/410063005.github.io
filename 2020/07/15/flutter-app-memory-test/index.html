@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Flutter 应用内存测试数据。">
+<meta name="keywords" content="Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter App 内存测试">
+<meta property="og:url" content="http://www.sunmoonblog.com/2020/07/15/flutter-app-memory-test/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Flutter 应用内存测试数据。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944369530168.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944406815956.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944408053563.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944370128933.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944407225565.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944408363481.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944384753825.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944408943099.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944440141932.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944385231943.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944409251967.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944440514423.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944403017361.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944441459158.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944443093212.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944404063442.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944441807084.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944443368308.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944399044259.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944442195175.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944443788400.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944399984819.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944442627978.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944444195039.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15945451536123.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947280277523.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947294740934.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947866240369.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947848408890.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947301347638.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947874114688.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.050Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flutter App 内存测试">
+<meta name="twitter:description" content="Flutter 应用内存测试数据。">
+<meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944369530168.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2020/07/15/flutter-app-memory-test/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Flutter App 内存测试 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/07/15/flutter-app-memory-test/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Flutter App 内存测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-15 14:12:49" itemprop="dateCreated datePublished" datetime="2020-07-15T14:12:49+08:00">2020-07-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Flutter 应用内存测试数据。</p>
+<a id="more"></a>
+<h1 id="内存测试一-简单-UI"><a href="#内存测试一-简单-UI" class="headerlink" title="内存测试一 - 简单 UI"></a>内存测试一 - 简单 UI</h1><p>分别<strong>使用 Android 和 Flutter 实现最简单的界面</strong>。</p>
+<ul>
+<li>显示一个文本</li>
+<li>显示一个图片</li>
+</ul>
+<p>使用 TextView 显示 “Hello World!” 的 Android Demo，布局如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">androidx.constraintlayout.widget.ConstraintLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:context</span>=<span class="string">".MainActivity"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">TextView</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">"Hello World!"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintBottom_toBottomOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintLeft_toLeftOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintRight_toRightOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">"parent"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">androidx.constraintlayout.widget.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>使用 Text Widget 显示 “Hello World!” 的 Flutter Demo，代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Center(child: Text(<span class="string">'Hello World!'</span>)),</span><br></pre></td></tr></table></figure>
+<p>显示图片的 Demo 非常类似，这里略过。</p>
+<p>测试数据显示：<strong>Flutter 应用比原生应用占用更多内存，多出来的部分主要包括 Other、Code、Native、Graphics</strong>。(注意：Android Studio 中无法正常显示 Other 部分变化，<code>adb shell dumpsys meminfo</code> 及 Flutter DevTools 中可正常观察到)</p>
+<p>以下是具体测试数据。</p>
+<h2 id="数据一"><a href="#数据一" class="headerlink" title="数据一"></a>数据一</h2><p>机型及配置：华为 Nova 2，Android 8.0，分辨率480dp(3x)。</p>
+<p>Android Text Demo<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944369530168.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944406815956.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944408053563.jpg" alt></p>
+<p>Android Image Demo<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944370128933.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944407225565.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944408363481.jpg" alt></p>
+<p>Flutter Text Demo<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944384753825.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944408943099.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944440141932.jpg" alt></p>
+<p>Flutter Image Demo<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944385231943.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944409251967.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944440514423.jpg" alt></p>
+<h2 id="数据二"><a href="#数据二" class="headerlink" title="数据二"></a>数据二</h2><p>机型及配置：小米 8，分辨率440dp(2.8x)</p>
+<p>Android Text Demo<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944403017361.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944441459158.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944443093212.jpg" alt></p>
+<p>Android Image Demo<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944404063442.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944441807084.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944443368308.jpg" alt></p>
+<p>Flutter Text Demo<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944399044259.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944442195175.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944443788400.jpg" alt></p>
+<p>Flutter Image Demo<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944399984819.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944442627978.jpg" alt><br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15944444195039.jpg" alt></p>
+<h1 id="内存测试二-分配大对象"><a href="#内存测试二-分配大对象" class="headerlink" title="内存测试二 - 分配大对象"></a>内存测试二 - 分配大对象</h1><p>持续在 Dart 代码中分配对象。观察内存变化。</p>
+<p>测试数据显示：<strong>从 Android 角度看，Dart Heap 中分配的对象归类为 “Private Other” 内存</strong></p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">List</span>&lt;Uint8List&gt; _memList = <span class="built_in">List</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> _addToMemList() &#123;</span><br><span class="line">    <span class="comment">// 点击一次, 分配 10MB 内存</span></span><br><span class="line">    _memList.add(_createData(<span class="number">10</span> * <span class="number">1024</span> * <span class="number">1024</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15945451536123.jpg" alt="-w1428"></p>
+<p>随着分配的 Dart 对象，Dart 内存和 Android 内存都在增加</p>
+<ul>
+<li>左图是 Dart 内存<ul>
+<li>Dart Heap Capacity (绿线区域)一直在增长</li>
+<li><font color="red">Dart Heap Used (浅蓝色区域)一直在增长</font></li>
+<li>Dart External (蓝色区域)几乎不变</li>
+</ul>
+</li>
+<li>右图是 Android 内存<ul>
+<li>Total (绿线)一直在增长</li>
+<li><font color="red">Other (紫线)一直在增长</font></li>
+<li>其他几乎不变</li>
+</ul>
+</li>
+</ul>
+<h1 id="内存测试三-显示图片"><a href="#内存测试三-显示图片" class="headerlink" title="内存测试三 - 显示图片"></a>内存测试三 - 显示图片</h1><p>持续在 Dart 代码中<strong>加载并显示</strong>本地图片(1024x1024)。观察内存变化。</p>
+<p>测试数据显示：<strong>Flutter 应用中图片在 Graphics 内存中分配</strong></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947280277523.jpg" alt="-w1666"></p>
+<p>随着加载和显示的图片增多，Dart 内存和 Android 内存都在增加</p>
+<ul>
+<li>左图是 Dart 内存<ul>
+<li>Dart Heap Capacity (绿线区域)一直在增长</li>
+<li>Dart Heap Used (浅蓝色区域)几乎不变</li>
+<li><font color="red">Dart External (蓝色区域)一直在增长</font></li>
+</ul>
+</li>
+<li>右图是 Android 内存<ul>
+<li>Total (绿线)一直在增长</li>
+<li><font color="red">Graphics (橙色区域)波浪形增长</font></li>
+<li>其他几乎不变</li>
+</ul>
+</li>
+</ul>
+<h1 id="内存测试四-预加载图片"><a href="#内存测试四-预加载图片" class="headerlink" title="内存测试四 - 预加载图片"></a>内存测试四 - 预加载图片</h1><p>持续在 Dart 代码中<strong>预加载但不显示</strong>本地图片(1024x1024)。观察内存变化。</p>
+<p>测试数据显示：<strong>Flutter 应用中图片在 Graphics 内存中分配</strong></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947294740934.jpg" alt="-w1294"></p>
+<p>随着预加载的图片增多，Dart 内存和 Android 内存都在增加</p>
+<ul>
+<li>左图是 Dart 内存<ul>
+<li>Dart Heap Capacity (绿线区域)一直在增长</li>
+<li>Dart Heap Used (浅蓝色区域)几乎不变</li>
+<li><font color="red">Dart External (蓝色区域)一直在增长</font></li>
+</ul>
+</li>
+<li>右图是 Android 内存<ul>
+<li>Total (绿线)一直在增长</li>
+<li><font color="red">Graphics (橙色区域)波浪形增长</font></li>
+<li>其他几乎不变</li>
+</ul>
+</li>
+</ul>
+<h1 id="内存测试五-启动多个-Flutter-引擎"><a href="#内存测试五-启动多个-Flutter-引擎" class="headerlink" title="内存测试五 - 启动多个 Flutter 引擎"></a>内存测试五 - 启动多个 Flutter 引擎</h1><p>持续启动 Flutter 引擎，每次增加一个。观察内存变化。</p>
+<p>测试数据显示：<strong>每开启一个 Flutter 引擎，Native 内存大约有5-6MB增长，Private Other 有10MB左右增长</strong></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947866240369.jpg" alt="-w1302"></p>
+<p>随着 Flutter 引擎数量增多，Dart 内存和 Android 内存都在增加</p>
+<ul>
+<li>左图是 Dart 内存<ul>
+<li><font color="red">Dart Heap Used (浅蓝色区域)几乎不变</font></li>
+<li>Dart External (蓝色区域)一直在增长</li>
+</ul>
+</li>
+<li>右图是 Android 内存<ul>
+<li>Total (绿线)一直在增长</li>
+<li><font color="red">Other (紫色区域)一直在快速增长</font></li>
+<li><font color="red">Native (蓝色区域)一直在较快增长</font></li>
+<li>Graphics (橙色区域)无增长</li>
+</ul>
+</li>
+</ul>
+<p>在 Android Studio 中测试结果如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947848408890.jpg" alt></p>
+<p>随着 Flutter 引擎数量增多，</p>
+<ul>
+<li>Private Other 一直在增长 (注：注意：Android Studio 中无法正常显示 Other 部分变化，<code>adb shell dumpsys meminfo</code> 及 Flutter DevTools 中可正常观察到)</li>
+<li>Native 内存(蓝色区域)一直在增长</li>
+</ul>
+<h1 id="测试结论"><a href="#测试结论" class="headerlink" title="测试结论"></a>测试结论</h1><ul>
+<li>Flutter 应用比原生应用占用更多内存，多出来的部分主要包括 Other、Code、Native、Graphics <a href="https://developer.android.com/studio/profile/memory-profiler#how-counted" target="_blank" rel="noopener">内存分类</a> <a href="https://developer.android.com/studio/command-line/dumpsys#meminfo" target="_blank" rel="noopener">meminfo</a></li>
+<li>从 Android 角度看，Dart Heap 属性 “Private Other” 内存。Dart 中创建对象会导致 Private Other 内存增长</li>
+<li>Flutter 应用中图片在 Graphics 内存中分配 <a href="https://www.yuque.com/xytech/flutter/avmyht" target="_blank" rel="noopener">闲鱼技术 Android Flutter实践内存初探</a></li>
+<li>每开启一个 Flutter 引擎，Native 内存大约有5-6MB增长，Private Other 有10MB左右增长</li>
+</ul>
+<p>为什么 Flutter 应用会比原生应用占用更多内存？官网给出的一些数据也许能解释部分原因。以下翻译自 <a href="https://flutter.dev/docs/development/add-to-app/performance#memory-and-latency" target="_blank" rel="noopener">Load sequence, performance, and memory - Flutter</a></p>
+<blockquote>
+<p>展示 Flutter UI 会有一定不可忽视的延迟。可以提前启动 Flutter 引擎来减少这个延迟。</p>
+<p>集成 Flutter 到已有应用时要评估预加载 Flutter 引擎(即，加载 Flutter 库、启动 Dart VM、运行 isolate 入口程序)带来的内存开销及延迟。</p>
+<p>在 2015 年的一款低端手机上，Flutter v1.10.3 release-AOT 模式下预热 <code>FlutterEngine</code> 开销如下：</p>
+<ul>
+<li><strong>Android</strong> 42 MB 和 1530 ms。其中有 330 ms 会阻塞主线程</li>
+<li><strong>iOS</strong>  22 MB 和 860 ms。其中有 260 ms 会阻塞主线程</li>
+</ul>
+<p>内存方面，一个测试样本数据如下(根据使用场景会有所变化)</p>
+<ul>
+<li>~4 MB OS’s memory usage for creating pthreads.</li>
+<li>~10 MB GPU driver memory.</li>
+<li>~1 MB for Dart runtime-managed memory.</li>
+<li>~5 MB for Dart-loaded font maps.</li>
+</ul>
+<p>延迟方面，一个测试样本数据如下(根据使用场景会有所变化)</p>
+<ul>
+<li>~20 ms to collect the Flutter assets from the application package.</li>
+<li>~15 ms to dlopen the Flutter engine library.</li>
+<li>~200 ms to create the Dart VM and load the AOT snapshot.</li>
+<li>~200 ms to load Flutter-dependent fonts and assets.</li>
+<li>~400 ms to run the entrypoint, create the first widget tree, and compile the needed GPU shader programs.</li>
+</ul>
+<p>预热 Flutter 引擎的时机应该足够晚，以减小内存占用；同时还要足够早，以避免 Flutter 引擎启动时间跟首帧延迟叠加在一起(否则会感觉启动慢，体验非常糟糕)</p>
+<p>具体预热时机要根据应用的实际结构来决定。通常经验是在将显示 Flutter 页面的前一个页面中预热</p>
+<p>假设引擎已经预热，关联 UI 时的首帧开销如下：</p>
+<ul>
+<li><strong>Android</strong> 320 ms 以及额外的 12 MB (跟屏幕的物理像素尺寸非常相关，physical pixel size)</li>
+<li><strong>iOS</strong> 200 ms 以及额外的 16 MB (跟屏幕的物理像素尺寸非常相关，physical pixel size)</li>
+</ul>
+<p>内存方面，开销主要来自用于渲染的 graphical memory buffer (跟屏幕尺寸相关)</p>
+<p>延迟方面，开销主要是等原生系统回调(提供 surface)以及编译 shader 程序(原文: compiling the remaining shader programs that are not pre-emptively predictable)的时间。这里的延迟仅在第一帧</p>
+<p>Flutter UI 释放后，相关内存也会释放。这里的内存释放跟 <code>FlutterEngine</code> 中的 Flutter State 无关，除非 <code>FlutterEngine</code> 也释放了</p>
+</blockquote>
+<h1 id="优化方向"><a href="#优化方向" class="headerlink" title="优化方向"></a>优化方向</h1><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947301347638.jpg" alt></p>
+<p>Flutter 应用内存可优化的点分别是：</p>
+<ul>
+<li>Private Others，Dart 代码分配的对象属于这一类。优化点是减少 Dart 代码中不必要的对象分配，尤其是大对象</li>
+<li>Code - 用于处理代码和资源，如 dex 字节码，so 库和字体。优化点是减少 <code>libflutter.so</code> 和 <code>libapp.so</code> 大小</li>
+<li>Graphics - 图形缓冲区队列向屏幕显示像素（包括 GL 表面、GL 纹理等等）所使用的内存。比较好入手的一个优化是减少 Dart 代码中图片占用的内存。另外可以考虑优化 Flutter UI 这一块(同样使用 skia，为什么 Android 原生 UI 占用的内存比 Flutter UI 少？)</li>
+<li>Native - C 或 C++ 代码分配的对象的内存。优化点是减少 Flutter 引擎占用的内存，比如单引擎比多引擎使用更少的内存</li>
+</ul>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/07/15/15947874114688.jpg" alt="-w1261"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/11/how-flutter-works/" rel="prev" title="(译) Flutter 原理">
+      <i class="fa fa-chevron-left"></i> (译) Flutter 原理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/15/flutter-overlay-usage/" rel="next" title="Flutter Overlay 用法简介">
+      Flutter Overlay 用法简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#内存测试一-简单-UI"><span class="nav-number">1.</span> <span class="nav-text">内存测试一 - 简单 UI</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据一"><span class="nav-number">1.1.</span> <span class="nav-text">数据一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据二"><span class="nav-number">1.2.</span> <span class="nav-text">数据二</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存测试二-分配大对象"><span class="nav-number">2.</span> <span class="nav-text">内存测试二 - 分配大对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存测试三-显示图片"><span class="nav-number">3.</span> <span class="nav-text">内存测试三 - 显示图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存测试四-预加载图片"><span class="nav-number">4.</span> <span class="nav-text">内存测试四 - 预加载图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存测试五-启动多个-Flutter-引擎"><span class="nav-number">5.</span> <span class="nav-text">内存测试五 - 启动多个 Flutter 引擎</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#测试结论"><span class="nav-number">6.</span> <span class="nav-text">测试结论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化方向"><span class="nav-number">7.</span> <span class="nav-text">优化方向</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

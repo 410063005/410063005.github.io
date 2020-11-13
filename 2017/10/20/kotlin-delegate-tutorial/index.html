@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Java中的代理很烦很繁，而Kotlin中的代理却看起来很简单。我们来学学Kotlin中代理的用法吧。">
+<meta name="keywords" content="Kotlin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kotlin代理">
+<meta property="og:url" content="http://www.sunmoonblog.com/2017/10/20/kotlin-delegate-tutorial/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Java中的代理很烦很繁，而Kotlin中的代理却看起来很简单。我们来学学Kotlin中代理的用法吧。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.844Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kotlin代理">
+<meta name="twitter:description" content="Java中的代理很烦很繁，而Kotlin中的代理却看起来很简单。我们来学学Kotlin中代理的用法吧。">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2017/10/20/kotlin-delegate-tutorial/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Kotlin代理 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2017/10/20/kotlin-delegate-tutorial/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kotlin代理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-10-20 10:38:40" itemprop="dateCreated datePublished" datetime="2017-10-20T10:38:40+08:00">2017-10-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Java中的代理很烦很繁，而Kotlin中的代理却看起来很简单。我们来学学Kotlin中代理的用法吧。</p>
+<a id="more"></a>
+<p>本文整理自<a href="https://kotlinlang.org/docs/reference/delegated-properties.html" target="_blank" rel="noopener">Delegated Properties</a>。</p>
+<p>有些通用类型的属性，尽管我们可以在需要每次都自己实现对于某些常用类型的属性，尽管我们可以在需要用于这些属性时每次都自行实现，但如果能一次性实现所有这些属性，并将其封装到库中可能是更好的方式。比如：</p>
+<ul>
+<li>懒加载属性： 这些属性的值在首次使用时才生成</li>
+<li>observable属性：每当属性值发生变化时监听器会收到通知</li>
+<li>将属性值保存到map，而不是为每个属性定义一个单独的字段</li>
+</ul>
+<h1 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h1><p>针对这类情形Kotlin提供了<em>代理属性</em> ，语法是<code>val/var &lt;property name&gt;: &lt;Type&gt; by &lt;expression&gt;</code>。 <code>by</code>关键字后面的表达式即<em>代理</em> 。 属性对应的<code>get()</code>和<code>set()</code>方法会被代理到<code>&lt;expression&gt;</code>对应对象的<code>getValue()</code>和<code>setValue()</code>方法。属性代理不必实现任何接口，但必须满足以下条件：</p>
+<ul>
+<li>为<code>val</code>属性提供<code>getValue()</code>方法</li>
+<li>为<code>var</code>性提供<code>getValue()</code>和<code>setValue()</code>方法</li>
+</ul>
+<p>当然，Kotlin标准库中提供了<code>ReadOnlyProperty</code>和<code>ReadOnlyProperty</code>接口包含这里提到的方法。<code>Delegate</code>可以实现这两个接口。</p>
+<p>比如这里的<code>Delegate</code>就是一个代理：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Delegate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">operator</span> <span class="function"><span class="keyword">fun</span> <span class="title">getValue</span><span class="params">(thisRef: <span class="type">Any</span>?, property: <span class="type">KProperty</span>&lt;*&gt;)</span></span>: String &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"<span class="variable">$thisRef</span>, thank you for delegating '<span class="subst">$&#123;property.name&#125;</span>' to me!"</span></span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">operator</span> <span class="function"><span class="keyword">fun</span> <span class="title">setValue</span><span class="params">(thisRef: <span class="type">Any</span>?, property: <span class="type">KProperty</span>&lt;*&gt;, value: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">        println(<span class="string">"<span class="variable">$value</span> has been assigned to '<span class="subst">$&#123;property.name&#125;</span> in <span class="variable">$thisRef</span>.'"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>假如有以下<code>Example</code> ：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> p: String <span class="keyword">by</span> Delegate()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当你读取<code>Example.p</code>字段的值时，由于它被代理到一个<code>Deleage</code>实例，这个<code>Delegate</code>实例的<code>getValue()</code>方法会被调用。<code>getValue()</code> 的参数如下：</p>
+<ol>
+<li>第一个参数为<code>Example</code>实例，即你读取p字段时的那个实例</li>
+<li>第二个参数是关于p的描述，它在Kotlin中被封装与<code>KProperty</code>对象</li>
+</ol>
+<p>所以最终<code>getValue()</code>输出<code>Example@33a17727, thank you for delegating ‘p’ to me!</code></p>
+<p>注意：</p>
+<ul>
+<li><code>getValue()</code>方法参数的必须是<code>thisRef: Example?, property: KProperty&lt;*&gt;</code> 。 <code>thisRef</code>的类型必须跟属性的类型相同，或者是属性类型的父类。也可以放宽为<code>Any?</code> ，这样能让 <code>Delegate</code> 更加通用。<code>property</code>必须为<code>KProperty&lt;*&gt;</code>或其父类</li>
+<li><code>getValue()</code>方法的返回值必须跟属性类型相同，或者是属性类型的父类</li>
+<li><code>setValue()</code>方法的第三个参数new value，必须跟属性类型相同或是其父类</li>
+<li><code>getValue()</code>和<code>setValue()</code>可以是Delegate的成员方法，也可是其扩展方法。对于原先并没有定义这些方法的对象而言，扩展方法更为方便。但无论是作为成员方法还是扩展方法，都需要添加<code>operator</code>修饰符</li>
+</ul>
+<p>为什么对<code>getValue()</code>和<code>setValue()</code>方法有上述规定呢，我们看看Kotlin编译器是如何处理Delegate的。实际上，对于每个代理属性，Kotlin编译器都会生成一个辅助的属性。比如，对于<code>prop</code>属性，会生成一个隐藏的<code>prop$delegate</code>属性，而<code>get()</code>和<code>set()</code>方法最后只是简单地代理到这个辅助属性。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> prop: Type <span class="keyword">by</span> MyDelegate()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// this code is generated by the compiler instead:</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> prop$delegate = MyDelegate()</span><br><span class="line">    <span class="keyword">var</span> prop: Type</span><br><span class="line">        <span class="keyword">get</span>() = prop$delegate.getValue(<span class="keyword">this</span>, <span class="keyword">this</span>::prop)</span><br><span class="line">        <span class="keyword">set</span>(value: Type) = prop$delegate.setValue(<span class="keyword">this</span>, <span class="keyword">this</span>::prop, value)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以在Idea中通过Tools &gt; Kotlin &gt; Show Kotlin Bytecode &gt; Decompile看到对应的Java代码，确实如这里所述。</p>
+<h1 id="标准代理"><a href="#标准代理" class="headerlink" title="标准代理"></a>标准代理</h1><h2 id="Lazy代理"><a href="#Lazy代理" class="headerlink" title="Lazy代理"></a>Lazy代理</h2><p>lazy()是一个可接收lambda表达式作为参数的方法，它返回一个<code>Lazy&lt;T&gt;</code>实例，该实例作为代理来实现懒加载功能。第一次调用<code>get()</code>时会执行传给<code>lazy()</code>方法的lambda并且保留其结果，之后再调用<code>get()</code>时会直接返回该结果。缺省情况下对懒加载属性的计算是同步的</p>
+<ul>
+<li>LazyThreadSafetyMode.SYNCHRONIZED - 默认的懒加载方式，会锁定当前属性以保证仅在一个线程中对其初始化</li>
+<li>LazyThreadSafetyMode.PUBLICATION - 初始化方法在并发访问未被初始化的属性时可多次被调用，但仅最先被返回的值作为属性的值</li>
+<li>LazyThreadSafetyMode.NONE - 对属性的访问不加任何锁。如果当前对象在多个线程中被访问，则属性的值不确定</li>
+</ul>
+<h2 id="Observable代理"><a href="#Observable代理" class="headerlink" title="Observable代理"></a>Observable代理</h2><p><code>Delegate.observable()</code>有两个参数：属性的初始值和监听器。当给属性赋值时(即执行赋值操作后)监听器会被调用。监听器被调用时会接收到三个参数：被赋值的属性，属性的旧值，属性的新值。</p>
+<p><code>vetoable()</code>跟<code>observable()</code>类似，但它会在属性赋值前被调用。</p>
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>一个常用的场景是在map中保存属性值。这种场景在解析JSON或类似的”动态”编程时很常见。这时可以使用map实例作为属性的代理。类似这样：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span></span>(<span class="keyword">val</span> map: Map&lt;String, Any?&gt;) &#123;</span><br><span class="line">    <span class="keyword">val</span> name: String <span class="keyword">by</span> map</span><br><span class="line">  	<span class="keyword">val</span> age: <span class="built_in">Int</span>     <span class="keyword">by</span> map</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> user = User(mapOf(</span><br><span class="line">	<span class="string">"name"</span> to <span class="string">"King"</span></span><br><span class="line">  	<span class="string">"age"</span> to <span class="number">25</span></span><br><span class="line">))</span><br></pre></td></tr></table></figure>
+<p>代理属性(例如<code>name</code>从map)中获取值，取值时的key即为属性的名字。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kotlin/" rel="tag"># Kotlin</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/08/09/retrofit-basic/" rel="prev" title="Retrofit如何支持TCP">
+      <i class="fa fa-chevron-left"></i> Retrofit如何支持TCP
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/11/07/how-to-test-tcp-api/" rel="next" title="如何联调TCP API">
+      如何联调TCP API <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#代理"><span class="nav-number">1.</span> <span class="nav-text">代理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#标准代理"><span class="nav-number">2.</span> <span class="nav-text">标准代理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Lazy代理"><span class="nav-number">2.1.</span> <span class="nav-text">Lazy代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Observable代理"><span class="nav-number">2.2.</span> <span class="nav-text">Observable代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map"><span class="nav-number">2.3.</span> <span class="nav-text">Map</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Flutter SDK 的 dartdoc.dart 脚本不仅可以演示了 dartdoc 各参数的用法，它也是学习 Dart 编程语言的绝好参考资料。">
+<meta name="keywords" content="Flutter,Dart">
+<meta property="og:type" content="article">
+<meta property="og:title" content="笨办法学 Dart: dartdoc.dart 源码分析">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/11/28/dart-hard-way-1/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Flutter SDK 的 dartdoc.dart 脚本不仅可以演示了 dartdoc 各参数的用法，它也是学习 Dart 编程语言的绝好参考资料。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15749233895070.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15749244487548.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15749246280161.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15749249251449.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.045Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="笨办法学 Dart: dartdoc.dart 源码分析">
+<meta name="twitter:description" content="Flutter SDK 的 dartdoc.dart 脚本不仅可以演示了 dartdoc 各参数的用法，它也是学习 Dart 编程语言的绝好参考资料。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/15749233895070.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/11/28/dart-hard-way-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>笨办法学 Dart: dartdoc.dart 源码分析 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/11/28/dart-hard-way-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          笨办法学 Dart: dartdoc.dart 源码分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-11-28 11:45:40" itemprop="dateCreated datePublished" datetime="2019-11-28T11:45:40+08:00">2019-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Flutter SDK 的 <a href="https://github.com/flutter/flutter/blob/master/dev/tools/dartdoc.dart" target="_blank" rel="noopener">dartdoc.dart</a> 脚本不仅可以演示了 <code>dartdoc</code> 各参数的用法，它也是学习 Dart 编程语言的绝好参考资料。</p>
+<a id="more"></a>
+<p>Dart SDK 中的 <code>dartdoc</code> 命令用于从 Dart 源码生成文档。使用过程中遇到问题，一番搜索后发现 Flutter SDK 的 <code>dartdoc.dart</code> 脚本是对该命令的封装。这个脚本用于生成 Flutter 文档。我发现从 <code>dartdoc.dart</code> 中不仅能学习到 <code>dartdoc</code> 各参数的用法，它还是学习 Dart 编程语言的绝好参考资料。学习并记录一下。(看似挺笨的学习方法，但感觉有效)</p>
+<p>一方面是 Dart 语言相关的知识：</p>
+<ul>
+<li>第三方简单用法<ul>
+<li>argParser</li>
+<li>path</li>
+<li>process</li>
+</ul>
+</li>
+<li>文件操作<ul>
+<li>文件生成和读写</li>
+<li>切换及遍历目录</li>
+</ul>
+</li>
+<li>进程操作</li>
+<li>Dart 语言特性<ul>
+<li>Synchronous generator</li>
+<li>扩展操作符</li>
+<li>字符串操作</li>
+</ul>
+</li>
+<li>正则表达式</li>
+</ul>
+<p>另一方面是 Dart dartdoc 的用法。</p>
+<p>dartdoc.dart 脚本见 <a href="https://github.com/flutter/flutter/blob/master/dev/tools/dartdoc.dart" target="_blank" rel="noopener">Github</a>。另外注意区分 dartdoc.dart 和 Dart <code>dartdoc</code>，前者是 Flutter SDK 中用于生成文档的脚本，是对后者的封装；后者则是 Dart SDK 的内置命令。</p>
+<h1 id="Dart-语言"><a href="#Dart-语言" class="headerlink" title="Dart 语言"></a>Dart 语言</h1><p><code>dartdoc.dart</code> 函数了以下内容。</p>
+<h2 id="args-库"><a href="#args-库" class="headerlink" title="args 库"></a>args 库</h2><p>首先要引入 <a href="https://pub.dev/packages/args" target="_blank" rel="noopener">args库</a>，在 <code>pubspec.yaml</code> 中添加如下依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dependencies:</span><br><span class="line">  args: 1.5.2</span><br></pre></td></tr></table></figure>
+<p>arg 库的基本用法包括：</p>
+<ul>
+<li>创建 ArgParser - <code>ArgParser()</code> </li>
+<li>添加 flag - <code>ArgParser.addFlag()</code> </li>
+<li>生成 ArgResults - <code>ArgParser.parse()</code> </li>
+<li>访问 <code>ArgResults</code><ul>
+<li>显示当前程序的用法 - <code>ArgResults.usage</code> </li>
+<li>访问传给当前程序的参数 - <code>[]</code></li>
+</ul>
+</li>
+</ul>
+<p>示例代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">ArgParser _createArgsParser() &#123;</span><br><span class="line">  <span class="comment">// 1 - 创建 ArgParser</span></span><br><span class="line">  <span class="keyword">final</span> ArgParser parser = ArgParser();</span><br><span class="line">  parser.addFlag(<span class="string">'help'</span>, abbr: <span class="string">'h'</span>, negatable: <span class="keyword">false</span>,</span><br><span class="line">      help: <span class="string">'Show command help.'</span>);</span><br><span class="line">  <span class="comment">// 2 - 添加 flag</span></span><br><span class="line">  parser.addFlag(<span class="string">'verbose'</span>, negatable: <span class="keyword">true</span>, defaultsTo: <span class="keyword">true</span>,</span><br><span class="line">      help: <span class="string">'Whether to report all error messages (on) or attempt to '</span></span><br><span class="line">          <span class="string">'filter out some known false positives (off).  Shut this off '</span></span><br><span class="line">          <span class="string">'locally if you want to address Flutter-specific issues.'</span>);</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">return</span> parser;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="keyword">void</span>&gt; main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; arguments) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">final</span> ArgParser argParser = _createArgsParser();</span><br><span class="line">  <span class="comment">// 3 - 生成 ArgResults</span></span><br><span class="line">  <span class="keyword">final</span> ArgResults args = argParser.parse(arguments);</span><br><span class="line">  <span class="keyword">if</span> (args[<span class="string">'help'</span>]) &#123;</span><br><span class="line">    <span class="built_in">print</span> (<span class="string">'Usage:'</span>);</span><br><span class="line">    <span class="comment">// 4 - 访问 `ArgResults`</span></span><br><span class="line">    <span class="built_in">print</span> (argParser.usage);</span><br><span class="line">    exit(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Flag 支持的选项包括：</p>
+<ul>
+<li><code>negatable</code> - 是否可忽略</li>
+<li><code>abbr</code> - 缩写命令，比如 <code>--help</code> 的短命令是 <code>-h</code></li>
+<li><code>defaultsTo</code> - 缺省值</li>
+</ul>
+<h2 id="path-库"><a href="#path-库" class="headerlink" title="path 库"></a>path 库</h2><p>首先要引入 <a href="https://pub.dev/packages/path" target="_blank" rel="noopener">path库</a>，在 <code>pubspec.yaml</code> 中添加如下依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dependencies:</span><br><span class="line">  path: 1.6.4</span><br></pre></td></tr></table></figure>
+<p>Dart 中使用 <code>Directory</code> 类可获取当前目录，通过 path 库可获取到目录名和文件名。示例代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取当前目录</span></span><br><span class="line">Directory.current.path; <span class="comment">// -&gt; /Users/cm/wd/flutter_web/lib/learn_dartdoc</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 切换目录</span></span><br><span class="line"><span class="keyword">if</span> (path.basename(Directory.current.path) == <span class="string">'tools'</span>) &#123;</span><br><span class="line">  Directory.current = Directory.current.parent.parent;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取当前目录名</span></span><br><span class="line">path.basename(<span class="string">'path/to/foo.dart'</span>); <span class="comment">// -&gt; 'foo.dart'</span></span><br><span class="line">path.basename(<span class="string">'path/to'</span>);          <span class="comment">// -&gt; 'to'</span></span><br><span class="line">path.basename(<span class="string">'path/to/'</span>); <span class="comment">// -&gt; 'to'</span></span><br></pre></td></tr></table></figure>
+<h2 id="process-库"><a href="#process-库" class="headerlink" title="process 库"></a>process 库</h2><p><code>dartdoc.dart</code> 脚本中有这样一段代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> ProcessResult flutter = Process.runSync(<span class="string">'flutter'</span>, &lt;<span class="built_in">String</span>&gt;[]);</span><br><span class="line"><span class="keyword">final</span> File versionFile = File(<span class="string">'version'</span>);</span><br><span class="line"><span class="keyword">if</span> (flutter.exitCode != <span class="number">0</span> || !versionFile.existsSync())</span><br><span class="line">  <span class="keyword">throw</span> Exception(<span class="string">'Failed to determine Flutter version.'</span>);</span><br></pre></td></tr></table></figure>
+<p>这段代码的功能包括：</p>
+<ul>
+<li>使用 <code>Process.runSync()</code> 启动 <code>flutter</code> 命令并检查是否运行成功</li>
+<li>使用 <code>File.existsSync()</code> 检查 <code>&lt;FLUTTER DIR&gt;/version</code> 文件是否存在</li>
+</ul>
+<p>引入 <a href="https://pub.dev/packages/process" target="_blank" rel="noopener">path库</a>，在 <code>pubspec.yaml</code> 中添加如下依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dependencies:</span><br><span class="line">  process: 3.0.12</span><br></pre></td></tr></table></figure>
+<p><a href="https://pub.dev/packages/process" target="_blank" rel="noopener">process 库</a> 的 <code>ProcessWrapper</code> 是对 Dart <code>Process</code> 的包装，以提供更方便的方法。其用法如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Run pub.</span></span><br><span class="line">ProcessWrapper process = ProcessWrapper(<span class="keyword">await</span> Process.start(</span><br><span class="line">  pubExecutable,</span><br><span class="line">  &lt;<span class="built_in">String</span>&gt;[<span class="string">'get'</span>],</span><br><span class="line">  workingDirectory: kDocsRoot,</span><br><span class="line">  environment: pubEnvironment,</span><br><span class="line">));</span><br><span class="line">printStream(process.stdout, prefix: <span class="string">'pub:stdout: '</span>);</span><br><span class="line">printStream(process.stderr, prefix: <span class="string">'pub:stderr: '</span>);</span><br><span class="line"><span class="keyword">final</span> <span class="built_in">int</span> code = <span class="keyword">await</span> process.done;</span><br></pre></td></tr></table></figure>
+<h2 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h2><p><code>dartdoc.dart</code> 脚本中用到几种基本的文件操作，</p>
+<ul>
+<li>写文件</li>
+<li>读文件</li>
+<li>创建目录</li>
+<li>遍历目录</li>
+</ul>
+<p><code>File.writeAsStringSync(String)</code> 方法用于将字符串写入文件。用法如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create the pubspec.yaml file.</span></span><br><span class="line"><span class="keyword">final</span> <span class="built_in">StringBuffer</span> buf = <span class="built_in">StringBuffer</span>();</span><br><span class="line">buf.writeln(<span class="string">'name: Flutter'</span>);</span><br><span class="line">buf.writeln(<span class="string">'homepage: https://flutter.dev'</span>);</span><br><span class="line">...</span><br><span class="line">File(<span class="string">'<span class="subst">$kDocsRoot</span>/pubspec.yaml'</span>).writeAsStringSync(buf.toString());</span><br></pre></td></tr></table></figure>
+<p><code>Directory.createSync()</code> 方法用于创建目录。用法如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create the library file.</span></span><br><span class="line"><span class="keyword">final</span> Directory libDir = Directory(<span class="string">'<span class="subst">$kDocsRoot</span>/lib'</span>);</span><br><span class="line">libDir.createSync();</span><br></pre></td></tr></table></figure>
+<p><code>dartdoc.dart</code> 包含的一个功能是遍历 Flutter SDK <code>packages</code> 目录来找到所有的库路径：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Returns import or on-disk paths for all libraries in the Flutter SDK.</span></span><br><span class="line"><span class="built_in">Iterable</span>&lt;<span class="built_in">String</span>&gt; libraryRefs() <span class="keyword">sync</span>* &#123;</span><br><span class="line">  <span class="keyword">for</span> (Directory dir <span class="keyword">in</span> findPackages()) &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="built_in">String</span> dirName = path.basename(dir.path);</span><br><span class="line">    <span class="keyword">for</span> (FileSystemEntity file <span class="keyword">in</span> Directory(<span class="string">'<span class="subst">$&#123;dir.path&#125;</span>/lib'</span>).listSync()) &#123;</span><br><span class="line">      <span class="keyword">if</span> (file <span class="keyword">is</span> File &amp;&amp; file.path.endsWith(<span class="string">'.dart'</span>)) &#123;</span><br><span class="line">        <span class="keyword">yield</span> <span class="string">'<span class="subst">$dirName</span>/<span class="subst">$&#123;path.basename(file.path)&#125;</span>'</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Add a fake package for platform integration APIs.</span></span><br><span class="line">  <span class="keyword">yield</span> <span class="string">'platform_integration/android.dart'</span>;</span><br><span class="line">  <span class="keyword">yield</span> <span class="string">'platform_integration/ios.dart'</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// Finds all packages in the Flutter SDK</span></span><br><span class="line"><span class="built_in">List</span>&lt;FileSystemEntity&gt; findPackages() &#123;</span><br><span class="line">  <span class="keyword">return</span> Directory(<span class="string">'&lt;FLUTTER SDK&gt;/packages'</span>)</span><br><span class="line">    .listSync()</span><br><span class="line">    .where((FileSystemEntity entity) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;)</span><br><span class="line">    .cast&lt;Directory&gt;()</span><br><span class="line">    .toList();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从这段代码可以学到两个知识点：</p>
+<ul>
+<li>首先，注意 <code>libraryRefs()</code> 方法中用到的 <code>sync*</code> 和 <code>yield</code> 的用法。实际上这里返回的 <code>Iterable</code> 是 <a href="https://dart.dev/guides/language/language-tour#generators" target="_blank" rel="noopener">synchronous generator</a></li>
+<li>其次，<code>Directory.listSync()</code> 返回当前目录中的所有文件和目录。该方法的参数 <code>recursive</code> 用于支持递归遍历</li>
+</ul>
+<h2 id="正则式"><a href="#正则式" class="headerlink" title="正则式"></a>正则式</h2><p><code>dartdoc.dart</code> 中用到了正则式。限于篇幅，这里不展开。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">printStream(process.stdout, prefix: args[<span class="string">'json'</span>] ? <span class="string">''</span> : <span class="string">'dartdoc:stdout: '</span>,</span><br><span class="line">  filter: args[<span class="string">'verbose'</span>] ? <span class="keyword">const</span> &lt;<span class="built_in">Pattern</span>&gt;[] : &lt;<span class="built_in">Pattern</span>&gt;[</span><br><span class="line">    <span class="built_in">RegExp</span>(<span class="string">r'^generating docs for library '</span>), <span class="comment">// unnecessary verbosity</span></span><br><span class="line">    <span class="built_in">RegExp</span>(<span class="string">r'^pars'</span>), <span class="comment">// unnecessary verbosity</span></span><br><span class="line">  ],</span><br><span class="line">);</span><br><span class="line">printStream(process.stderr, prefix: args[<span class="string">'json'</span>] ? <span class="string">''</span> : <span class="string">'dartdoc:stderr: '</span>,</span><br><span class="line">  filter: args[<span class="string">'verbose'</span>] ? <span class="keyword">const</span> &lt;<span class="built_in">Pattern</span>&gt;[] : &lt;<span class="built_in">Pattern</span>&gt;[</span><br><span class="line">    <span class="built_in">RegExp</span>(<span class="string">r'^ warning: .+: \(.+/\.pub-cache/hosted/pub.dartlang.org/.+\)'</span>), <span class="comment">// packages outside our control</span></span><br><span class="line">  ],</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>这里来看一些小的语言特性。小则小，用起来确实方便。</p>
+<p>一，可以将 <code>if</code> 表达式用于 List 字面量的创建。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; dartdocBaseArgs = &lt;<span class="built_in">String</span>&gt;[</span><br><span class="line">  <span class="string">'global'</span>,</span><br><span class="line">  <span class="string">'run'</span>,</span><br><span class="line">  <span class="keyword">if</span> (args[<span class="string">'checked'</span>]) <span class="string">'-c'</span>,</span><br><span class="line">  <span class="string">'dartdoc'</span>,</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p>二，Dart 提供 <code>...</code> 扩展操作符。用法如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; dartdocBaseArgs = &lt;<span class="built_in">String</span>&gt;[</span><br><span class="line">  <span class="string">'global'</span>,</span><br><span class="line">  <span class="string">'run'</span>,</span><br><span class="line">  <span class="keyword">if</span> (args[<span class="string">'checked'</span>]) <span class="string">'-c'</span>,</span><br><span class="line">  <span class="string">'dartdoc'</span>,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Verify which version of dartdoc we're using.</span></span><br><span class="line"><span class="keyword">final</span> ProcessResult result = Process.runSync(</span><br><span class="line">  pubExecutable,</span><br><span class="line">  &lt;<span class="built_in">String</span>&gt;[...dartdocBaseArgs, <span class="string">'--version'</span>],</span><br><span class="line">  workingDirectory: kDocsRoot,</span><br><span class="line">  environment: pubEnvironment,</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h1 id="Dart-dartdoc-命令"><a href="#Dart-dartdoc-命令" class="headerlink" title="Dart dartdoc 命令"></a><a href="https://github.com/dart-lang/dartdoc#dartdoc" target="_blank" rel="noopener">Dart dartdoc 命令</a></h1><blockquote>
+<p>Use dartdoc to generate HTML documentaton for your Dart package.</p>
+</blockquote>
+<p>Dart dartdoc 是 Dart SDK 中用于为 Dart package 生成 HTML 文档的命令行工具。</p>
+<p>要正确使用这个工具，建议先简单了解以下内容：</p>
+<ul>
+<li><a href="https://dart.dev/guides/libraries/create-library-packages" target="_blank" rel="noopener">Dart package 的组织方式</a></li>
+<li><a href="https://dart.dev/guides/language/effective-dart/documentation#doc-comments" target="_blank" rel="noopener">Dart 注释文档最佳实践</a></li>
+</ul>
+<p>最简单的 Dart package 目录结构如下：</p>
+<p><img src="/images/15749233895070.jpg" alt></p>
+<ul>
+<li>pubspec file</li>
+<li>lib directory<ul>
+<li>lib 目录下可以创建任意目录结构</li>
+<li>lib/src 目录下的代码是私有的，通常是具体实现</li>
+<li>lib 目录下的代码是公开的</li>
+<li>可以通过 lib 目录下的文件导出 lib/src 为公开代码</li>
+</ul>
+</li>
+</ul>
+<p>更完整的代码结构可以参考 <a href="https://github.com/dart-lang/shelf" target="_blank" rel="noopener">shelf</a>。</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>Dart SDK 自带 dartdoc，不用另外安装。</p>
+<ul>
+<li>生成文档 - 在根目录下运行 <code>dartdoc</code></li>
+<li>查看文档<ul>
+<li><code>dhttpd --path doc/api</code> 启动服务</li>
+<li><code>http://localhost:8080</code> 查看</li>
+</ul>
+</li>
+</ul>
+<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><p>Dart dartdoc 命令支持相当多的参数。以 Flutter 为例，生成文档时的参数如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">dartdoc</span><br><span class="line">    --allow-tools</span><br><span class="line">    --no-validate-links</span><br><span class="line">    --link-to-source-excludes ../../bin/cache</span><br><span class="line">    --link-to-source-root ../.. </span><br><span class="line">    --link-to-source-uri-template https://github.com/flutter/flutter/blob/master/%f%#L%l%</span><br><span class="line">    --inject-html</span><br><span class="line">    --header styles.html</span><br><span class="line">    --header analytics.html </span><br><span class="line">    --header survey.html</span><br><span class="line">    --header snippets.html</span><br><span class="line">    --header opensearch.html</span><br><span class="line">    --footer-text lib/footer.html</span><br><span class="line">    --allow-warnings-in-packages Flutter,flutter,platform_integration,flutter_test,...</span><br><span class="line">    --exclude package:Flutter/temp_doc.dart,package:http/browser_client.dart,...</span><br><span class="line">    --favicon=favicon.ico</span><br><span class="line">    --package-order flutter,Dart,...</span><br><span class="line">    --auto-include-dependencies)</span><br></pre></td></tr></table></figure>
+<p>实际使用时可以参考 <a href="https://github.com/dart-lang/dartdoc#dartdoc" target="_blank" rel="noopener">dart-lang/dartdoc: API documentation tool for Dart.</a>。</p>
+<h2 id="dartdoc-options-yaml"><a href="#dartdoc-options-yaml" class="headerlink" title="dartdoc_options.yaml"></a>dartdoc_options.yaml</h2><p>可以通过在根目录下创建 <code>dartdoc_options.yaml</code> 来控制调整生成的文档。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dartdoc:</span><br><span class="line">  exclude: []</span><br></pre></td></tr></table></figure>
+<p>详细参数见 <a href="https://github.com/dart-lang/dartdoc#advanced-features" target="_blank" rel="noopener">Github</a></p>
+<h2 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h2><p>这里用一个简单的例子演示 dartdoc 的用法。代码结构和 <code>dartdoc_options.yaml</code> 分别如下：</p>
+<p><img src="/images/15749244487548.jpg" alt="-w885"></p>
+<p>我们在 <code>exclude</code> 中排除了 <code>hello.dart</code> 和 <code>bar.dart</code> 两个文件，而 <code>lib/src</code> 下的代码为私有的，所以最终仅为 <code>hello2.dart</code> 生成了文档。</p>
+<p><img src="/images/15749246280161.jpg" alt="-w773"></p>
+<p>浏览器中看到了文档是这样的：</p>
+<p><img src="/images/15749249251449.jpg" alt="-w723"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+              <a href="/tags/dart/" rel="tag"># Dart</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/26/dart-async-isolate-eventloop/" rel="prev" title="(译) Dart 异步编程之 Isolate 和事件循环">
+      <i class="fa fa-chevron-left"></i> (译) Dart 异步编程之 Isolate 和事件循环
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/05/anatomy-of-material-buttons-in-flutter/" rel="next" title="(译) Flutter Material Button 完全解析">
+      (译) Flutter Material Button 完全解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dart-语言"><span class="nav-number">1.</span> <span class="nav-text">Dart 语言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#args-库"><span class="nav-number">1.1.</span> <span class="nav-text">args 库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#path-库"><span class="nav-number">1.2.</span> <span class="nav-text">path 库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#process-库"><span class="nav-number">1.3.</span> <span class="nav-text">process 库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件操作"><span class="nav-number">1.4.</span> <span class="nav-text">文件操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则式"><span class="nav-number">1.5.</span> <span class="nav-text">正则式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">1.6.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dart-dartdoc-命令"><span class="nav-number">2.</span> <span class="nav-text">Dart dartdoc 命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">2.1.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数"><span class="nav-number">2.2.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dartdoc-options-yaml"><span class="nav-number">2.3.</span> <span class="nav-text">dartdoc_options.yaml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单例子"><span class="nav-number">2.4.</span> <span class="nav-text">简单例子</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

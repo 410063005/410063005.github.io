@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="这里介绍 Android 开发中的一个小技巧：扩大 View 的 touchable area。扩大 touchable area 后可以让 View 的可点击区域大于其自身显示区域，某些场景下很有用。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 小技巧之扩大点击区域">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/06/20/extend-view-touchable-area/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="这里介绍 Android 开发中的一个小技巧：扩大 View 的 touchable area。扩大 touchable area 后可以让 View 的可点击区域大于其自身显示区域，某些场景下很有用。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/06/19/touchdelegate.gif">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.041Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 小技巧之扩大点击区域">
+<meta name="twitter:description" content="这里介绍 Android 开发中的一个小技巧：扩大 View 的 touchable area。扩大 touchable area 后可以让 View 的可点击区域大于其自身显示区域，某些场景下很有用。">
+<meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/06/19/touchdelegate.gif">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/06/20/extend-view-touchable-area/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android 小技巧之扩大点击区域 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/06/20/extend-view-touchable-area/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android 小技巧之扩大点击区域
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-06-20 18:08:34" itemprop="dateCreated datePublished" datetime="2019-06-20T18:08:34+08:00">2019-06-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这里介绍 Android 开发中的一个小技巧：扩大 View 的 touchable area。扩大 touchable area 后可以让 View 的可点击区域大于其自身显示区域，某些场景下很有用。<br><a id="more"></a></p>
+<h1 id="TouchDelegate"><a href="#TouchDelegate" class="headerlink" title="TouchDelegate"></a>TouchDelegate</h1><p>以下是 <a href="https://developer.android.com/reference/android/view/TouchDelegate.html" target="_blank" rel="noopener">TouchDelegate</a> 的文档。</p>
+<blockquote>
+<p>Helper class to handle situations where you want a view to have a larger touch area than its actual view bounds. The view whose touch area is changed is called the delegate view. This class should be used by an ancestor of the delegate. To use a TouchDelegate, first create an instance that specifies the bounds that should be mapped to the delegate and the delegate view itself.</p>
+</blockquote>
+<blockquote>
+<p>The ancestor should then forward all of its touch events received in its View.onTouchEvent(MotionEvent) to onTouchEvent(android.view.MotionEvent).</p>
+</blockquote>
+<p>看文档可知 TouchDelegate 就是专门为修改 view 的点击区域而生。</p>
+<p>以下翻译至<a href="https://developer.android.com/training/gestures/viewgroup.html#delegate" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>Android 中的 <code>TouchDelegate</code> 类可用于扩展子节点的 touchable area，让子节点的 touchable area 可以超出其本身的边界。当子节点很小，需要更大 touch 区域时这个技巧很有用。当然，你也可以使用这个技巧来缩小 touch 区域。</p>
+<p>以下例子中，<code>ImageButton</code> 是代理 view (即，父节点会扩展其 touch 区域)。布局文件如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">RelativeLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">     <span class="attr">android:id</span>=<span class="string">"@+id/parent_layout"</span></span></span><br><span class="line"><span class="tag">     <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">     <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">     <span class="attr">tools:context</span>=<span class="string">".MainActivity"</span> &gt;</span></span><br><span class="line"></span><br><span class="line">     <span class="tag">&lt;<span class="name">ImageButton</span> <span class="attr">android:id</span>=<span class="string">"@+id/button"</span></span></span><br><span class="line"><span class="tag">          <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">          <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">          <span class="attr">android:background</span>=<span class="string">"@null"</span></span></span><br><span class="line"><span class="tag">          <span class="attr">android:src</span>=<span class="string">"@drawable/icon"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">RelativeLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>以下的代码片断操作这几个操作：</p>
+<ul>
+<li>获取父节点，并且在主线程中发一个 <code>Runnable</code> 消息。这可以保证调用 <code>getHitRect()</code> 方法前父节点已完成子节点的布局工作。<code>getHitRect()</code> 方法用于获取子节点的点击区域(touchable area)</li>
+<li>获取子节点(在这里是 <code>ImageButton</code>)，并且调用 <code>getHitRect()</code> 来获取其 touchable area 的边界</li>
+<li>扩展 <code>ImageButton</code> 可点击区域的边界</li>
+<li>实例化一个 <code>TouchDelegate</code>，传入的构造参数包括点击区域边界以及 <code>ImageButton</code> 对象本身</li>
+<li>在父节点上设置 <code>TouchDelegate</code>，这样能让在 touch delegate 边界内发生的 touch event 被路由到 <code>ImageButton</code></li>
+</ul>
+<p>作为 <code>ImageButton</code> 这个子节点的 touch delegate，父节点将收到所有的 touch event。如果 touch event 发生在子节点的点击区域内，父节点会将这些 touch event 传递给子节点处理。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">Activity</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Post in the parent's message queue to make sure the parent</span></span><br><span class="line">        <span class="comment">// lays out its children before you call getHitRect()</span></span><br><span class="line">        findViewById&lt;View&gt;(R.id.parent_layout).post &#123;</span><br><span class="line">            <span class="comment">// The bounds for the delegate view (an ImageButton</span></span><br><span class="line">            <span class="comment">// in this example)</span></span><br><span class="line">            <span class="keyword">val</span> delegateArea = Rect()</span><br><span class="line">            <span class="keyword">val</span> myButton = findViewById&lt;ImageButton&gt;(R.id.button).apply &#123;</span><br><span class="line">                isEnabled = <span class="literal">true</span></span><br><span class="line">                setOnClickListener &#123;</span><br><span class="line">                    Toast.makeText(</span><br><span class="line">                            <span class="keyword">this</span><span class="symbol">@MainActivity</span>,</span><br><span class="line">                            <span class="string">"Touch occurred within ImageButton touch region."</span>,</span><br><span class="line">                            Toast.LENGTH_SHORT</span><br><span class="line">                    ).show()</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// The hit rectangle for the ImageButton</span></span><br><span class="line">                getHitRect(delegateArea)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Extend the touch area of the ImageButton beyond its bounds</span></span><br><span class="line">            <span class="comment">// on the right and bottom.</span></span><br><span class="line">            delegateArea.right += <span class="number">100</span></span><br><span class="line">            delegateArea.bottom += <span class="number">100</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">// Sets the TouchDelegate on the parent view, such that touches</span></span><br><span class="line">            <span class="comment">// within the touch delegate bounds are routed to the child.</span></span><br><span class="line">            (myButton.parent <span class="keyword">as</span>? View)?.apply &#123;</span><br><span class="line">                <span class="comment">// Instantiate a TouchDelegate.</span></span><br><span class="line">                <span class="comment">// "delegateArea" is the bounds in local coordinates of</span></span><br><span class="line">                <span class="comment">// the containing view to be mapped to the delegate view.</span></span><br><span class="line">                <span class="comment">// "myButton" is the child view that should receive motion</span></span><br><span class="line">                <span class="comment">// events.</span></span><br><span class="line">                touchDelegate = TouchDelegate(delegateArea, myButton)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h1><p>我自己动手将这个示例改了一下，代码见 <a href="https://github.com/410063005/cmdemo/blob/master/app/src/main/java/com/sunmoonblog/cmdemo/layout/TouchDelegateActivity.kt" target="_blank" rel="noopener">Github</a>。</p>
+<p>截图如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/06/19/touchdelegate.gif" width="40%" height="40%"></p>
+<p>从截图可以看出，扩大 <code>ImageButton</code> 的 touchable area 后，其点击区域也随着变大。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://developer.android.com/training/gestures/viewgroup.html#delegate" target="_blank" rel="noopener">官方文档</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/19/hexo-and-mweb/" rel="prev" title="使用 Hexo + MWeb 写博客">
+      <i class="fa fa-chevron-left"></i> 使用 Hexo + MWeb 写博客
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/" rel="next" title="(译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法">
+      (译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TouchDelegate"><span class="nav-number">1.</span> <span class="nav-text">TouchDelegate</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Demo"><span class="nav-number">2.</span> <span class="nav-text">Demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

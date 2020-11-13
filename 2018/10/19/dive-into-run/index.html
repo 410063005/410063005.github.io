@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="你在Android Stuiod中点击绿色三角形图标(Run)时，背后发生了什么？点击黄色闪电图标(Apply Change)呢？">
+<meta name="keywords" content="Android,Gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Studio是如何运行app的？">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/10/19/dive-into-run/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="你在Android Stuiod中点击绿色三角形图标(Run)时，背后发生了什么？点击黄色闪电图标(Apply Change)呢？">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/19/dive-into-run/run-flow.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/19/dive-into-run/ir-pre-build.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/19/dive-into-run/ir-post-build.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.904Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Studio是如何运行app的？">
+<meta name="twitter:description" content="你在Android Stuiod中点击绿色三角形图标(Run)时，背后发生了什么？点击黄色闪电图标(Apply Change)呢？">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/10/19/dive-into-run/run-flow.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/10/19/dive-into-run/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android Studio是如何运行app的？ | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/10/19/dive-into-run/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android Studio是如何运行app的？
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-19 17:41:45" itemprop="dateCreated datePublished" datetime="2018-10-19T17:41:45+08:00">2018-10-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>你在Android Stuiod中点击绿色三角形图标(Run)时，背后发生了什么？点击黄色闪电图标(Apply Change)呢？<br><a id="more"></a></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我们的Android项目有一个奇怪的问题：在Android Studio使用Instant Run运行时，无论修改一行代码还是几行代码，永远都是cold swap，没有见到传说中的hot swap或warm swap。</p>
+<p>如果对instant run或hot swap这些概念不是太熟，可以快速浏览一下<a href="https://developer.android.com/studio/run/#instant-run" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>这个问题本身没有太多影响，无非是多增加几秒中的开发时间。但问题就是问题，不是吗？</p>
+<p>我花了一些时间跟进这个问题。本文是从Android Studio如何运行应用的角度来看这个问题的，比较粗线条，一些细节还有待深入。</p>
+<p>主要的参考资料是</p>
+<ul>
+<li><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/README.md" target="_blank" rel="noopener">android/README.md at master · JetBrains/android</a></li>
+</ul>
+<p>涉及到的代码包括</p>
+<ul>
+<li><a href="https://github.com/JetBrains/android" target="_blank" rel="noopener">JetBrains/android</a></li>
+<li><a href="https://android.googlesource.com/platform/tools/base/" target="_blank" rel="noopener">Android Gradle Plugin</a></li>
+</ul>
+<h1 id="运行过程"><a href="#运行过程" class="headerlink" title="运行过程"></a>运行过程</h1><p>用户在Android Studio中点击Run或Apply Change运行应用的过程可以简单总结为如下几个阶段：</p>
+<ul>
+<li>用户点击Run按钮(pre build阶段)</li>
+<li>开始Gradle构建(build阶段)</li>
+<li>部署应用并启动(post build阶段)</li>
+</ul>
+<p>点一下按钮很简单，但背后的过程其实比较复杂：</p>
+<ul>
+<li>用户点击Run按钮(pre build阶段) - Android Studio调用<a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/AndroidRunConfigurationBase.java" target="_blank" rel="noopener">AndroidRunConfigurationBase.getState()</a>方法，该方法创建<code>AndroidRunState</code>实例</li>
+<li>开始Gradle构建(build阶段) - 跟普通的Gradle构建本质上一样，但Android Gradle Plugin提供了许多Android特定的Task，构建中会用到这些Task</li>
+<li>部署应用并启动(post build阶段) - 这个阶段又回到Android Studio，Android Studio调用<code>AndroidRunState.execute()</code>方法，该方法执行一系列的<code>LaunchTasks</code>。<code>LaunchTasks</code>会调用<code>am</code>或<code>install</code>等adb命令安装apk或启动应用</li>
+</ul>
+<p>pre build阶段有几个重要的操作：</p>
+<ul>
+<li><code>InstantRunBuilder.computeBuildCause()</code> - 计算本次构建的原因(其中包含build mode)</li>
+<li><code>InstantRunBuilder.getInstantRunArguments()</code> - 生成用于Gradle中InstantRun相关Task的参数</li>
+<li><code>AndroidRunConfigurationBase.getState()</code> - <strong>保存build options到env</strong> 。build options最重要的参数是build mode。</li>
+</ul>
+<p>build阶段会从读取到上述build options，build options作为运行Gradle命令时的参数(比如，<code>android.optional.compilation</code>参数)。build阶段的结果会写入到<code>build-info.xml</code> 。</p>
+<p>小提示: <code>build-info.xml</code>的两种查看方式</p>
+<ul>
+<li>项目的<code>/build/intermediates/build-info/debug/build-info.xml</code></li>
+<li>Android Studio &gt; Show Log in Finder，然后在<code>flr</code>目录下找到<code>build-info.xml</code> (这里会有很多build-info.xml，分别对应于每一次构建)</li>
+</ul>
+<p>post build阶段读取<code>build-info.xml</code>，根据其内容决定如何部署和启动应用。</p>
+<p>先用这张图简单总结一下，再来逐个分析。</p>
+<p><img src="run-flow.png" alt></p>
+<p>由于涉及到日常app开发中不常见的一些东西，为尽可能容易理解，对每个阶段都按这个套路进行分析。</p>
+<ul>
+<li>属于哪个阶段，涉及到的工具</li>
+<li>对应的日志</li>
+<li>对应的代码</li>
+<li>相关的代码</li>
+</ul>
+<p>提示：一些代码很难完全看懂，但根据对应的日志不难猜出大概</p>
+<h1 id="Pre-build"><a href="#Pre-build" class="headerlink" title="Pre build"></a>Pre build</h1><p>Pre build阶段发生在Android Studio中用户点击Run按钮时。</p>
+<p>对应的重要日志见Android Studio的idea.log (日志位置 Android Studio &gt; Show Log in Finder)。日志如下，通过该日志可以知道当前构建的原因以及构建的类型。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2018-10-17 14:27:33,770 [thread 476]   INFO - ools.idea.fd.InstantRunBuilder - BuildCause: APP_NOT_RUNNING, BuildMode: COLD</span><br></pre></td></tr></table></figure>
+<p>对应的代码见：</p>
+<ul>
+<li><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/AndroidRunConfigurationBase.java" target="_blank" rel="noopener">AndroidRunConfigurationBase</a></li>
+<li><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/fd/InstantRunBuilder.java#L231" target="_blank" rel="noopener">InstantRunBuilder</a></li>
+</ul>
+<p>这里只看三个较重要的方法。</p>
+<p><code>AndroidRunConfigurationBase.getState()</code>主要有以下功能：</p>
+<ul>
+<li>选择手机或模拟器设备</li>
+<li>保存build options</li>
+</ul>
+<p><img src="ir-pre-build.png" alt></p>
+<p><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/README.md" target="_blank" rel="noopener">图片来源</a></p>
+<p><code>InstantRunBuilder.computeBuildCause()</code>方法中计算<code>BuildCause</code>。<code>BuildCause</code>定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> BuildCause &#123;</span><br><span class="line">  <span class="comment">// reasons for full build</span></span><br><span class="line">  NO_DEVICE(BuildMode.FULL),</span><br><span class="line">  APP_NOT_INSTALLED(BuildMode.FULL),</span><br><span class="line">  MISMATCHING_TIMESTAMPS(BuildMode.FULL),</span><br><span class="line">  API_TOO_LOW_FOR_INSTANT_RUN(BuildMode.FULL),</span><br><span class="line">  FIRST_INSTALLATION_TO_DEVICE(BuildMode.FULL), <span class="comment">// first installation in this Android Studio session</span></span><br><span class="line">  FREEZE_SWAP_REQUIRES_API21(BuildMode.FULL),</span><br><span class="line"></span><br><span class="line">  <span class="comment">// reasons for forced cold swap build</span></span><br><span class="line">  USER_REQUESTED_COLDSWAP(BuildMode.COLD), <span class="comment">// User pressed Run, and only Run button was enabled (name not ideal, but matches existing proto)</span></span><br><span class="line">  USER_CHOSE_TO_COLDSWAP(BuildMode.COLD),  <span class="comment">// Both Run and Hotswap were enabled, and user chose Run</span></span><br><span class="line">  APP_NOT_RUNNING(BuildMode.COLD),</span><br><span class="line">  APP_USES_MULTIPLE_PROCESSES(BuildMode.COLD),</span><br><span class="line">  ANDROID_TV_UNSUPPORTED(BuildMode.COLD),</span><br><span class="line">  MANIFEST_RESOURCE_CHANGED(BuildMode.COLD),</span><br><span class="line"></span><br><span class="line">  INCREMENTAL_BUILD(BuildMode.HOT),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果在使用Instant Run过程中遇到问题或疑惑，或许可以从<code>computeBuildCause()</code>的代码找到答案。以这个精简后的代码为例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NotNull</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> BuildCause <span class="title">computeBuildCause</span><span class="params">(@Nullable IDevice device)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">if</span> (manifestResourceChanged(device)) &#123;</span><br><span class="line">    <span class="keyword">return</span> BuildCause.MANIFEST_RESOURCE_CHANGED;</span><br><span class="line">  &#125;</span><br><span class="line">  ...	</span><br><span class="line">  <span class="keyword">if</span> (myRunContext.isForceColdswap()) &#123;</span><br><span class="line">    <span class="keyword">return</span> myRunContext.couldHaveInvokedHotswap() ? BuildCause.USER_CHOSE_TO_COLDSWAP : BuildCause.USER_REQUESTED_COLDSWAP;</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">if</span> (myInstantRunContext.usesMultipleProcesses()) &#123;</span><br><span class="line">    <span class="keyword">return</span> BuildCause.APP_USES_MULTIPLE_PROCESSES;</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过代码我们可以知道：</p>
+<ul>
+<li>修改应用的manifest后不可能进行hot swap，至少会是cold swap。因为修改manifest后返回<code>MANIFEST_RESOURCE_CHANGED</code>，它对应<code>BuildMode.COLD</code></li>
+<li>多进程的应用不可能进程hot swap，至少会是cold swap。因为多进程应用时返回<code>APP_USES_MULTIPLE_PROCESSES</code>，它对应<code>BuildMode.COLD</code></li>
+</ul>
+<p>再看一下<code>InstantRunBuilder.getInstantRunArguments()</code>方法，它为build过程生成参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">getInstantRunArguments</span><span class="params">(@NotNull BuildMode buildMode)</span> </span>&#123;</span><br><span class="line">  StringBuilder sb = <span class="keyword">new</span> StringBuilder(<span class="number">50</span>);</span><br><span class="line">  sb.append(<span class="string">"-P"</span>);</span><br><span class="line">  sb.append(PROPERTY_OPTIONAL_COMPILATION_STEPS);</span><br><span class="line">  sb.append(<span class="string">"="</span>);</span><br><span class="line">  sb.append(OptionalCompilationStep.INSTANT_DEV.name());</span><br><span class="line"></span><br><span class="line">  <span class="keyword">switch</span> (buildMode) &#123;</span><br><span class="line">    <span class="keyword">case</span> HOT:</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> COLD:</span><br><span class="line">      sb.append(<span class="string">","</span>).append(OptionalCompilationStep.RESTART_ONLY.name());</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> FULL:</span><br><span class="line">      sb.append(<span class="string">","</span>).append(OptionalCompilationStep.FULL_APK.name());</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  String compilationSteps = sb.toString();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Starting with Studio 2.3, we always do a split APK install on cold swaps</span></span><br><span class="line">  String coldSwapMode = AndroidGradleSettings.createProjectProperty(AndroidProject.PROPERTY_SIGNING_COLDSWAP_MODE, <span class="string">"MULTIAPK"</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> ImmutableList.of(compilationSteps, coldSwapMode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码的意思就是根据不同的buildMode，会生成不同的参数传给Gradle：</p>
+<ul>
+<li><code>HOT</code> - INSTANT_DEV， 传<code>-Pandroid.optional.complilation=INSTANT_DEV</code></li>
+<li><code>COLD</code> - RESTART_ONLY， 传<code>-Pandroid.optional.complilation=INSTANT_DEV,RESTART_ONLY</code></li>
+<li><code>FULL</code> - FULL_APK， 传<code>-Pandroid.optional.complilation=INSTANT_DEV,FULL_APK</code></li>
+</ul>
+<p>Gradle收到的参数不同，运行的Task也将有所不同。</p>
+<h1 id="Build"><a href="#Build" class="headerlink" title="Build"></a>Build</h1><p>Build阶段发生在Gradle中。</p>
+<p>对应的重要日志见<code>build.log</code> (日志位置 Android Studio &gt; Show Log in Finder， 然后找flr目录)。日志如下，通过该日志知道重新编译的class文件跟前一个版本是兼容的，所以接下来可以进行hot swap：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Receiving verifier result: COMPATIBLE. Current Verifier/Build mode is NO_CHANGES/HOT_WARM.</span><br><span class="line">Verifier result is now : COMPATIBLE. Build mode is now HOT_WARM.</span><br></pre></td></tr></table></figure>
+<p>Build阶段还会生成一个重要的文件<code>build-info.xml</code> (日志位置 Android Studio &gt; Show Log in Finder， 然后找flr目录)</p>
+<p>对应的代码见<code>com.android.build.gradle.internal.InstantRunBuildContext.setVerifierStatus()</code> <a href="https://github.com/JetBrains/android" target="_blank" rel="noopener">Github</a></p>
+<p>相关的代码有：</p>
+<ul>
+<li><code>TaskManager.createPostCompilationTasks()</code></li>
+<li><code>InstantRunTaskManager.createPreColdswapTask()</code>，这个方法会读取上述<code>android.optional.complilation</code>参数</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// InstantRunTaskManager.java</span></span><br><span class="line"><span class="comment">/** Creates all InstantRun related transforms after compilation. */</span></span><br><span class="line"><span class="meta">@NonNull</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> PreColdSwapTask <span class="title">createPreColdswapTask</span><span class="params">(@NonNull ProjectOptions projectOptions)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    TransformVariantScope transformVariantScope = variantScope.getTransformVariantScope();</span><br><span class="line">    InstantRunBuildContext context = variantScope.getInstantRunBuildContext();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (transformVariantScope.getGlobalScope().isActive(OptionalCompilationStep.FULL_APK)) &#123;</span><br><span class="line">        context.setVerifierStatus(InstantRunVerifierStatus.FULL_BUILD_REQUESTED);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (transformVariantScope.getGlobalScope().isActive(</span><br><span class="line">            OptionalCompilationStep.RESTART_ONLY)) &#123;</span><br><span class="line">        context.setVerifierStatus(InstantRunVerifierStatus.COLD_SWAP_REQUESTED);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    PreColdSwapTask preColdSwapTask =</span><br><span class="line">            taskFactory.create(</span><br><span class="line">                    <span class="keyword">new</span> PreColdSwapTask.ConfigAction(</span><br><span class="line">                            <span class="string">"preColdswap"</span>, transformVariantScope, variantScope));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (verifierTask != <span class="keyword">null</span>) &#123;</span><br><span class="line">        preColdSwapTask.dependsOn(verifierTask);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> preColdSwapTask;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// InstantRunBuildContext.java</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Sets the verifier status for the current build.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> verifierStatus</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setVerifierStatus</span><span class="params">(@NonNull InstantRunVerifierStatus verifierStatus)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    LOG.info(</span><br><span class="line">            <span class="string">"Receiving verifier result: &#123;&#125;. Current Verifier/Build mode is &#123;&#125;/&#123;&#125;."</span>,</span><br><span class="line">            verifierStatus,</span><br><span class="line">            currentBuild.getVerifierStatus(),</span><br><span class="line">            currentBuild.buildMode);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// get the new build mode for this verifier status as it may change the one we</span></span><br><span class="line">    <span class="comment">// currently use.</span></span><br><span class="line">    InstantRunBuildMode newBuildMode =</span><br><span class="line">            currentBuild.buildMode.combine(</span><br><span class="line">                    verifierStatus.getInstantRunBuildModeForPatchingPolicy(patchingPolicy));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// save the verifier status, even if it does not end up being used as the main status,</span></span><br><span class="line">    <span class="comment">// this can be useful to check later on that certain condition were not met.</span></span><br><span class="line">    currentBuild.allStatuses.add(verifierStatus);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// if our current status is not set, or the new build mode is higher, reset everything.</span></span><br><span class="line">    <span class="keyword">if</span> (currentBuild.getVerifierStatus() == InstantRunVerifierStatus.NO_CHANGES</span><br><span class="line">            || currentBuild.getVerifierStatus() == InstantRunVerifierStatus.COMPATIBLE</span><br><span class="line">            || newBuildMode != currentBuild.buildMode) &#123;</span><br><span class="line">        currentBuild.verifierStatus = verifierStatus;</span><br><span class="line">        currentBuild.buildMode = newBuildMode;</span><br><span class="line">    &#125;</span><br><span class="line">    Preconditions.checkNotNull(</span><br><span class="line">            patchingPolicy, <span class="string">"setApiLevel should be called before setVerifierStatus"</span>);</span><br><span class="line"></span><br><span class="line">    LOG.info(</span><br><span class="line">            <span class="string">"Verifier result is now : &#123;&#125;. Build mode is now &#123;&#125;."</span>,</span><br><span class="line">            currentBuild.getVerifierStatus(),</span><br><span class="line">            currentBuild.buildMode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Post-Build"><a href="#Post-Build" class="headerlink" title="Post Build"></a>Post Build</h1><p>Post Build阶段发生在Android Studio。</p>
+<p>对应的代码见<a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/AndroidLaunchTasksProviderFactory.java" target="_blank" rel="noopener">com.android.tools.idea.run.AndroidLaunchTasksProviderFactory</a>，它读取<code>build-info.xml</code>确定要执行的Task。</p>
+<p>这里不展开分析，只上一张图</p>
+<p><img src="ir-post-build.png" alt></p>
+<p><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/README.md" target="_blank" rel="noopener">图片来源</a></p>
+<p>注意：这张图跟最新的代码不完全对应，但不影响理解。</p>
+<h1 id="关键代码"><a href="#关键代码" class="headerlink" title="关键代码"></a>关键代码</h1><p>这里记录一下分析问题过程中遇到的一些关键代码，以备查找。</p>
+<h2 id="JetBrains-android"><a href="#JetBrains-android" class="headerlink" title="JetBrains/android"></a><a href="https://github.com/JetBrains/android" target="_blank" rel="noopener">JetBrains/android</a></h2><p>build相关：</p>
+<ul>
+<li><code>com.android.tools.idea.fd.BuildMode</code> - 构建模式。分为HOT, COLD, FULL三种</li>
+<li><code>com.android.tools.idea.fd.BuildCause</code> - 构建原因</li>
+<li><code>com.android.tools.idea.run.AndroidRunConfigurationBase</code> </li>
+<li><code>com.android.tools.idea.run.AndroidRunConfiguration</code> </li>
+<li><code>com.android.tools.idea.fd.InstantRunBuilder</code></li>
+</ul>
+<p>task相关：</p>
+<ul>
+<li><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/AndroidLaunchTasksProviderFactory.java" target="_blank" rel="noopener">com.android.tools.idea.run.AndroidLaunchTasksProviderFactory</a> - 读取build-info.xml</li>
+<li><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/AndroidLaunchTasksProvider.java" target="_blank" rel="noopener">com.android.tools.idea.run.AndroidLaunchTasksProvider</a></li>
+<li><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/tasks/NoChangesTask.java" target="_blank" rel="noopener">com.android.tools.idea.run.tasks.NoChangesTask</a></li>
+<li><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/tasks/HotSwapTask.java" target="_blank" rel="noopener">com.android.tools.idea.run.tasks.HotSwapTask</a></li>
+<li><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/tasks/SplitApkDeployTask.java" target="_blank" rel="noopener">com.android.tools.idea.run.tasks.SplitApkDeployTask</a></li>
+</ul>
+<h2 id="Android-Gradle-Plugin"><a href="#Android-Gradle-Plugin" class="headerlink" title="Android Gradle Plugin"></a><a href="https://android.googlesource.com/platform/tools/base/" target="_blank" rel="noopener">Android Gradle Plugin</a></h2><ul>
+<li><code>com.android.build.gradle.internal.incremental.BuildInfoWriterTask</code> - 创建<code>build-info.xml</code></li>
+<li><code>com.android.build.gradle.internal.incremental.InstantRunBuildContext</code> - 记录了构建相关的信息，这些信息将写入<code>build-info.xml</code></li>
+<li><code>com.android.build.gradle.internal.transforms.InstantRunVerifierTransform</code> - 比较同一个class文件的两个版本是否支持instant run</li>
+<li><code>com.android.build.gradle.internal.transforms.InstantRunTransform</code> - 比class进行增强，以支持instant run的hot swap</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>用户在Android Studio中点击Run或Apply Change运行应用时，Android Studio会保存build options并为Gradle生成参数。Gradle进行实际构建，构建结果记录在<code>build-info.xml</code>文件中。Android Studio分析构建结果后调用Android SDK相关工具部署并启动应用。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://github.com/JetBrains/android/blob/master/android/src/com/android/tools/idea/run/README.md" target="_blank" rel="noopener">android/README.md at master · JetBrains/android</a></p>
+<p><a href="http://www.jetbrains.org/intellij/sdk/docs/basics/run_configurations.html" target="_blank" rel="noopener">Run Configurations / IntelliJ Platform SDK DevGuide</a></p>
+<p><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/README.md" target="_blank" rel="noopener">Android Developer Tools - Instant Run</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+              <a href="/tags/gradle/" rel="tag"># Gradle</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/09/13/gradle-incremental-compilation/" rel="prev" title="(翻译)Gradle增量编译">
+      <i class="fa fa-chevron-left"></i> (翻译)Gradle增量编译
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/10/26/instant-run/" rel="next" title="(译)Instant Run">
+      (译)Instant Run <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运行过程"><span class="nav-number">2.</span> <span class="nav-text">运行过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Pre-build"><span class="nav-number">3.</span> <span class="nav-text">Pre build</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Build"><span class="nav-number">4.</span> <span class="nav-text">Build</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Post-Build"><span class="nav-number">5.</span> <span class="nav-text">Post Build</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关键代码"><span class="nav-number">6.</span> <span class="nav-text">关键代码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JetBrains-android"><span class="nav-number">6.1.</span> <span class="nav-text">JetBrains/android</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-Gradle-Plugin"><span class="nav-number">6.2.</span> <span class="nav-text">Android Gradle Plugin</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

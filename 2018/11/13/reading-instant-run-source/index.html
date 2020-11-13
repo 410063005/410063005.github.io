@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="我们知道，Android热修复的补丁通常是通过网络下发的，并且加载补丁后要重启进程才能生效。那么Instant Run的补丁是如何下发并且生效的呢？">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Instant Run浅析(三)">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="我们知道，Android热修复的补丁通常是通过网络下发的，并且加载补丁后要重启进程才能生效。那么Instant Run的补丁是如何下发并且生效的呢？">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/bg.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/instant-flow.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/instant-run-project.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/instant-run-provider.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/instant-run-client-classes.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/message_patches.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/classloader.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/hello-world-apppatch.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/calc-update-mode.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/update-mode.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/build-info.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/idea-log.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/build-log.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/insant-run-log.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.928Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Instant Run浅析(三)">
+<meta name="twitter:description" content="我们知道，Android热修复的补丁通常是通过网络下发的，并且加载补丁后要重启进程才能生效。那么Instant Run的补丁是如何下发并且生效的呢？">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/bg.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Instant Run浅析(三) | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/11/13/reading-instant-run-source/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Instant Run浅析(三)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-13 10:39:38" itemprop="dateCreated datePublished" datetime="2018-11-13T10:39:38+08:00">2018-11-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>我们知道，Android热修复的补丁通常是通过网络下发的，并且加载补丁后要重启进程才能生效。那么Instant Run的补丁是如何下发并且生效的呢？</p>
+<a id="more"></a>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>先看这张图：</p>
+<p><img src="bg.png" alt></p>
+<p>图中的<code>base.apk</code>是首次运行应用时生成的apk包，<code>reload.dex</code>是接下来Instant Run运行生成的补丁包(<code>HelloWorld$override.class</code>被打包成<code>reload.dex</code>)。</p>
+<p>前面两篇文章分别就图中某些问题进行了讨论：</p>
+<ul>
+<li><a href="https://www.sunmoonblog.com/2018/10/19/dive-into-run/">Android Studio是如何运行app的？</a> - 分析了点击Run或Apply Changes后是如何运行app的</li>
+<li><a href="https://www.sunmoonblog.com/2018/10/30/instant-run-1/">Instant Run浅析(二)</a> - 分析了如何使用instrumentation技术生成<code>HelloWorld$override.class</code></li>
+</ul>
+<p>本篇要讨论的是补丁包如何被发送、接收以及加载。</p>
+<p>为便于理解问题，先直接给出几个相关的知识点：</p>
+<ul>
+<li>首先必须了解的是，<font color="red">Instant Run是CS架构的，它分为服务端和客户端</font></li>
+<li>Instant Run的客户端运行在Android Studio中</li>
+<li>Instant Run的服务端运行在手机上的app进程</li>
+</ul>
+<p>也就是说，当你看见Android Studio的黄色闪电图标(Apply Change)亮起时，可以理解为Instant Run客户端成功连接/登录到Instant Run服务端，就像QQ客户端成功连接/登录QQ服务器端。这个比喻不完全准确，但二者并无本质上的不同。Instant Run客户端向Instant Run服务端发送消息，服务端处理消息并返回结果。</p>
+<p>为了更直观地理解Instant Run，先看一个基于<code>instant-run-client</code>库开发的demo，代码见<a href="https://github.com/410063005/instant-run-demo" target="_blank" rel="noopener">Github</a>。这个demo有几个功能：</p>
+<ul>
+<li>让app弹出toast</li>
+<li>让app重启当前activity</li>
+<li>手工版的hot swap</li>
+</ul>
+<iframe width="1000" height="500" src="instant-run-client-demo.mp4" frameborder="0" allowfullscreen></iframe>
+
+<p>demo的玩法如下：</p>
+<ul>
+<li>下载demo源码<a href="https://github.com/410063005/instant-run-demo" target="_blank" rel="noopener">Github</a></li>
+<li>Android Studio中运行demo的app module，确认黄色闪电图标亮起</li>
+<li>从上一步生成的<code>build-info.xml</code>文件找到token (一长串数字)</li>
+<li>下载并运行<code>appclient.jar</code>，运行方法<code>java -jar appclient.jar</code></li>
+</ul>
+<p>注：</p>
+<ul>
+<li><code>build-info.xml</code>文件的具体路径是<code>/build/intermediates/build-info/debug/build-info.xml</code></li>
+<li><code>appclient.jar</code>编译自demo源码中的appclient module，编译方法<code>./gradlew shadowJar</code></li>
+</ul>
+<p>视频中demo发出”put patches”指令后紧接着发出”restart activity”，原来的”hello”变成了”你好”。很神奇？一起来看看背后的原理吧。</p>
+<h1 id="架构分析"><a href="#架构分析" class="headerlink" title="架构分析"></a>架构分析</h1><p>上述demo是基于<code>instant-run-client</code>库实现的。<code>instant-run-client</code>和<code>instant-run-server</code>的关系大致如下图：</p>
+<p><img src="instant-flow.png" alt></p>
+<ul>
+<li>Android Gradle Plugin生成patch</li>
+<li><code>instant-run-client</code>发送patch</li>
+<li><code>instant-run-server</code>接收并加载patch</li>
+</ul>
+<p>Instant Run的源码在ASOP的<code>platform/tools/base/</code>目录。<a href="https://android.googlesource.com/platform/tools/base/" target="_blank" rel="noopener">base项目</a>是ASOP中一个独立的git工程。注意，base项目无法独立编译。本文基于该项目<code>studio-master-dev</code>分支进行分支，最后一次提交是<code>ec8e2b78ea42ac57d6e63bf88a3e09e1713bcc08</code>。</p>
+<p>代码结构很清晰，它分成以下几个模块：</p>
+<p><img src="instant-run-project.png" alt></p>
+<p>Instant Run各模块及主要类总结如下：</p>
+<ul>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-common/" target="_blank" rel="noopener">common模块</a> - 公共组件</li>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-runtime/" target="_blank" rel="noopener">runtime模块</a> - Instant Run运行时</li>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-server/" target="_blank" rel="noopener">server模块</a> - Instant Run服务端</li>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-client/" target="_blank" rel="noopener">client模块</a> - Instant Run客户端</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>类名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>common</td>
+<td><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-common/src/main/java/com/android/tools/ir/common/ProtocolConstants.java" target="_blank" rel="noopener">ProtocolConstants</a></td>
+<td>instant run协议</td>
+</tr>
+<tr>
+<td>common</td>
+<td><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-common/src/main/java/com/android/tools/ir/runtime/ApplicationPatch.java" target="_blank" rel="noopener">ApplicationPatch</a></td>
+<td>对patch的路径及数据的封装</td>
+</tr>
+<tr>
+<td>runtime</td>
+<td><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-runtime/src/main/java/com/android/tools/ir/runtime/IncrementalChange.java" target="_blank" rel="noopener">IncrementalChange</a></td>
+<td>关键的接口，代表代码变更</td>
+</tr>
+<tr>
+<td>runtime</td>
+<td><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-runtime/src/main/java/com/android/tools/ir/runtime/PatchesLoader.java" target="_blank" rel="noopener">PatchesLoader</a></td>
+<td>关键接口，用于加载patch，具体见<code>AbstractPatchesLoaderImpl</code></td>
+</tr>
+<tr>
+<td>server</td>
+<td><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-server/src/main/java/com/android/tools/ir/server/Server.java" target="_blank" rel="noopener">Server</a></td>
+<td>服务端的核心</td>
+</tr>
+<tr>
+<td>client</td>
+<td><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-client/src/main/java/com/android/tools/ir/client/UpdateMode.java" target="_blank" rel="noopener">UpdateMode</a></td>
+<td>app加载patch后的启动模式</td>
+</tr>
+<tr>
+<td>client</td>
+<td><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-client/src/main/java/com/android/tools/ir/client/InstantRunBuildInfo.java" target="_blank" rel="noopener">InstantRunBuildInfo</a></td>
+<td>对应于<code>build-info.xml</code>文件</td>
+</tr>
+<tr>
+<td>client</td>
+<td><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-client/src/main/java/com/android/tools/ir/client/InstantRunClient.java" target="_blank" rel="noopener">InstantRunClient</a></td>
+<td>客户端的核心</td>
+</tr>
+</tbody>
+</table>
+<p>注意这里的两个重点：</p>
+<ul>
+<li><font color="red">Instant Run服务端被打包到APK</font></li>
+<li><font color="red">Instant Run客户端被集成到Android Studio</font>
+
+</li>
+</ul>
+<p>如果你不太了解<code>build-info.xml</code>，可以参考这里：</p>
+<ul>
+<li><a href="https://www.sunmoonblog.com/2018/10/26/instant-run/">(译)Instant Run</a></li>
+<li><a href="https://www.sunmoonblog.com/2018/10/19/dive-into-run/">Android Studio是如何运行app的？</a> - 分析了点击Run或Apply Changes后是如何运行app的</li>
+</ul>
+<p>另外，<code>server</code>模块的<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-server/src/main/java/com/android/tools/ir/server/InstantRunContentProvider.java" target="_blank" rel="noopener">InstantRunContentProvider</a>很有意思，有必要提一下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">InstantRunContentProvider</span> <span class="keyword">extends</span> <span class="title">ContentProvider</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isMainProcess()) &#123;</span><br><span class="line">            Log.i(Logging.LOG_TAG, <span class="string">"starting instant run server: is main process"</span>);</span><br><span class="line">            Server.create(getContext());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Log.i(Logging.LOG_TAG, <span class="string">"not starting instant run server: not main process"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>反编译<code>base.apk</code>你会发现构建系统偷偷帮你添加了<code>InstantRunContentProvider</code>，这么做的原因是利用<code>ContentProvider.onCreate()</code>早于<code>Application.onCreate()</code>运行的特点来简化Instant Run的实现。2016年Google推出Instant Run，在早期版本中为了能将Instant Run应用于<code>Application</code>，会向app中注入<code>BootstrapApplication</code>，这个<code>BootstrapApplication</code>代理到app原来的<code>Application</code>。<code>BootstrapApplication</code>方案带来不必要的复杂性，后期版本中采用<code>InstantRunContentProvider</code>方案。2016年关于Instant Run的技术博客中，比如<a href="https://blog.csdn.net/nupt123456789/article/details/51828701" target="_blank" rel="noopener">这篇</a>，经常可以看到<code>BootstrapApplication</code>，请注意避免踩坑。</p>
+<p>如果你不相信<code>provider</code>比<code>application</code>先运行，可以看看日志。</p>
+<p><img src="instant-run-provider.png" alt></p>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>Instant Run客户端通过<code>ddmlib</code>库跟服务端通信。使用<code>ddmlib</code>时在<code>build.gradle</code>添加如下依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// https://mvnrepository.com/artifact/com.android.tools.ddms/ddmlib</span><br><span class="line">compile &apos;com.android.tools.ddms:ddmlib:26.2.1&apos;</span><br></pre></td></tr></table></figure>
+<h2 id="Instant-Run客户端"><a href="#Instant-Run客户端" class="headerlink" title="Instant Run客户端"></a>Instant Run客户端</h2><p><code>instant-run-client</code>模块并不复杂，这是它的类图。</p>
+<p><img src="instant-run-client-classes.png" alt></p>
+<p><code>instant-run-client</code>最终会调用<code>ServiceCommunicator.talkToService(IDevice device, Communicator&lt;T&gt; communicator)</code>跟Android设备通信的。</p>
+<ul>
+<li><code>device</code>参数通过<code>ddmlib</code>库获取<ul>
+<li>使用<code>ddmlib</code>获取device列表的方法可参考<a href="https://github.com/410063005/instant-run-demo/blob/master/appclient/src/main/java/com/sunmoonblog/appclient/Demo.java#L29" target="_blank" rel="noopener">这里</a></li>
+<li>通信前<code>device</code>通过本地的TCP 46622端口跟远程的Unix Domain Socket建立端口转发关系</li>
+</ul>
+</li>
+<li><code>communicator</code>参数封装了通信逻辑，<code>ProtocolConstants</code>中的每个命令字都有对应的<code>Communicator</code>实现</li>
+</ul>
+<p><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-client/src/main/java/com/android/tools/ir/client/InstantRunClient.java" target="_blank" rel="noopener">InstantRunClient</a>有如下几个重要方法：</p>
+<ul>
+<li><code>getAppState()</code></li>
+<li><code>showToast()</code></li>
+<li><code>restartActivity()</code></li>
+<li><code>pushPatches()</code></li>
+</ul>
+<p>鉴于这些方法非常容易理解，这里就不做无聊的分析。有兴趣可以参考前面提到的<a href="https://github.com/410063005/instant-run-demo" target="_blank" rel="noopener">demo</a>。</p>
+<h2 id="Instant-Run服务端"><a href="#Instant-Run服务端" class="headerlink" title="Instant Run服务端"></a>Instant Run服务端</h2><p><strong>Server是Instant Run服务端的核心，它是一个典型的服务端程序</strong>。</p>
+<p>不过跟常见的服务端程序有所不同的是，<code>Server</code>使用<a href="https://developer.android.com/reference/android/net/LocalServerSocket" target="_blank" rel="noopener">LocalServerSocket</a>以及<a href="https://developer.android.com/reference/android/net/LocalSocket" target="_blank" rel="noopener">LocalSocket</a>编程，而不是Java中常用的<code>ServerSocket</code>以及<code>Socket</code>编程。</p>
+<p>查文档知道<code>LocalServerSocket</code>和<code>LocalSocket</code>是Android平台特有的类，它们与<code>Socket</code>的区别可参考<a href="https://stackoverflow.com/questions/12580415/what-if-the-difference-between-android-localserversocket-and-java-serversocket" target="_blank" rel="noopener">这里</a></p>
+<p><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-server/src/main/java/com/android/tools/ir/server/Server.java" target="_blank" rel="noopener">Server</a>的核心代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">SocketServerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                LocalServerSocket serverSocket = Server.<span class="keyword">this</span>.serverSocket;</span><br><span class="line">                <span class="keyword">if</span> (serverSocket == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">break</span>; <span class="comment">// stopped?</span></span><br><span class="line">                &#125;</span><br><span class="line">                LocalSocket socket = serverSocket.accept();</span><br><span class="line">                SocketServerReplyThread socketServerReplyThread = <span class="keyword">new</span> SocketServerReplyThread(</span><br><span class="line">                        socket);</span><br><span class="line">                ...</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">                ...</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种代码结构是不是很眼熟？总结一下它的套路：</p>
+<ol>
+<li>启动<code>SocketServerThread</code>线程 </li>
+<li><code>SocketServerThread</code>线程进入无限循环 </li>
+<li><code>accept()</code>监听客户端连接 </li>
+<li>启动<code>SocketServerReplyThread</code>线程处理客户端连接 </li>
+<li>跳转到2，继续循环 </li>
+</ol>
+<p><code>SocketServerReplyThread.handle()</code>方法负责处理客户端消息，我们感兴趣的消息指令见下表。</p>
+<table>
+<thead>
+<tr>
+<th>命令字</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MESSAGE_PING</code></td>
+<td>检查服务端在线状态。 服务端在线时Android Studio的黄色闪电图标亮起</td>
+</tr>
+<tr>
+<td><code>MESSAGE_SHOW_TOAST</code></td>
+<td>通知服务端弹出Toast提示</td>
+</tr>
+<tr>
+<td><code>MESSAGE_RESTART_ACTIVITY</code></td>
+<td>通知服务端重启当前activity 。某些修改必须重起activity才能生效</td>
+</tr>
+<tr>
+<td><code>MESSAGE_PATCHES</code></td>
+<td>向服务端发送patch</td>
+</tr>
+</tbody>
+</table>
+<p><code>MESSAGE_PATCHES</code>的处理流程如下：</p>
+<p><img src="message_patches.png" alt></p>
+<p>再来看对应的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(DataInputStream input, DataOutputStream output)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">case</span> MESSAGE_PATCHES: &#123;</span><br><span class="line">		<span class="keyword">if</span> (!authenticate(input)) &#123;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		List&lt;ApplicationPatch&gt; changes = ApplicationPatch.read(input);</span><br><span class="line">		<span class="keyword">if</span> (changes == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">boolean</span> hasResources = hasResources(changes);</span><br><span class="line">		<span class="comment">// 第1处，初始的 updateMode 值由客户端发过来</span></span><br><span class="line">		<span class="keyword">int</span> updateMode = input.readInt();</span><br><span class="line">		<span class="comment">// 第2处， 服务端重新计算updateMode</span></span><br><span class="line">		updateMode = handlePatches(changes, hasResources, updateMode);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">boolean</span> showToast = input.readBoolean();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Send an "ack" back to the IDE; this is used for timing purposes only</span></span><br><span class="line">		output.writeBoolean(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">		restart(updateMode, hasResources, showToast);</span><br><span class="line">		<span class="keyword">continue</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;	</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">handlePatches</span><span class="params">(@NonNull List&lt;ApplicationPatch&gt; changes, <span class="keyword">boolean</span> hasResources,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">int</span> updateMode)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (hasResources) &#123;</span><br><span class="line">		FileManager.startUpdate();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (ApplicationPatch change : changes) &#123;</span><br><span class="line">		String path = change.getPath();</span><br><span class="line">		<span class="comment">// 第3处，更新代码或更新资源</span></span><br><span class="line">		<span class="keyword">if</span> (path.equals(RELOAD_DEX_FILE_NAME)) &#123;</span><br><span class="line">			updateMode = handleHotSwapPatch(updateMode, change);</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (isResourcePath(path)) &#123;</span><br><span class="line">			updateMode = handleResourcePatch(updateMode, change, path);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (hasResources) &#123;</span><br><span class="line">		FileManager.finishUpdate(<span class="keyword">true</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> updateMode;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">handleResourcePatch</span><span class="params">(<span class="keyword">int</span> updateMode, @NonNull ApplicationPatch patch,</span></span></span><br><span class="line"><span class="function"><span class="params">		@NonNull String path)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Log.isLoggable(Logging.LOG_TAG, Log.VERBOSE)) &#123;</span><br><span class="line">		Log.v(Logging.LOG_TAG, <span class="string">"Received resource changes ("</span> + path + <span class="string">")"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	FileManager.writeAaptResources(path, patch.getBytes());</span><br><span class="line">	<span class="comment">//noinspection ResourceType</span></span><br><span class="line">	<span class="comment">// 第4处代码，资源更新时，updateMode至少是WARM_SWAP</span></span><br><span class="line">	updateMode = Math.max(updateMode, UPDATE_MODE_WARM_SWAP);</span><br><span class="line">	<span class="keyword">return</span> updateMode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意第3处代码，它在更新资源或代码。更新代码时会调用<code>handleHotSwapPatch()</code>，它是加载patch的关键所在，代码如下(为了保持代码清晰这里仅保留主要部分)：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">handleHotSwapPatch</span><span class="params">(<span class="keyword">int</span> updateMode, @NonNull ApplicationPatch patch)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">try</span> &#123;</span><br><span class="line">         String dexFile = FileManager.writeTempDexFile(patch.getBytes());</span><br><span class="line">         String nativeLibraryPath = FileManager.getNativeLibraryFolder().getPath();</span><br><span class="line">         <span class="comment">// 第5处，从dex文件加载指定类</span></span><br><span class="line">         DexClassLoader dexClassLoader = <span class="keyword">new</span> DexClassLoader(dexFile,</span><br><span class="line">                 context.getCacheDir().getPath(), nativeLibraryPath,</span><br><span class="line">                 getClass().getClassLoader());</span><br><span class="line"></span><br><span class="line">         <span class="comment">// we should transform this process with an interface/impl</span></span><br><span class="line">         Class&lt;?&gt; aClass = Class.forName(</span><br><span class="line">                 <span class="string">"com.android.tools.ir.runtime.AppPatchesLoaderImpl"</span>, <span class="keyword">true</span>, dexClassLoader);</span><br><span class="line">         <span class="keyword">try</span> &#123;</span><br><span class="line">	<span class="comment">// 第6处，创建loader实例并加载patch</span></span><br><span class="line">             PatchesLoader loader = (PatchesLoader) aClass.newInstance();</span><br><span class="line">             <span class="keyword">if</span> (!loader.load()) &#123;</span><br><span class="line">		<span class="comment">// 第7处，更新updateMode</span></span><br><span class="line">                 updateMode = UPDATE_MODE_COLD_SWAP;</span><br><span class="line">             &#125;</span><br><span class="line">         &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">             Log.e(Logging.LOG_TAG, <span class="string">"Couldn't apply code changes"</span>, e);</span><br><span class="line">	<span class="comment">// 第8处，更新updateMode</span></span><br><span class="line">             updateMode = UPDATE_MODE_COLD_SWAP;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">         Log.e(Logging.LOG_TAG, <span class="string">"Couldn't apply code changes"</span>, e);</span><br><span class="line"><span class="comment">// 第9处，更新updateMode</span></span><br><span class="line">         updateMode = UPDATE_MODE_COLD_SWAP;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">return</span> updateMode;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第5处代码：从dex文件中加载<code>AppPatchesLoaderImpl</code></li>
+<li>第6处代码：创建loader实例并加载patch</li>
+<li>第7，8，9处代码：loader加载patch不成功或者发生异常时，updateMode直接升级为<code>COLD_SWAP</code></li>
+</ul>
+<p>关于这段代码还应注意的是classloader之间是如何建立关系的：</p>
+<p><img src="classloader.png" alt></p>
+<p>上面的代码中使用<code>AppPatchesLoaderImpl</code>加载其他类。<code>AppPatchesLoaderImpl</code>由Android Gradle Plugin生成，我们看不到源码。不过可以在<code>build/intermediates/transforms/instantRun/debug</code>目录找对应的类文件，其反编译结果如下。</p>
+<p><img src="hello-world-apppatch.png" alt></p>
+<p><code>getPatchedClasses()</code>方法返回的<code>String[]</code>记录了本次修改的类。就本次而言，仅修改了<code>HelloWorld</code>。</p>
+<p><code>AbstractPatchesLoaderImpl</code>是<code>AppPatchesLoaderImpl</code>的父类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractPatchesLoaderImpl</span> <span class="keyword">implements</span> <span class="title">PatchesLoader</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 这个方法用于加载patch</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">load</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (String className : getPatchedClasses()) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                ClassLoader cl = getClass().getClassLoader();</span><br><span class="line">                Class&lt;?&gt; aClass = cl.loadClass(className + <span class="string">"$override"</span>);</span><br><span class="line">                Object o = aClass.newInstance();</span><br><span class="line"></span><br><span class="line">                Class&lt;?&gt; originalClass = cl.loadClass(className);</span><br><span class="line">                Field changeField = originalClass.getDeclaredField(<span class="string">"$change"</span>);</span><br><span class="line">                <span class="comment">// force the field accessibility as the class might not be "visible"</span></span><br><span class="line">                <span class="comment">// from this package.</span></span><br><span class="line">                changeField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">                Object previous =</span><br><span class="line">                        originalClass.isInterface()</span><br><span class="line">                                ? patchInterface(changeField, o)</span><br><span class="line">                                : patchClass(changeField, o);</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 这个方法用于指定要加载哪些patch类</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> String[] getPatchedClasses();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>AbstractPatchesLoaderImpl.load()</code>用于加载patch。以<code>HelloWorld</code>为例，<code>load()</code>方法的几个关键操作如下：</p>
+<ul>
+<li>加载<code>HelloWorld$override</code>类</li>
+<li>创建<code>HelloWorld$override</code>实例</li>
+<li>找到<code>HelloWorld</code>类的<code>$change</code>字段</li>
+<li>将<code>HelloWorld$override</code>实例设置到<code>$change</code>字段。参考<a href="https://www.sunmoonblog.com/2018/10/30/instant-run-1/">Instant Run浅析(二)</a></li>
+</ul>
+<h1 id="补充知识"><a href="#补充知识" class="headerlink" title="补充知识"></a>补充知识</h1><p>这里记录了一些有用的知识点，分析Instant Run源码时可能会用到。</p>
+<h2 id="updateMode"><a href="#updateMode" class="headerlink" title="updateMode"></a>updateMode</h2><p><code>InstantRunClient.pushPatches()</code>用于发送patch，这个方法返回<code>UpdateMode</code>。通过<code>pushPatches()</code>的代码容易明白<font color="red"><strong>updateMode是由Android gradle plugin，instant-run-server以及Android Studio三方共同确定的</strong> ，instant-run-client 充当协调者</font></p>
+<p>用图画出来大概是这样：</p>
+<p><img src="calc-update-mode.png" alt></p>
+<p>总结一下就是以下三个影响因素，其中最重要的是<code>build-info.xml</code>：</p>
+<ul>
+<li><code>build-info.xml</code> - Android gradle plugin生成的<code>build-info.xml</code> (文件路径<code>/build/intermediates/build-info/debug/build-info.xml</code>)</li>
+<li>app状态信息 - 运行状态、前台状态以及 <code>AbstractPatchesLoaderImpl.load()</code> 返回值</li>
+<li>Android Studio <em>instant run设置</em> - 见下图</li>
+</ul>
+<p><img src="update-mode.png" alt></p>
+<p>instant-run-client作为协调者综合考量这三个因素，得到最终的updateMode，而最终的updateMode决定app是否会被重启。</p>
+<h2 id="build-info-xml"><a href="#build-info-xml" class="headerlink" title="build-info.xml"></a>build-info.xml</h2><p>Android Studio开启instant run之后，每次instant run的编译信息记录在<code>/build/intermediates/build-info/debug/build-info.xml</code>文件中。文件内容类似这样：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">instant-run</span></span></span><br><span class="line"><span class="tag">    <span class="attr">abi</span>=<span class="string">"x86,armeabi-v7a,armeabi"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">api-level</span>=<span class="string">"24"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">build-mode</span>=<span class="string">"COLD"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">density</span>=<span class="string">"420dpi"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">format</span>=<span class="string">"10"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">ir-eligibility</span>=<span class="string">"SYNTHETIC_CONSTRUCTOR_CHANGE"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">plugin-version</span>=<span class="string">"3.1.3"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">timestamp</span>=<span class="string">"1537942541795"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">token</span>=<span class="string">"-1881962896096570399"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">verifier</span>=<span class="string">"COLD_SWAP_REQUESTED"</span> &gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span></span></span><br><span class="line"><span class="tag">        <span class="attr">build-mode</span>=<span class="string">"COLD"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">ir-eligibility</span>=<span class="string">"SYNTHETIC_CONSTRUCTOR_CHANGE"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">timestamp</span>=<span class="string">"1537942541795"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">verifier</span>=<span class="string">"COLD_SWAP_REQUESTED"</span> &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifact</span></span></span><br><span class="line"><span class="tag">            <span class="attr">location</span>=<span class="string">"/Users/build/intermediates/split-apk/debug/slices/slice_2.apk"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">type</span>=<span class="string">"SPLIT"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">instant-run</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>直接看xml文件会有些无聊，结合代码容易理解一些。</p>
+<ul>
+<li><code>InstantRunBuildInfo</code> - instant run编译信息，对应于<code>build-info.xml</code>的<code>&lt;instant-run&gt;</code>节点</li>
+<li><code>InstantRunArtifact</code> - instant run编译结果，对应于<code>build-info.xml</code>的<code>&lt;artifact&gt;</code>节点。编译结果本质上文件</li>
+<li><code>InstantRunArtifactType</code> - instant run编译结果的类型，对应于<code>build-info.xml</code>中<code>&lt;artifact&gt;</code>节点的type属性</li>
+</ul>
+<p><code>InstantRunArtifactType</code>分为以下几种类型：</p>
+<ul>
+<li><code>MAIN</code> - 包含资源文件的主APK </li>
+<li><code>SPLIT_MAIN</code> - 包含资源文件的主APK，适用于分包(多个APK文件)的场景</li>
+<li><code>SPLIT</code> - 分包APK</li>
+<li><code>RELOAD_DEX</code> - 代码更新包</li>
+<li><code>RESOURCES</code> - 资源更新包</li>
+</ul>
+<p>instant run会进行根据情况进行不同类型的构建，每次构建会生成一个<code>&lt;build&gt;</code>节点保存到<code>build-info.xml</code>中：</p>
+<ul>
+<li><code>FULL</code> - 全量构建，一般发生在首次运行instant run时。生成一个类型为<code>SPLIT_MAIN</code>的apk文件以及一个或多个类型为<code>SPLIT</code>的apk文件</li>
+<li><code>HOT_WARM</code> - 一般发生在进行了兼容的改动之后。生成类型为 <code>RELOAD_DEX</code> 的dex文件，或者类型为<code>RESOURCES</code>的ap_文件</li>
+<li><code>COLD</code> - 一般发生在进行了不兼容的改动后。生成类型为<code>SPLIT</code>的文件</li>
+</ul>
+<p><img src="build-info.png" alt></p>
+<p><code>build-info.xml</code>中还会记录两个关键信息：</p>
+<ul>
+<li><code>duration</code> - 最后一次构建时各任务的耗时信息</li>
+<li><code>ir-eligibility</code> - 违反哪条规则导致COLD构建。比如修改方法签名会导致COLD构建，这时的<code>ir-eligibility</code>是METHOD_DELETED</li>
+</ul>
+<p>当你发生instant run运行慢或者行为不符合预期，<code>build-info.xml</code>或许能提供一些线索。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">instant-run</span> <span class="attr">build-mode</span>=<span class="string">"COLD"</span> <span class="attr">ir-eligibility</span>=<span class="string">"METHOD_DELETED"</span> <span class="attr">verifier</span>=<span class="string">"COLD_SWAP_REQUESTED"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">task</span> <span class="attr">name</span>=<span class="string">"javac"</span> <span class="attr">duration</span>=<span class="string">"0"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">task</span> <span class="attr">name</span>=<span class="string">"instant-run-dex"</span> <span class="attr">duration</span>=<span class="string">"0"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">task</span> <span class="attr">name</span>=<span class="string">"instant-run-transform"</span> <span class="attr">duration</span>=<span class="string">"0"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">task</span> <span class="attr">name</span>=<span class="string">"verifier"</span> <span class="attr">duration</span>=<span class="string">"0"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">instant-run</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>使用如下命令在<code>platform/tools/base/</code>工程中搜索”build-info”字符串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -name &quot;*.java&quot; | xargs grep &quot;build-info&quot;</span><br></pre></td></tr></table></figure>
+<p>可以找到几个跟<code>build-info.xml</code>相关的类：</p>
+<ul>
+<li>BuildInfoWriterTask</li>
+<li>ApplicationTaskManager</li>
+<li>InstantRunBuildContext</li>
+</ul>
+<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><p>这里介绍几个跟Instant Run相关的重要日志。</p>
+<h3 id="Instant-Run日志"><a href="#Instant-Run日志" class="headerlink" title="Instant Run日志"></a>Instant Run日志</h3><p>小技巧：instant run打印了非常详尽的日志。打开日志后运行代码，对照着日志和运行结果分析代码，看”动”的代码比看”静止”的代码更简单。adb shell中执行<code>setprop log.tag.InstantRun VERBSOE</code>命令可以打开instant run日志。</p>
+<p>instant run日志类似这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">09-27 18:16:25.766 7749-7867 V/InstantRun: Received Ping message from the IDE; returned active = true</span><br><span class="line">09-27 18:16:25.769 7749-7867 V/InstantRun: Received EOF from the IDE</span><br><span class="line">09-27 18:16:25.783 7749-7867 V/InstantRun: Received connection from IDE: spawning connection thread</span><br><span class="line">09-27 18:16:25.787 7749-7867 V/InstantRun: Received incremental code patch</span><br><span class="line">09-27 18:16:25.794 7749-7867 V/InstantRun: Writing new dex file: /data/data/com.sunmoonblog.demo_screenshot/files/instant-run/dex-temp/reload0x0004.dex</span><br><span class="line">09-27 18:16:25.798 7749-7867 V/InstantRun: Reading live code from /data/data/com.sunmoonblog.demo_screenshot/files/instant-run/dex-temp/reload0x0004.dex</span><br><span class="line">09-27 18:16:25.978 7749-7867 V/InstantRun: Got the patcher class class com.android.tools.ir.runtime.AppPatchesLoaderImpl</span><br><span class="line">    Got the patcher instance com.android.tools.ir.runtime.AppPatchesLoaderImpl@1314ec2</span><br><span class="line">    Got the list of classes </span><br><span class="line">    class com.sunmoonblog.demo_screenshot.MainActivity</span><br><span class="line">09-27 18:16:25.982 7749-7867 V/InstantRun: Finished loading changes; update mode =1</span><br><span class="line">    Applying incremental code without restart</span><br><span class="line">09-27 18:16:25.984 7749-7867 V/InstantRun: About to show toast for activity com.sunmoonblog.demo_screenshot.MainActivity@665fe86: Applied code changes without activity restart</span><br><span class="line">    Received EOF from the IDE</span><br></pre></td></tr></table></figure>
+<h3 id="Android-Studio日志"><a href="#Android-Studio日志" class="headerlink" title="Android Studio日志"></a>Android Studio日志</h3><p><a href="https://developer.android.com/studio/report-bugs?utm_source=android-studio#instant-run-bugs" target="_blank" rel="noopener">Android Studio日志</a> - 在Android Studio - Help - Show Log in Finder中可以找到这些日志。强烈推荐看看<a href="https://developer.android.com/studio/report-bugs?utm_source=android-studio#instant-run-bugs" target="_blank" rel="noopener">官方介绍</a></p>
+<p><img src="idea-log.png" alt></p>
+<p>其中<code>idea.log</code>是Android Studio以及SDK运行时生成的日志，在这里可以找到<code>build-info.xml</code>中build-mode的根源。</p>
+<h3 id="其他日志"><a href="#其他日志" class="headerlink" title="其他日志"></a>其他日志</h3><p>跟<code>idea.log</code>同级别有一个flr目录，其中包括几个重要日志。</p>
+<p><img src="build-log.png" alt></p>
+<ul>
+<li><code>build.log</code> - This log captures build information from Gradle。这个日志跟Android Studio build工具栏中看到的日志是一样的，跟gradle带–info参数运行时看到的日志也是一样的。</li>
+<li><code>build-info.xml</code> - 这个日志我们之前分析过，官方对它的介绍是这样的： This is an intermediate file that Android Studio uses to coordinate Instant Run features with the Android plugin for Gradle</li>
+<li><code>profile.log</code> - This log provides a profile of how quickly Gradle progressed through each build task.</li>
+</ul>
+<p>注：你可能觉得这么既然Android Studio build工具栏(第1种方式)或<code>gradle --info</code>(第2种方式)者能看到日志，何必要那么麻烦去Android Studio的日志目录中找build.log文件。问题在于日志往往较多，第1种方式无法显示完整日志，不便于排查问题。而第2种方式压根不能进行instant run</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">2018-09-30 10:37:10,325 [e-1024-b01]   INFO -                    #InstantRun - Invoking hotswap launch </span><br><span class="line">2018-09-30 10:37:11,216 [thread 878]   INFO -                    #InstantRun - Build timestamps: Local: 1538274511551, Device: 1538274511551 </span><br><span class="line">2018-09-30 10:37:11,247 [thread 878]   INFO -                    #InstantRun - Ping sent and replied successfully, application seems to be running. Foreground=true </span><br><span class="line">2018-09-30 10:37:11,267 [thread 878]   INFO -                    #InstantRun - Ping sent and replied successfully, application seems to be running. Foreground=true </span><br><span class="line">2018-09-30 10:37:11,924 [thread 878]   INFO - ools.idea.fd.InstantRunBuilder - BuildCause: APP_USES_MULTIPLE_PROCESSES, BuildMode: COLD </span><br><span class="line">...</span><br><span class="line">2018-09-30 10:37:45,834 [e-1024-b01]   INFO - ild.invoker.GradleBuildInvoker - Gradle build finished in 33s 900ms</span><br></pre></td></tr></table></figure>
+<p>如果找不到上述日志，可以检查一下日志开关是否开启：</p>
+<p><img src="insant-run-log.png" alt></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>简单总结一下本文内容：</p>
+<ul>
+<li>Instant Run是CS架构</li>
+<li>Android Studio作为客户端，app作为服务端</li>
+<li>补丁包是由Android Studio发送到app</li>
+<li>app加载hotswap类型补丁时不重启即可生效<ul>
+<li><code>PatchesLoader</code>从补丁包加载<code>HelloWorld$override</code>类并创建其实例</li>
+<li><code>HelloWorld$override</code>实例设置到<code>HelloWorld.$change</code>字段</li>
+</ul>
+</li>
+<li>demo演示了<code>instant-run-client</code>库的用法，demo见<a href="https://github.com/410063005/instant-run-demo" target="_blank" rel="noopener">Github</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/07/android-animation-2/" rel="prev" title="LayoutAnimationController介绍">
+      <i class="fa fa-chevron-left"></i> LayoutAnimationController介绍
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/14/android-studio-shortcut/" rel="next" title="android-studio-shortcut">
+      android-studio-shortcut <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#架构分析"><span class="nav-number">2.</span> <span class="nav-text">架构分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码分析"><span class="nav-number">3.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Instant-Run客户端"><span class="nav-number">3.1.</span> <span class="nav-text">Instant Run客户端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Instant-Run服务端"><span class="nav-number">3.2.</span> <span class="nav-text">Instant Run服务端</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充知识"><span class="nav-number">4.</span> <span class="nav-text">补充知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#updateMode"><span class="nav-number">4.1.</span> <span class="nav-text">updateMode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#build-info-xml"><span class="nav-number">4.2.</span> <span class="nav-text">build-info.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#日志"><span class="nav-number">4.3.</span> <span class="nav-text">日志</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Instant-Run日志"><span class="nav-number">4.3.1.</span> <span class="nav-text">Instant Run日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-Studio日志"><span class="nav-number">4.3.2.</span> <span class="nav-text">Android Studio日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他日志"><span class="nav-number">4.3.3.</span> <span class="nav-text">其他日志</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

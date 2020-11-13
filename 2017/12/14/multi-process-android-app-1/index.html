@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Android官网上只是简单地提到了进程，但应用开发中使用多进程会遇到各种各样的问题。本文讨论了其中一些问题，也许能给你解决问题的思路。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译)Android多进程应用">
+<meta property="og:url" content="http://www.sunmoonblog.com/2017/12/14/multi-process-android-app-1/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Android官网上只是简单地提到了进程，但应用开发中使用多进程会遇到各种各样的问题。本文讨论了其中一些问题，也许能给你解决问题的思路。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://engineering.life360.com/images/android-multiproc-singletons.webp">
+<meta property="og:image" content="http://engineering.life360.com/images/android-multiproc-content-providers.webp">
+<meta property="og:image" content="http://engineering.life360.com/images/android-multiproc-bound-service.webp">
+<meta property="og:image" content="http://engineering.life360.com/images/android-multiproc-application.webp">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.847Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译)Android多进程应用">
+<meta name="twitter:description" content="Android官网上只是简单地提到了进程，但应用开发中使用多进程会遇到各种各样的问题。本文讨论了其中一些问题，也许能给你解决问题的思路。">
+<meta name="twitter:image" content="http://engineering.life360.com/images/android-multiproc-singletons.webp">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2017/12/14/multi-process-android-app-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译)Android多进程应用 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2017/12/14/multi-process-android-app-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译)Android多进程应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-12-14 10:13:02" itemprop="dateCreated datePublished" datetime="2017-12-14T10:13:02+08:00">2017-12-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Android官网上只是简单地提到了进程，但应用开发中使用多进程会遇到各种各样的问题。本文讨论了其中一些问题，也许能给你解决问题的思路。</p>
+<a id="more"></a>
+<p>原文：<a href="http://engineering.life360.com/engineering/2016/06/10/multi-process-android-apps/" target="_blank" rel="noopener">Making Multi-process Android applications</a><br>译文：<a href="#">译文</a></p>
+<p>可以让Android应用中的不同组件运行在不同的进程。有时这种做法是必要的，可以改进应用性能。但你必须意识到，官方网站上并没有太多关于Android多进程应用的文档，而且多进程应用也不容易理解。我们看看何时它会很有用，有何挑战以及如何解决。</p>
+<p>缺省时所有Android应用组件都运行在相同的Linux进程中。但也可以让不同组件运行在不同的进程。许多场景下多进程很有用。我们来看看。</p>
+<p>Android会不时杀死进程回收内存，以提供给更重要的进程。Android使用重要性等级来决定该杀死和保留哪个进程。占用内存高的后台进程更可能被Android杀死。如果你将后台组件(service, content provider)和前台组件(activity)放在同一个进程，该进程会使用更多的内存。当应用进入后台，它更可能被杀死。Android杀死进程时后杀死其中所有的组件。为了将后台组件跟UI的生命周期解耦，最好将其独立到一个独立的进程。</p>
+<p>比如，如果应用需要在客户端和服务器端之间同步数据时，它可以在独立进程中的service中进行同步。这可以让后台进程更少重启，让其独立于UI进程的生命周期。另外，UI进程中的崩溃和异常对后台进程没有任何影响。反之亦然。</p>
+<p>使用多进程的另一个原因是多个特性完全不同且独立。比如，如果应用支持Email, Calendar, Contacts, Notes以及Tasks，其中每个特性可以在独立进程中运行以保持各自的生命周期独立。</p>
+<h1 id="如何运行多进程"><a href="#如何运行多进程" class="headerlink" title="如何运行多进程"></a>如何运行多进程</h1><p><code>&lt;activity&gt;</code>, <code>&lt;service&gt;</code>, <code>&lt;receiver&gt;</code>以及<code>&lt;provider&gt;</code>都支持<code>&lt;android:process&gt;</code>属性，该属性可以指定组件运行的进程。多个组件也可以共享同一个进程，指定多少进程就能启动多少进程。</p>
+<h1 id="挑战"><a href="#挑战" class="headerlink" title="挑战"></a>挑战</h1><p>当Android应用使用多进程时，需要处理进程间的数据一致性。甚至你的代码结构良好，在运行时也不太容易知道哪段代码在哪个进程运行。</p>
+<h2 id="共享数据"><a href="#共享数据" class="headerlink" title="共享数据"></a>共享数据</h2><p>尽管可以在多个独立进程中运行不同独立逻辑，某些时候它们仍然需要共享数据。如果你使用文件，数据库或者shared preferences，你可能遇到跨进程数据不一致问题。如果使用文件，你需要监听其他进程对文件进行的修改。如果从多个进程访问数据库，你可能会遇到非常难以调试的数据库冲突或死锁问题。如果使用shared preferences，必须使用多进程模式打开它，并且使用<code>OnSharedPreferenceChangeListener</code>监听其他进程导致的变化。</p>
+<h2 id="单例"><a href="#单例" class="headerlink" title="单例"></a>单例</h2><p>单例是在Android应用中跨组件共享状态信息和数据的简单办法。可以使用<code>synchronized</code>关键字保证单例的方法是线程安全的。但如果在多进程应用中使用单例，可能生成的单例对象数量跟进程数量一样多。因为进程并不共享地址空间，所以一个进程中的单例对象对其他进程并不可见。如果使用shared preferences，数据库或文件中的数据初始化单例，要让(不同进程中的)每个单例对象保持一致的数据非常困难，而且很可能它们在运行时有不同的数据状态。另外，<code>synchronized</code>对这种情况不起作用。看看代码中单例的通常用法。</p>
+<p><img src="http://engineering.life360.com/images/android-multiproc-singletons.webp" alt></p>
+<p>假设我们有一个单例类，不妨称之为<code>SubscriptionManager</code>，它会跟踪用户订阅。在这个类中更新订阅内容。同时你将数据保存到文件以供离线访问。如果数据文件存在的话，由这些文件初始化单例。有两个进程：主进程和后台进程。在一个工具类中检查用户是否订阅了某个内容，该类会被主进程和后台进程调用。用户调用<code>SubscriptionManager.getInstance(context).updateSubscription(feature, subscription);</code>从主进程订阅。这个调用更新了订阅内容，发送到后台并且更新了文件。</p>
+<p>在这种情况下，后台进程中的<code>SubscriptionManager</code>并不知道主进程中发生的这次订阅，除非你在数据文件中设置了<code>FileObserver</code>，监听数据变化更进行相应更新。或者，你也可以使用广播机制来通知这次订阅。所以说，使用这些方式在进程间共享数据非常复杂，并不是最佳方案。</p>
+<h1 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h1><p>Android通过<code>Binder</code>接口提供进程间通信(IPC)。<a href="https://developer.android.com/guide/topics/providers/content-providers.html" target="_blank" rel="noopener">Content providers</a>和<a href="https://developer.android.com/guide/components/services.html#CreatingBoundService" target="_blank" rel="noopener">Bound services</a>使用binder接口来跨进程通信。所以本方案使用这种方式来维护多进程间数据和状态的一致性。</p>
+<h2 id="Content-Provider"><a href="#Content-Provider" class="headerlink" title="Content Provider"></a>Content Provider</h2><p>ContentProvider用于管理对结构化数据的访问。它们封装数据并且提供数据安全机制。ContentProvider是在当前进程的数据跟其他进程的代码之间建立联系的标准接口。(Content providers are the standard interface that connects data in one process with code running in another process)</p>
+<p><img src="http://engineering.life360.com/images/android-multiproc-content-providers.webp" alt></p>
+<p>尽管ContentProvider本是用于应用间共享数据，它也可以用于在多进程之间共享数据。Android保证跨进程时ContentProvider的单一性。<a href="https://developer.android.com/reference/android/content/ContentResolver.html" target="_blank" rel="noopener">ContentResolver</a>提供易用的接口，所以应用代码不必担心IPC细节。</p>
+<p>注意：如果不想在应用外共享数据， <strong>不要</strong> 在manifest中对外暴露ContentProvider(<code>android:export=&quot;false&quot;</code>)</p>
+<p>尽管ContentProvider和ContentResolver的”CURD” API主要被设计为共享SQL数据库中的数据，也可以扩展更通用的<a href="https://developer.android.com/reference/android/content/ContentResolver.html" target="_blank" rel="noopener"><code>call(android.net.Uri, java.lang.String, java.lang.String, android.os.Bundle)</code></a> API以实现应用特定的目的。</p>
+<p>比如：在上述例子的<code>SubscriptionManager</code>，你可以提供如下API来检查和更新订阅：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ContentResolver resolver = getContentResolver(); </span><br><span class="line">Bundle result = resolver.call(“SubcriptionCheck”, arg, extras);</span><br></pre></td></tr></table></figure>
+<h2 id="Bound-Service"><a href="#Bound-Service" class="headerlink" title="Bound Service"></a>Bound Service</h2><p>Bound service是客户端-服务器接口中的服务器端。Bound service允许组件(比如activity)绑定到service，发送请求，接收响应，甚至执行IPC</p>
+<p><img src="http://engineering.life360.com/images/android-multiproc-bound-service.webp" alt></p>
+<p>有两种方式实现IPC：Messengers和AIDL。Messenger方式更简单一些。两种方式中Android框架都做好了IPC底层工作(marshalling, unmarshalling, RPC)，IPC对调用方是透明的。跟service通信的步骤如下：</p>
+<ul>
+<li>bindService</li>
+<li>连接到service时收到回调</li>
+<li>使用binder接口发送请求，或调用service API</li>
+<li>从service接收响应</li>
+</ul>
+<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><p>可以使用intent在另一个进程中启动service，或者从代码中的任何地方发送广播，并且在另外的进程中接收该广播并启动一个service来处理它。</p>
+<p>比如你有一个测量系统用于捕获应用中的某些事件，可以将每次测量发送到service，让service将其写入数据库或发送到后台，而不是让代码中到处都是数据库或网络操作。</p>
+<h1 id="Application类的坑"><a href="#Application类的坑" class="headerlink" title="Application类的坑"></a>Application类的坑</h1><p>你可以实现<code>Application</code>的子类，并且在<code>AndroidManifest.xml</code>的<code>&lt;application&gt;</code>标签的<code>&lt;android:name</code>&gt;属性中指定这个类的全名。当应用进程启动时，你实现的<code>Application</code>子类会最先初始化。</p>
+<p>要注意的是，应用中启动的每一个进程都会执行上述初始化。不幸的是，并不能为不同的进程指定不同的Application类。</p>
+<p><img src="http://engineering.life360.com/images/android-multiproc-application.webp" alt></p>
+<p>如果你使用Application类，很可能你会在它的<code>onCreate()</code>方法中做一些初始化工作。 <strong>请确保这些初始化工作对进程是恰当且必要的</strong>  也在<code>Application.onCreate()</code>中使用下面的代码确定进程上下文：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> pid = android.os.Process.myPid(); </span><br><span class="line">ActivityManager manager = (ActivityManager) <span class="keyword">this</span>.getSystemService(Context.ACTIVITY_SERVICE); </span><br><span class="line"><span class="keyword">for</span> (ActivityManager.RunningAppProcessInfo processInfo : manager.getRunningAppProcesses()) &#123; </span><br><span class="line">    <span class="keyword">if</span> (processInfo.pid == pid) &#123; </span><br><span class="line">        String currentProcName = processInfo.processName; </span><br><span class="line">        <span class="keyword">if</span> (!TextUtils.isEmpty(currentProcName) &amp;&amp; currentProcName.equals(<span class="string">":background"</span>)) &#123;</span><br><span class="line">           <span class="comment">//Rest of the initializations are not needed for the background</span></span><br><span class="line">           <span class="comment">//process</span></span><br><span class="line">           <span class="keyword">return</span>; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Initializations for the UI process */</span></span><br></pre></td></tr></table></figure>
+<p>通过这种方式你可以降低内存占用，避免某些大块内存分配，甚至有可能加快应用启动速度。这里提到初始化包括：加载专有字体，初始化Google Maps，及以初始化第三方SDK。通常只需要在主进程中做这些初始化。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>希望这篇博客能帮助你理解多进程应用，知道使用多进程中会遇到的问题，以及如何去解决这些问题。</p>
+<h1 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h1><ul>
+<li>如果不必在应用外访问provider和service，就不要暴露它们</li>
+<li>限制广播的只对自己的应用可见</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/12/13/recyclerview-spansizelookup/" rel="prev" title="使用RecyclerView实现居中的GridView">
+      <i class="fa fa-chevron-left"></i> 使用RecyclerView实现居中的GridView
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/14/writing-tools/" rel="next" title="Markdown之使用技巧收集">
+      Markdown之使用技巧收集 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#如何运行多进程"><span class="nav-number">1.</span> <span class="nav-text">如何运行多进程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#挑战"><span class="nav-number">2.</span> <span class="nav-text">挑战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#共享数据"><span class="nav-number">2.1.</span> <span class="nav-text">共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单例"><span class="nav-number">2.2.</span> <span class="nav-text">单例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决办法"><span class="nav-number">3.</span> <span class="nav-text">解决办法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Content-Provider"><span class="nav-number">3.1.</span> <span class="nav-text">Content Provider</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bound-Service"><span class="nav-number">3.2.</span> <span class="nav-text">Bound Service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service"><span class="nav-number">3.3.</span> <span class="nav-text">Service</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Application类的坑"><span class="nav-number">4.</span> <span class="nav-text">Application类的坑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注意"><span class="nav-number">6.</span> <span class="nav-text">注意</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

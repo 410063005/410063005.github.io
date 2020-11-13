@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="官方关于instant run插桩技术的介绍。">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译)Instant Run Instrumentation">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/10/28/instant-run-instrumentation/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="官方关于instant run插桩技术的介绍。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://coding.net/s/5416fc93-d7fe-432a-9389-44fbaaf851de">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.906Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译)Instant Run Instrumentation">
+<meta name="twitter:description" content="官方关于instant run插桩技术的介绍。">
+<meta name="twitter:image" content="https://coding.net/s/5416fc93-d7fe-432a-9389-44fbaaf851de">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/10/28/instant-run-instrumentation/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译)Instant Run Instrumentation | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/10/28/instant-run-instrumentation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译)Instant Run Instrumentation
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-28 21:03:44" itemprop="dateCreated datePublished" datetime="2018-10-28T21:03:44+08:00">2018-10-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>官方关于instant run插桩技术的介绍。<br><a id="more"></a><br>翻译自<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/README.md" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>汇总一下文中提到的几个类：</p>
+<ul>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/InstantRunPatchingPolicy.java" target="_blank" rel="noopener">InstantRunPatchingPolicy.java</a></li>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/InstantRunBuildMode.java" target="_blank" rel="noopener">InstantRunBuildMode.java</a></li>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/InstantRunVerifierStatus.java" target="_blank" rel="noopener">InstantRunVerifierStatus.java</a></li>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/gradle-core/src/main/java/com/android/build/gradle/internal/incremental/InstantRunBuildContext.java" target="_blank" rel="noopener">InstantRunBuildContext.java</a></li>
+</ul>
+<p>注：不太明白如何翻译instrumenttation这个词，查了一下这个词指的应该是获取计算机软件或者硬件状态的数据的技术，一般翻译为插桩</p>
+<p>本文介绍了instant run hot swap的插桩操作，翻译自<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/README.md" target="_blank" rel="noopener">instant run hot swap instrumentation</a>。</p>
+<p>另一篇相关的文章是<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/README.md" target="_blank" rel="noopener">instant run</a>。</p>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>Instant run的一个目标是可以在旧的Android设备上运行(低至Android ICS)，所以不会考虑那些要求修改运行时环境(Runtime Environment)的技术方案，比如说，修改Android VM以支持类似标准JDK中的允许重新加载类的javaagent技术。</p>
+<p>任何使用不同class loader加载同一个类的不同版本的技术方案都无法解决是这几个问题：</p>
+<ul>
+<li>类的问题 - Java语言中使用类的完全限定名以及加载该类的class loader来识别类(package name + simple class name)。所以相同完全限定名的类被不同的class loader加载后其实是不同的Java类，它们之间并不能强制转型，会出现ClassCastException</li>
+<li>实例的问题 - 修改前的类的实例并不能作为修改后的类的实例来使用，新的实例是新的类的，这里也有混用时类型无法匹配的问题</li>
+</ul>
+<p>因此instant run的解决方案要考虑Java语言的内存模型以及类型系统的限制：</p>
+<ol>
+<li>类不能被重载 (译者注：JVM运行期间类不能被重载，reload)</li>
+<li>类的实例必须都是同一类型，即使类的实现被修改</li>
+<li>并不能真的创建更新后的类的实例(因为类之间的引用关系已经被JVM提前解析了，这种引用关系是不能变的)</li>
+</ol>
+<p>(译者注：这里讲到的限制都有一个前提，即并不重启JVM)</p>
+<p>最终的解决方案有点难以置信地简单：不要想着类会变会被修改，所有实例都是最初的类的实例。如果一个类被更新了，它所有的方法实现重定向到新的实现即可。</p>
+<p>换句话说，一旦类加载了，这个类的所有实例都来自唯一的FQCN(full qualitied class name，完全限定类名)+ class loader。一旦这个类更新了，它立马变成一个(保留字段值的)空壳，这个空壳用于重定向每个方法调用到新的方法实现。</p>
+<p>当然，为了保证上述过程能成功进行，原始的类必须具备可更新的能力(即，可以重定向到新的方法实现)。而更新后的类也必须具备接收重定向方法调用的能力。通过这个例子来看看它的工作原理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.google.android.foo;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> intField;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">someMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> intField;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了让这个类可更新，将它增强为这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.google.android.foo;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> IncrementalChange $change = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">int</span> intField;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">someMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="keyword">if</span> ($change != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> $change.access$dispatch(<span class="string">"someMethod_()I"</span>, <span class="keyword">this</span>)</span><br><span class="line">           &#125;</span><br><span class="line">      <span class="keyword">return</span> intField;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如你所见，如果那个静态字段<code>$change</code>没被设置，类的行为并不会发生改变(当然，还是有一些影响，<code>if()</code>判断会带来轻微的性能损失)。还要注意的是，是这个增强后的类而不是原始的类被打包到初始的APK中。</p>
+<p>现在假如用户修改了A的实现，构建系统会对A类进行必要的增强以让其成为修改前的类的新实现。由于修改后的类并不会被用来创建新的实例，所以增强过程中我们可以安全地移除它其中的全部实例字段和静态字段。此外，还可以将其所有方法转换成静态方法。</p>
+<p>这是修改后的A类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.google.android.foo;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> intField;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">someMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> intField*<span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是增强后的A类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.google.android.foo;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span>$<span class="title">Override</span> <span class="keyword">implements</span> <span class="title">Dispatch</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">someMethod</span><span class="params">(A sender)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sender.intField*<span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">dispatch</span><span class="params">(A sender, String methodName, String signature)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (methodName.equals(<span class="string">"someMethod"</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> someMethod(sender);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(译者注：注意区别两个不同的增强过程。一个增强过程是让初始的类具备可更新的能力，另一个增强过程是让修改的类可以作为原始类的代理)</p>
+<p>现在要做的工作就是将<code>A$Override</code>类写入到A类的<code>$change</code>字段。这个工作是在运行期间使用新的classloader完成的(不妨称这个classloader为overriding classloader，它用于加载<code>A$Override</code>类)。overriding classloader的父加载器是原始的A类的classloader，所以<code>A$Override</code>对A可见(译者注：注意这里类的可见性问题)。运行时的关系图如下：</p>
+<p><img src="https://coding.net/s/5416fc93-d7fe-432a-9389-44fbaaf851de" alt="overriding-class-loader"></p>
+<h1 id="可支持的更新操作"><a href="#可支持的更新操作" class="headerlink" title="可支持的更新操作"></a>可支持的更新操作</h1><p>目前，Hot Swap支持修改任意方法实现(包括构造方法，静态方法以及实例方法)，以及结构变化(比如增加或删除一个方法，修改类结构，修改静态初始化块)，</p>
+<p>这里涉及到两种插桩。一种是初始插桩，它将最初并不支持hot swap的类增强为可支持hot swap。另一种是增量插桩，它会对修改后的类进行增强，增强的类用于运行期间注入到类的<code>$change</code>字段。</p>
+<h2 id="初始插桩"><a href="#初始插桩" class="headerlink" title="初始插桩"></a>初始插桩</h2><p>初始插桩用于准备可支持hot swap的类，这些类在VM生命周期中可以被更新。这种可更新能力带来的开销应当最小化，因为它影响应用中的每个方法和类。</p>
+<h2 id="让方法可更新"><a href="#让方法可更新" class="headerlink" title="让方法可更新"></a>让方法可更新</h2><p>当一个方法被覆盖，其<code>$change</code>值被设置为当前的<code>$Override</code>类。每个方法调用都被重定向到新的方法实现，重定向过程会传递原始调用的参数并返回非void方法的返回结果。</p>
+<p>在初始插桩期间，所有的静态方法及实例方法都会按照以下伪代码这种方式被增强：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ($change != <span class="keyword">null</span>) &#123;</span><br><span class="line">    Object[] parameters = <span class="keyword">new</span> Object[method.getTypeParameters().length];</span><br><span class="line">    parameters[<span class="number">0</span>] = <span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; method.getTypeParameters().length; i++) &#123;</span><br><span class="line">        parameters[i] = box(argsI);</span><br><span class="line">    &#125;</span><br><span class="line">    Object res = $change.access$dispatch(method.signature, parameters);</span><br><span class="line">    <span class="keyword">if</span> (method.getReturnType != Void) &#123;</span><br><span class="line">        <span class="keyword">return</span> unbox(res);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="让构造方法可被更新"><a href="#让构造方法可被更新" class="headerlink" title="让构造方法可被更新"></a>让构造方法可被更新</h2><p>基于以上相同的思路，构造方法也可插桩。注意以下几个难点：</p>
+<ol>
+<li>直到<code>super.&lt;init&gt;</code>方法被调用后才能在构造方法以外的地方使用<code>this</code>关键字，否则它未被初始化</li>
+<li>只有构造方法代码才能调用<code>super.&lt;init&gt;</code>，这个调用不能放在其他类中进行</li>
+<li>当用户有类似<code>super.A(Utils.myStaticMethod(&quot;a&quot;, &quot;b&quot;), 2+3)</code>这种代码时，一些代码才可以出现在<code>super.&lt;init&gt;</code>调用之前</li>
+</ol>
+<p>因此将构造方法分成3个阶段：</p>
+<ol>
+<li><code>super.&lt;init&gt;</code>之前的阶段，这个阶段只包括用于创建super构造方法参数列表的必要代码</li>
+<li>使用参数来自上一步的参数调用<code>super.&lt;init&gt;</code></li>
+<li><code>super.&lt;init&gt;</code>之后的阶段。(注意这个阶段可以在构造方法以外的地方使用<code>this</code>)</li>
+</ol>
+<p>以这段代码为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Public <span class="title">A</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, String str)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(Utils.getContext(), i*j, str);</span><br><span class="line">    <span class="keyword">this</span>.intField = i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>支持更新的伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">A</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    Dispatch localChange = $change;</span><br><span class="line">    If (localChange != <span class="keyword">null</span>) &#123;</span><br><span class="line">        Object[] args = <span class="keyword">new</span> Object[];</span><br><span class="line">        args[<span class="number">0</span>] = args;     <span class="comment">// so init$args implementation can change</span></span><br><span class="line">        <span class="comment">// the super parameter values.</span></span><br><span class="line">        args[<span class="number">1</span>] = box(i);</span><br><span class="line">        localChange.init$args(args);</span><br><span class="line">        <span class="comment">// push back arguments on the stack from the args as the</span></span><br><span class="line">        <span class="comment">// init$args function may have changed it.</span></span><br><span class="line">        a = args[<span class="number">1</span>];</span><br><span class="line">        b = args[<span class="number">2</span>];</span><br><span class="line">        c = args[<span class="number">3</span>];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        a = Utils.getContext();</span><br><span class="line">        b = i*j;</span><br><span class="line">        c = str</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">super</span>.&lt;init&gt;(a, b, c);</span><br><span class="line">    <span class="keyword">if</span> (localChange != <span class="keyword">null</span>) &#123;</span><br><span class="line">        Object[] args = <span class="keyword">new</span> Object[<span class="number">2</span>];</span><br><span class="line">        Args[<span class="number">0</span>] = <span class="keyword">this</span>;</span><br><span class="line">        Args[<span class="number">1</span>] = box(i);</span><br><span class="line">        localChange.init$body(args);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.intField = i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="调用super"><a href="#调用super" class="headerlink" title="调用super"></a>调用super</h2><p>调用super方法也需要特殊处理。需要特殊处理的原因在于VM中的检查器会校验对invokdespecial指令对父类方法的调用是由包含目标方法的子类代码发起的。</p>
+<p>进一步说，使用反射起作用。即使找到父类方法的引用并且调用它，生成的代码也只不过是对你传入的实例进行invokevirtual调用。所以invokevirtual会调用对象的实例方法而不是预期中的父类的方法。</p>
+<p>为了解决这个问题，我们在可更新的类中生成一个跳转方法<code>access$super()</code>。这个方法提供对父类方法的访问。所以剩下要做的就是在incremental transformation过程将所有<code>super.method()</code>调用转换成对<code>access$super()</code>的调用。</p>
+<p>跳转方法的伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Object access$<span class="keyword">super</span>(String name, object[] args) &#123;</span><br><span class="line">  <span class="keyword">switch</span>(name) &#123;</span><br><span class="line">    <span class="string">"firstMethod.(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;"</span>:</span><br><span class="line">         <span class="keyword">return</span> <span class="keyword">super</span>.firstMethod((String)arg[<span class="number">0</span>], arg[<span class="number">1</span>]);</span><br><span class="line">    <span class="string">"secondMethod.(Ljava/lang/String;I)V"</span>:</span><br><span class="line">         <span class="keyword">return</span> <span class="keyword">super</span>.secondMethod((String)arg[<span class="number">0</span>], (<span class="keyword">int</span>)arg[<span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">           <span class="function">Throw new <span class="title">InstantRunException</span><span class="params">(<span class="string">"... not found"</span>)</span></span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="字节码插桩"><a href="#字节码插桩" class="headerlink" title="字节码插桩"></a>字节码插桩</h1><h2 id="初始指插桩"><a href="#初始指插桩" class="headerlink" title="初始指插桩"></a>初始指插桩</h2><p>ASM Java bytecode visitor执行这种插桩，对类的修改如下：</p>
+<ol>
+<li>增加一个静态的<code>$change</code>字段</li>
+<li>将所有的非private方法修改为public，以便它们可以被<code>$override</code>类直接访问而不是通过反射方式访问</li>
+<li>修改所有方法的实现：先检查是否有新版本的实现被设置到<code>$change</code>字段，如果有的话将调用分发到<code>$change</code></li>
+<li>将所有的非private字段修改为public，以便它们可以被<code>$override</code>类直接访问而不是通过反射方式访问)</li>
+<li>提供<code>access$super</code>方法(细节见上文)</li>
+<li>提供<code>access$constructor</code>(细节见上文)</li>
+</ol>
+<h2 id="增量插桩"><a href="#增量插桩" class="headerlink" title="增量插桩"></a>增量插桩</h2><p>ASM Java bytecode visitor创建<code>$override</code>类，引入如下变更：</p>
+<ol>
+<li>移除所有构造方法和字段声明。由于不会创建<code>$override</code>类的实例，所以用不到构造方法和字段</li>
+<li>将所有方法修改为静态(因为这个类没有实例)</li>
+<li>修改Dispatcher方法的实现逻辑</li>
+<li>使用反射方式访问原始实例的private字段</li>
+<li>使用调用<code>$Override.method</code>的方式来调用私有方法</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/26/instant-run/" rel="prev" title="(译)Instant Run">
+      <i class="fa fa-chevron-left"></i> (译)Instant Run
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/10/30/instant-run-1/" rel="next" title="Instant Run浅析(二)">
+      Instant Run浅析(二) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可支持的更新操作"><span class="nav-number">2.</span> <span class="nav-text">可支持的更新操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始插桩"><span class="nav-number">2.1.</span> <span class="nav-text">初始插桩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#让方法可更新"><span class="nav-number">2.2.</span> <span class="nav-text">让方法可更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#让构造方法可被更新"><span class="nav-number">2.3.</span> <span class="nav-text">让构造方法可被更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调用super"><span class="nav-number">2.4.</span> <span class="nav-text">调用super</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字节码插桩"><span class="nav-number">3.</span> <span class="nav-text">字节码插桩</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始指插桩"><span class="nav-number">3.1.</span> <span class="nav-text">初始指插桩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增量插桩"><span class="nav-number">3.2.</span> <span class="nav-text">增量插桩</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

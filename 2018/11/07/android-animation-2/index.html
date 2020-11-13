@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="你或许注意到android.view.animation包下有个类很特别的类叫LayoutAnimationController。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LayoutAnimationController介绍">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/11/07/android-animation-2/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="你或许注意到android.view.animation包下有个类很特别的类叫LayoutAnimationController。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/07/android-animation-2/lac-seq.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.925Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LayoutAnimationController介绍">
+<meta name="twitter:description" content="你或许注意到android.view.animation包下有个类很特别的类叫LayoutAnimationController。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/11/07/android-animation-2/lac-seq.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/11/07/android-animation-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>LayoutAnimationController介绍 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/11/07/android-animation-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LayoutAnimationController介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-07 18:08:23" itemprop="dateCreated datePublished" datetime="2018-11-07T18:08:23+08:00">2018-11-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>你或许注意到<code>android.view.animation</code>包下有个类很特别的类叫<code>LayoutAnimationController</code>。<br><a id="more"></a></p>
+<h1 id="LayoutAnimationController介绍"><a href="#LayoutAnimationController介绍" class="headerlink" title="LayoutAnimationController介绍"></a>LayoutAnimationController介绍</h1><p>跟<code>AlphaAnimation</code>等类不同，<a href="https://developer.android.com/reference/android/view/animation/LayoutAnimationController" target="_blank" rel="noopener">LayoutAnimationController</a>并不是<code>Animation</code>的子类。先看看官方文档。</p>
+<blockquote>
+<p>A layout animation controller is used to animated a layout’s, or a view group’s, children. Each child uses the same animation but for every one of them, the animation starts at a different time. A layout animation controller is used by ViewGroup to compute the delay by which each child’s animation start must be offset. The delay is computed by using characteristics of each child, like its index in the view group. This standard implementation computes the delay by multiplying a fixed amount of miliseconds by the index of the child in its parent view group. Subclasses are supposed to override getDelayForView(android.view.View) to implement a different way of computing the delay. For instance, a GridLayoutAnimationController will compute the delay based on the column and row indices of the child in its parent view group. Information used to compute the animation delay of each child are stored in an instance of LayoutAnimationController.AnimationParameters, itself stored in the ViewGroup.LayoutParams of the view</p>
+</blockquote>
+<p>简单来说就是，<code>ViewGroup</code>使用<code>LayoutAnimationController</code>来计算子View动画的延迟时间。通常使用子View的某个特征来计算延迟时间，比如子View的索引。标准实现中是使用子View的索引乘上一个固定的时间。<code>LayoutAnimationController</code>的子类也可以重写<code>getDelayForView()</code>方法，以使用其它计算方式。比如<code>GridLayoutAnimationController</code>就是基于行索引和列索引来计算子View的动画的延迟时间。</p>
+<p>用于计算每个子View动画延迟时间的信息保存在<code>LayoutAnimationController.AnimationParameters</code>参数中，而该参数本身又保存在<code>ViewGroup.LayoutParams</code>中。</p>
+<h1 id="LayoutAnimationController用法"><a href="#LayoutAnimationController用法" class="headerlink" title="LayoutAnimationController用法"></a>LayoutAnimationController用法</h1><p>它的用法还是比较简单，所以直接上例子。</p>
+<p><code>rv_item_list_anim.xml</code>用于指定item的动画。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">set</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:duration</span>=<span class="string">"1000"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:shareInterpolator</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">alpha</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:fromAlpha</span>=<span class="string">"0.0"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:toAlpha</span>=<span class="string">"1.0"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">translate</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:fromXDelta</span>=<span class="string">"-100%"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:toXDelta</span>=<span class="string">"0%"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>rv_layout_animation.xml</code>用于定义LayoutAnimationController。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">layoutAnimation</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:animation</span>=<span class="string">"@anim/rv_item_list_anim"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:animationOrder</span>=<span class="string">"normal"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:delay</span>=<span class="string">"0.2"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:interpolator</span>=<span class="string">"@android:anim/linear_interpolator"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<iframe width="300" height="500" src="layoutanimationcontroller.mp4" frameborder="0" allowfullscreen></iframe>
+
+<h1 id="LayoutAnimationController源码分析"><a href="#LayoutAnimationController源码分析" class="headerlink" title="LayoutAnimationController源码分析"></a>LayoutAnimationController源码分析</h1><p><code>ViewGroup</code>使用<code>LayoutAnimationController</code>成员来实现动画效果。相关的方法包括：</p>
+<ul>
+<li><code>setLayoutAnimation()</code>和<code>getLayoutAnimation()</code> - 分别用于设置和获取动画</li>
+<li><code>canAnimate()</code> - 判断是否有动画效果</li>
+<li><code>startLayoutAnimation()</code> - 启动动画</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewGroup</span> <span class="keyword">extends</span> <span class="title">View</span> <span class="keyword">implements</span> <span class="title">ViewParent</span>, <span class="title">ViewManager</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Layout animation</span></span><br><span class="line">    <span class="keyword">private</span> LayoutAnimationController mLayoutAnimationController;</span><br><span class="line">    <span class="keyword">private</span> Animation.AnimationListener mAnimationListener;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns the layout animation controller used to animate the group's</span></span><br><span class="line"><span class="comment">     * children.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the current animation controller</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LayoutAnimationController <span class="title">getLayoutAnimation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mLayoutAnimationController;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Sets the layout animation controller used to animate the group's</span></span><br><span class="line"><span class="comment">     * children after the first layout.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> controller the animation controller</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLayoutAnimation</span><span class="params">(LayoutAnimationController controller)</span> </span>&#123;</span><br><span class="line">        mLayoutAnimationController = controller;</span><br><span class="line">        <span class="keyword">if</span> (mLayoutAnimationController != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mGroupFlags |= FLAG_RUN_ANIMATION;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Indicates whether the view group has the ability to animate its children</span></span><br><span class="line"><span class="comment">     * after the first layout.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> true if the children can be animated, false otherwise</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">canAnimate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mLayoutAnimationController != <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Runs the layout animation. Calling this method triggers a relayout of</span></span><br><span class="line"><span class="comment">     * this view group.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startLayoutAnimation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mLayoutAnimationController != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mGroupFlags |= FLAG_RUN_ANIMATION;</span><br><span class="line">            requestLayout();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><code>LayoutAnimationController</code>的时序图如下：</p>
+<p><img src="lac-seq.png" alt></p>
+<p>对几个关键步骤稍加说明：</p>
+<ul>
+<li>第5步 - 调用<code>LayoutAnimationController.getAnimationForView()</code>为child view创建animation</li>
+<li>第6步 - 调用<code>LayoutAnimationController.start()</code>启动动画</li>
+<li>第8步 - 注意这一步调用的是<code>boolean View.draw(Canvas canvas, ViewGroup parent, long drawingTime)</code>方法。所以其实最终又回到了前一篇所讲的<a href="https://www.sunmoonblog.com/2018/11/06/android-animation-1/#more">View Animation</a></li>
+</ul>
+<!--为什么用于ListView和RecyclerView时不够流畅???-->
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/06/android-animation-1/" rel="prev" title="理解Android View Animation">
+      <i class="fa fa-chevron-left"></i> 理解Android View Animation
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/13/reading-instant-run-source/" rel="next" title="Instant Run浅析(三)">
+      Instant Run浅析(三) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#LayoutAnimationController介绍"><span class="nav-number">1.</span> <span class="nav-text">LayoutAnimationController介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LayoutAnimationController用法"><span class="nav-number">2.</span> <span class="nav-text">LayoutAnimationController用法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LayoutAnimationController源码分析"><span class="nav-number">3.</span> <span class="nav-text">LayoutAnimationController源码分析</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

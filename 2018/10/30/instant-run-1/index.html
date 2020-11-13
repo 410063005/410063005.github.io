@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="从使用体验上讲，Instant Run加快了开发效率，相当高大上。从技术上讲，其涉及到的技术点比较多，初看神秘又复杂。不过个人觉得Instant Run的复杂性主要在于工程实现，略过这种复杂性后聚焦其背后原理，会发现它还是非常简单明了的。前一篇中我们分析了Instant Run的流程，在此基础上再来看看Instant Run的原理。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Instant Run浅析(二)">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/10/30/instant-run-1/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="从使用体验上讲，Instant Run加快了开发效率，相当高大上。从技术上讲，其涉及到的技术点比较多，初看神秘又复杂。不过个人觉得Instant Run的复杂性主要在于工程实现，略过这种复杂性后聚焦其背后原理，会发现它还是非常简单明了的。前一篇中我们分析了Instant Run的流程，在此基础上再来看看Instant Run的原理。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/30/instant-run-1/flow1.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/30/instant-run-1/flow1.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/30/instant-run-1/class-structure.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/30/instant-run-1/relationship.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/30/instant-run-1/seq.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/30/instant-run-1/do-transform.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/10/30/instant-run-1/transform.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.906Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Instant Run浅析(二)">
+<meta name="twitter:description" content="从使用体验上讲，Instant Run加快了开发效率，相当高大上。从技术上讲，其涉及到的技术点比较多，初看神秘又复杂。不过个人觉得Instant Run的复杂性主要在于工程实现，略过这种复杂性后聚焦其背后原理，会发现它还是非常简单明了的。前一篇中我们分析了Instant Run的流程，在此基础上再来看看Instant Run的原理。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/10/30/instant-run-1/flow1.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/10/30/instant-run-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Instant Run浅析(二) | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/10/30/instant-run-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Instant Run浅析(二)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-30 20:39:02" itemprop="dateCreated datePublished" datetime="2018-10-30T20:39:02+08:00">2018-10-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>从使用体验上讲，Instant Run加快了开发效率，相当高大上。从技术上讲，其涉及到的技术点比较多，初看神秘又复杂。不过个人觉得Instant Run的复杂性主要在于工程实现，略过这种复杂性后聚焦其背后原理，会发现它还是非常简单明了的。<a href="https://www.sunmoonblog.com/2018/10/19/dive-into-run/">前一篇</a>中我们分析了Instant Run的流程，在此基础上再来看看Instant Run的原理。<br><a id="more"></a><br>本文的主要参考资料是：</p>
+<ul>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/README.md" target="_blank" rel="noopener">instant-run</a> - 官方关于Instant Run实现目标和技术选型的介绍</li>
+<li><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/README.md" target="_blank" rel="noopener">instant-run-instrumentation</a> - 官方关于Instant Run插桩技术介绍</li>
+</ul>
+<p>我的博客中有这两篇文章的翻译，供参考：</p>
+<ul>
+<li><a href="https://www.sunmoonblog.com/2018/10/26/instant-run/">(译)Instant Run</a></li>
+<li><a href="https://www.sunmoonblog.com/2018/10/28/instant-run-instrumentation/">(译)Instant Run Instrumentation</a></li>
+</ul>
+<p>看完上面两篇官方文档，你应该基本能明白Instant Run的原理。如果是这样的话，你可以直接忽略接下来的内容。不过为了检验一下自己是否真的有明白Instant Run，我还是要接着往下写。</p>
+<p>首先，Instant Run的核心原理可以概括成以下两点：</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Delegation_pattern" target="_blank" rel="noopener">Delegation pattern</a>，代理模式</li>
+<li><a href="https://en.wikipedia.org/wiki/Instrumentation_(computer_programming" target="_blank" rel="noopener">Instrumentation</a> - Java插桩技术</li>
+</ul>
+<p>接下来分别就这两点展开讨论。</p>
+<h1 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h1><p>你会疑惑Instant Run怎么能跟代理模式扯上关系，是不是搞错了？但相信我没错。</p>
+<p><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/README.md" target="_blank" rel="noopener">instant-run-instrumentation</a>中指出：Instant Run为了规避Java类加载带来本身的限制带来的一些技术问题，并不玩classloader相关的黑科技，而是用了另外一个简单粗暴的方法(原文只说简单，粗暴是个人观点)。这里用Instant Run版本的<code>HelloWorld</code>作为例子来演示一下这个方法是如何简单粗暴。</p>
+<p>假设你有个<code>HelloWorld</code>类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 版本1</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"hello"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你会发现<code>HelloWorld</code>有个问题，它不具备”更新能力”。现在各种app都流行热修复啊，对不对？我们的<code>HelloWorld</code>不能更新不能热修那怎么行，万一有bug怎么办？</p>
+<p>好吧，为了让其具备更新能力，代码改成这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">    <span class="keyword">static</span> IncrementalChange $change;</span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"hello"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        IncrementalChange var1 = $change;</span><br><span class="line">        <span class="keyword">if</span> (var1 != <span class="keyword">null</span>) &#123;</span><br><span class="line">            var1.access$dispatch(<span class="string">"sayHello.()V"</span>, <span class="keyword">new</span> Object[]&#123;<span class="keyword">this</span>&#125;);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"hello"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你可能会好奇这里的<code>IncrementalChange</code>是什么，请暂且放一放不和它纠结，它并不影响我们对以上代码的理解。这些代码含义很清晰：</p>
+<ul>
+<li>如果<code>$change</code>字段没被设置，代码逻辑没变化</li>
+<li>如果<code>$change</code>字段有被设置(被设置成<code>HelloWorld$override</code>实例，后面会提到)，执行更新/修复后的逻辑</li>
+</ul>
+<p>简单来说，<code>HelloWorld</code>现在具备更新能力了！现在需求变了，这回我们的<code>HelloWorld</code>不说”hello”要说”你好”，代码改成这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 版本2</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"你好"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是修改后的<code>HelloWorld</code>如何跟修改前的<code>HelloWorld</code>联系起来呢？这里用一张图来说明：</p>
+<p><img src="flow1.png" alt></p>
+<p>(特别需要注意的是， <em>上图中绿框表示的类文件才被真正被打包到APK中</em> )</p>
+<p><code>HelloWorld$override</code>实现了<code>IncrementalChange</code>接口，可被设置到<code>$change</code>字段。其代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span>$<span class="title">override</span> <span class="keyword">implements</span> <span class="title">IncrementalChange</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> HelloWorld$override() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> init$body(HelloWorld $<span class="keyword">this</span>, Object[] var1) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(HelloWorld $<span class="keyword">this</span>)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"你好"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Object access$dispatch(String var1, Object... var2) &#123;</span><br><span class="line">        <span class="keyword">switch</span>(var1.hashCode()) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">350191790</span>:</span><br><span class="line">            sayHello((HelloWorld)var2[<span class="number">0</span>]);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上就是Instant Run的核心原理。但有几个问题需要考虑：</p>
+<ul>
+<li>第2步的enhance过程 - 如何 <strong>自动修改</strong> 版本1的<code>HelloWorld</code>让其具备更新能力？</li>
+<li>第5步的enhance过程 - 如何 <strong>自动修改</strong> 版本2的<code>HelloWorld</code>生成用于更新的版本？</li>
+<li>第6步 - 如何设置<code>$change</code>字段</li>
+</ul>
+<p>本文只讨论前两个问题，它们本质上是同一个问题：我们不可能通过手工修改Java源文件的方式去实现Instant Run，而要借助Java插桩技术自动修改Java类文件。</p>
+<h1 id="插桩技术"><a href="#插桩技术" class="headerlink" title="插桩技术"></a>插桩技术</h1><p>instrumentation，这个词指的应该是获取计算机软件或者硬件状态的数据的技术，一般翻译为插桩。字面意思理解起来有困难的话，可以这样考虑：</p>
+<ul>
+<li>你只管动手写版本1的<code>HelloWorld.java</code>。但是构建时有个家伙默默地帮你修改<code>HelloWorld</code>让其具备更新能力(第2步enhance过程，初始插桩)</li>
+<li>你只管动手改版本1的<code>HelloWorld.java</code>，得到版本2的<code>HelloWorld.java</code>。那个神秘的家伙帮你生成<code>HelloWorld$override</code>(第5步enhance过程，增量插桩)</li>
+</ul>
+<p><img src="flow1.png" alt></p>
+<p>instrumentation就是藏在背后那个神秘的家伙。</p>
+<h2 id="ASM库"><a href="#ASM库" class="headerlink" title="ASM库"></a>ASM库</h2><p>其实在Java世界，instrumentation并不神秘，有各种instrumentation相关的库。</p>
+<h3 id="ASM介绍"><a href="#ASM介绍" class="headerlink" title="ASM介绍"></a>ASM介绍</h3><p>Java中最常用的插桩库是<a href="https://asm.ow2.io/" target="_blank" rel="noopener">ASM</a>。这是关于ASM的介绍：</p>
+<blockquote>
+<p>ASM is an all purpose Java bytecode manipulation and analysis framework. It can be used to modify existing classes or to dynamically generate classes, directly in binary form. ASM provides some common bytecode transformations and analysis algorithms from which custom complex transformations and code analysis tools can be built. </p>
+</blockquote>
+<blockquote>
+<p>The goal of the ASM library is to generate, transform and analyze compiled Java classes, represented as byte arrays (as they are stored on disk and loaded in the Java Virtual Machine). For this purpose ASM provides tools to read, write and transform such byte arrays by using higher level concepts than bytes, such as numeric constants, strings, Java identifiers, Java types, Java class structure elements, etc. Note that the scope of the ASM library is strictly limited to reading, writing, transforming and analyzing classes.</p>
+</blockquote>
+<p>翻译一下：</p>
+<p>ASM是一个全功能型的Java字节码操作和分析框架。它用于修改已存在的类文件，或者直接以二进制形式生成动态类。ASM提供一些常用的字节码转换和分析算法，可以基于这些算法构建自定义的复杂转换和分析工具。</p>
+<p>ASM库的目标是生成，转换或分析编译后的Java类，这些类以byte数组形式存在(它们保存在磁盘上，由JVM加载)。出于这个目的，ASM提供在更高层面而非字节层面提供读写和转换这些byte数组的方法，比如数字常量、字符串、Java关键字、Java类型、Java类结构等等。注意，ASM库的应用范围严格限定在读写、变换和分析Java类</p>
+<p>更多ASM相关的内容可以参考这里：</p>
+<ul>
+<li><a href="https://asm.ow2.io/asm4-guide.pdf" target="_blank" rel="noopener">ASM user guide</a></li>
+<li><a href="https://asm.ow2.io/developer-guide.html" target="_blank" rel="noopener">ASM developer guide</a></li>
+</ul>
+<p>Tips：ASM这个名字并非随便取的，它来自于C语言中的<code>__asm__</code>关键字。这个关键字允许在C语言中使用汇编语言。</p>
+<h3 id="ASM-API模型"><a href="#ASM-API模型" class="headerlink" title="ASM API模型"></a>ASM API模型</h3><p>ASM提供两种API模型用于生成和转换Java类：核心API提供 <strong>基于事件</strong> 的表示模型，而tree API提供 <strong>基于对象</strong> 的表示模型。</p>
+<ul>
+<li>基于事件的API - 使用事件序列表示Java类，每个事件代表类中的一个元素。这个API定义了可能的事件以及这些事件需要遵守的顺序</li>
+<li>基于对象的API - 使用对象树表示Java类，每个对象表示类中的一部分。这个API也可以将事件序列转换成对象树，或者反过来将对象树转换成事件序列</li>
+</ul>
+<p>ASM的这两种API模型有点像处理XML文档的API模型。基于事件的API类似于Simple API for XML (SAX)，而基于对象的API类似于Document Object Model (DOM)。</p>
+<p>ASM的主要类之间的关系见<a href="https://asm.ow2.io/developer-guide.html" target="_blank" rel="noopener">这里</a>。ASM中有几个关键的角色，这几个角色可以组合成复杂处理流程：</p>
+<ul>
+<li>event producer(class parser)</li>
+<li>event consumer(class writer)</li>
+<li>event filter</li>
+</ul>
+<p>ASM库中最关键的类是<code>ClassVisitor</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassVisitor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ClassVisitor</span><span class="params">(<span class="keyword">int</span> api)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ClassVisitor</span><span class="params">(<span class="keyword">int</span> api, ClassVisitor cv)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visit</span><span class="params">(<span class="keyword">int</span> version, <span class="keyword">int</span> access, String name,</span></span></span><br><span class="line"><span class="function"><span class="params">        String signature, String superName, String[] interfaces)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitSource</span><span class="params">(String source, String debug)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitOuterClass</span><span class="params">(String owner, String name, String desc)</span></span>; <span class="function">AnnotationVisitor <span class="title">visitAnnotation</span><span class="params">(String desc, <span class="keyword">boolean</span> visible)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitAttribute</span><span class="params">(Attribute attr)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitInnerClass</span><span class="params">(String name, String outerName, String innerName, <span class="keyword">int</span> access)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> FieldVisitor <span class="title">visitField</span><span class="params">(<span class="keyword">int</span> access, String name, String desc,</span></span></span><br><span class="line"><span class="function"><span class="params">        String signature, Object value)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> MethodVisitor <span class="title">visitMethod</span><span class="params">(<span class="keyword">int</span> access, String name, String desc,</span></span></span><br><span class="line"><span class="function"><span class="params">        String signature, String[] exceptions)</span></span>; <span class="function"><span class="keyword">void</span> <span class="title">visitEnd</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ClassVisitor</code>中的每个方法对应于Java类文件中相应部分。Java类文件结构见下图。</p>
+<p><img src="class-structure.png" alt></p>
+<p>ASM基于<code>ClassVisitor</code>API提供以下三个核心组件：</p>
+<ul>
+<li><code>ClassReader</code> - 它作为event producer，用于解析byte数组中的Java类。它的<code>accept()</code>方法接收<code>ClassVisitor</code>实例作为参数，<code>ClassReader</code>调用该实例对应的<code>visitXxx()</code>方法</li>
+<li><code>ClassWriter</code> - 它作为event consumer，是<code>ClassVisitor</code>的子类。<code>ClassWriter</code>用于构建Java类并输出到byte数组</li>
+<li><code>ClassVisitor</code> - 它作为event filter，将收到的所有方法调用代理到另一个<code>ClassVisitor</code>实例</li>
+</ul>
+<p>好了讲了这么多虚点，上代码来点实的。<code>ClassPrinter</code>是基于ASM库的一个简化版本的<code>javap</code>程序，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassPrinter</span> <span class="keyword">extends</span> <span class="title">ClassVisitor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ClassPrinter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(ASM5);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visit</span><span class="params">(<span class="keyword">int</span> version, <span class="keyword">int</span> access, String name, String signature, String superName, String[] interfaces)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.visit(version, access, name, signature, superName, interfaces);</span><br><span class="line">        System.out.println(name + <span class="string">" extends "</span> + superName + <span class="string">" &#123;"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> FieldVisitor <span class="title">visitField</span><span class="params">(<span class="keyword">int</span> access, String name, String desc, String signature, Object value)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"    "</span> + name + <span class="string">" "</span> + desc);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.visitField(access, name, desc, signature, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> MethodVisitor <span class="title">visitMethod</span><span class="params">(<span class="keyword">int</span> access, String name, String desc, String signature, String[] exceptions)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"    "</span> + name + <span class="string">" "</span> + desc);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.visitMethod(access, name, desc, signature, exceptions);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitEnd</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.visitEnd();</span><br><span class="line">        System.out.println(<span class="string">"&#125;"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ClassPrinter cp = <span class="keyword">new</span> ClassPrinter();</span><br><span class="line">        ClassReader cr = <span class="keyword">new</span> ClassReader(<span class="string">"java.lang.Runnable"</span>);</span><br><span class="line">        cr.accept(cp, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java/lang/Runnable extends java/lang/Object &#123;</span><br><span class="line">    run ()V</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是另一个例子，这段代码用于修改字节码中的版本号。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChangeVersionAdapter</span> <span class="keyword">extends</span> <span class="title">ClassVisitor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ChangeVersionAdapter</span><span class="params">(ClassVisitor cv)</span> </span>&#123;</span><br><span class="line">          <span class="keyword">super</span>(ASM4, cv);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visit</span><span class="params">(<span class="keyword">int</span> version, <span class="keyword">int</span> access, String name, </span></span></span><br><span class="line"><span class="function"><span class="params">		    String signature, String superName, String[] interfaces)</span> </span>&#123; </span><br><span class="line">		cv.visit(V1_5, access, name, signature, superName, interfaces);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] b1 = ...</span><br><span class="line">        ClassReader cr = <span class="keyword">new</span> ClassReader(b1);</span><br><span class="line">        ClassWriter cw = <span class="keyword">new</span> ClassWriter(cr, <span class="number">0</span>); ChangeVersionAdapter ca = <span class="keyword">new</span> ChangeVersionAdapter(cw); cr.accept(ca, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">byte</span>[] b2 = cw.toByteArray();		</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>类之间的关系如下图：</p>
+<p><img src="relationship.png" alt></p>
+<p>时序图：</p>
+<p><img src="seq.png" alt></p>
+<h2 id="InstantRunTransform"><a href="#InstantRunTransform" class="headerlink" title="InstantRunTransform"></a>InstantRunTransform</h2><p><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/gradle-core/src/main/java/com/android/build/gradle/internal/transforms/InstantRunTransform.java" target="_blank" rel="noopener">InstantRunTransform</a>是正是Android Gradle Plugin中用于 <strong>自动修改</strong> 字节码的工具。了解了ASM之后，再来分析<code>InstantRunTransform</code>就相对容易，因为它不过是对ASM库的应用。</p>
+<p><code>InstantRunTransform.doTransform()</code>是插桩入口，它的主要流程如下图：</p>
+<p><img src="do-transform.png" alt></p>
+<ul>
+<li><code>InstantRunTransform.transformToClasses2Format()</code>即上文中提到的初始插桩，实际插桩工作由<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/IncrementalSupportVisitor.java" target="_blank" rel="noopener">IncrementalSupportVisitor</a>完成</li>
+<li><code>InstantRunTransform.transformToClasses3Format()</code>即上文中提到的增量插桩，实际插桩工作由<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/IncrementalChangeVisitor.java" target="_blank" rel="noopener">IncrementalChangeVisitor</a>完成</li>
+</ul>
+<p>前文提到第2步和第5步两个enhance过程，其实分别是<code>transformToClasses2Format()</code>和<code>transformToClasses3Format()</code>。</p>
+<p><img src="transform.png" alt></p>
+<p><a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/IncrementalSupportVisitor.java" target="_blank" rel="noopener">IncrementalSupportVisitor</a>和<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/IncrementalChangeVisitor.java" target="_blank" rel="noopener">IncrementalChangeVisitor</a>是纯粹对ASM库的应用，其实现目标以及可能遇到的一些技术难题见<a href="https://www.sunmoonblog.com/2018/10/28/instant-run-instrumentation/#more">(译)Instant Run Instrumentation</a>，在此不展开具体分析。如果想深入研究ASM的话这二者可作为不错的学习材料，建议对对照着<a href="https://asm.ow2.io/asm4-guide.pdf" target="_blank" rel="noopener">ASM user guide</a>和<a href="https://asm.ow2.io/developer-guide.html" target="_blank" rel="noopener">ASM developer guide</a>学习这两个类的源码。</p>
+<h1 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h1><p>本文通过介绍Instant Run中的代理模式和字节码插桩技术，希望能带理解你Instant Run的原理。下一篇中将讨论Instant Run是如何发送并加载<code>HelloWorld$override</code>。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://mp.weixin.qq.com/s?__biz=MzAxMTI4MTkwNQ==&amp;mid=2650821004&amp;idx=1&amp;sn=120899d7ecaae5a2f74d67059dcab5e9&amp;pass_ticket=W4nv7dMI7tRatGj6kxkJk9rkIORQBbIG4EkbSHCxUbc%3D" target="_blank" rel="noopener">浅谈Instan Run中的热替换</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/28/instant-run-instrumentation/" rel="prev" title="(译)Instant Run Instrumentation">
+      <i class="fa fa-chevron-left"></i> (译)Instant Run Instrumentation
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/06/android-animation-1/" rel="next" title="理解Android View Animation">
+      理解Android View Animation <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#代理模式"><span class="nav-number">1.</span> <span class="nav-text">代理模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#插桩技术"><span class="nav-number">2.</span> <span class="nav-text">插桩技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ASM库"><span class="nav-number">2.1.</span> <span class="nav-text">ASM库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ASM介绍"><span class="nav-number">2.1.1.</span> <span class="nav-text">ASM介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ASM-API模型"><span class="nav-number">2.1.2.</span> <span class="nav-text">ASM API模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InstantRunTransform"><span class="nav-number">2.2.</span> <span class="nav-text">InstantRunTransform</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结束"><span class="nav-number">3.</span> <span class="nav-text">结束</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

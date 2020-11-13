@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简单了解一下 inline hook 技术。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android inline hook 浅析">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/07/15/inline-hook-basic/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="简单了解一下 inline hook 技术。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/CodeFlow.png">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/inline-example.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.042Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android inline hook 浅析">
+<meta name="twitter:description" content="简单了解一下 inline hook 技术。">
+<meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/CodeFlow.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/07/15/inline-hook-basic/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android inline hook 浅析 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/07/15/inline-hook-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android inline hook 浅析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-15 16:33:41" itemprop="dateCreated datePublished" datetime="2019-07-15T16:33:41+08:00">2019-07-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>简单了解一下 inline hook 技术。</p>
+<a id="more"></a>
+<p>inline hook 技术涉及到很多底层知识，所以我不太 hold 得住。幸好网上能找到很多不错的参考资料，就算不能完全弄懂，也可以了解个大概。先上参考资料：</p>
+<ul>
+<li><a href="https://www.malwaretech.com/2015/01/inline-hooking-for-programmers-part-1.html" target="_blank" rel="noopener">Inline Hooking for Programmers (Part 1: Introduction)</a>，这个文档中的示意图非常清晰，有助于理解 inline hook 的本质</li>
+<li><a href="https://www.jianshu.com/p/76d789d9d4e1" target="_blank" rel="noopener">Android Inline Hook 详解</a>，这个文档是对下一个文档的整理和总结，有助于理解实现 inline hook 的关键步骤</li>
+<li><a href="http://ele7enxxh.com/Android-Arm-Inline-Hook.html" target="_blank" rel="noopener">Android Arm Inline Hook</a>，这个文档介绍了实现 inline hook 的技术细节</li>
+<li><a href="https://github.com/ele7enxxh/Android-Inline-Hook" target="_blank" rel="noopener">ele7enxxh/Android-Inline-Hook</a>，这个是 inline hook 的源码，建议结合着上一个文档来看</li>
+<li>[]，上面的源码是使用旧的 NDK 编译方式，Android Studio 使用 CMake 编译。所以我动手将该源码改造成可以直接 Android Studio 中运行的 demo，方便动手实践</li>
+</ul>
+<h1 id="什么是-inline-hook"><a href="#什么是-inline-hook" class="headerlink" title="什么是 inline hook"></a>什么是 inline hook</h1><blockquote>
+<p>Inline hooking is a method of intercepting calls to target functions. The general idea is to redirect a function to our own, so that we can perform processing before and/or after the function does its; this could include: checking parameters, shimming, logging, spoofing returned data, and filtering calls. </p>
+<p>The hooks are placed by directly modifying code within the target function (inline modification), usually by overwriting the first few bytes with a jump; this allows execution to be redirected before the function does any processing</p>
+</blockquote>
+<p>inline hook 是拦截目标函数调用的一种手段。通常是将原始方法调用重定向到我们指定的新方法，以便在原始方法执行前后可以执行某些操作，包括检查参数、打印日志、过滤某些调用等等。</p>
+<p>inline hook 的实现手段是直接修改目标函数的代码(即内联修改)，通常是用跳转指令替换目标函数代码的前几个字节。跳转指令让目标函数进行实际处理前被重定向。</p>
+<p>inline hook 需要解决的问题：</p>
+<ul>
+<li>hook 成功后，如何调用原先的旧函数</li>
+<li>无限递归问题</li>
+<li>多线程场景时的 race conditions</li>
+<li>指令修正</li>
+</ul>
+<h1 id="Inline-hook-的原理"><a href="#Inline-hook-的原理" class="headerlink" title="Inline hook 的原理"></a>Inline hook 的原理</h1><p>inline hook 由3部分组成：</p>
+<ul>
+<li>Hook - 为了 hook 目标函数(旧函数)，会向其代码中写入一个5个字节的跳转指令(实际跳转指令以及指令大小跟平台相关)</li>
+<li>Proxy - 用于指定被 hook 的目标函数将要跳转到的函数(新函数)</li>
+<li>Trampoline - 用于调用旧函数</li>
+</ul>
+<h1 id="为什么需要-trampoline"><a href="#为什么需要-trampoline" class="headerlink" title="为什么需要 trampoline"></a>为什么需要 trampoline</h1><p>前面提到的两个问题，可以通过 trampoline 来解决</p>
+<ul>
+<li>hook 成功后，如何调用原先的旧函数</li>
+<li>无限递归问题</li>
+</ul>
+<p>假设有一个方法 <code>MessageBoxA()</code>，它可以显示一个对话框。假设我们 hook 了该方法，即，将其重定向到某个 Proxy。这个 Proxy 先打印出参数，再调用 <code>MessageBoxA()</code> 显示对话框。但是要注意，由于已经被 hook，所以正常调用 <code>MessageBoxA()</code> 时它又会重定向到 Proxy。这是一个无限递归调用，最后会导致程序因 stack overflow 而中止。</p>
+<p>有一个直观的解决方案：在 Proxy 中先 unhook <code>MessageBoxA()</code> (即取消重定向)，然后调用 <code>MessageBoxA()</code>，然后再一次 hook <code>MessageBoxA()</code> (即打开重定向)。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/CodeFlow.png" width="60%" height="60%"></p>
+<p>上图中提供了另外一个更通用的解决方案：使用 trampoline。先将 <code>MesasgeBoxA()</code> 的头5个字节保存在 trampoline 中，再向 <code>MessageBoxA()</code> 的头5个字节写入 Proxy 的地址。这样一来，hook <code>MessageBoxA()</code> 之后，如果你想正常调用原来的 <code>MessageBoxA()</code>，你可以借助 trampoline 来完成。</p>
+<h1 id="Android-Inline-Hook-源码分析"><a href="#Android-Inline-Hook-源码分析" class="headerlink" title="Android-Inline-Hook 源码分析"></a>Android-Inline-Hook 源码分析</h1><p><a href="https://github.com/ele7enxxh/Android-Inline-Hook" target="_blank" rel="noopener">ele7enxxh/Android-Inline-Hook</a> 是 Github 上的一个开源项目。它的几个要点包括：</p>
+<ul>
+<li>指令模式判断</li>
+<li>跳转指令构造</li>
+<li>跳转指令修正</li>
+<li>多线程处理及其他细节</li>
+</ul>
+<p>这里只看跳转指令构造的大致原理(涉及到太多背景知识和技术细节，只能不求甚解)。</p>
+<h2 id="inlineHookItem-结构体"><a href="#inlineHookItem-结构体" class="headerlink" title="inlineHookItem 结构体"></a><a href="https://github.com/ele7enxxh/Android-Inline-Hook/blob/master/inlineHook.c#L40" target="_blank" rel="noopener">inlineHookItem 结构体</a></h2><p>每个被 hook 的函数被记录在 <code>inlineHookItem</code> 结构体中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">inlineHookItem</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span> target_addr;          <span class="comment">// 目标函数地址</span></span><br><span class="line">	<span class="keyword">uint32_t</span> new_addr;             <span class="comment">// 新函数地址</span></span><br><span class="line">	<span class="keyword">uint32_t</span> **proto_addr;</span><br><span class="line">	<span class="keyword">void</span> *orig_instructions;       <span class="comment">// 原始指令</span></span><br><span class="line">	<span class="keyword">int</span> orig_boundaries[<span class="number">4</span>];</span><br><span class="line">	<span class="keyword">int</span> trampoline_boundaries[<span class="number">20</span>];</span><br><span class="line">  ...</span><br><span class="line">	<span class="keyword">void</span> *trampoline_instructions; <span class="comment">// 跳转指令</span></span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>inlineHookItem.trampoline_instructions</code> 字段正是上文中提到的 trampoline。</p>
+<h2 id="registerInlineHook-方法"><a href="#registerInlineHook-方法" class="headerlink" title="registerInlineHook() 方法"></a><a href="https://github.com/ele7enxxh/Android-Inline-Hook/blob/master/inlineHook.c#L252" target="_blank" rel="noopener">registerInlineHook() 方法</a></h2><p>调用 <code>registerInlineHook()</code> 方法开始记录 <code>inlineHookItem</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">enum</span> ele7en_status <span class="title">registerInlineHook</span><span class="params">(<span class="keyword">uint32_t</span> target_addr, <span class="keyword">uint32_t</span> new_addr, <span class="keyword">uint32_t</span> **proto_addr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">inlineHookItem</span> *<span class="title">item</span>;</span></span><br><span class="line"></span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">	item = findInlineHookItem(target_addr);</span><br><span class="line">	<span class="keyword">if</span> (item != <span class="literal">NULL</span>) &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	item = addInlineHookItem();</span><br><span class="line"></span><br><span class="line">	item-&gt;target_addr = target_addr;</span><br><span class="line">	item-&gt;new_addr = new_addr;</span><br><span class="line">	item-&gt;proto_addr = proto_addr;</span><br><span class="line">	item-&gt;length = TEST_BIT0(item-&gt;target_addr) ? <span class="number">12</span> : <span class="number">8</span>;</span><br><span class="line">	...</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> ELE7EN_OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该方法几个主要步骤是：</p>
+<ul>
+<li>调用 <code>findInlineHookItem()</code> 方法检查是否已有相关记录。有则直接返回，否则进入下一步</li>
+<li>调用 <code>addInlineHookItem()</code> 方法为指定的 <code>target_addr</code> 来创建一个新的 <code>inlineHookItem</code></li>
+<li>初始化创建的 <code>inlineHookItem</code> </li>
+</ul>
+<h2 id="doInlineHook-方法"><a href="#doInlineHook-方法" class="headerlink" title="doInlineHook() 方法"></a><a href="https://github.com/ele7enxxh/Android-Inline-Hook/blob/master/inlineHook.c#L342" target="_blank" rel="noopener">doInlineHook() 方法</a></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">doInlineHook</span><span class="params">(struct inlineHookItem *item)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">	<span class="keyword">if</span> (item-&gt;proto_addr != <span class="literal">NULL</span>) &#123;</span><br><span class="line">		*(item-&gt;proto_addr) = TEST_BIT0(item-&gt;target_addr) ? (<span class="keyword">uint32_t</span> *) SET_BIT0((<span class="keyword">uint32_t</span>) item-&gt;trampoline_instructions) : item-&gt;trampoline_instructions;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> (TEST_BIT0(item-&gt;target_addr)) &#123;</span><br><span class="line">		<span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">		i = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span> (CLEAR_BIT0(item-&gt;target_addr) % <span class="number">4</span> != <span class="number">0</span>) &#123;</span><br><span class="line">			((<span class="keyword">uint16_t</span> *) CLEAR_BIT0(item-&gt;target_addr))[i++] = <span class="number">0xBF00</span>;  <span class="comment">// NOP</span></span><br><span class="line">		&#125;</span><br><span class="line">		((<span class="keyword">uint16_t</span> *) CLEAR_BIT0(item-&gt;target_addr))[i++] = <span class="number">0xF8DF</span>;</span><br><span class="line">		((<span class="keyword">uint16_t</span> *) CLEAR_BIT0(item-&gt;target_addr))[i++] = <span class="number">0xF000</span>;	<span class="comment">// LDR.W PC, [PC]</span></span><br><span class="line">		((<span class="keyword">uint16_t</span> *) CLEAR_BIT0(item-&gt;target_addr))[i++] = item-&gt;new_addr &amp; <span class="number">0xFFFF</span>;</span><br><span class="line">		((<span class="keyword">uint16_t</span> *) CLEAR_BIT0(item-&gt;target_addr))[i++] = item-&gt;new_addr &gt;&gt; <span class="number">16</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		((<span class="keyword">uint32_t</span> *) (item-&gt;target_addr))[<span class="number">0</span>] = <span class="number">0xe51ff004</span>;	<span class="comment">// LDR PC, [PC, #-4]</span></span><br><span class="line">		((<span class="keyword">uint32_t</span> *) (item-&gt;target_addr))[<span class="number">1</span>] = item-&gt;new_addr;</span><br><span class="line">	&#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>doInlineHook()</code> 方法是 inline hook 关键之一。其作用包括：</p>
+<ul>
+<li>处理对原始方法的访问 - 将 <code>trampoline_instructions</code> 强制转型为 <code>void *proto_addr</code>。如果想调用原始方法，调用 <code>proto_addr</code> 指向的方法即可</li>
+<li>修改原始方法，写入跳转指令</li>
+</ul>
+<h2 id="relocateInstruction-方法"><a href="#relocateInstruction-方法" class="headerlink" title="relocateInstruction() 方法"></a><a href="https://github.com/ele7enxxh/Android-Inline-Hook/blob/master/relocate.c#L489" target="_blank" rel="noopener">relocateInstruction() 方法</a></h2><p><code>relocateInstruction()</code> 方法是 inline hook 的关键之一。其作用是将原始函数的被跳转指令替换的那几个指令拷贝到 <code>trampoline_instructions</code> 中，此时 PC 值已经变动，所以还需要对相关指令进行修正。 PC 值相关的指令由 <a href="https://github.com/ele7enxxh/Android-Inline-Hook/blob/master/relocate.c#L14" target="_blank" rel="noopener">INSTRUCTION_TYPE</a> 描述。</p>
+<p><code>relocateInstruction()</code> 方法用于按不同的平台分为：</p>
+<ul>
+<li><code>relocateInstructionInThumb()</code><ul>
+<li><code>relocateInstructionInThumb16()</code></li>
+<li><code>relocateInstructionInThumb32()</code></li>
+</ul>
+</li>
+<li><code>relocateInstructionInArm()</code></li>
+</ul>
+<p>这里只看 <code>relocateInstructionInArm()</code> 方法。它的参数包括：</p>
+<ul>
+<li><code>target_addr</code> - 待Hook的目标函数地址，即当前 PC 值，用于修正指令</li>
+<li><code>orig_instructions</code> - 存放原有指令的首地址，用于修正指令和后续对原有指令的恢复</li>
+<li><code>length</code> - 存放的原有指令的长度，Arm 指令为8字节；Thumb 指令为12字节</li>
+<li><code>trampoline_instructions</code> - 存放修正后指令的首地址，用于调用原函数</li>
+<li><code>orig_boundaries</code> - 存放原有指令的指令边界（所谓边界即为该条指令与起始地址的偏移量），用于后续线程处理中，对 PC 的迁移</li>
+<li><code>trampoline_boundaries</code> - 存放修正后指令的指令边界，用途与上相同</li>
+<li><code>count</code> - 处理的指令项数，用途与上相同</li>
+</ul>
+<p>精简后的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">relocateInstructionInArm</span><span class="params">(<span class="keyword">uint32_t</span> target_addr, <span class="keyword">uint32_t</span> *orig_instructions, <span class="keyword">int</span> length, <span class="keyword">uint32_t</span> *trampoline_instructions, <span class="keyword">int</span> *orig_boundaries, <span class="keyword">int</span> *trampoline_boundaries, <span class="keyword">int</span> *count)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (orig_pos = <span class="number">0</span>; orig_pos &lt; length / <span class="keyword">sizeof</span>(<span class="keyword">uint32_t</span>); ++orig_pos) &#123;</span><br><span class="line">		<span class="keyword">uint32_t</span> instruction;</span><br><span class="line">		<span class="keyword">int</span> type;</span><br><span class="line">		instruction = orig_instructions[orig_pos];</span><br><span class="line">		type = getTypeInArm(instruction);</span><br><span class="line">		<span class="keyword">if</span> (type == BLX_ARM || type == BL_ARM || type == B_ARM || type == BX_ARM) &#123;</span><br><span class="line">			...</span><br><span class="line">			trampoline_instructions[trampoline_pos++] = value;</span><br><span class="line">		&#125;	<span class="keyword">else</span> <span class="keyword">if</span> (type == ADD_ARM) &#123;</span><br><span class="line">	    ...</span><br><span class="line">			trampoline_instructions[trampoline_pos++] = <span class="number">0xE52D0004</span> | (r &lt;&lt; <span class="number">12</span>);	<span class="comment">// PUSH &#123;Rr&#125;</span></span><br><span class="line">			trampoline_instructions[trampoline_pos++] = <span class="number">0xE59F0008</span> | (r &lt;&lt; <span class="number">12</span>);	<span class="comment">// LDR Rr, [PC, #8]</span></span><br><span class="line">			trampoline_instructions[trampoline_pos++] = (instruction &amp; <span class="number">0xFFF0FFFF</span>) | (r &lt;&lt; <span class="number">16</span>);</span><br><span class="line">			trampoline_instructions[trampoline_pos++] = <span class="number">0xE49D0004</span> | (r &lt;&lt; <span class="number">12</span>);	<span class="comment">// POP &#123;Rr&#125;</span></span><br><span class="line">			trampoline_instructions[trampoline_pos++] = <span class="number">0xE28FF000</span>;	<span class="comment">// ADD PC, PC</span></span><br><span class="line">			trampoline_instructions[trampoline_pos++] = pc;	    </span><br><span class="line">	  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			trampoline_instructions[trampoline_pos++] = instruction;</span><br><span class="line">	  &#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	trampoline_instructions[trampoline_pos++] = <span class="number">0xe51ff004</span>;	<span class="comment">// LDR PC, [PC, #-4]</span></span><br><span class="line">	trampoline_instructions[trampoline_pos++] = lr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的略去了技术细节，建议参考 <a href="http://ele7enxxh.com/Android-Arm-Inline-Hook.html" target="_blank" rel="noopener">Android Arm Inline Hook
+</a>。</p>
+<h1 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h1><p><a href="https://github.com/ele7enxxh/Android-Inline-Hook" target="_blank" rel="noopener">ele7enxxh/Android-Inline-Hook: thumb16 thumb32 arm32 inlineHook in Android</a> 近期没有更新，它仍然使用 <code>ndk-build</code> 编译，且提供的 example 真机验证不便。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"inlineHook.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> (*old_puts)(<span class="keyword">const</span> <span class="keyword">char</span> *) = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">new_puts</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="built_in">string</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    old_puts(<span class="string">"inlineHook success"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">hook</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (registerInlineHook((<span class="keyword">uint32_t</span>) <span class="built_in">puts</span>, (<span class="keyword">uint32_t</span>) new_puts, (<span class="keyword">uint32_t</span> **) &amp;old_puts) != ELE7EN_OK) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (inlineHook((<span class="keyword">uint32_t</span>) <span class="built_in">puts</span>) != ELE7EN_OK) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">unHook</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (inlineUnHook((<span class="keyword">uint32_t</span>) <span class="built_in">puts</span>) != ELE7EN_OK) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"test"</span>);</span><br><span class="line">    hook();</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"test"</span>);</span><br><span class="line">    unHook();</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"test"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以我动手写了另一个 demo，完整代码见 <a href="https://github.com/410063005/android-ndk/tree/inline-hook" target="_blank" rel="noopener">Inline hook demo</a>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJni</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_hello_jni);</span><br><span class="line"></span><br><span class="line">        findViewById(R.id.btnCallOriginal).setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">                callHookTestCallOriginal();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">                    </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">callHookTestCallOriginal</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">"hello-jni"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>源码结构如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/inline-example.png" width="40%" height="40%"></p>
+<p>NDK 编译配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 3.4.1)</span><br><span class="line"></span><br><span class="line">add_library(hello-jni SHARED</span><br><span class="line">            hello-jni.c inlinehook/inlineHook.c inlinehook/relocate.c inlinehook/hooktest.c)</span><br><span class="line"></span><br><span class="line"># Include libraries needed for hello-jni lib</span><br><span class="line">target_link_libraries(hello-jni</span><br><span class="line">                      android</span><br><span class="line">                      log)</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/09/glide-transform/" rel="prev" title="Glide transform 问题分析">
+      <i class="fa fa-chevron-left"></i> Glide transform 问题分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/16/dart-stream/" rel="next" title="(译) Dart 异步编程之 Stream">
+      (译) Dart 异步编程之 Stream <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是-inline-hook"><span class="nav-number">1.</span> <span class="nav-text">什么是 inline hook</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Inline-hook-的原理"><span class="nav-number">2.</span> <span class="nav-text">Inline hook 的原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么需要-trampoline"><span class="nav-number">3.</span> <span class="nav-text">为什么需要 trampoline</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Android-Inline-Hook-源码分析"><span class="nav-number">4.</span> <span class="nav-text">Android-Inline-Hook 源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#inlineHookItem-结构体"><span class="nav-number">4.1.</span> <span class="nav-text">inlineHookItem 结构体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#registerInlineHook-方法"><span class="nav-number">4.2.</span> <span class="nav-text">registerInlineHook() 方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#doInlineHook-方法"><span class="nav-number">4.3.</span> <span class="nav-text">doInlineHook() 方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#relocateInstruction-方法"><span class="nav-number">4.4.</span> <span class="nav-text">relocateInstruction() 方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Demo"><span class="nav-number">5.</span> <span class="nav-text">Demo</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="翻译自 Improving build speed in Android Studio - Android Developers - Medium。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译)改进 Android Studio 中的构建速度">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/10/28/improving-build-speed-in-android-studio/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="翻译自 Improving build speed in Android Studio - Android Developers - Medium。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15722512736229.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15722514469463.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15722614003578.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.043Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译)改进 Android Studio 中的构建速度">
+<meta name="twitter:description" content="翻译自 Improving build speed in Android Studio - Android Developers - Medium。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/15722512736229.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/10/28/improving-build-speed-in-android-studio/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译)改进 Android Studio 中的构建速度 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/10/28/improving-build-speed-in-android-studio/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译)改进 Android Studio 中的构建速度
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-10-28 16:11:52" itemprop="dateCreated datePublished" datetime="2019-10-28T16:11:52+08:00">2019-10-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>翻译自 <a href="https://medium.com/androiddevelopers/improving-build-speed-in-android-studio-3e1425274837" target="_blank" rel="noopener">Improving build speed in Android Studio - Android Developers - Medium</a>。</p>
+<a id="more"></a>
+<h1 id="改进构建速度"><a href="#改进构建速度" class="headerlink" title="改进构建速度"></a>改进构建速度</h1><p>我们想让你在 Android Studio 中的生产力尽可能高。从之前跟开发者的讨论和调查中我们得知等待构建会降低生产力。</p>
+<p>本文将分享一些用于准确定位影响构建速度的新的分析，以及我们目前在做的工作和你可以怎样防止构建速度变慢。</p>
+<p><em>可能要感谢那些在设置中打开 “data sharing” 以分享其使用过程中的统计数据的那些开发者</em></p>
+<h1 id="度量构建速度的不同方式"><a href="#度量构建速度的不同方式" class="headerlink" title="度量构建速度的不同方式"></a>度量构建速度的不同方式</h1><p>The first thing we did was to create internal benchmarks* using open source projects (SignalAndroid, Tachiyomi, SantaTracker &amp; skeleton of Uber) to measure the build speed impact of various changes to the project (code, resources, manifest etc).</p>
+<p>我们工作的第一步是使用开源项目(<a href="https://github.com/signalapp/Signal-Android/archive/v4.19.1.zip" target="_blank" rel="noopener">SignalAndroid</a>, <a href="https://github.com/inorichi/tachiyomi/archive/014bb2f42634765ae2fec487cf3b8dc779f23f7b.zip" target="_blank" rel="noopener">Tachiyomi</a>, <a href="https://github.com/google/santa-tracker-android" target="_blank" rel="noopener">SantaTracker</a>, <a href="https://github.com/kageiit/android-studio-gradle-test.git" target="_blank" rel="noopener">Uber</a>) 建立内部指标来度量对项目的不同修改对构建速度的影响 (比如修改代码，资源以及 manifest)</p>
+<p>例如，这是修改代码对构建速度的影响指标，它表明过去一段时间构建速度有非常大的提高。</p>
+<p><img src="/images/15722512736229.jpg" alt></p>
+<p>我们也观察了真实世界中的数据，关注升级 Android Gradle 插件前后 debug 构建的速度变化。我们将这个数据作为新版本的实际改进。</p>
+<p>下图显示新版本带来了极大提升，对比 2.3 版本构建时间下降了 50%。</p>
+<p><img src="/images/15722514469463.jpg" alt></p>
+<p>最后看看构建时间随着时间的推移，而不关心 Android Gradle 插件的版本。我们将这个数据作为实际的构建速度。</p>
+<p>If builds are indeed getting faster with each release, and we can see it in our data, why are they still getting slower over time?<br>We dug a little deeper and realized that things happening in our ecosystem are causing build to slow down faster than we can improve.<br>While we knew that project growth — with more code, more resource usage, more language features — was making build slower over time, we also discovered that there are many additional factors beyond our immediate control:</p>
+<p>（那么问题来了，）随着每次新版本发布，如果构建速度真的变快了的话，为什么看到的实际构建速度却逐渐变慢？</p>
+<p>我们深挖了一下，认识到实际的问题在于整个生态中正在发生的情况导致构建速度变慢，这个过程超过了我们的改进速度。</p>
+<p>我们知道随着项目增长，更多的代码、更多的资源以及更多的语言特性，让项目构建速度逐渐变慢。我们还发现有许多额外因素超出我们的直接控制。</p>
+<ul>
+<li>2017 年底 <strong><a href="https://meltdownattack.com/" target="_blank" rel="noopener">Spectre and Meltdown</a></strong> 补丁对新的进程和 I/O 性能有影响，导致 clean builds 变慢 50% 到 140%</li>
+<li><strong>第三方以及自定义 Gradle 插件</strong>：96% 的 Android Studio 开发者使用其他的 Gradle 插件 (一些开发者并没有遵守 <a href="https://developer.android.com/studio/build/optimize-your-build" target="_blank" rel="noopener">新的最佳实践</a>)</li>
+<li>大部分 <strong>注解处理器不是增量式的</strong>，每次修改代码都会全量编译。</li>
+<li><strong>Java 8 的使用</strong>。Java 8 的语言特性会引起 desugaring 过程。我们使用 D8 编译器减少了 desugaring 的影响</li>
+<li><strong>Kotlin 的使用</strong>。Kotlin 的注解处理器(KAPT)也会影响构建性能。我们正在跟 JetBrains 合作来最小化性能影响</li>
+</ul>
+<ul>
+<li>之前列出的那些荐跟真实项目不同，它们不会随着时间增长。测试指标只是模拟变化并且事后撤销，仅仅度量我们插件随时间的变化<br>** 3.3 关注基础工作以便未来的改进 (例如, 命名资源、增量注解器元素、Gradle workers 等等)，所以几乎没有什么性能改进</li>
+</ul>
+<h1 id="我们能做什么"><a href="#我们能做什么" class="headerlink" title="我们能做什么"></a>我们能做什么</h1><h2 id="修复内部流程-amp-持续性能提升"><a href="#修复内部流程-amp-持续性能提升" class="headerlink" title="修复内部流程 &amp; 持续性能提升"></a>修复内部流程 &amp; 持续性能提升</h2><p>我们也承认许多内部来自 Google 提供的功能特性，所以我们改变内部流程以更好及时发现构建性能降低。</p>
+<p>我们让 <a href="https://developer.android.com/studio/build/optimize-your-build#annotation_processors" target="_blank" rel="noopener">annotation processors 支持增量构建</a>。写这篇文章时，Glide、Dagger 以及 Auto Service 都是增量式的，我们正在让其他库也支持增量构建。</p>
+<p>我们在新发布的版本中还引入了更轻量级的 R 类生成方案，以及 lazy task 和 worker API，并继续跟 Gradle inc. 以及 JetBrains 合作来继续从整体上改进构建性能。</p>
+<h2 id="Attribution-tools"><a href="#Attribution-tools" class="headerlink" title="Attribution tools"></a>Attribution tools</h2><p>最近一个调查表明大约 60% 的开发者不会分析构建性能，也不知道如何分析构建性能。因此我们计划改进 Android Studio 中的工具来提升社区中关于项目构建时间的认识和透明度。</p>
+<p>我们正在探索如何直接在 Android Studio 中更好地提供插件和 task 如何影响构建性能的相关信息。</p>
+<h1 id="你能做什么"><a href="#你能做什么" class="headerlink" title="你能做什么"></a>你能做什么</h1><p>configuration 时间因 variant、模块以及其他因素变化，这里分享真实项目中的数据作为参考点。</p>
+<p><img src="/images/15722614003578.jpg" alt></p>
+<p>如果你发现你的项目中 configuration 时间比上图中要慢很多，很可能是某些自定义构建逻辑(或第三方 Gradle 插件)影响了 configuration 时间。</p>
+<h2 id="使用工具"><a href="#使用工具" class="headerlink" title="使用工具"></a>使用工具</h2><p>Gradle 提供免费的<a href="https://guides.gradle.org/performance/" target="_blank" rel="noopener">工具集</a>用于分析构建。建议你使用 <a href="https://guides.gradle.org/performance/#build_scans" target="_blank" rel="noopener">Gradle scan</a>，它能提供关于构建的许多信息。如果你不能将自己的构建信息上传到 Gradle 服务器，则建议使用 <a href="https://guides.gradle.org/performance/#profile_report" target="_blank" rel="noopener">Gradle profiler</a>。Gradle profiler 能提供的信息要少一些，但不用担心它向服务器上传数据。</p>
+<p>注意：构建扫描并不能用来有效分析 configuration 耗时，建议使用 JVM profiler 来分析 configuration 耗时。</p>
+<h2 id="优化构建配置和任务"><a href="#优化构建配置和任务" class="headerlink" title="优化构建配置和任务"></a>优化构建配置和任务</h2><p>这里有些优化构建速度的最佳实践可供参考。也可以参考 <a href="https://developer.android.com/studio/build/optimize-your-build" target="_blank" rel="noopener">latest best practices</a>。</p>
+<p>配置</p>
+<ul>
+<li>在 configuration 中只建立 task (通过 lazy API)，避免任何 I/O 或其他操作 ( Configuration 不是用于执行 git 操作、读取文件、查询连接设备以其其他计算的)</li>
+<li>在 configuration 中建议所有 task。Configuration 并不知道实际会构建什么</li>
+</ul>
+<p>优化任务</p>
+<ul>
+<li>为每个 task 都声明 inputs/outputs (即使没有任何文件)，以保证任务可增量编译以及可缓存</li>
+<li>将复杂步骤分解成多个任务，以便增量编译和可缓存 (这样可以让某些 task 保持 up-to-date 状态或者并行)</li>
+<li>确保 task 不会写入或删除其他 task 的输出目录</li>
+<li>在 plugin/buildSrc 中添加自己的 task，而不是在 <code>build.gradle</code> 中添加</li>
+</ul>
+<p>我们关心你作为开发者的生产力。我们将继续努力让构建更快速，也希望这些 tips 和 guidelines 能帮你减少构建时间，而你更加专注开发优秀的应用。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/27/kotlin-comparison-method-violates/" rel="prev" title="记一个 IllegalArgumentException">
+      <i class="fa fa-chevron-left"></i> 记一个 IllegalArgumentException
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/10/28/why-i-moved-from-java-to-dart/" rel="next" title="(译)为什么我从 Java 迁移到 Dart">
+      (译)为什么我从 Java 迁移到 Dart <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#改进构建速度"><span class="nav-number">1.</span> <span class="nav-text">改进构建速度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#度量构建速度的不同方式"><span class="nav-number">2.</span> <span class="nav-text">度量构建速度的不同方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#我们能做什么"><span class="nav-number">3.</span> <span class="nav-text">我们能做什么</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#修复内部流程-amp-持续性能提升"><span class="nav-number">3.1.</span> <span class="nav-text">修复内部流程 &amp; 持续性能提升</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Attribution-tools"><span class="nav-number">3.2.</span> <span class="nav-text">Attribution tools</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#你能做什么"><span class="nav-number">4.</span> <span class="nav-text">你能做什么</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用工具"><span class="nav-number">4.1.</span> <span class="nav-text">使用工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化构建配置和任务"><span class="nav-number">4.2.</span> <span class="nav-text">优化构建配置和任务</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

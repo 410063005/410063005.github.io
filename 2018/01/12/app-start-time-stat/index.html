@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="(译)Android之应用启动速度中提到启动慢通常出现在创建Application和Activity阶段，具体来说就是Application.onCreate()和Activity.onCreate()。这两个方法负载过重，导致启动时间长。优化启动速度的第一步是统计启动时间，如何统计呢？">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="统计启动时间">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/01/12/app-start-time-stat/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="(译)Android之应用启动速度中提到启动慢通常出现在创建Application和Activity阶段，具体来说就是Application.onCreate()和Activity.onCreate()。这两个方法负载过重，导致启动时间长。优化启动速度的第一步是统计启动时间，如何统计呢？">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515746480768.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/1515747098555.webp">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.863Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="统计启动时间">
+<meta name="twitter:description" content="(译)Android之应用启动速度中提到启动慢通常出现在创建Application和Activity阶段，具体来说就是Application.onCreate()和Activity.onCreate()。这两个方法负载过重，导致启动时间长。优化启动速度的第一步是统计启动时间，如何统计呢？">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/1515746480768.webp">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/01/12/app-start-time-stat/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>统计启动时间 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/01/12/app-start-time-stat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          统计启动时间
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-01-12 21:49:41" itemprop="dateCreated datePublished" datetime="2018-01-12T21:49:41+08:00">2018-01-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <a href="/2017/12/21/app-launch-time/" title="(译)Android之应用启动速度">(译)Android之应用启动速度</a>中提到启动慢通常出现在创建Application和Activity阶段，具体来说就是<code>Application.onCreate()</code>和<code>Activity.onCreate()</code>。这两个方法负载过重，导致启动时间长。优化启动速度的第一步是统计启动时间，如何统计呢？<br><a id="more"></a>
+<h1 id="统计启动时间"><a href="#统计启动时间" class="headerlink" title="统计启动时间"></a>统计启动时间</h1><p>需要说明的是，应当使用关闭了debug模式的APK进行测试，否则统计结果可能跟真实情况差别很大。</p>
+<h2 id="Displayed关键字"><a href="#Displayed关键字" class="headerlink" title="Displayed关键字"></a>Displayed关键字</h2><p>一个简单的统计启动时间的办法是在logcat日志中搜索<code>Displayed</code>关键字，可以看到类似这样的日志：</p>
+<p><img src="/images/1515746480768.webp" alt></p>
+<p>这里可以看到我们应用首页的启动时间。测试是在在x86模拟器进行的，使用的是关闭了debug模式的包，一共测试了三次，每次都是杀死进程后重启启动的(冷启动)</p>
+<h2 id="adb命令"><a href="#adb命令" class="headerlink" title="adb命令"></a>adb命令</h2><p>另一种统计办法是使用adb命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">adb [-d|-e|-s &lt;serialNumber&gt;] shell am start -S -W</span><br><span class="line">com.example.app/.MainActivity</span><br><span class="line">-c android.intent.category.LAUNCHER</span><br><span class="line">-a android.intent.action.MAIN</span><br></pre></td></tr></table></figure>
+<p><img src="/images/1515747098555.webp" alt></p>
+<ul>
+<li>ThisTime - 当前Activity启动的耗时，这个时间跟上文说到的logat <code>Displayed</code>日志中的第一个时间是对应的</li>
+<li>TotalTime - 总的耗时，从App进程启动开始算起</li>
+<li>WaitTime - (不清楚，待求证?)</li>
+</ul>
+<h1 id="更准确的统计"><a href="#更准确的统计" class="headerlink" title="更准确的统计"></a>更准确的统计</h1><p>直观上感觉我们应用的启动速度并不快。我想优化启动速度，但不清楚到底是哪段代码拖慢了启动速度。如何找到瓶颈所在呢？</p>
+<p>前文说过启动慢通常发生在<code>Application.onCreate()</code>和<code>Activity.onCreate()</code>。所以重点关注<code>App</code>，<code>SplashActivity</code>，<code>IndexActivity</code>三个对象<code>onCreate()</code>中各个方法调用的具体耗时：</p>
+<ul>
+<li><code>App</code> - App是应用入口，它是<code>android.app.Application</code>的子类。我们在<code>App.onCreate()</code>有大量初始化代码，或许某些代码很慢</li>
+<li><code>SplashActivity</code> - SplashActivity是应用的闪屏页，闪屏页通常没有太多代码，可能不是性能瓶颈。但最好先看数据再下结论</li>
+<li><code>IndexActivity</code> - IndexActivity是应用的首页，首页有4个Tab，分别会加载四个不同的Fragment</li>
+</ul>
+<h2 id="TimingLogger"><a href="#TimingLogger" class="headerlink" title="TimingLogger"></a>TimingLogger</h2><p>确定 <em>统计对象</em> 后再来看看 <em>统计工具</em> 。<a href="https://developer.android.com/reference/android/util/TimingLogger.html" target="_blank" rel="noopener">android.util.TimingLogger</a>非常适合我们需求场景，它是Android SDK提供的工具类，用于统计方法耗时。用法比较简单：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">TimingLogger timings = <span class="keyword">new</span> TimingLogger(<span class="string">"TAG"</span>, <span class="string">"methodA"</span>);</span><br><span class="line"><span class="comment">// ... do some work A ...</span></span><br><span class="line">timings.addSplit(<span class="string">"work A"</span>);</span><br><span class="line"><span class="comment">// ... do some work B ...</span></span><br><span class="line">timings.addSplit(<span class="string">"work B"</span>);</span><br><span class="line"><span class="comment">// ... do some work C ...</span></span><br><span class="line">timings.addSplit(<span class="string">"work C"</span>);</span><br><span class="line">timings.dumpToLog();</span><br></pre></td></tr></table></figure>
+<p>上面代码在logcat的输出类似这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">D/TAG     ( 3459): methodA: begin</span><br><span class="line">D/TAG     ( 3459): methodA:      9 ms, work A</span><br><span class="line">D/TAG     ( 3459): methodA:      1 ms, work B</span><br><span class="line">D/TAG     ( 3459): methodA:      6 ms, work C</span><br><span class="line">D/TAG     ( 3459): methodA: end, 16 ms</span><br></pre></td></tr></table></figure>
+<p>注意：<code>TimingLogger</code>的实现依赖于<code>Log.isLoggable()</code>方法。我们知道，需要将对应tag的日志级别至少设置为VERBOSE级别<code>Log.isLoggable()</code>才生效。设置方法是<code>adb shell setprop log.tag.TAG &lt;Level&gt;</code>，使用<code>TimingLogger</code>前需要调用这个命令设置一下。但某些机器上<code>TimingLogger</code>不起作用，比如小米，推测是厂商修改ROM关闭这个功能。</p>
+<h2 id="日志分析"><a href="#日志分析" class="headerlink" title="日志分析"></a>日志分析</h2><p>我们分别在模拟器和OPPO手机上测试，得到两份数据。具体数据见<a href="timing-log-emualtor.txt">模拟器日志</a>和<a href="timing-log-oppo.txt">OPPO手机日志</a>。OPPO手机日志用于做实际分析，模拟器日志仅仅用作对比验证。</p>
+<p>每个方法调用都会消耗CPU时间，我们优先关注耗时最多的那些方法。从OPPO手机日志中找到那些耗时超过 <strong>50ms</strong> 的方法调用(当然50ms只是个经验值，这个值可根据实际情况调整)：</p>
+<p>先是<code>App.onCreate()</code>中耗时超过50ms的方法调用</p>
+<ul>
+<li>LoginHelper.getInstance() - 397ms</li>
+<li>QbSdk.initX5Environment() - 102ms</li>
+<li>Bugly.init() - 91ms</li>
+<li>ChannelUtils.initChannel() - 72ms</li>
+</ul>
+<p>然后是<code>IndexActivity.onCreate()</code>中耗时超过50ms的方法调用</p>
+<ul>
+<li>IndexActivity.setSubContentView() - 87ms</li>
+<li>MyPresenter.attach() - 81ms</li>
+<li>IndexActivity.setupView() - 246ms</li>
+</ul>
+<p><code>SplashActivity.onCreate()</code>中并没有出现耗时超过50ms的方法调用，我们可以忽略它。</p>
+<p>不过我们从日志文件看到一个奇怪的现象————某些日志出次了多次，看起来就像是代码重复执行。比如这段日志出现了三次：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">D/cm-perf: App.onCreate2(): begin</span><br><span class="line">D/cm-perf: App.onCreate2():      31 ms, ChannelUtils.initChannel</span><br><span class="line">D/cm-perf: App.onCreate2():      2 ms, StatUtils.getQIMEI</span><br><span class="line">D/cm-perf: App.onCreate2():      1 ms, Logger.setDebuggable</span><br><span class="line">D/cm-perf: App.onCreate2():      0 ms, Env.initEnv</span><br><span class="line">D/cm-perf: App.onCreate2(): end, 34 ms</span><br></pre></td></tr></table></figure>
+<p>下面逐一对上述数据和现象进行初步分析，并对某些耗时操作给出了大致的解决方案</p>
+<ul>
+<li>LoginHelper.getInstance() </li>
+</ul>
+<p>腾讯WTLogin SDK初始化，非常非常慢。不仅在OPPO真机上慢，在性能较高的<a href="timing-log-emualtor.txt">模拟器</a>上也是一如继往的慢。对这个方法调用慢的问题，暂时没想到好的解决办法，总不能不登录吧？</p>
+<ul>
+<li>QbSdk.initX5Environment()</li>
+</ul>
+<p><a href="https://x5.tencent.com/tbs/" target="_blank" rel="noopener">腾讯浏览服务SDK(x5内核)</a>初始化。x5内核用于替换Android原生的WebView，以提高应用内h5页面性能。很显然没必要在应用启动时就初始化x5内核，毕竟真实用户很可能根本就不会打开h5，在用户真正使用打开h5时再初始化x5内核才是合理的。当然，需要注意的是<code>QbSdk.initX5Environment()</code>内部会启动一个新的线程做异步初始化。所以<code>QbSdk.initX5Environment()</code>返回并不表示初始化完成！使用没有初始化成功的x5内核，可能会出现一些奇怪的bug，比如WebView黑屏之类的。(是的，我被这个问题坑到了，后面再讲)</p>
+<ul>
+<li>Bugly.init()</li>
+</ul>
+<p><a href="https://bugly.qq.com/v2/" target="_blank" rel="noopener">腾讯Bugly SDK</a>初始化。能否将这个初始化延后？</p>
+<ul>
+<li>ChannelUtils.initChannel()</li>
+</ul>
+<p>初始化渠道号。这个方法中有IO操作！具体来说就是拿到当前应用对应的APK文件，然后解析其中的渠道号文件，所以耗时多。有没有办法避免这里的IO操作？</p>
+<ul>
+<li>IndexActivity.setSubContentView()</li>
+</ul>
+<p>这个方法加载布局而已，耗时却很多。推测是布局过于复杂引起的。</p>
+<ul>
+<li>MyPresenter.attach() (注：这里的实际操作是调用Retrofit)</li>
+</ul>
+<p>这里耗时多就比较出乎意料。正常来说它应当是一个很轻的操作，不至于慢。但仔细分析就容易明白：MyPresenter中用到了Retrofit生成的Service类，而Service是通过<a href="https://github.com/square/retrofit/blob/master/retrofit/src/main/java/retrofit2/Retrofit.java#L133" target="_blank" rel="noopener">Java动态代理</a>生成的，这个生成过程非常慢。不过Retrofit有做缓存，之后的访问速度会变快。</p>
+<ul>
+<li>IndexActivity.setupView()</li>
+</ul>
+<p>这里耗时多是因为在其中初始化<a href="https://cloud.tencent.com/product/im" target="_blank" rel="noopener">腾讯云IM SDK</a>。</p>
+<ul>
+<li>某些日志输出多次的问题</li>
+</ul>
+<p>我们应用是多进程的，包括主进程、IM进程和网络进程。<code>App.onCreate()</code>中的部分初始化代码不不幸遇到<a href="http://yifeng.studio/2017/06/16/android-multi-process-things/" target="_blank" rel="noopener">Android多进程的坑</a>。那些输出日志的代码在三个进程中被执行，所以能看到三次日志输出。执行不必要的代码肯定会在某种程度上降低启动速度，解决方法是 <strong>根据当前进程功能只做必要的初始化</strong> 。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>如[Android之应用启动速度](2017-12-21-app-launch-time.md]中提到的那样，应用启动慢通常出现在创建Application和Activity的阶段。而<code>TimingLogger</code>可以方便地统计方法耗时，通过方法耗时数据可以清楚地看到性能瓶颈所在。</p>
+<p>我们基本弄清楚启动慢的原因，接下来就是如何优化启动速度了。优化的策略不外乎这几个：</p>
+<ul>
+<li>减少不需要的初始化<ul>
+<li>某些旧的没用的代码可能没有删除，它们会引起不必要的初始化</li>
+<li>多进程应用中很容易出现不必要的初始化，具体可参考<a href="http://yifeng.studio/2017/06/16/android-multi-process-things/" target="_blank" rel="noopener">这里</a></li>
+</ul>
+</li>
+<li>延迟初始化/延迟加载<ul>
+<li>事情分轻重缓急，真的不需要在应用入口做完所有的初始化</li>
+<li>最好是延迟到要使用时才初始化，或者在负载较轻时再初始化</li>
+</ul>
+</li>
+<li>避免IO操作</li>
+<li>简化布局</li>
+<li>缓存</li>
+</ul>
+<p>当然说起容易做起来难，真正优化时其实很容易踩坑，比如上面提到的x5 WebView黑屏问题。如何有效优化的同时又避免踩坑呢？未完待续，敬请期待。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/01/11/tips-on-action-bar/" rel="prev" title="如何在ActionBar上显示引导提示">
+      <i class="fa fa-chevron-left"></i> 如何在ActionBar上显示引导提示
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/01/30/glide-series/" rel="next" title="玩转Glide">
+      玩转Glide <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#统计启动时间"><span class="nav-number">1.</span> <span class="nav-text">统计启动时间</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Displayed关键字"><span class="nav-number">1.1.</span> <span class="nav-text">Displayed关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#adb命令"><span class="nav-number">1.2.</span> <span class="nav-text">adb命令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更准确的统计"><span class="nav-number">2.</span> <span class="nav-text">更准确的统计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TimingLogger"><span class="nav-number">2.1.</span> <span class="nav-text">TimingLogger</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#日志分析"><span class="nav-number">2.2.</span> <span class="nav-text">日志分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

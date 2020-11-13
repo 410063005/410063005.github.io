@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="翻译自 Flutter Lifecycle for Android and iOS Developers | Medium。类比 Android 和 iOS，了解 Flutter State 的生命周期。">
+<meta name="keywords" content="Flutter,翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译) Flutter State 生命周期">
+<meta property="og:url" content="http://www.sunmoonblog.com/2020/07/21/flutter-state-lifecycle/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="翻译自 Flutter Lifecycle for Android and iOS Developers | Medium。类比 Android 和 iOS，了解 Flutter State 的生命周期。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.050Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译) Flutter State 生命周期">
+<meta name="twitter:description" content="翻译自 Flutter Lifecycle for Android and iOS Developers | Medium。类比 Android 和 iOS，了解 Flutter State 的生命周期。">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2020/07/21/flutter-state-lifecycle/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译) Flutter State 生命周期 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/07/21/flutter-state-lifecycle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译) Flutter State 生命周期
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-21 17:48:26" itemprop="dateCreated datePublished" datetime="2020-07-21T17:48:26+08:00">2020-07-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>翻译自 <a href="https://medium.com/flutter-community/flutter-lifecycle-for-android-and-ios-developers-8f532307e0c7" target="_blank" rel="noopener">Flutter Lifecycle for Android and iOS Developers | Medium</a>。类比 Android 和 iOS，了解 Flutter State 的生命周期。</p>
+<a id="more"></a>
+<!--One of the most confusing ideas transitioning from Android and/or iOS is to understand how Flutter handles its lifecycle.
+-->
+<p>从 Android 或 iOS 转到 Flutter 开发，最让人疑惑的是 Flutter 如何处理生命周期。</p>
+<p><strong>onCreate()</strong> 在哪里？<strong>viewDidLoad()</strong> 呢？我应该将业务逻辑放在哪里？为什么只有一个 <code>build</code> 方法？</p>
+<p>本文将解答这些疑惑。</p>
+<h1 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h1><p><strong>Activity</strong> 生命周期是 Android 开发必须记住的：</p>
+<ul>
+<li>onCreate</li>
+<li>onStart</li>
+<li>onResume</li>
+</ul>
+<hr>
+<ul>
+<li>onPause</li>
+<li>onStop</li>
+<li>onRestart</li>
+<li>onDestroy</li>
+</ul>
+<p>大部分业务逻辑放在 <strong>onCreate</strong> 方法：初始化 view、数据库、监听器等等。<strong>onResume</strong> 和 <strong>onPause</strong> 是判断用户离开或进入当前页面的好时机。</p>
+<h1 id="iOS"><a href="#iOS" class="headerlink" title="iOS"></a>iOS</h1><p>UIViewController 的生命周期如下：</p>
+<ul>
+<li>viewDidLoad</li>
+<li>viewWillAppear</li>
+<li>viewDidAppear</li>
+</ul>
+<hr>
+<ul>
+<li>viewWillDisappear</li>
+<li>viewDidDisappear</li>
+<li>viewDidUnload</li>
+</ul>
+<p>如你所见，两个平台均使用几乎一致的步骤来创建或销毁页面。大部分业务逻辑放在 <strong>viewDidLoad()</strong>，而 <strong>Will/Did Appear/Disappear</strong> 用于保存信息，判断用户何时离开页面等等。</p>
+<h1 id="Flutter"><a href="#Flutter" class="headerlink" title="Flutter"></a>Flutter</h1><p>在 Flutter 中呢？Widget 也遵循类似规则吗？</p>
+<p>Flutter 中主要有两种 Widget：<strong>StatelessWidget</strong> 和 <strong>StatefulWidget</strong>。本文重点放在 <strong>StatefulWidget</strong>，因为它有点像 <strong>Android</strong> 和 <strong>iOS</strong> 中的某些概念。</p>
+<h2 id="StatefulWidget"><a href="#StatefulWidget" class="headerlink" title="StatefulWidget"></a>StatefulWidget</h2><p>StatefulWidget 是最重要的 Widget，因为它持有 <strong>State</strong>，它知道何时发生变化并进行必要的重绘。它的生命周期如下：</p>
+<ul>
+<li>createState</li>
+<li>initState</li>
+<li>didChangeDependencies</li>
+<li>build</li>
+<li>(didUpdateWidget)</li>
+</ul>
+<p>— — — — — — — — — — —</p>
+<ul>
+<li>deactivate</li>
+<li>dispose</li>
+</ul>
+<p>你可能会注意到创建阶段的 state 比销毁阶段的多，这是因为创建/重建 Widget 及其 State 更复杂。</p>
+<h3 id="createState"><a href="#createState" class="headerlink" title="createState():"></a>createState():</h3><p>构建新的 StatefulWidget 时将调用 createState()，StatefulWidget 的子类必须覆盖这个方法：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyScreen</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _MyScreenState createState() =&gt; _MyScreenState();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="initState"><a href="#initState" class="headerlink" title="initState()"></a>initState()</h3><p>通常需要重写这个方法。它是 Widget 创建后调用的第一个方法，可以理解成 <strong>onCreate()</strong> 或 <strong>viewDidLoad()</strong> 的等价物。在这个方法中可以检查 Widget 某些相关属性：是否有被渲染？当前是否处理 mounted 状态？</p>
+<h3 id="mounted"><a href="#mounted" class="headerlink" title="mounted"></a>mounted</h3><p>每个 Widget 都有这个属性。当为 Widget.buildContext 赋值后 mounted 的值变成 <strong>true</strong>，Widget 在树中。直到 <strong>dispose</strong> 方法被调用前，mounted 一直为 true。</p>
+<h3 id="addPostFrameCallback"><a href="#addPostFrameCallback" class="headerlink" title="addPostFrameCallback"></a>addPostFrameCallback</h3><p>可以在 <strong>initState</strong> 方法中按如下方式调用 <code>addPostFrameCallback</code>：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'package:flutter/scheduler.dart'</span>;</span><br><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> initState() &#123;</span><br><span class="line">  <span class="keyword">super</span>.initState();</span><br><span class="line">  SchedulerBinding.instance.addPostFrameCallback((_) =&gt; &#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法为一帧结束时添加回调，回调方法只会调用一次，通知 Widget 构建已完成。</p>
+<h3 id="didChangeDependencies"><a href="#didChangeDependencies" class="headerlink" title="didChangeDependencies"></a>didChangeDependencies</h3><p>widget 构建时第一次调用 initState() 后立即会调用 didChangeDependencies()。如果 <strong>StatefulWidgets</strong> 依赖某个 <strong>InheritedWidget</strong>，后者发生变化时会导致 didChangeDependencies() 再次被调用。</p>
+<h3 id="build"><a href="#build" class="headerlink" title="build()"></a>build()</h3><p>可以肯定地说这是最重要的方法。这个方法依赖整个待渲染的 Widget 树，在 <strong>didChangeDependencies()</strong> 立即被调用。所有的 GUI 渲染发生在这个方法，每次 UI 需要重新渲染时都会调用这个方法。(重新渲染是很廉价的操作)</p>
+<h3 id="didUpdateWidget"><a href="#didUpdateWidget" class="headerlink" title="didUpdateWidget()"></a>didUpdateWidget()</h3><p>这是一个不太常见的生命周期方法。一旦 parent widget 有变化需要重绘 UI 时会调用 didUpdateWidget()。这个方法有一个 <strong>oldWidget</strong> 参数，可以将它跟当前 <strong>widget</strong> 进行比较以执行某些额外的业务逻辑。</p>
+<h3 id="deactivate"><a href="#deactivate" class="headerlink" title="deactivate()"></a>deactivate()</h3><p>这个生命周期方法也不太常见。这个方法被调用时，意味着 Widget 开始进入”死亡”阶段。</p>
+<p>当 framework 从树中移除 State 时会调用本方法。某些情况下，framework 会重新将 State 对象加入到树中。</p>
+<h3 id="dispose"><a href="#dispose" class="headerlink" title="dispose()"></a>dispose()</h3><p>这个方法也非常重要。当 Widget 及其 State 从树中永久移除时会调用这个方法。此后 Widget 不会再被构建。</p>
+<p>你需要在这个方法中做取消对 stream 的监听、销毁动画等操作。它是 <strong>initState</strong> 的反操作。</p>
+<h1 id="WidgetsBindingObserver"><a href="#WidgetsBindingObserver" class="headerlink" title="WidgetsBindingObserver"></a>WidgetsBindingObserver</h1><p>如果我们想监听应用何时进入后台该怎么办？</p>
+<p>可以这样做。对 <strong>StatefulWidget</strong> 做些小改动：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_MyScreenState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">MyScreen</span>&gt; <span class="title">with</span> <span class="title">WidgetsBindingObserver</span></span></span><br></pre></td></tr></table></figure>
+<p>我们让 <code>_MyScreenState</code> 实现了抽象类 <strong>WidgetsBindingObserver</strong>，之后就可以观察应用的生命周期状态。在 <strong>initState</strong> 方法中开始观察：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WidgetsBinding.instance.addObserver(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
+<p>在 <strong>dispose</strong> 方法中停止观察：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WidgetsBinding.instance.removeObserver(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
+<p>接下来在 <strong>didChangeAppLifecycleState</strong> 接收生命周期的变化即可：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> didChangeAppLifecycleState(AppLifecycleState state) &#123;</span><br><span class="line">  <span class="keyword">super</span>.didChangeAppLifecycleState(state);</span><br><span class="line">  <span class="keyword">if</span> (state == AppLifecycleState.paused) &#123;</span><br><span class="line">    <span class="comment">// went to Background</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (state == AppLifecycleState.resumed) &#123;</span><br><span class="line">    <span class="comment">// came back to Foreground</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个技巧很有用。如果你想在应用进入后台时弹出 notification，或者保存数据，又或者在用户点 back 回退时弹出 popup，都可以使用这个技巧。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+              <a href="/tags/翻译/" rel="tag"># 翻译</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/16/flutter-split-debug-info/" rel="prev" title="Flutter split-debug-info 用法介绍">
+      <i class="fa fa-chevron-left"></i> Flutter split-debug-info 用法介绍
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/22/flutter-mmamp-memory/" rel="next" title="Android 内存优化之优化 so 文件">
+      Android 内存优化之优化 so 文件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Android"><span class="nav-number">1.</span> <span class="nav-text">Android</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#iOS"><span class="nav-number">2.</span> <span class="nav-text">iOS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Flutter"><span class="nav-number">3.</span> <span class="nav-text">Flutter</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#StatefulWidget"><span class="nav-number">3.1.</span> <span class="nav-text">StatefulWidget</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#createState"><span class="nav-number">3.1.1.</span> <span class="nav-text">createState():</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#initState"><span class="nav-number">3.1.2.</span> <span class="nav-text">initState()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mounted"><span class="nav-number">3.1.3.</span> <span class="nav-text">mounted</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#addPostFrameCallback"><span class="nav-number">3.1.4.</span> <span class="nav-text">addPostFrameCallback</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#didChangeDependencies"><span class="nav-number">3.1.5.</span> <span class="nav-text">didChangeDependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#build"><span class="nav-number">3.1.6.</span> <span class="nav-text">build()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#didUpdateWidget"><span class="nav-number">3.1.7.</span> <span class="nav-text">didUpdateWidget()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#deactivate"><span class="nav-number">3.1.8.</span> <span class="nav-text">deactivate()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dispose"><span class="nav-number">3.1.9.</span> <span class="nav-text">dispose()</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WidgetsBindingObserver"><span class="nav-number">4.</span> <span class="nav-text">WidgetsBindingObserver</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

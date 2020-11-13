@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简单测试一下 Bitmap 解码性能，收集一些测试数据。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bitmap 解码性能测试">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/05/31/bitmap-decode-perf/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="简单测试一下 Bitmap 解码性能，收集一些测试数据。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.037Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bitmap 解码性能测试">
+<meta name="twitter:description" content="简单测试一下 Bitmap 解码性能，收集一些测试数据。">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/05/31/bitmap-decode-perf/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Bitmap 解码性能测试 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/05/31/bitmap-decode-perf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Bitmap 解码性能测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-05-31 17:12:16" itemprop="dateCreated datePublished" datetime="2019-05-31T17:12:16+08:00">2019-05-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>简单测试一下 Bitmap 解码性能，收集一些测试数据。<br><a id="more"></a></p>
+<h1 id="测试结论"><a href="#测试结论" class="headerlink" title="测试结论"></a>测试结论</h1><p>测试代码见 <a href="https://github.com/410063005/cmdemo/blob/master/app/src/main/java/com/sunmoonblog/cmdemo/bitmap/BitmapDecodePerfActivity.kt" target="_blank" rel="noopener">BitmapDecodePerfActivity</a>。</p>
+<p>测试结论：</p>
+<ul>
+<li>解码性能跟图片体积有一定关系, 基本上体积越大解码时间越长</li>
+<li>解码性能跟图片尺寸有一定关系, 基本上尺寸越大解码时间越长</li>
+<li>WebP 解码性能比 PNG 解码性能差</li>
+<li>较大图片的解码时间常常超过 16ms，所以不应该在主线程解码较大图片</li>
+<li>小图片的解码时间很短，几乎不会影响到主线程</li>
+<li>同一个图片放在不同的资源目录, 会影响解码性能</li>
+</ul>
+<h1 id="图片体积和图片尺寸"><a href="#图片体积和图片尺寸" class="headerlink" title="图片体积和图片尺寸"></a>图片体积和图片尺寸</h1><p>图片体积和图片尺寸会影响解码性能。</p>
+<table>
+<thead>
+<tr>
+<th>图片名</th>
+<th>体积(KB)</th>
+<th>尺寸</th>
+<th>内存(MB)</th>
+<th>解码时间(ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kb_1.png</td>
+<td>1</td>
+<td>116x22</td>
+<td>0</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>kb_50.png</td>
+<td>53</td>
+<td>750x520</td>
+<td>1.5</td>
+<td>7.1</td>
+</tr>
+<tr>
+<td>kb_80.png</td>
+<td>88</td>
+<td>1125x711</td>
+<td>3.1</td>
+<td>11.1</td>
+</tr>
+<tr>
+<td>kb_100.png</td>
+<td>103</td>
+<td>750x416</td>
+<td>1.2</td>
+<td>7.0</td>
+</tr>
+<tr>
+<td>kb_190.png</td>
+<td>190</td>
+<td>750x460</td>
+<td>1.3</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>kb_320.png</td>
+<td>326</td>
+<td>752x942</td>
+<td>2.7</td>
+<td>17.8</td>
+</tr>
+</tbody>
+</table>
+<p>(数据来自 BitmapDecodePerfActivity.button12.setOnClickListener {} )</p>
+<p>从上表可以看出，</p>
+<ul>
+<li>随着图片体积增加，解码时间也越来越长</li>
+<li><code>kb_100.png</code> 体积比 <code>kb_80.png</code> 大，但解码时间反而短，看起来是个例外。原因可能是因为图片尺寸增加也会影响到解码时间，<code>kb_80.png</code> 的尺寸是 <code>kb_100.png</code> 的两倍以上</li>
+<li>小图片的解码时间很短，几乎不会影响到主线程。实际开发中可以直接在布局文件中引用小图片资源，不用担心影响主线程</li>
+<li>较大图片的解码时间可能超过 16ms，比如这里的 <code>kb_320.png</code>，所以不应该在主线程解码较大图片</li>
+</ul>
+<h1 id="WebP-与-PNG"><a href="#WebP-与-PNG" class="headerlink" title="WebP 与 PNG"></a>WebP 与 PNG</h1><table>
+<thead>
+<tr>
+<th>图片名</th>
+<th>体积(KB)</th>
+<th>尺寸</th>
+<th>内存(MB)</th>
+<th>解码时间(ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kb_80.webp</td>
+<td>78</td>
+<td>1500x742</td>
+<td>4.2</td>
+<td>29.7</td>
+</tr>
+<tr>
+<td>kb_90.webp</td>
+<td>91</td>
+<td>750x1206</td>
+<td>3.5</td>
+<td>24.9</td>
+</tr>
+<tr>
+<td>kb_100.webp</td>
+<td>96</td>
+<td>750x1334</td>
+<td>3.8</td>
+<td>27.6</td>
+</tr>
+</tbody>
+</table>
+<p>(数据来自 BitmapDecodePerfActivity.button11.setOnClickListener {} )</p>
+<p>直观上 WebP 图片解码耗时更长。以下是对比：</p>
+<table>
+<thead>
+<tr>
+<th>图片名</th>
+<th>体积(KB)</th>
+<th>尺寸</th>
+<th>内存(MB)</th>
+<th>解码时间(ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>jialuo.png</td>
+<td>326</td>
+<td>752x942</td>
+<td>2.7</td>
+<td>21.5</td>
+</tr>
+<tr>
+<td>jialuo_lossless.webp</td>
+<td>222</td>
+<td>752x942</td>
+<td>2.7</td>
+<td>30.0</td>
+</tr>
+<tr>
+<td>jialuo_lossy_75.webp</td>
+<td>55</td>
+<td>752x942</td>
+<td>2.7</td>
+<td>24.6</td>
+</tr>
+</tbody>
+</table>
+<p>(数据来自 BitmapDecodePerfActivity.button18.setOnClickListener {} )</p>
+<p>上表对三张相同尺寸的图片进行测试：</p>
+<ul>
+<li><code>jialuo.png</code> - 原始 PNG 图片</li>
+<li><code>jialuo_lossless.webp</code> - 原始图片无损压缩得到的 WebP</li>
+<li><code>jialuo_lossy_75.webp</code> - 原始图片有损压缩压缩后得到的 WebP，质量为75%</li>
+</ul>
+<p>从上表可以看出，</p>
+<ul>
+<li>相同尺寸下，WebP 图片体积明显小很多</li>
+<li>相同质量下，WebP 图片解码性能明显比 PNG 要低</li>
+<li>降低质量后 WebP 图片体积减小很多，可能在一定程度上弥补解码性能差的问题</li>
+<li>较大图片的解码时间常常超过 16ms，比方说这里的三张图片均超过 16ms，所以不应该在主线程解码较大图片</li>
+</ul>
+<h1 id="分辨率与图片资源目录"><a href="#分辨率与图片资源目录" class="headerlink" title="分辨率与图片资源目录"></a>分辨率与图片资源目录</h1><p>图片资源该放在哪个目录， <code>hdpi</code> 还是 <code>xhdpi</code> 还是 <code>xxhdpi</code>？官方对此的说明见<a href="https://developer.android.com/training/multiscreen/screendensities#TaskProvideAltBmp" target="_blank" rel="noopener">这里</a></p>
+<table>
+<thead>
+<tr>
+<th>图片名</th>
+<th>目录</th>
+<th>Bitmap尺寸</th>
+<th>内存(MB)</th>
+<th>解码时间(ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>splash_as_xhdpi.webp</td>
+<td>xhdpi</td>
+<td>1125x2001</td>
+<td>8.6</td>
+<td>82.4</td>
+</tr>
+<tr>
+<td>splash_as_xxhdpi.webp</td>
+<td>xxhdpi</td>
+<td>750x1334</td>
+<td>3.8</td>
+<td>27.1</td>
+</tr>
+<tr>
+<td>splash_as_xxxhdpi.webp</td>
+<td>xxxhdpi</td>
+<td>563x1001</td>
+<td>2.1</td>
+<td>40.0</td>
+</tr>
+</tbody>
+</table>
+<p>(数据来自 BitmapDecodePerfActivity.button19.setOnClickListener {} )</p>
+<p>上表中三张图片的体积均为 96KB，尺寸均为 750x1334。</p>
+<p>测试手机是华为 Nova 2，屏幕大小 1080x2150，densityDpi 是 480。根据 Android 源码的定义，480 的手机分类是 DENSITY_XXHIGH。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DisplayMetrics</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Standard quantized DPI for extra-extra-high-density screens.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DENSITY_XXHIGH = <span class="number">480</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上表可以看出，</p>
+<ul>
+<li>同一张图片放在不同的资源目录，最终解码出来的图片大小不一样。理由很简单，系统会对根据屏幕分辨率图片资源进行缩放处理</li>
+<li>图片放在错误的资源目录会产生不良影响。以 <code>splash.webp</code> 为例，由于我的测试机屏幕分辨率是 DENSITY_XXHIGH，所以预期是将它放在 <code>xxhdpi</code> 目录<ul>
+<li>如果错误地放在 <code>xhdpi</code> 目录，得到一个放大的 Bitmap，白白消耗内存</li>
+<li>如果放在不正确的目录，解码时间变长</li>
+</ul>
+</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>精确测试解码性能比较困难，从但上述测试数据中不难归纳出以下结论：</p>
+<ul>
+<li>大图片的解码时间很可能超过 16ms。所以为了更流畅的用户体验，<strong>不应在主线程中解码大图片</strong></li>
+<li>图片放在错误的资源目录，不仅浪费内存，还会增加解码时间。所以为了更好的性能，<strong>应当提供为不同屏幕密度提供合适的图片资源</strong></li>
+</ul>
+<p>以上结论跟 <a href="https://developer.android.com/topic/performance/graphics" target="_blank" rel="noopener">Handling bitmaps</a> 提供的最佳实践是吻合的。</p>
+<blockquote>
+<p>Loading bitmaps on the UI thread can degrade your app’s performance, causing slow responsiveness or even ANR messages. It is therefore important to manage threading appropriately when working with bitmaps.</p>
+</blockquote>
+<blockquote>
+<p>If your app is loading multiple bitmaps into memory, you need to skillfully manage memory and disk caching. Otherwise, the responsiveness and fluidity of your app’s UI may suffer.</p>
+</blockquote>
+<p>(测试过程中，为了让数据更稳定，做法是取解码20次取平均值。这样做是否有问题？之所以有这个疑问，因为测试中发现一个现象：解码20次得到的平均值倾向于比单独测试一次得到的值要小。)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/05/22/kotlin-autocloseable-use/" rel="prev" title="Kotlin 之 AutoCloseable.use()">
+      <i class="fa fa-chevron-left"></i> Kotlin 之 AutoCloseable.use()
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/04/fake-dlopen/" rel="next" title="Android dlopen 方法的使用限制及解决方案">
+      Android dlopen 方法的使用限制及解决方案 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#测试结论"><span class="nav-number">1.</span> <span class="nav-text">测试结论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图片体积和图片尺寸"><span class="nav-number">2.</span> <span class="nav-text">图片体积和图片尺寸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WebP-与-PNG"><span class="nav-number">3.</span> <span class="nav-text">WebP 与 PNG</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分辨率与图片资源目录"><span class="nav-number">4.</span> <span class="nav-text">分辨率与图片资源目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

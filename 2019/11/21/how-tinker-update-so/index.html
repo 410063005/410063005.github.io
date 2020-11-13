@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近一篇文章提到使用 Tinker 替换 so 来实现 Android 平台上 Flutter 热更新。为什么 Tinker 可以更新/替换 so，它是如何实现换的？这个方案用于 Flutter 可能会存在哪些限制，原因是什么？一起来研究下吧。篇幅较长，水平有限，如有疏漏欢迎指正。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于 Tinker 用于 Flutter 热更新的思考">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/11/21/how-tinker-update-so/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="最近一篇文章提到使用 Tinker 替换 so 来实现 Android 平台上 Flutter 热更新。为什么 Tinker 可以更新/替换 so，它是如何实现换的？这个方案用于 Flutter 可能会存在哪些限制，原因是什么？一起来研究下吧。篇幅较长，水平有限，如有疏漏欢迎指正。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737818623730.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737820549373.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737861688694.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737860062659.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737883238420.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15738059908501.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15738059908501.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15752896732123.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753450972729.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753607615004.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753621578674.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753622582470.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753633845265.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.045Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于 Tinker 用于 Flutter 热更新的思考">
+<meta name="twitter:description" content="最近一篇文章提到使用 Tinker 替换 so 来实现 Android 平台上 Flutter 热更新。为什么 Tinker 可以更新/替换 so，它是如何实现换的？这个方案用于 Flutter 可能会存在哪些限制，原因是什么？一起来研究下吧。篇幅较长，水平有限，如有疏漏欢迎指正。">
+<meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737818623730.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/11/21/how-tinker-update-so/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>关于 Tinker 用于 Flutter 热更新的思考 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/11/21/how-tinker-update-so/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关于 Tinker 用于 Flutter 热更新的思考
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-11-21 21:46:44" itemprop="dateCreated datePublished" datetime="2019-11-21T21:46:44+08:00">2019-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近一篇文章提到使用 Tinker 替换 so 来实现 Android 平台上 Flutter 热更新。为什么 Tinker 可以更新/替换 so，它是如何实现换的？这个方案用于 Flutter 可能会存在哪些限制，原因是什么？一起来研究下吧。篇幅较长，水平有限，如有疏漏欢迎指正。</p>
+<a id="more"></a>
+<p>[TOC]</p>
+<p>本文围绕 Tinker so 替换技术用于 Flutter 更新来讨论以下几个问题：</p>
+<ul>
+<li>Tinker 如何实现 so 更新/替换？</li>
+<li><code>System.load()</code> 的执行流程是怎样的？</li>
+<li>Flutter 大致的编译流程是怎样的？</li>
+<li>Flutter 编译产物是什么，有什么变更？</li>
+<li>so 替换如何应用于 Flutter 热更新？</li>
+<li>Flutter 及其编译产物的变更对上述方案有哪些潜在的影响？</li>
+</ul>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><a href="http://github.com/tencent/tinker" target="_blank" rel="noopener">Tinker</a> 是 Android 平台上一个流行的热更新框架，官网介绍如下：</p>
+<blockquote>
+<p>Tinker is a hot-fix solution library for Android, it supports dex, library and resources update without reinstalling apk.</p>
+</blockquote>
+<p>Tinker 更新 dex 的原理如下，</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737818623730.jpg" alt="Tinker 原理"></p>
+<p>从介绍及原理图可以看出 <em>Tinker 的主打功能是通过差分包更新 dex 来实现热更新</em>，介绍中虽然简短地提到支持 library 热修复，但原理图中并没有给出相关内容。</p>
+<p>Tinker 与其他主流热修复框架功能特性对比如下，</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737820549373.jpg" alt="Tinker 功能特性"></p>
+<p>(图片来自 <a href="https://github.com/tencent/tinker/wiki" target="_blank" rel="noopener">Tinker wiki</a>)</p>
+<p>只有 Tinker 支持 so 替换，是不是非常特别？我好奇它是如何实现的。</p>
+<h1 id="Tinker-如何更新-so-库"><a href="#Tinker-如何更新-so-库" class="headerlink" title="Tinker 如何更新 so 库"></a>Tinker 如何更新 so 库</h1><p>这是 Tinker API 概览：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737861688694.jpg" alt="Tinker API 概览"></p>
+<p><a href="https://github.com/Tencent/tinker/blob/master/tinker-android/tinker-android-lib/src/main/java/com/tencent/tinker/lib/library/TinkerLoadLibrary.java" target="_blank" rel="noopener">TinkerLoadLibrary</a> 负责加载更新/替换后的 so，大致过程如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737860062659.jpg" alt="TinkerLoadLibrary"></p>
+<p>实际上 Tinker 会根据一些条件来选择不同的加载过程，限于篇幅这里我们只讨论左边这种情况。涉及到的主要代码是：</p>
+<ul>
+<li><a href="https://github.com/Tencent/tinker/blob/master/tinker-android/tinker-android-lib/src/main/java/com/tencent/tinker/lib/library/TinkerLoadLibrary.java#L137" target="_blank" rel="noopener">TinkerLoadLibrary.loadLibraryFromTinker()</a></li>
+<li><a href="https://github.com/Tencent/tinker/blob/master/tinker-android/tinker-android-loader/src/main/java/com/tencent/tinker/loader/TinkerLoader.java" target="_blank" rel="noopener">TinkerLoader.tryLoad()</a></li>
+</ul>
+<p><code>TinkerLoadLibrary.loadLibraryFromTinker(Context context, String relativePath, String libName)</code> 的流程如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15737883238420.jpg" alt="TinkerLoadLibrary 加载 so"></p>
+<ul>
+<li><del>第一步是条件判断，检查是否支持加载 so、是否已构建 <code>Tinker</code>、<code>tinkerLoadResult</code> 是否存在，任一条件失败就直接结束</del> (忽略, 我们不关注)</li>
+<li>第二步是遍历 <code>tinkerLoadResult.libs</code>，从中找到跟 <code>relativePath</code> 匹配的那一项并构建出 <code>patchLibraryPath</code></li>
+<li>第三步，通过 MD5 校验则<strong>调用 System.load() 加载 so 文件</strong>(由 <code>patchLibraryPath</code> 指定)，否则结束</li>
+</ul>
+<p>单看这个流程的话，我们很快就能得出结论：Tinker 更新/替换 so，本质上不过是对 <code>System.load()</code> 的包装。</p>
+<p>所以剩下的问题是梳理这里的 <code>tinkerLoadResult.libs</code> 到底指向了哪个文件？那个文件是如何来的？</p>
+<!--
+TinkerInstaller.install()
+ -> Tinker.install()
+  -> TinkerLoadResult.parseTinkerResult()
+   -> ApplicationLike.getTinkerResultIntent()
+    -> AnnotationProcessor 注解器
+     -> TinkerApplication
+-->
+<p>继续分析之前先了解 Tinker 的几个背景知识：</p>
+<ul>
+<li>第一，Tinker 合并差分包后生成新的 so 保存在相应目录下。目录名类似于 <code>tinker/patch-641e634c/lib</code>。</li>
+</ul>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15738059908501.jpg" alt="Tinker so 文件目录结构"></p>
+<ul>
+<li>第二，使用 Tinker 库的一种方式是继承 <a href="https://github.com/Tencent/tinker/blob/master/tinker-android/tinker-android-lib/src/main/java/com/tencent/tinker/entry/DefaultApplicationLike.java" target="_blank" rel="noopener">DefaultApplicationLike</a>，而它本身继承自 <a href="https://github.com/Tencent/tinker/blob/master/tinker-android/tinker-android-lib/src/main/java/com/tencent/tinker/entry/ApplicationLike.java" target="_blank" rel="noopener">ApplicationLike</a>。<a href="[tinker/SampleApplicationLike.java](https://github.com/Tencent/tinker/blob/master/tinker-sample-android/app/src/main/java/tinker/sample/android/app/SampleApplicationLike.java">官方示例</a>) 的演示了 <code>DefaultApplicationLike</code> 的用法，</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.tencent.tinker.anno.DefaultLifeCycle;</span><br><span class="line"></span><br><span class="line"><span class="meta">@DefaultLifeCycle</span>(application = <span class="string">"tinker.sample.android.app.SampleApplication"</span>,</span><br><span class="line">                  flags = ShareConstants.TINKER_ENABLE_ALL,</span><br><span class="line">                  loadVerifyFlag = <span class="keyword">false</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleApplicationLike</span> <span class="keyword">extends</span> <span class="title">DefaultApplicationLike</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Log.d(TAG, <span class="string">"onCreate"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第三，Tinker 的 <code>@DefaultLifeCycle</code> 注解器(源码见 <a href="https://github.com/Tencent/tinker/blob/master/tinker-android/tinker-android-anno/src/main/java/com/tencent/tinker/anno/AnnotationProcessor.java" target="_blank" rel="noopener">AnnotationProcessor</a>)从 <code>SampleApplicationLike</code> 生成如下形式的 <a href="https://github.com/Tencent/tinker/blob/master/tinker-android/tinker-android-anno/src/main/resources/TinkerAnnoApplication.tmpl" target="_blank" rel="noopener">Application</a>。具体用法可以参考<a href="[tinker/SampleApplicationLike.java](https://github.com/Tencent/tinker/blob/master/tinker-sample-android/app/src/main/java/tinker/sample/android/app/SampleApplicationLike.java">官方示例</a>)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Generated application for tinker life cycle</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> %<span class="title">APPLICATION</span>% <span class="keyword">extends</span> <span class="title">TinkerApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> %APPLICATION%() &#123;</span><br><span class="line">        <span class="keyword">super</span>(%TINKER_FLAGS%, <span class="string">"%APPLICATION_LIFE_CYCLE%"</span>, <span class="string">"%TINKER_LOADER_CLASS%"</span>, %TINKER_LOAD_VERIFY_FLAG%);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>简单总结一下：</p>
+<ul>
+<li><code>@DefaultLifeCycle</code> 注解器从 <code>SampleApplicationLike</code> 生成 <code>SampleApplication</code></li>
+<li>生成的 <code>SampleApplication</code> 继承自 <code>TinkerApplication</code></li>
+<li><code>SampleApplicationLike</code> 是 <code>SampleApplication</code> 的代理 (理解这个关系需要留意模板文件中的 <code>%APPLICATION_LIFE_CYCLE%</code> 以及 <a href="https://github.com/Tencent/tinker/blob/master/tinker-android/tinker-android-loader/src/main/java/com/tencent/tinker/loader/app/TinkerApplication.java" target="_blank" rel="noopener">TinkerApplication</a> 构造方法第二个参数)</li>
+</ul>
+<p>有了这些背景知识，再回头看 <code>tinkerLoadResult.libs</code>。</p>
+<p>第一步，应用启动时调用 <code>TinkerApplication.loadTinker()</code>，这个方法反射调用 <code>TinkerLoader.tryLoad()</code>。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">TinkerApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Intent tinkerResultIntent;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onBaseContextAttached</span><span class="params">(Context base)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        loadTinker();</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadTinker</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//reflect tinker loader, because loaderClass may be define by user!</span></span><br><span class="line">            Class&lt;?&gt; tinkerLoadClass = Class.forName(loaderClassName, <span class="keyword">false</span>, TinkerApplication<span class="class">.<span class="keyword">class</span>.<span class="title">getClassLoader</span>())</span>;</span><br><span class="line">            Method loadMethod = tinkerLoadClass.getMethod(TINKER_LOADER_METHOD, TinkerApplication<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            Constructor&lt;?&gt; constructor = tinkerLoadClass.getConstructor();</span><br><span class="line">            tinkerResultIntent = (Intent) loadMethod.invoke(constructor.newInstance(), <span class="keyword">this</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">            <span class="comment">//has exception, put exception error code</span></span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第二步，<code>TinkerLoader.tryLoad()</code> 最终调用 <code>TinkerSoLoader</code> 来加载 so 文件。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TinkerLoader</span> <span class="keyword">extends</span> <span class="title">AbstractTinkerLoader</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Intent <span class="title">tryLoad</span><span class="params">(TinkerApplication app)</span> </span>&#123;</span><br><span class="line">        Log.d(TAG, <span class="string">"tryLoad test test"</span>);</span><br><span class="line">        Intent resultIntent = <span class="keyword">new</span> Intent();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> begin = SystemClock.elapsedRealtime();</span><br><span class="line">        tryLoadPatchFilesInternal(app, resultIntent);</span><br><span class="line">        <span class="keyword">long</span> cost = SystemClock.elapsedRealtime() - begin;</span><br><span class="line">        ShareIntentUtil.setIntentPatchCostTime(resultIntent, cost);</span><br><span class="line">        <span class="keyword">return</span> resultIntent;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">tryLoadPatchFilesInternal</span><span class="params">(TinkerApplication app, Intent resultIntent)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> isEnabledForNativeLib = ShareTinkerInternals.isTinkerEnabledForNativeLib(tinkerFlag);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (isEnabledForNativeLib) &#123;</span><br><span class="line">            <span class="comment">//tinker/patch.info/patch-641e634c/lib</span></span><br><span class="line">            <span class="keyword">boolean</span> libCheck = TinkerSoLoader.checkComplete(patchVersionDirectory, securityCheck, resultIntent);</span><br><span class="line">            <span class="keyword">if</span> (!libCheck) &#123;</span><br><span class="line">                <span class="comment">//file not found, do not load patch</span></span><br><span class="line">                Log.w(TAG, <span class="string">"tryLoadPatchFiles:native lib check fail"</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第三步，<code>TinkerSoLoader.checkComplete()</code> 生成一个 HashMap 对象用于保存 so 文件相关的信息。而 HashMap 本身又保存在 Intent 中，字段名为 <code>intent_patch_libs_path</code>。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TinkerSoLoader</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">checkComplete</span><span class="params">(String directory, </span></span></span><br><span class="line"><span class="function"><span class="params">      ShareSecurityCheck securityCheck, Intent intentResult)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="comment">//tinker//patch-641e634c/lib</span></span><br><span class="line">        String libraryPath = directory + <span class="string">"/"</span> + SO_PATH + <span class="string">"/"</span>;</span><br><span class="line"></span><br><span class="line">        HashMap&lt;String, String&gt; libs = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (ShareBsDiffPatchInfo info : libraryList) &#123;</span><br><span class="line">            ...</span><br><span class="line">            String middle = info.path + <span class="string">"/"</span> + info.name;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//unlike dex, keep the original structure</span></span><br><span class="line">            libs.put(middle, info.md5);</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="comment">//if is ok, add to result intent</span></span><br><span class="line">        intentResult.putExtra(ShareIntentUtil.INTENT_PATCH_LIBS_PATH, libs);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以这里的 so 文件为例，</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/21/15738059908501.jpg" alt="Tinker so 文件目录结构"></p>
+<p>HashMap 中包含如下数据：</p>
+<ul>
+<li>key - <code>tinker/patch-3a9eeb8d/lib/lib/armeabi/libapp.so</code></li>
+<li>value - 该 so 文件的 MD5</li>
+</ul>
+<p>注意，第三步中用于保存 HashMap 的 Intent 即第一步中的  <code>TinkerApplication.tinkerResultIntent</code>。</p>
+<hr>
+<p>第四步，这一步涉及到的内容较多，是第三步和第五步之间的衔接，整理如下供参考。</p>
+<p>两个关键点：</p>
+<ul>
+<li><code>TinkerApplication.createInlineFence()</code> 反射方式创建 <code>TinkerApplicationInlineFence</code></li>
+<li><code>TinkerApplicationInlineFence.createDelegate()</code> 反射方式创建 <code>ApplicationLike</code> (<code>ApplicationLike</code> 是 <code>TinkerApplication</code> 的代理)</li>
+</ul>
+<p>主要流程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TinkerApplication.attachBaseContext()</span><br><span class="line"> -&gt; TinkerApplication.onBaseContextAttached()</span><br><span class="line">  -&gt; ITinkerInlineFenceBridge.attachBaseContext()</span><br><span class="line">   -&gt; TinkerApplicationInlineFence.attachBaseContext()</span><br><span class="line">    -&gt; TinkerApplicationInlineFence.attachBaseContextImpl_$noinline$()</span><br><span class="line">     -&gt; ApplicationLike.onBaseContextAttached()</span><br></pre></td></tr></table></figure>
+<p>从这个流程可以看出 <code>TinkerApplication</code> 和 <code>ApplicationLike</code> 之间的关联。</p>
+<p>再来结合 demo 来看 <code>ApplicationLike.onBaseContextAttached()</code> 这个回调，观察 <code>ApplicationLike</code> 是如何跟 <code>TinkerInstaller</code> 关联起来的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DefaultLifeCycle</span>(application = <span class="string">"tinker.sample.android.app.SampleApplication"</span>,</span><br><span class="line">                  flags = ShareConstants.TINKER_ENABLE_ALL,</span><br><span class="line">                  loadVerifyFlag = <span class="keyword">false</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleApplicationLike</span> <span class="keyword">extends</span> <span class="title">DefaultApplicationLike</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBaseContextAttached</span><span class="params">(Context base)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onBaseContextAttached(base);</span><br><span class="line">        ...</span><br><span class="line">        TinkerManager.installTinker(<span class="keyword">this</span>);</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TinkerManager</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">installTinker</span><span class="params">(ApplicationLike appLike)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        TinkerInstaller.install(appLike,</span><br><span class="line">            loadReporter, patchReporter, patchListener,</span><br><span class="line">            SampleResultService<span class="class">.<span class="keyword">class</span>, <span class="title">upgradePatchProcessor</span>)</span>;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>第五步，调用 <code>TinkerInstaller.install()</code> 方法，一系列调用后将生成 <code>TinkerLoadResult</code> 对象。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TinkerInstaller</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Tinker <span class="title">install</span><span class="params">(ApplicationLike applicationLike)</span> </span>&#123;</span><br><span class="line">        Tinker tinker = <span class="keyword">new</span> Tinker.Builder(applicationLike.getApplication()).build();</span><br><span class="line">        Tinker.create(tinker);</span><br><span class="line">        tinker.install(applicationLike.getTinkerResultIntent());</span><br><span class="line">        <span class="keyword">return</span> tinker;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Tinker</span> </span>&#123;</span><br><span class="line">    TinkerLoadResult tinkerLoadResult;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">install</span><span class="params">(Intent intentResult, Class&lt;? extends AbstractResultService&gt; serviceClass, AbstractPatch upgradePatch)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        tinkerLoadResult = <span class="keyword">new</span> TinkerLoadResult();</span><br><span class="line">        tinkerLoadResult.parseTinkerResult(getContext(), intentResult);</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TinkerLoadResult</span> </span>&#123;</span><br><span class="line">   <span class="comment">//@Nullable</span></span><br><span class="line">    <span class="keyword">public</span> HashMap&lt;String, String&gt; libs;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">parseTinkerResult</span><span class="params">(Context context, Intent intentResult)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">switch</span> (loadCode) &#123;</span><br><span class="line">            <span class="keyword">case</span> ShareConstants.ERROR_LOAD_OK:</span><br><span class="line">                TinkerLog.i(TAG, <span class="string">"oh yeah, tinker load all success"</span>);</span><br><span class="line">                tinker.setTinkerLoaded(<span class="keyword">true</span>);</span><br><span class="line">                <span class="comment">// get load dex</span></span><br><span class="line">                dexes = ShareIntentUtil.getIntentPatchDexPaths(intentResult);</span><br><span class="line">                libs = ShareIntentUtil.getIntentPatchLibsPaths(intentResult);</span><br><span class="line">                ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从以上代码可以看到，<code>TinkerLoadResult.libs</code> 来自于 <code>ApplicationLike.getTinkerResultIntent()</code> 返回的 Intent 中保存 HashMap 对象，其字段名为 <code>intent_patch_libs_path</code>。</p>
+<p>前面提到过 <code>ApplicationLike</code> 是 <code>TinkerApplication</code> 的代理。<code>ApplicationLike.getTinkerResultIntent()</code> 返回的 Intent 其实就是 <code>TinkerApplication.tinkerResultIntent</code>，具体可参考 <a href="https://github.com/Tencent/tinker/blob/master/tinker-android/tinker-android-lib/src/main/java/com/tencent/tinker/entry/TinkerApplicationInlineFence.java#L68" target="_blank" rel="noopener">tinker/TinkerApplicationInlineFence.java</a>。</p>
+<p><code>TinkerLoadResult</code> 代表加载结果，其 <code>libs</code> 字段保存了 so 文件地址。如果以 <code>TinkerLoadResult</code> 作为关注点，整个过程总结如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15752896732123.jpg" alt="TinkerLoadResult"></p>
+<ol>
+<li><code>TinkerApplication</code> 及相关类是生产者，负责生产 <code>TinkerLoadResult</code></li>
+<li><code>Tinker</code> 是管理者，负责管理 <code>TinkerLoadResult</code></li>
+<li><code>TnikerLoadLibrary</code> 是消费者，负责消费 <code>TinkerLoadResult</code></li>
+</ol>
+<p>可见，无论这个过程多复杂，Tinker 最终仍然是调用 <code>System.load()</code> 加载 so 库。</p>
+<h1 id="System-load-简介"><a href="#System-load-简介" class="headerlink" title="System.load() 简介"></a>System.load() 简介</h1><p>前面提到 Tinker 更新/替换 so 库其实不过是对 <code>System.load()</code> 方法的包装。<a href="https://github.com/flutter/engine/blob/v1.9.1-hotfixes/shell/platform/android/io/flutter/view/FlutterMain.java" target="_blank" rel="noopener">Flutter 引擎初始化</a> 时也调用了 <code>System.load()</code> 方法。所以我们有必要了解这个方法。</p>
+<p>考虑到已经有很多优秀的文章很好地总结了相关知识，我这里直接搬一些上来。</p>
+<ul>
+<li><a href="http://gityuan.com/2017/03/26/load_library/" target="_blank" rel="noopener">loadLibrary动态库加载过程分析</a></li>
+<li><a href="https://pqpo.me/2017/05/31/system-loadlibrary/" target="_blank" rel="noopener">深入理解 System.loadLibrary - Pqpo’s Notes</a></li>
+</ul>
+<p><a href="http://gityuan.com/2017/03/26/load_library/" target="_blank" rel="noopener">loadLibrary动态库加载过程分析</a> 提到加载动态库的调用栈如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">System.loadLibrary()</span><br><span class="line"> -&gt; Runtime.loadLibrary()</span><br><span class="line">  -&gt; Runtime.doLoad()</span><br><span class="line">   -&gt; Runtime_nativeLoad() //1</span><br><span class="line">    -&gt; LoadNativeLibrary() //2</span><br><span class="line">     -&gt; dlopen()</span><br><span class="line">       -&gt; dlsym()</span><br><span class="line">         -&gt; JNI_OnLoad()</span><br></pre></td></tr></table></figure>
+<p>(注：无论 <code>System.loadLibrary()</code> 还是 <code>System.load()</code> 最后都会调用到 <a href="https://android.googlesource.com/platform/art/+/e34fa1d/runtime/java_vm_ext.cc#577" target="_blank" rel="noopener">LoadNativeLibrary()</a> 方法，所以这里对二者未加区分)</p>
+<p>调用栈中最主要代码是：</p>
+<ul>
+<li>代码1 - <a href="https://android.googlesource.com/platform/art/+/906846f/runtime/native/java_lang_Runtime.cc#70" target="_blank" rel="noopener">java_lang_Runtime.Runtime_nativeLoad()</a></li>
+<li>代码2 - <a href="https://android.googlesource.com/platform/art/+/e34fa1d/runtime/java_vm_ext.cc#577" target="_blank" rel="noopener">java_vm_ext.LoadNativeLibrary()</a></li>
+</ul>
+<p><a href="https://android.googlesource.com/platform/art/+/e34fa1d/runtime/java_vm_ext.cc#577" target="_blank" rel="noopener">LoadNativeLibrary()</a> 方法执行如下几个操作：</p>
+<ul>
+<li>通过 <code>dlopen()</code> 打开动态共享库;</li>
+<li>通过 <code>dlsym</code> 获取 <code>JNI_OnLoad</code> 符号所对应的方法；</li>
+<li>调用该加载库中的 <code>JNI_OnLoad()</code> 方法</li>
+</ul>
+<p><code>dlopen()</code> 和 <code>dlsym()</code> 是 Linux 系统为动态链接器提供的接口，允许应用程序在运行时加载和链接动态库。这个 demo 演示了这些接口的用法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// hello.c</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*SIMPLE_FUNC)</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *handle = dlopen(<span class="string">"libworld.so"</span>, RTLD_NOW);</span><br><span class="line">    <span class="keyword">if</span> (!handle) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"error: %s\n"</span>, dlerror());</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">void</span> *symSayWorld = dlsym(handle, <span class="string">"sayWorld"</span>);</span><br><span class="line">    <span class="keyword">if</span> (!symSayWorld) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"error: %s\n"</span>, dlerror());</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    SIMPLE_FUNC sayWorld = symSayWorld;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s"</span>, <span class="string">"hello"</span>);</span><br><span class="line">    sayWorld();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// world.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sayWorld</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, <span class="string">",world"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753450972729.jpg" alt="dlopen 的用法"></p>
+<h1 id="从-so-库到-Flutter-热更新"><a href="#从-so-库到-Flutter-热更新" class="headerlink" title="从 so 库到 Flutter 热更新"></a>从 so 库到 Flutter 热更新</h1><p>将 so 更新/替换应用于 Flutter 热更新技术上完全是可行的。《深入理解计算机系统》第七章第 7.11 节（P468）中讨论了应用程序如何加载和链接共享库。</p>
+<blockquote>
+<p>应用程序还可以在它运行时要求动态链接器加载和链接任意共享库，而无需在编译时链接那些库到应用中。</p>
+</blockquote>
+<p>书中还举了微软 Windows 应用更新的例子：</p>
+<blockquote>
+<p>分发软件。微软 Windows 应用的开发者常常利用共享库来分发软件更新。他们生成一个共享库的新版本。然后用户可以下载，并用它替换当前的版本。下一次他们运行应用程序时，应用将自动链接和加载新的共享库</p>
+</blockquote>
+<p>所以理论上只要 Flutter 不出于系统安全等原因阻止应用动态链接和加载<strong>更新后的共享库</strong>，动态链接技术同样可以用于热更新。但实践中可能遇到以下几个问题：</p>
+<ul>
+<li>首先你得要有 so ！</li>
+</ul>
+<p>我们知道 Dart 有 JIT 和 AOT 两种不同的编译模式，而 Flutter 是使用 Dart 作为开发语言，其编译产物在 debug 模式和 release 模式下并不相同。Dart 和 Flutter 都在快速演进，编译产物常常随版本发生变化。所以并不是所有编译模式或 Flutter 版本都有 so。没有 so，也就无法替换 so 文件来热更新。好在 Flutter v1.7 版本开始 release 模式下编译产物输出为 so 文件，所以 so 更新/替换方案变得可行</p>
+<ul>
+<li>其次是加载 so 的过程要可控</li>
+</ul>
+<p>我们很容易控制如何加载自己开发的 so 库文件。但第三方库通常会主动加载自带的 so 库文件，典型的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class FooSdk &#123;</span><br><span class="line"></span><br><span class="line">    // 在 static 初始化语句块中加载 libfoo.so</span><br><span class="line">    static &#123;</span><br><span class="line">        System.loadLibrary(&apos;foo&apos;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // libfoo.so 实现 bar() 方法</span><br><span class="line">    public native void bar();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第三方库通常会主动加载 so 的好处是对开发者透明和友好，坏处是不灵活不可控。Flutter 会不会也使用这种写死的加载方式呢？</p>
+<p>我们会一步步详细展开，看看实践中是否存在这些问题。如果有，要如何克服？主要话题包括：</p>
+<ul>
+<li>Flutter 编译流程及产物简介</li>
+<li>Flutter 引擎初始化简介</li>
+</ul>
+<h2 id="Flutter-编译流程及产物"><a href="#Flutter-编译流程及产物" class="headerlink" title="Flutter 编译流程及产物"></a>Flutter 编译流程及产物</h2><p>Dart 支持 JIT 和 AOT 两种编译模式。Flutter 在 debug 模式和 release 模式分别使用 JIT 和 AOT，前者开发调试速度快，后者运行效率高。</p>
+<p>使用 Android Studio 或 VS code 来打包 Flutter 应用时，实际都会调用 <code>flutter run</code> 来构建 APK 包。关于 <code>flutter run</code> 命令<a href="https://juejin.im/post/5d68fb1af265da03d063b69e#heading-1" target="_blank" rel="noopener">浅谈Flutter构建</a>中有比较详细的讨论。</p>
+<p>忽略一些不必要的细节，我们可以简单地认为：</p>
+<ul>
+<li>编译 debug 包对应于 <code>flutter build bundle</code> 这条命令</li>
+<li>编译 release 包对应于 <code>flutter build aot; flutter build bundle --precompiled</code> 这两条命令</li>
+</ul>
+<p>现在来动手实践一下，观察这些命令的编译产物。我的 Flutter 版本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Flutter 1.10.15-pre.234 • channel master • https://github.com/flutter/flutter.git</span><br><span class="line">Framework • revision e7236796bd (6 weeks ago) • 2019-10-24 03:21:06 -0400</span><br><span class="line">Engine • revision 5ded729f6a</span><br><span class="line">Tools • Dart 2.6.0 (build 2.6.0-dev.8.1 d43cd7e909)</span><br></pre></td></tr></table></figure>
+<p><code>flutter create flutter_empty_demo</code> 创建一个新的项目，不对代码作任何改动，利用这个项目进行验证。</p>
+<h3 id="编译-debug-包"><a href="#编译-debug-包" class="headerlink" title="编译 debug 包"></a>编译 debug 包</h3><p>运行 <code>flutter build bundle</code> 并观察建产物。这条命令本质是通过以下代码构造出一条类似于 <code>dart &lt;参数1&gt; &lt;参数2&gt; ... &lt;参数n&gt;</code> 带复杂参数的命令。主要代码包括：</p>
+<ul>
+<li><a href="https://github.com/flutter/flutter/blob/v1.9.1-hotfixes/packages/flutter_tools/lib/src/compile.dart" target="_blank" rel="noopener">compile.dart</a> - 对 Flutter SDK 中 <code>dart</code> 命令的包装，提供 <code>KernelCompiler</code> </li>
+<li><a href="https://github.com/flutter/flutter/blob/v1.9.1-hotfixes/packages/flutter_tools/lib/src/bundle.dart" target="_blank" rel="noopener">bundle.dart</a> - 基于 <code>KernelCompiler</code> 提供 <code>BundleBuilder</code></li>
+<li><a href="https://github.com/flutter/flutter/blob/v1.9.1-hotfixes/packages/flutter_tools/lib/src/commands/build_bundle.dart" target="_blank" rel="noopener">build_bundle.dart</a> - 基于 <code>BundleBuilder</code> 来实现 <code>flutter build bundle</code> 命令</li>
+</ul>
+<p>这条命令没有任何提示，等待约2秒后项目根目录下多出 <code>build/flutter_assets</code> 文件夹。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753607615004.jpg" alt="debug 模式编译产物"></p>
+<ul>
+<li><a href="https://github.com/dart-lang/sdk/tree/master/pkg/kernel" target="_blank" rel="noopener">kernel</a> - kernel 是从 Dart 本身衍生出来的语言，用于 Dart 程序的中间格式。这里的 <code>kernel_blob.bin</code> 即我们应用中编写的 Dart 代码</li>
+<li>snapshots - Dart 虚拟机的状态</li>
+<li>assets - 图片、字体等资源</li>
+</ul>
+<h3 id="编译-release-包"><a href="#编译-release-包" class="headerlink" title="编译 release 包"></a>编译 release 包</h3><p>运行 <code>flutter build aot</code> 并观察建产物。同样地，这条命令本质是通过以下代码构造出一条类似于 <code>dart &lt;参数1&gt; &lt;参数2&gt; ... &lt;参数n&gt;</code> 的带复杂参数的命令。主要代码包括：</p>
+<ul>
+<li><a href="https://github.com/flutter/flutter/blob/v1.9.1-hotfixes/packages/flutter_tools/lib/src/base/build.dart" target="_blank" rel="noopener">build.dart</a> - 对 Flutter SDK 中 <code>dart</code> 命令的包装，提供 <code>AOTSnapshotter</code>，可以将 Dart 代码编译成 so</li>
+<li><a href="https://github.com/flutter/flutter/blob/v1.9.1-hotfixes/packages/flutter_tools/lib/src/commands/build_aot.dart" target="_blank" rel="noopener">build_aot.dart</a> - 基于 <code>BundleAOTSnapshotterBuilder</code> 来实现 <code>flutter build aot</code> 命令</li>
+</ul>
+<p>这条命令耗时比编译 debug 包稍长，输出如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753621578674.jpg" alt="flutter build aot"><br>执行成功后项目根目录下多出 <code>build/aot</code> 目录，我们的 Dart 代码被编译成这里的 <code>app.so</code>。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753622582470.jpg" alt="build /aot 目录"><br><code>app.so</code> 是可以将 Tinker so 替换用于 Flutter 更新的关键之一。实际上， Flutter 一开始并不是编译成 <code>app.so</code>，而是多次调整直到 1.7 版本开始输出为 <code>app.so</code>，直到目前最新版本 (V1.9)。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/03/15753633845265.jpg" alt="Flutter 编译产物演进"></p>
+<p>(注：图片来自 <a href="https://juejin.im/post/5d68fb1af265da03d063b69e" target="_blank" rel="noopener">浅谈Flutter构建</a>)</p>
+<p>通过对比相关代码可以看到，编译产物的变更其实只不过是 <code>snapshot_kind</code> 参数的调整：从 V1.7 的 <code>app-aot-blobs</code> 调整到 V1.9 的 <code>app-aot-elf</code></p>
+<p><a href="https://github.com/flutter/flutter/blob/v1.9.1-hotfixes/packages/flutter_tools/lib/src/base/build.dart#L138" target="_blank" rel="noopener">Flutter V1.9 AOTSnapshotter 代码片断</a></p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">String</span> assembly = fs.path.join(outputDir.path, <span class="string">'snapshot_assembly.S'</span>);</span><br><span class="line"><span class="keyword">if</span> (platform == TargetPlatform.ios || platform == TargetPlatform.darwin_x64) &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> aotSharedLibrary = fs.path.join(outputDir.path, <span class="string">'app.so'</span>);</span><br><span class="line">  outputPaths.add(aotSharedLibrary);</span><br><span class="line">  genSnapshotArgs.add(<span class="string">'--snapshot_kind=app-aot-elf'</span>);</span><br><span class="line">  genSnapshotArgs.add(<span class="string">'--elf=<span class="subst">$aotSharedLibrary</span>'</span>);</span><br><span class="line">  genSnapshotArgs.add(<span class="string">'--strip'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/flutter/flutter/blob/v1.5.4-hotfixes/packages/flutter_tools/lib/src/base/build.dart#L152" target="_blank" rel="noopener">Flutter V1.5 AOTSnapshotter 代码片断</a></p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">String</span> assembly = fs.path.join(outputDir.path, <span class="string">'snapshot_assembly.S'</span>);</span><br><span class="line"><span class="keyword">if</span> (buildSharedLibrary || platform == TargetPlatform.ios) &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// Blob AOT snapshot.</span></span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> vmSnapshotData = fs.path.join(outputDir.path, <span class="string">'vm_snapshot_data'</span>);</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> isolateSnapshotData = fs.path.join(outputDir.path, <span class="string">'isolate_snapshot_data'</span>);</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> vmSnapshotInstructions = fs.path.join(outputDir.path, <span class="string">'vm_snapshot_instr'</span>);</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> isolateSnapshotInstructions = fs.path.join(outputDir.path, <span class="string">'isolate_snapshot_instr'</span>);</span><br><span class="line">  outputPaths.addAll(&lt;<span class="built_in">String</span>&gt;[vmSnapshotData, isolateSnapshotData, vmSnapshotInstructions, isolateSnapshotInstructions]);</span><br><span class="line">  genSnapshotArgs.addAll(&lt;<span class="built_in">String</span>&gt;[</span><br><span class="line">    <span class="string">'--snapshot_kind=app-aot-blobs'</span>,</span><br><span class="line">    <span class="string">'--vm_snapshot_data=<span class="subst">$vmSnapshotData</span>'</span>,</span><br><span class="line">    <span class="string">'--isolate_snapshot_data=<span class="subst">$isolateSnapshotData</span>'</span>,</span><br><span class="line">    <span class="string">'--vm_snapshot_instructions=<span class="subst">$vmSnapshotInstructions</span>'</span>,</span><br><span class="line">    <span class="string">'--isolate_snapshot_instructions=<span class="subst">$isolateSnapshotInstructions</span>'</span>,</span><br><span class="line">  ]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Flutter-引擎初始化"><a href="#Flutter-引擎初始化" class="headerlink" title="Flutter 引擎初始化"></a>Flutter 引擎初始化</h2><p><a href="https://github.com/flutter/engine/blob/v1.9.1-hotfixes/shell/platform/android/io/flutter/view/FlutterMain.java" target="_blank" rel="noopener">FlutterMain</a> 用于初始化 Flutter 引擎。这里只讨论跟 <code>libapp.so</code> 加载相关的部分 (<code>libapp.so</code> 即上文的 <code>app.so</code>)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * A class to intialize the Flutter engine.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlutterMain</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"FlutterMain"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_AOT_SHARED_LIBRARY_NAME = <span class="string">"libapp.so"</span>;</span><br><span class="line">    <span class="comment">// Mutable because default values can be overridden via config properties</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String sAotSharedLibraryName = DEFAULT_AOT_SHARED_LIBRARY_NAME;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Initialize our Flutter config values by obtaining them from the</span></span><br><span class="line"><span class="comment">     * manifest XML file, falling back to default values.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">initConfig</span><span class="params">(@NonNull Context applicationContext)</span> </span>&#123;</span><br><span class="line">        Bundle metadata = getApplicationInfo(applicationContext).metaData;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// There isn't a `&lt;meta-data&gt;` tag as a direct child of `&lt;application&gt;` in</span></span><br><span class="line">        <span class="comment">// `AndroidManifest.xml`.</span></span><br><span class="line">        <span class="keyword">if</span> (metadata == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        sAotSharedLibraryName = metadata.getString(PUBLIC_AOT_SHARED_LIBRARY_NAME, DEFAULT_AOT_SHARED_LIBRARY_NAME);</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Blocks until initialization of the native system has completed.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> applicationContext The Android application context.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args Flags sent to the Flutter runtime.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ensureInitializationComplete</span><span class="params">(@NonNull Context applicationContext, @Nullable String[] args)</span> </span>&#123;</span><br><span class="line">      ...</span><br><span class="line">      List&lt;String&gt; shellArgs = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">      String kernelPath = <span class="keyword">null</span>;</span><br><span class="line">      <span class="keyword">if</span> (BuildConfig.DEBUG) &#123;</span><br><span class="line">          String snapshotAssetPath = PathUtils.getDataDirectory(applicationContext) + File.separator + sFlutterAssetsDir;</span><br><span class="line">          kernelPath = snapshotAssetPath + File.separator + DEFAULT_KERNEL_BLOB;</span><br><span class="line">          shellArgs.add(<span class="string">"--"</span> + SNAPSHOT_ASSET_PATH_KEY + <span class="string">"="</span> + snapshotAssetPath);</span><br><span class="line">          shellArgs.add(<span class="string">"--"</span> + VM_SNAPSHOT_DATA_KEY + <span class="string">"="</span> + sVmSnapshotData);</span><br><span class="line">          shellArgs.add(<span class="string">"--"</span> + ISOLATE_SNAPSHOT_DATA_KEY + <span class="string">"="</span> + sIsolateSnapshotData);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          shellArgs.add(<span class="string">"--"</span> + AOT_SHARED_LIBRARY_NAME + <span class="string">"="</span> + sAotSharedLibraryName);</span><br><span class="line">    </span><br><span class="line">          <span class="comment">// Most devices can load the AOT shared library based on the library name</span></span><br><span class="line">          <span class="comment">// with no directory path.  Provide a fully qualified path to the library</span></span><br><span class="line">          <span class="comment">// as a workaround for devices where that fails.</span></span><br><span class="line">          shellArgs.add(<span class="string">"--"</span> + AOT_SHARED_LIBRARY_NAME + <span class="string">"="</span> + applicationInfo.nativeLibraryDir + File.separator + sAotSharedLibraryName);</span><br><span class="line">      &#125;</span><br><span class="line">      ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="#">带你不到80行代码搞定Flutter热更新</a> 使用反射强行修改 <code>FlutterMain.sAotSharedLibraryName</code>，使其指向由 Tinker 管理的 so，从而实现热更新。不过从 V1.9 代码看似乎有更优雅的方案：</p>
+<ul>
+<li>首先 <code>sAotSharedLibraryName</code> 并非 <code>final</code> 字段，为的就是能从文件中读取配置</li>
+<li>其次，<code>initConfig()</code> 方法的注释提到在 <code>AndroidManifest.xml</code> 中添加一个名为 <code>FlutterMain.aot-shared-library-name</code> 的 <code>&lt;meta-data&gt;</code> 可以为 <code>sAotSharedLibraryName</code> 指定值</li>
+<li>最后，<code>FlutterMain.ensureInitializationComplete()</code> 方法的第二个参数 <code>args</code> 也会被添加到 <code>shellArgs</code> 变量中。所以可以按照格式添加额外的参数 <code>--AOT_SHARED_LIBRARY_NAME=&lt;so文件&gt;</code> 让 Flutter 引擎加载指定的 so 库。</li>
+</ul>
+<p>so 替换应用于 Flutter 热更新是可行的，原因包括：</p>
+<ul>
+<li>Flutter 1.7 之后编译产物输出为 <code>libapp.so</code> 文件，完全可以直接复用 Tinker 作为热更新框架</li>
+<li>能使用反射等方式将 Flutter 加载 so 库的过程变得可控，比如从指定的路径加载更新/替换后的 so 库</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>最后来简单回答下前面提出的几个问题，作为总结。</p>
+<ul>
+<li>Tinker 如何实现 so 更新/替换？</li>
+</ul>
+<p>Tinker 实际上是调用 <code>System.load()</code> 来 so 实现更新/替换。 虽然 so 更新/替换并不是 Tinker 独有的，我们完全可以直接调用 <code>System.load()</code> 来实现 so 更新，但考虑 Tinker 的 patch 包生成和合并非常完善(可以生成很小的差分包)，工程实际中是个不错的选择。</p>
+<ul>
+<li><code>System.load()</code> 的执行流程是怎样的？</li>
+</ul>
+<p><code>System.load()</code> 调用 <code>Runtime</code> 相关方法，最终进入到 Java 虚拟机中的 <a href="https://android.googlesource.com/platform/art/+/e34fa1d/runtime/java_vm_ext.cc#577" target="_blank" rel="noopener">java_vm_ext.LoadNativeLibrary()</a> 方法。该方法调用 <code>dlopen()</code> 和 <code>dlsysm()</code> 加载 so 文件</p>
+<ul>
+<li>Flutter 大致的编译流程是怎样的？</li>
+</ul>
+<p>调用 <code>dart</code> 命令将应用中的 Dart 代码编译成某种类型的 snapshot 文件，常用的 snapshot-kind 包括 <code>kernel</code>、<code>app-aot-elf</code> 和 <code>app-aot-blobs</code>。 (这里仍然有个疑问，为什么 Dart 官网并没有提到 <code>app-aot-elf</code> 和 <code>app-aot-blobs</code> 这两种类型的 snapshot-kind？)</p>
+<ul>
+<li>Flutter 编译产物是什么，有什么变更？</li>
+</ul>
+<p>编译产物包括 1. 资源 (assets) 2. 代码 (kernel/so库 和 snapshots)</p>
+<ul>
+<li>so 替换如何应用于 Flutter 热更新？</li>
+</ul>
+<p>通过反射等方式修改 <code>FlutterMain.sAotSharedLibraryName</code> 字段，将缺省的 <code>libapp.so</code> 替换为指定的 so</p>
+<ul>
+<li>Flutter 及其编译产物的变更对上述方案有哪些潜在的影响？</li>
+</ul>
+<p>Fluter 1.7 版本之前编译产物并非 so 文件，所以不能直接利用 so 替换来实现热更新。1.7 版本之后编译产物输出为 so 文件，可以利用 so 替换来实现热更新。</p>
+<p>但是要注意，so 替换方案虽然可行，Flutter 的代码仍在频繁变更中，所以使用反射等手段时要尤其注意 Flutter 版本带来的影响。比方说，Flutter 1.9 中反射方式修改 <code>FlutterMain.sAotSharedLibraryName</code> 是可行的，但 Flutter 1.12 中则会失败。原因很简单：1.12 新版本中 <code>FlutterMain</code> 被重构成 <code>FlutterMain</code> 和 <code>FlutterLoader</code>，原先用于加载 <code>libapp.so</code> 的代码现移到 <code>FlutterLoader</code> 中了，包括 <code>sAotSharedLibraryName</code> 字段。具体可参考源码。</p>
+<ul>
+<li>Flutter 1.9 - <a href="https://github.com/flutter/engine/blob/v1.9.1-hotfixes/shell/platform/android/io/flutter/view/FlutterMain.java" target="_blank" rel="noopener">engine/FlutterMain.java</a></li>
+<li>Flutter 1.12 - <a href="https://github.com/flutter/engine/blob/v1.12.13-hotfixes/shell/platform/android/io/flutter/view/FlutterMain.java" target="_blank" rel="noopener">engine/FlutterMain.java</a> 和 <a href="https://github.com/flutter/engine/blob/v1.12.13-hotfixes/shell/platform/android/io/flutter/embedding/engine/loader/FlutterLoader.java" target="_blank" rel="noopener">engine/FlutterLoader.java</a></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="#">带你不到80行代码搞定Flutter热更新</a></li>
+<li><a href="https://github.com/410063005/so-loader-demo/blob/master/README.md" target="_blank" rel="noopener">dlopen demo 完整源码</a></li>
+<li><a href="https://www.sunmoonblog.com/2019/06/04/fake-dlopen/">Android dlopen 方法的使用限制及解决方案</a></li>
+<li><a href="https://pqpo.me/2017/05/31/system-loadlibrary/" target="_blank" rel="noopener">深入理解 System.loadLibrary - Pqpo’s Notes</a></li>
+<li><a href="http://gityuan.com/2017/03/26/load_library/" target="_blank" rel="noopener">loadLibrary动态库加载过程分析 - Gityuan博客 | 袁辉辉的技术博客</a></li>
+<li><a href="https://juejin.im/post/5d68fb1af265da03d063b69e#heading-1" target="_blank" rel="noopener">浅谈Flutter构建 - 掘金</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/13/dart-jit-aot/" rel="prev" title="Dart JIT 与 AOT">
+      <i class="fa fa-chevron-left"></i> Dart JIT 与 AOT
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/26/dart-async-isolate-eventloop/" rel="next" title="(译) Dart 异步编程之 Isolate 和事件循环">
+      (译) Dart 异步编程之 Isolate 和事件循环 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Tinker-如何更新-so-库"><span class="nav-number">2.</span> <span class="nav-text">Tinker 如何更新 so 库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#System-load-简介"><span class="nav-number">3.</span> <span class="nav-text">System.load() 简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从-so-库到-Flutter-热更新"><span class="nav-number">4.</span> <span class="nav-text">从 so 库到 Flutter 热更新</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Flutter-编译流程及产物"><span class="nav-number">4.1.</span> <span class="nav-text">Flutter 编译流程及产物</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编译-debug-包"><span class="nav-number">4.1.1.</span> <span class="nav-text">编译 debug 包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译-release-包"><span class="nav-number">4.1.2.</span> <span class="nav-text">编译 release 包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flutter-引擎初始化"><span class="nav-number">4.2.</span> <span class="nav-text">Flutter 引擎初始化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="开篇。这是 Flutter 入门系列的第一篇，列出了最近收集的学习资料。Flutter 和 Dart 都在快速更新中，所以学习资料尽可能以官方为准，以保证权威和及时更新。">
+<meta name="keywords" content="Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter 入门之开篇">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/11/13/flutter-series-1-begin/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="开篇。这是 Flutter 入门系列的第一篇，列出了最近收集的学习资料。Flutter 和 Dart 都在快速更新中，所以学习资料尽可能以官方为准，以保证权威和及时更新。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15736145796553.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15736157127923.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.044Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flutter 入门之开篇">
+<meta name="twitter:description" content="开篇。这是 Flutter 入门系列的第一篇，列出了最近收集的学习资料。Flutter 和 Dart 都在快速更新中，所以学习资料尽可能以官方为准，以保证权威和及时更新。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/15736145796553.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/11/13/flutter-series-1-begin/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Flutter 入门之开篇 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/11/13/flutter-series-1-begin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Flutter 入门之开篇
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-11-13 10:35:40" itemprop="dateCreated datePublished" datetime="2019-11-13T10:35:40+08:00">2019-11-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>开篇。这是 Flutter 入门系列的第一篇，列出了最近收集的学习资料。Flutter 和 Dart 都在快速更新中，所以学习资料尽可能以官方为准，以保证权威和及时更新。</p>
+<a id="more"></a>
+<p>[TOC]</p>
+<p>俗话说，兵欲善其事必先利其器。学习 Dart 前如何”利器”呢？我认为无非这几个方面：</p>
+<ul>
+<li>优秀的学习资料</li>
+<li>称手的开发工具</li>
+<li>反复实践和练习</li>
+</ul>
+<p>具体见下图：</p>
+<p><img src="/images/15736145796553.jpg" alt="-w724"></p>
+<h1 id="学习资料"><a href="#学习资料" class="headerlink" title="学习资料"></a>学习资料</h1><h2 id="网站和公众号"><a href="#网站和公众号" class="headerlink" title="网站和公众号"></a>网站和公众号</h2><p>官网通常是最权威的学习资料来源，所以强烈推荐优先看 Flutter 官网。Flutter 基于 Dart 平台，所以了解和熟悉 Dart 是非常必要的。官方还会不定期在 <a href="https://medium.com/flutter" target="_blank" rel="noopener">medium</a> 发一些技术文章，介绍 Flutter 的新特性，建议也关注。</p>
+<ul>
+<li><a href="https://dart.dev/" target="_blank" rel="noopener">Dart 官网</a></li>
+<li><a href="https://flutter.dev/" target="_blank" rel="noopener">Flutter 官网</a></li>
+<li><a href="https://medium.com/flutter" target="_blank" rel="noopener">medium</a></li>
+<li>谷歌开发者公众号</li>
+</ul>
+<p>考虑到 Flutter 官网内容是英文，英文不好的话浏览起来会比较吃力的，也可退而求其次看中文网站：</p>
+<ul>
+<li><a href="https://flutter.cn" target="_blank" rel="noopener">Flutter 中文</a></li>
+<li><a href="https://dart.cn" target="_blank" rel="noopener">Dart 中文</a> </li>
+</ul>
+<!--more[Dart 中文](http://s0dart0dev.icopy.site/) (非官方，大量内容由机器翻译)-->
+<p>中文内容的好处，</p>
+<ul>
+<li>消除了语言障碍，方便快速浏览学习</li>
+<li>中文网站通常在国内，打开速度可能快得多</li>
+</ul>
+<p>但也要注意其不足：</p>
+<ul>
+<li>访问可能不稳定 (通常不由官方支持，说不定哪天就没了)</li>
+<li>某些内容相当不准确<ul>
+<li>一些新术语很难翻译</li>
+<li>大量内容由机器翻译，不靠谱</li>
+</ul>
+</li>
+<li>内容更新不及时 (Flutter 和 Dart 都在快速更新中)</li>
+</ul>
+<p>谷歌开发者公众号是 Google 中国官方账号，汇集 Android、Flutter、Chrome OS 以及 AI 等开发技术。2019 年以及随着 Flutter 的爆发，这个公众号上关于 Flutter 的内容明显增多，建议关注。</p>
+<p><img src="/images/15736157127923.jpg" alt="-w187"></p>
+<p>谷歌开发者公众号上曾推出过几期 《Flutter 您需要知道的知识点》，这里整理如下：</p>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&amp;mid=2652048481&amp;idx=1&amp;sn=3775bb6e61b9b4d7d7c5a48871a13807&amp;chksm=808cac24b7fb2532858b94dc45f1ec4f8ec83f28f186e0cbc53a40034b3398feddea553e3054&amp;mpshare=1&amp;scene=1&amp;srcid=1113sj4rrsidBwb6ecBCdZ86&amp;sharer_sharetime=1573616038315&amp;sharer_shareid=b5535657e3516bd6d7252ce5f5ed09f4&amp;rd2werd=1#wechat_redirect" target="_blank" rel="noopener">Flutter 您需要知道的知识点 | FAQ・第一期</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&amp;mid=2652048715&amp;idx=1&amp;sn=c8346d2603f311301d719d5374cc77ea&amp;chksm=808cad0eb7fb241864557d2bc08cacc2efeb76a27d3a6b849d2df44ccbddfa13c3e1b1db0f85&amp;mpshare=1&amp;scene=1&amp;srcid=1113h6WpLLfSkAf6rNSO5Yc5&amp;sharer_sharetime=1573616056926&amp;sharer_shareid=b5535657e3516bd6d7252ce5f5ed09f4&amp;rd2werd=1#wechat_redirect" target="_blank" rel="noopener">Flutter 您需要知道的知识点 | FAQ・第二期</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&amp;mid=2652049096&amp;idx=1&amp;sn=dc9d0a408d07d78d487974354fd5dee7&amp;chksm=808cae8db7fb279b3b2d183246a6759ccbc3d1d51420c7a7a5640f89206a1a20985d8d3f1b07&amp;mpshare=1&amp;scene=1&amp;srcid=1113f7jM3rxmuXGnN5NFNgzQ&amp;sharer_sharetime=1573616077912&amp;sharer_shareid=b5535657e3516bd6d7252ce5f5ed09f4&amp;rd2werd=1#wechat_redirect" target="_blank" rel="noopener">Flutter 您需要知道的知识点 | FAQ・第三期</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&amp;mid=2652049594&amp;idx=1&amp;sn=26434fd1aa93efb4aff12018365607cf&amp;chksm=808cb0ffb7fb39e9c4ccc010dd5dacd02faf326e22a70dae95783898e32b80c9102e94f9ec84&amp;mpshare=1&amp;scene=1&amp;srcid=11130i26qvOXs6rDzq7uSpdx&amp;sharer_sharetime=1573616095494&amp;sharer_shareid=b5535657e3516bd6d7252ce5f5ed09f4&amp;rd2werd=1#wechat_redirect" target="_blank" rel="noopener">Flutter 您需要知道的知识点 | FAQ・第四期</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&amp;mid=2652049986&amp;idx=1&amp;sn=adcb4fd598f8f37a83c98b3ae5fb478c&amp;chksm=808cb207b7fb3b11b969337386db9295f58c41f82131ad72de927ca3da80a31d4b0422234b4a&amp;mpshare=1&amp;scene=1&amp;srcid=1113cwoJv70OIw09MTgbsUFi&amp;sharer_sharetime=1573616122448&amp;sharer_shareid=b5535657e3516bd6d7252ce5f5ed09f4&amp;rd2werd=1#wechat_redirect" target="_blank" rel="noopener">Flutter 您需要知道的知识点 | FAQ・第五期</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&amp;mid=2652050376&amp;idx=1&amp;sn=2034b412bb113de7b208e18c3f74508f&amp;chksm=808cb38db7fb3a9b0c9c5d1fcb2d8a746d365c8eeb9ae5d2d4ad9f2ff1496c17c0851ecb26df&amp;mpshare=1&amp;scene=1&amp;srcid=1113xZMxrEdhsqDfbyi6edBg&amp;sharer_sharetime=1573616160182&amp;sharer_shareid=b5535657e3516bd6d7252ce5f5ed09f4&amp;rd2werd=1#wechat_redirect" target="_blank" rel="noopener">Flutter 您需要知道的知识点 | FAQ・第六期</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&amp;mid=2652050932&amp;idx=1&amp;sn=4284ce654f5ba9365845583cfc674bed&amp;chksm=808cb5b1b7fb3ca7a074b16b027bd3a4c8a79f190cf7b046adcd17e028568fbe5cce59e8ce2e&amp;mpshare=1&amp;scene=1&amp;srcid=1113upVjIoYooOEWY0gf8KPO&amp;sharer_sharetime=1573616174633&amp;sharer_shareid=b5535657e3516bd6d7252ce5f5ed09f4&amp;rd2werd=1#wechat_redirect" target="_blank" rel="noopener">Flutter 您需要知道的知识点 | FAQ・第七期</a></li>
+</ul>
+<p>(谷歌知道大家学不过来，所以将 Flutter 重点知识做成了卡片，让大家好时不时复习巩固一下，早日写出优秀的 Flutter 应用)</p>
+<p>另外，谷歌开发者公众号上的 Flutter 相关的内容汇总在 <code>开发专栏 &gt; 重点知识巩固 &gt; UI框架</code>。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="官方代码"><a href="#官方代码" class="headerlink" title="官方代码"></a>官方代码</h3><blockquote>
+<p>Talk is cheap, show me the code</p>
+</blockquote>
+<p>如果你的学习习惯是多看代码，那么首推官方示例。官方示例分布在不同的仓库中：</p>
+<ul>
+<li><a href="https://github.com/flutter/flutter/tree/master/examples" target="_blank" rel="noopener">官方 examples</a> - 包含若干入门的简单示例</li>
+<li><a href="https://github.com/flutter/samples" target="_blank" rel="noopener">官方 samples</a> - Flutter 最佳实践</li>
+<li><a href="https://github.com/flutter/samples/blob/master/INDEX.md" target="_blank" rel="noopener">A curated list of samples</a> - 嫌上面的例子还不够的话，这个列表中的项目够你看的</li>
+</ul>
+<p>不要小看 <a href="https://github.com/flutter/flutter/tree/master/examples" target="_blank" rel="noopener">官方 examples</a>，它使用最简短的代码演示了最丰富的基础功能，包括：</p>
+<ul>
+<li><strong>Hello, world</strong> 最经典的 “hello, world”，以及一个阿拉伯文版本的 “hello, world” (国际化？Flutter 能行！)</li>
+<li><strong>Image List</strong> 流行的网络图片列表界面 (这个 demo 还顺手写了个简单的 HTTP Sever)</li>
+<li><strong>Flutter gallery</strong> 演示了各种 Widget 的用法</li>
+<li><strong>Platform Channel</strong> 演示了 Flutter 如何跟 Android/iOS 交互 </li>
+</ul>
+<p><a href="https://github.com/flutter/samples" target="_blank" rel="noopener">官方 samples</a> 则演示了 Flutter 高级功能和最佳实践：</p>
+<ul>
+<li><strong>Animations</strong></li>
+<li><strong>Isolate Example</strong></li>
+<li><strong>Provider 状态管理</strong></li>
+</ul>
+<p>官方例子的优势是权威、内容丰富，更新及时，是我们学习的好资料。它的不足则在于往往非常理想化、代码过于”干净”，实际应用常遇到机型兼容问题、产品需求等情况导致”恶心”的代码，例子可以参考，遇到的坑还是要自己一点点填。</p>
+<h3 id="第三方代码"><a href="#第三方代码" class="headerlink" title="第三方代码"></a>第三方代码</h3><blockquote>
+<p>我们的大脑理解抽象内容很吃力，我们喜欢有形的事物。当事物是直接的而且是有形的时候，就显得容易理解。<br>乌尔里希·伯泽尔《有效学习》</p>
+</blockquote>
+<p>很多第三方代码有类似这样的功能，能边看代码边看效果，有助于快速理解 Flutter UI。</p>
+<h2 id="视频和书籍"><a href="#视频和书籍" class="headerlink" title="视频和书籍"></a>视频和书籍</h2><p>如果你的学习习惯是看视频，推荐如下几个视频：</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=lkF0TQJO0bA&amp;list=PLjxrf2q8roU23XGwz3Km7sQZFTdB996iG&amp;index=2" target="_blank" rel="noopener">Flutter Widget of the Week</a> - 每个视频在一两分钟内生动形象地演示一个 Widget 的主要功能和用法，适合快速入门 Flutter Widget</li>
+<li><a href="https://www.youtube.com/watch?v=rfagvy5xCW0&amp;list=PLOU2XLYxmsIK0r_D-zWcmJ1plIcDNnRkK&amp;index=4" target="_blank" rel="noopener">The Boring Flutter Dev Show</a></li>
+</ul>
+<p>个人感觉通过视频来学习的缺点是比较费时间，时不时得快进，也很难快速抓住重点，当然 <a href="https://www.youtube.com/watch?v=lkF0TQJO0bA&amp;list=PLjxrf2q8roU23XGwz3Km7sQZFTdB996iG&amp;index=2" target="_blank" rel="noopener">Flutter Widget of the Week</a> 除外 (它已经帮你划好重点)</p>
+<p>如果你的学习习惯是看书，推荐如下几本书：</p>
+<ul>
+<li><a href="https://book.flutterchina.club/" target="_blank" rel="noopener">Flutter 实战</a> 由浅入深的介绍了 Flutter 技术和开发流程。该书包含不仅包含大量示例、图片，还有配套的示例源码，可帮助读者循序渐进的掌握 Flutter 开发技术。<ul>
+<li>入门篇（第1章~第7章）- 常用的组件以及布局</li>
+<li>进阶篇（第8章~第14章）- 事件机制、动画、自定义组件、文件和网络、插件、国际化以及Flutter核心原理</li>
+<li>实例篇 (第15章）- 实现一个简版的 Github APP</li>
+</ul>
+</li>
+</ul>
+<p>如果你还知道其他不错的视频或书籍资源，欢迎在评论中分享出来。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>这里是几篇不错的文章：</p>
+<ul>
+<li><a href="https://renato.athaydes.com/posts/interesting-dart-features.html" target="_blank" rel="noopener">Interesting Features of the Dart Programming Language</a></li>
+<li><a href="https://github.com/yissachar/awesome-dart" target="_blank" rel="noopener">Awesome Dart</a></li>
+<li><a href="https://tech.meituan.com/2018/08/09/waimai-flutter-practice.html" target="_blank" rel="noopener">Flutter原理与实践 - 美团技术团队</a></li>
+<li><a href="https://fucknmb.com/2019/02/26/Flutter-Engine-%E7%BC%96%E8%AF%91%E6%8C%87%E5%8C%97/" target="_blank" rel="noopener">Flutter Engine 编译指北 | 区长</a></li>
+<li><a href="https://www.ccarea.cn/archives/category/flutter" target="_blank" rel="noopener">Flutter – cc’s blog</a></li>
+</ul>
+<h1 id="开发工具"><a href="#开发工具" class="headerlink" title="开发工具"></a>开发工具</h1><p><a href="https://dartpad.dartlang.org/" target="_blank" rel="noopener">DartPad</a> 是学习 Dart 语法和尝试 Dart 语言特性的最佳方式，还可以体验 Dart 核心库（除了 dart:io 库和依赖 dart:io 的库）。</p>
+<p>VS Code 是一个<strong>轻量级</strong>编辑器。我使用它没别的原因，Android Studio 强虽强，笔记本性能有限，资源能省则省！</p>
+<p><a href="https://dartcode.org/" target="_blank" rel="noopener">https://dartcode.org/</a> dart 和 flutter 插件</p>
+<p>Android Studio</p>
+<p>[TODO]</p>
+<h1 id="练习与实践"><a href="#练习与实践" class="headerlink" title="练习与实践"></a>练习与实践</h1><h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><blockquote>
+<p>纸上得来终觉浅，绝知此事要…</p>
+</blockquote>
+<p><a href="https://dart.dev/codelabs/dart-cheatsheet" target="_blank" rel="noopener">Dart cheatsheet codelab | Dart</a> - 这个练习用于快速掌握 Dart 语言特性</p>
+<ul>
+<li>默写 demo</li>
+<li>实现 freecodecamp 上的练习</li>
+</ul>
+<p>除了看例子，还可以跟着 Codelabs 动手</p>
+<ul>
+<li><a href="https://dart.dev/codelabs" target="_blank" rel="noopener">Dart Codelabs</a></li>
+<li><a href="https://flutter.dev/docs/codelabs" target="_blank" rel="noopener">Flutter Codelabs</a></li>
+</ul>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><ul>
+<li>[TODO] 集成和构建。关键问题：so 兼容问题</li>
+<li>从简单页面入手 </li>
+</ul>
+<p>为什么要从简单页面入手？</p>
+<p><a href="https://medium.com/flutter-community/add-flutter-to-existing-android-ios-app-ae8c4fb1582e" target="_blank" rel="noopener">https://medium.com/flutter-community/add-flutter-to-existing-android-ios-app-ae8c4fb1582e</a></p>
+<p><a href="https://tech.meituan.com/2018/08/09/waimai-flutter-practice.html" target="_blank" rel="noopener">Flutter原理与实践 - 美团技术团队</a></p>
+<h1 id="经验"><a href="#经验" class="headerlink" title="经验"></a>经验</h1><p><a href="https://book.flutterchina.club/chapter1/flutter_intro.html" target="_blank" rel="noopener">https://book.flutterchina.club/chapter1/flutter_intro.html</a></p>
+<ul>
+<li>学习 <a href="https://github.com/flutter/flutter/blob/master/dev/tools/dartdoc.dart" target="_blank" rel="noopener">dartdoc.dart 源码</a></li>
+<li>翻译 <a href="#">dart.cn 文档</a> </li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/13/dart-type-system/" rel="prev" title="Dart 的类型系统">
+      <i class="fa fa-chevron-left"></i> Dart 的类型系统
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/13/dart-jit-aot/" rel="next" title="Dart JIT 与 AOT">
+      Dart JIT 与 AOT <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习资料"><span class="nav-number">1.</span> <span class="nav-text">学习资料</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网站和公众号"><span class="nav-number">1.1.</span> <span class="nav-text">网站和公众号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">1.2.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#官方代码"><span class="nav-number">1.2.1.</span> <span class="nav-text">官方代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三方代码"><span class="nav-number">1.2.2.</span> <span class="nav-text">第三方代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#视频和书籍"><span class="nav-number">1.3.</span> <span class="nav-text">视频和书籍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">1.4.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开发工具"><span class="nav-number">2.</span> <span class="nav-text">开发工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#练习与实践"><span class="nav-number">3.</span> <span class="nav-text">练习与实践</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#练习"><span class="nav-number">3.1.</span> <span class="nav-text">练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实践"><span class="nav-number">3.2.</span> <span class="nav-text">实践</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#经验"><span class="nav-number">4.</span> <span class="nav-text">经验</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="2.6.7发版本时碰到几个跟proguard混淆相关的问题，记录下备忘。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bug系列之proguard的坑">
+<meta property="og:url" content="http://www.sunmoonblog.com/2017/03/30/bug-proguard/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="2.6.7发版本时碰到几个跟proguard混淆相关的问题，记录下备忘。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.839Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bug系列之proguard的坑">
+<meta name="twitter:description" content="2.6.7发版本时碰到几个跟proguard混淆相关的问题，记录下备忘。">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2017/03/30/bug-proguard/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Bug系列之proguard的坑 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2017/03/30/bug-proguard/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Bug系列之proguard的坑
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-03-30 21:29:50" itemprop="dateCreated datePublished" datetime="2017-03-30T21:29:50+08:00">2017-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>2.6.7发版本时碰到几个跟proguard混淆相关的问题，记录下备忘。</p>
+<a id="more"></a>
+<h1 id="问题一"><a href="#问题一" class="headerlink" title="问题一"></a>问题一</h1><p>测试同事反馈某个赠送礼物的功能不正常。发现debug包中该功能完全正常，而release包里面则有问题。</p>
+<p>想起之前Android Studio对相关代码检查时，提示礼物的model类中某些字段未被用到，可删除。所以第一反应是：会不会proguard也认为这个字段未用到，所以给删除了。检查proguard的输出文件<code>usage.txt</code>中是否存在删除model类的记录，发现并没有。但<code>mapping.txt</code>中却有如下记录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">com.tc.xx.api.GiftsService$InnerGift -&gt; com.tc.xx.c.f$a:</span><br><span class="line">    int num -&gt; a</span><br><span class="line">    java.lang.String content -&gt; b</span><br><span class="line">    java.lang.String receiver -&gt; c</span><br><span class="line">    void &lt;init&gt;(java.lang.String) -&gt; &lt;init&gt;</span><br></pre></td></tr></table></figure>
+<p>原来是礼物的model类被混淆了！这种情况下GSON生成的json数据不正确，导致跟后台的通信失败。</p>
+<p><strong>总结：之前赶进度偷懒将model类放在不正确的package下， 结果被混淆了，最终引发问题。</strong></p>
+<p>我们的proguard配置中已经指定model所在的package不被混淆，所以解决办法很简单，将相关的类放到该package下即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Application classes that will be serialized/deserialized over Gson</span><br><span class="line">-keep class com.tc.xx.model.** &#123; *; &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="问题二"><a href="#问题二" class="headerlink" title="问题二"></a>问题二</h1><p>测试同事反馈更换头像或首次发送语音消息时app会crash，必现。两个功能都涉及到一个上传库。</p>
+<p>跟前一个问题类似，debug包中该功能完全正常，而release包里面则有问题。找到了一个比较奇怪的崩溃日志，发生crash的地方并不是我们自己的代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">java.lang.NoSuchFieldError: no &quot;J&quot; field &quot;mNativeContext&quot; in class &quot;Lcom/tc/upload/network/base/ConnectionImpl;&quot; or its superclasses</span><br><span class="line">com.tc.upload.network.base.ConnectionImpl.native_init(Native Method)</span><br><span class="line">com.tc.upload.network.base.ConnectionImpl.&lt;clinit&gt;(Unknown Source)</span><br><span class="line">com.tc.upload.network.base.a.&lt;init&gt;(Unknown Source)</span><br><span class="line">com.tc.upload.network.base.f.&lt;init&gt;(Unknown Source)</span><br><span class="line">com.tc.upload.network.b.g.a(Unknown Source)</span><br><span class="line">com.tc.upload.network.b.g.a(Unknown Source)</span><br><span class="line">com.tc.upload.network.b.c.a(Unknown Source)</span><br><span class="line">com.tc.upload.network.b.c.d(Unknown Source)</span><br></pre></td></tr></table></figure>
+<p>显然，又是某个第三方库代码被不正确地混淆了，导致上传时crash。</p>
+<p>分析后发现调用了来自uploadlib.jar的方法，不清楚具体实现的代码，还是不混淆为妙！ 添加以下配置后问题解决。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># uploadlib</span><br><span class="line">-keep class com.tc.upload.** &#123;*;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>总结：无论来自哪里的第三方库，一定要注明来源(最好是官网地址)，并添加官方给出的proguard配置</strong></p>
+<p>注：不知道uploadlib.jar的来源，只好简单地配置为完整不混淆。</p>
+<hr>
+<p>为什么这么多的混淆问题之前没有发现呢？不得不说一样腾讯云IM SDK的包结构非常坑，很多类放在<code>com.tc</code>包下，而它的<a href="https://www.qcloud.com/document/product/269/1557#1.6-.E4.BB.A3.E7.A0.81.E6.B7.B7.E6.B7.86.E8.A7.84.E5.88.99" target="_blank" rel="noopener">官网</a>给出的混淆配置居然是这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-keep class com.tc.** &#123;*;&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>这明摆着是要让用了云IM SDK的、使用标准package命名方式的腾讯app没法好好混淆吗？</p>
+<p>我们之前的版本一直被这个问题困扰，某个版本中优化了<code>-keep class com.tc.**{*;}</code>这个不合理的配置，让<code>com.tc</code>包下大量原本可被混淆的代码能正确地混淆。但同时，之前一些错误的或是遗漏的混淆引发的问题也暴露出来了，如上面提到的两个问题。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/02/24/rv-on-item-touch-listener/" rel="prev" title="RecyclerView.OnItemTouchListener的用法">
+      <i class="fa fa-chevron-left"></i> RecyclerView.OnItemTouchListener的用法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/05/27/argb-evaluator-usage/" rel="next" title="ArgbEvaluator的用法">
+      ArgbEvaluator的用法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题一"><span class="nav-number">1.</span> <span class="nav-text">问题一</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题二"><span class="nav-number">2.</span> <span class="nav-text">问题二</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

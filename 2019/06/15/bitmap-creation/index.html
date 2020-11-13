@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Bitmap 不像四大组件一样有明确定义的生命周期。但作为 Java 对象，Bitmap 仍然有一个从出生到死亡的过程，它是内存超级大户，所以了解内存在其生命周期中是如何被分配和销毁是必要的。本文试图理清创建和销毁 Bitmap 过程的主脉络，忽略一些细节，重点聚焦内存分配与回收。如有疏漏，欢迎批评指正。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bitmap 之从出生到死亡">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/06/15/bitmap-creation/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Bitmap 不像四大组件一样有明确定义的生命周期。但作为 Java 对象，Bitmap 仍然有一个从出生到死亡的过程，它是内存超级大户，所以了解内存在其生命周期中是如何被分配和销毁是必要的。本文试图理清创建和销毁 Bitmap 过程的主脉络，忽略一些细节，重点聚焦内存分配与回收。如有疏漏，欢迎批评指正。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-arch.png?imageView2/2/w/300">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-overview.png">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-convert-resource.png">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-createion-allocator-classes.png">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-sk-codec-class.png">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-decode.png">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-ref-relationship.png">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-free-mem.png">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-free-native-mem.png">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-free-native-mem2.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.041Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bitmap 之从出生到死亡">
+<meta name="twitter:description" content="Bitmap 不像四大组件一样有明确定义的生命周期。但作为 Java 对象，Bitmap 仍然有一个从出生到死亡的过程，它是内存超级大户，所以了解内存在其生命周期中是如何被分配和销毁是必要的。本文试图理清创建和销毁 Bitmap 过程的主脉络，忽略一些细节，重点聚焦内存分配与回收。如有疏漏，欢迎批评指正。">
+<meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-arch.png?imageView2/2/w/300">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/06/15/bitmap-creation/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Bitmap 之从出生到死亡 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/06/15/bitmap-creation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Bitmap 之从出生到死亡
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-06-15 13:32:03" itemprop="dateCreated datePublished" datetime="2019-06-15T13:32:03+08:00">2019-06-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Bitmap 不像四大组件一样有明确定义的生命周期。但作为 Java 对象，Bitmap 仍然有一个从出生到死亡的过程，它是内存超级大户，所以了解内存在其生命周期中是如何被分配和销毁是必要的。本文试图理清创建和销毁 Bitmap 过程的主脉络，忽略一些细节，重点聚焦内存分配与回收。如有疏漏，欢迎批评指正。</p>
+<a id="more"></a>
+<p>Bitmap 占内存多是因为其像素数据(pixels)大。Bitmap 像素数据的存储在不同 Android 版本之间有所不同，具体来说：</p>
+<ul>
+<li>Android 2.3 (API Level 10) 以及之前 - 像素数据保存在 native heap</li>
+<li>Android 3.0 到 Android 7.1 (API Level 11-26) - 像素数据保存在 java heap</li>
+<li>Android 8.0 以及之后 - 像素数据保存在 native heap</li>
+</ul>
+<p>这种变化导致不同 Android 版本间 Bitmap 相关的代码可能有较大差异。本文基于 <a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/Bitmap.cpp" target="_blank" rel="noopener">Android 8.0 源码</a>分析。</p>
+<h1 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h1><p>先从整体上看一下 Bitmap。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-arch.png?imageView2/2/w/300" alt></p>
+<ul>
+<li>用户在手机屏幕上看到的是一张张图片</li>
+<li>App 中这些图片实际上是 BitmapDrawable</li>
+<li>BitmapDrawable 是对 Bitmap 的包装</li>
+<li>Bitmap 是对 SkBitmap 的包装。具体说来， Bitmap 的实现包括 Java 层和 JNI 层，JNI 层依赖 <a href="https://github.com/google/skia" target="_blank" rel="noopener">Skia</a>。</li>
+<li>SkBitmap 本质上可简单理解为内存中的一个字节数组</li>
+</ul>
+<p>所以说 Bitmap 其实是一个字节数组。创建 Bitmap 是在内存中分配一个字节数组，销毁 Bitmap 则是回收这个字节数组。</p>
+<h1 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h1><p>创建 Bitmap 的方式很多，</p>
+<ul>
+<li>可以通过 SDK 提供的 API 来创建 Bitmap</li>
+<li>加载某些布局或资源时会创建 Bitmap</li>
+<li><a href="https://github.com/bumptech/glide" target="_blank" rel="noopener">Glide</a> 等第三方图片库会创建 Bitmap</li>
+</ul>
+<p>先说通过 API 创建 Bitmap。SDK 中创建 Bitmap 的 API 很多，分成三大类：</p>
+<ul>
+<li><strong>创建</strong> Bitmap - <code>Bitmap.createBitmap()</code> 方法在内存中从无到有地创建 Bitmap</li>
+<li><strong>拷贝</strong> Bitmap - <code>Bitmap.copy()</code> 从已有的 Bitmap 拷贝出一个新的 Bitmap</li>
+<li><strong>解码</strong> - 从文件或字节数组等资源解码得到 Bitmap，这是最常见的创建方式<ul>
+<li>BitmapFactory.decodeResource()</li>
+<li><a href="https://developer.android.com/reference/android/graphics/ImageDecoder" target="_blank" rel="noopener">ImageDecoder.decodeBitmap</a>。ImageDecoder 是 Android 9.0 新加的类</li>
+</ul>
+</li>
+</ul>
+<p>假设 <code>resId</code> 对应的是一张图片。加载如下布局文件时会创建一个 Bitmap：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ImageView</span> <span class="attr">android:src</span>=<span class="string">"@drawable/resId"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>代码中加载资源也会创建出一个 Bitmap：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Drawable drawable = Resources.getDrawable(resId)</span><br></pre></td></tr></table></figure>
+<p>实际项目中往往不是直接调用 API 来创建 Bitmap，而是使用 <a href="https://github.com/bumptech/glide" target="_blank" rel="noopener">Glide</a> 或 <a href="https://github.com/square/picasso" target="_blank" rel="noopener">Picosso</a> 等第三方图片库。这些库成熟稳定，接口易用，开发中处理 Bitmap 变得轻松。</p>
+<p>以 Glide 为例，只要一行代码可以很方便地从网络上加载一张图片。但另一方面，Glide 也让 Bitmap 的创建更加多样和复杂。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(<span class="keyword">this</span>).load(<span class="string">"http://goo.gl/gEgYUd"</span>).into(imageView);</span><br></pre></td></tr></table></figure>
+<p>太多的创建 Bitmap 的方式，简直让人头大。但好在无论哪种创建方式，最终殊途同归。见下图：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-overview.png" alt></p>
+<p><strong>Java 层的创建 Bitmap 的所有 API 进入到 Native 层后，全都会走如下这四个步骤</strong>。</p>
+<ul>
+<li>资源转换 - 这一步将 Java 层传来的不同类型的资源转换成解码器可识别的数据类型</li>
+<li>内存分配 - 分配内存时会考虑是否复用 Bitmap、是否缩放 Bitmap 等因素</li>
+<li>图片解码 - 实际的解码工作由第三方库完成，解码结果填在上一步分配的内存中。注，<code>Bitmap.createBitmap()</code> 和 <code>Bitmap.copy()</code> 创建的 Bitmap 不需要进行图片解码</li>
+<li>创建对象 - 这一步将包含解码数据的内存块包装成 Java 层的 <code>android.graphics.Bitmap</code> 对象，方便 App 使用</li>
+</ul>
+<p>内存分配和图片解码由 <a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/BitmapFactory.cpp#233" target="_blank" rel="noopener">BitmapFactory.doDecode()</a> 函数完成。它是创建 Bitmap 的核心，主要负责内存分配和图片解码。其关键步骤包括：</p>
+<ol>
+<li>Update with options supplied by the client.</li>
+<li>Create the codec.</li>
+<li>Handle sampleSize. (跟 BitmapFactory.Options.inSampleSize 参数相关)</li>
+<li>Set the decode colorType.</li>
+<li>Handle scale.  (跟 BitmapFactory.Options.inScaled 参数相关)</li>
+<li>Handle reuseBitmap (跟 BitmapFactory.Options.inBitmap 参数相关)</li>
+<li>Choose decodeAllocator</li>
+<li>Construct a color table</li>
+<li>AllocPixels </li>
+<li>Use SkAndroidCodec to perform the decode.</li>
+<li>Create the java bitmap</li>
+</ol>
+<p>我们先简单说说资源转换，稍后详细讨论内存分配和图片解码(包括第7, 9, 10步)。</p>
+<h2 id="资源转换"><a href="#资源转换" class="headerlink" title="资源转换"></a>资源转换</h2><p>解码前的第一项工作是资源转换。Java 层的待解码资源包括：</p>
+<ul>
+<li>File</li>
+<li>Resource</li>
+<li>ByteArray</li>
+<li>Stream</li>
+<li>FileDescriptor</li>
+</ul>
+<p>第一步，在 JNI 层将待解码的资源重新划分成四种，包括：</p>
+<ul>
+<li>FileDescriptor</li>
+<li>Asset</li>
+<li>ByteArray</li>
+<li>DecodeAsset</li>
+</ul>
+<p>第二步，<code>BitmapFactory</code> 提供四个方法对资源进行转换，</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nativeDecodeFileDescriptor()</span><br><span class="line">nativeDecodeAsset()</span><br><span class="line">nativeDecodeByteArray()</span><br><span class="line">nativeDecodeAsset()</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-convert-resource.png" alt></p>
+<p>所有的资源都会转换成与 <code>SkStreamRewindable</code> 兼容的数据。</p>
+<p>最后，<a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/BitmapFactory.cpp#233" target="_blank" rel="noopener">BitmapFactory.doDecode()</a> 统一解码处理 <code>SkStreamRewindable</code>。 </p>
+<h2 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h2><p>解码前的第二项工作是内存分配。</p>
+<p>首先是选择 decodeAllocator (见上文提到的 <code>BitmapFactory.doDecode()</code> 的第7步)。有以下几种 Allocator 可供选择：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-createion-allocator-classes.png" alt></p>
+<p>选择 Allocator 时考虑的因素包括：是否复用已有 Bitmap，是否会缩放 Bitmap，是否是 Hardware Bitmap。选择策略总结如下：</p>
+<table>
+<thead>
+<tr>
+<th>是否复用已有 Bitmap</th>
+<th>是否会缩放 Bitmap</th>
+<th>是否是 Hardware Bitmap</th>
+<th>Allocator类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>是</td>
+<td>是</td>
+<td>-</td>
+<td><a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/BitmapFactory.cpp#144" target="_blank" rel="noopener">ScaleCheckingAllocator</a></td>
+</tr>
+<tr>
+<td>是</td>
+<td>否</td>
+<td>-</td>
+<td><a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/GraphicsJNI.h#171" target="_blank" rel="noopener">RecyclingPixelAllocator</a></td>
+</tr>
+<tr>
+<td>否</td>
+<td>是</td>
+<td>是</td>
+<td><a href="https://github.com/google/skia/blob/master/include/core/SkBitmap.h#L1119" target="_blank" rel="noopener">SkBitmap::HeapAllocator</a></td>
+</tr>
+<tr>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td><a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/GraphicsJNI.h#125" target="_blank" rel="noopener">HeapAllocator</a> (缺省的Allocator)</td>
+</tr>
+</tbody>
+</table>
+<p>接下来，使用选定的 Allocator 分配内存。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">BitmapFactory.doDecode() -&gt;</span><br><span class="line">	SkBitmap.tryAllocPixels() -&gt;</span><br><span class="line">    		Allocator.allocPixelRef()</span><br></pre></td></tr></table></figure>
+<p>代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BitmapFactory.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> jobject <span class="title">doDecode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    SkBitmap decodingBitmap;</span><br><span class="line">    <span class="keyword">if</span> (!decodingBitmap.setInfo(bitmapInfo) ||</span><br><span class="line">            !decodingBitmap.tryAllocPixels(decodeAllocator, colorTable.get())) &#123;</span><br><span class="line">        <span class="comment">// SkAndroidCodec should recommend a valid SkImageInfo, so setInfo()</span></span><br><span class="line">        <span class="comment">// should only only fail if the calculated value for rowBytes is too</span></span><br><span class="line">        <span class="comment">// large.</span></span><br><span class="line">        <span class="comment">// tryAllocPixels() can fail due to OOM on the Java heap, OOM on the</span></span><br><span class="line">        <span class="comment">// native heap, or the recycled javaBitmap being too small to reuse.</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SkBitmap.cpp https://github.com/google/skia/blob/master/src/core/SkBitmap.cpp#L213</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">SkBitmap::tryAllocPixels</span><span class="params">(Allocator* allocator)</span> </span>&#123;</span><br><span class="line">    HeapAllocator stdalloc;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nullptr</span> == allocator) &#123;</span><br><span class="line">        allocator = &amp;stdalloc;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> allocator-&gt;allocPixelRef(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Allocator 的类型有四种，我们只看其中的两种。</p>
+<p>先看 <code>SkBitmap::HeapAllocator</code> 作为 decodeAllocator 进行内存分配的流程。</p>
+<ol>
+<li><a href="https://github.com/google/skia/blob/master/src/core/SkBitmap.cpp#L213" target="_blank" rel="noopener">SkBitmap::tryAllocPixels</a></li>
+<li><a href="https://github.com/google/skia/blob/master/src/core/SkBitmap.cpp#L368" target="_blank" rel="noopener">SkBitmap::HeapAllocator::allocPixelRef</a></li>
+<li><a href="https://github.com/google/skia/blob/master/src/core/SkMallocPixelRef.cpp#L57" target="_blank" rel="noopener">SkMallocPixelRef::MakeAllocate</a></li>
+<li><a href="https://github.com/google/skia/blob/master/include/private/SkMalloc.h#L66" target="_blank" rel="noopener">sk_calloc_canfail</a></li>
+<li><a href="https://github.com/google/skia/blob/master/src/ports/SkMemory_malloc.cpp#L66" target="_blank" rel="noopener">sk_malloc_flags</a></li>
+</ol>
+<p>对应的代码如下(可以看到最终会调用 <code>malloc()</code> 分配指定大小的内存)：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/** We explicitly use the same allocator for our pixels that SkMask does,</span></span><br><span class="line"><span class="comment"> so that we can freely assign memory allocated by one class to the other.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">bool</span> SkBitmap::HeapAllocator::allocPixelRef(SkBitmap* dst) &#123;</span><br><span class="line">    <span class="keyword">const</span> SkImageInfo info = dst-&gt;info();</span><br><span class="line">    <span class="keyword">if</span> (kUnknown_SkColorType == info.colorType()) &#123;</span><br><span class="line"><span class="comment">//        SkDebugf("unsupported config for info %d\n", dst-&gt;config());</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sk_sp&lt;SkPixelRef&gt; pr = SkMallocPixelRef::MakeAllocate(info, dst-&gt;rowBytes());</span><br><span class="line">    <span class="keyword">if</span> (!pr) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dst-&gt;setPixelRef(<span class="built_in">std</span>::move(pr), <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    SkDEBUGCODE(dst-&gt;validate();)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SkMallocPixelRef.cpp</span></span><br><span class="line"><span class="function">sk_sp&lt;SkPixelRef&gt; <span class="title">SkMallocPixelRef::MakeAllocate</span><span class="params">(<span class="keyword">const</span> SkImageInfo&amp; info, <span class="keyword">size_t</span> rowBytes)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">void</span>* addr = sk_calloc_canfail(size);</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SkMalloc.h</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span>* <span class="title">sk_calloc_canfail</span><span class="params">(<span class="keyword">size_t</span> size)</span> </span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(IS_FUZZING_WITH_LIBFUZZER)</span></span><br><span class="line">    <span class="comment">// The Libfuzzer environment is very susceptible to OOM, so to avoid those</span></span><br><span class="line">    <span class="comment">// just pretend we can't allocate more than 200kb.</span></span><br><span class="line">    <span class="keyword">if</span> (size &gt; <span class="number">200000</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">return</span> sk_malloc_flags(size, SK_MALLOC_ZERO_INITIALIZE);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SkMemory_malloc.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">sk_malloc_flags</span><span class="params">(<span class="keyword">size_t</span> size, <span class="keyword">unsigned</span> flags)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">void</span>* p;</span><br><span class="line">    <span class="keyword">if</span> (flags &amp; SK_MALLOC_ZERO_INITIALIZE) &#123;</span><br><span class="line">        p = <span class="built_in">calloc</span>(size, <span class="number">1</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        p = <span class="built_in">malloc</span>(size);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (flags &amp; SK_MALLOC_THROW) &#123;</span><br><span class="line">        <span class="keyword">return</span> throw_on_failure(size, p);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SkBitmap::setPixelRef</span><span class="params">(sk_sp&lt;SkPixelRef&gt; pr, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    fPixelRef = kUnknown_SkColorType != <span class="keyword">this</span>-&gt;colorType() ? <span class="built_in">std</span>::move(pr) : <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">void</span>* p = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">size_t</span> rowBytes = <span class="keyword">this</span>-&gt;rowBytes();</span><br><span class="line">    <span class="comment">// ignore dx,dy if there is no pixelref</span></span><br><span class="line">    <span class="keyword">if</span> (fPixelRef) &#123;</span><br><span class="line">        rowBytes = fPixelRef-&gt;rowBytes();</span><br><span class="line">        <span class="comment">// TODO(reed):  Enforce that PixelRefs must have non-null pixels.</span></span><br><span class="line">        p = fPixelRef-&gt;pixels();</span><br><span class="line">        <span class="keyword">if</span> (p) &#123;</span><br><span class="line">            p = (<span class="keyword">char</span>*)p + dy * rowBytes + dx * <span class="keyword">this</span>-&gt;bytesPerPixel();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    SkPixmapPriv::ResetPixmapKeepInfo(&amp;fPixmap, p, rowBytes);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再来看 <code>HeapAllocator</code> 作为 decodeAllocator 进行内存分配的流程。</p>
+<ol>
+<li><a href="https://github.com/google/skia/blob/master/src/core/SkBitmap.cpp#L213" target="_blank" rel="noopener">SkBitmap::tryAllocPixels</a></li>
+<li><a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/Graphics.cpp#616" target="_blank" rel="noopener">HeapAllocator::allocPixelRef</a></li>
+<li><a href="https://android.googlesource.com/platform/frameworks/base/+/master/libs/hwui/hwui/Bitmap.cpp#79" target="_blank" rel="noopener">android::Bitmap::allocateHeapBitmap</a></li>
+</ol>
+<p>对应的代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Graphics.cpp https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/Graphics.cpp#616</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">HeapAllocator::allocPixelRef</span><span class="params">(SkBitmap* bitmap, SkColorTable* ctable)</span> </span>&#123;</span><br><span class="line">    mStorage = android::Bitmap::allocateHeapBitmap(bitmap, ctable);</span><br><span class="line">    <span class="keyword">return</span> !!mStorage;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Bitmap.cpp https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/libs/hwui/hwui/Bitmap.cpp#86</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> sk_sp&lt;Bitmap&gt; <span class="title">allocateHeapBitmap</span><span class="params">(<span class="keyword">size_t</span> size, <span class="keyword">const</span> SkImageInfo&amp; info, <span class="keyword">size_t</span> rowBytes)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">void</span>* addr = <span class="built_in">calloc</span>(size, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (!addr) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sk_sp&lt;Bitmap&gt;(<span class="keyword">new</span> Bitmap(addr, size, info, rowBytes));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// GraphicsJNI.h https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/GraphicsJNI.h#125</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HeapAllocator</span> :</span> <span class="keyword">public</span> SkBRDAllocator &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">   HeapAllocator() &#123; &#125;;</span><br><span class="line">    ~HeapAllocator() &#123; &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">bool</span> <span class="title">allocPixelRef</span><span class="params">(SkBitmap* bitmap, SkColorTable* ctable)</span> <span class="keyword">override</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Fetches the backing allocation object. Must be called!</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">android::Bitmap* <span class="title">getStorageObjAndReset</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mStorage.release();</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function">SkCodec::ZeroInitialized <span class="title">zeroInit</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span> </span>&#123; <span class="keyword">return</span> SkCodec::kYes_ZeroInitialized; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    sk_sp&lt;android::Bitmap&gt; mStorage;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>对于 <code>RecyclingPixelAllocator</code> 和 <code>ScaleCheckingAllocator</code> 的情况，读者可以自行分析。</p>
+<p>无论哪种 Allocator，最终要么调用 <code>malloc()</code> 分配内存，要么复用之前分配的内存。分配/复用完成后，由 <code>SkBitmap</code> 来持有这块内存，供下一步中图片解码用。</p>
+<p>注：</p>
+<ul>
+<li>准确来说，<code>SkBitmap::HeapAllocator</code> 分配内存由 <a href="https://github.com/google/skia/blob/master/src/core/SkPixmap.cpp" target="_blank" rel="noopener">SkBitmap 的 SkPixmap</a> 持有，而不是 SkBitmap 持有。忽略这个细节</li>
+<li>准确来说，<code>HeapAllocator</code> 分配的内存是由 <code>android::Bitmap.mStorage</code> 持有，而不是 SkBitmap 持有。但 <code>android::Bitmap</code> 与 SkBitmap 有某种关联，所以可以忽略这个细节</li>
+</ul>
+<!--
+注：native 层的 Bitmap 类比较让人疑惑，一直找不到其具体代码，似乎是在 [hwui库](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/libs/hwui/hwui/Bitmap.h#45)中定义的
+-->
+<h2 id="图片解码"><a href="#图片解码" class="headerlink" title="图片解码"></a>图片解码</h2><p>在 Skia 中 <code>SkCodec</code> 代表解码器，解码器的类层次结构如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-sk-codec-class.png" alt></p>
+<p>Skia 将实际的解码工作交由第三方库，不同图片格式有各自对应的解码器。比如 PNG 图片由 <code>SkPngCodec</code> 解码，而 <code>SkPngCodec</code> 是封装和调用 libpng 库。</p>
+<p>前面提到 <code>BitmapFactory.doDecode()</code> 的第2步是创建解码器，第10步是调用该解码器进行解码。</p>
+<ul>
+<li><a href="https://github.com/google/skia/blob/master/src/codec/SkCodec.cpp#L70" target="_blank" rel="noopener">SkCodec::MakeFromStream()</a> 根据图片格式选择一个合适的 <code>SkCodec</code>，比如为 PNG 图片选择 <code>SkPngCodec</code></li>
+<li><a href="https://github.com/google/skia/blob/master/src/codec/SkAndroidCodec.cpp#L78" target="_blank" rel="noopener">SkAndroidCodec::MakeFromStream()</a> 创建 <code>SkAndroidCodec</code>， 它是上一步创建的 <code>SkCodec</code> 的代理。<code>SkAndroidCodec</code> 的具体类型跟图片格式有关。PNG，JPEG，GIF，BMP 等格式时其类型是 <code>SkSampledCodec</code>，WEBP 格式时是 <code>SkAndroidCodecAdapter</code></li>
+<li>调用 <a href="https://github.com/google/skia/blob/master/src/codec/SkAndroidCodec.cpp#L357" target="_blank" rel="noopener">SkAndroidCodec.getAndroidPixels()</a> 解码</li>
+</ul>
+<p>代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> jobject <span class="title">doDecode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    SkCodec::Result result = codec-&gt;getAndroidPixels(decodeInfo, decodingBitmap.getPixels(),</span><br><span class="line">            decodingBitmap.rowBytes(), &amp;codecOptions);</span><br><span class="line">                </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以 PNG 图片为例来分析。 首先，对于 PNG 图片 </p>
+<ul>
+<li>以上代码中，<code>codec</code> 是 <code>SkSampledCodec</code></li>
+<li><code>SkSampledCodec</code> 使用的解码器是 <code>SkPngCodec</code> (见 <code>SkAndroidCodec.fCodec</code> 字段)。</li>
+</ul>
+<p>解码流程如下图：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-decode.png" alt></p>
+<p>第一步是调用 <code>codec-&gt;getAndroidPixels()</code> 方法。注意第二个参数正是上一步分配的内存地址，即 <code>SkBitmap</code> 持有的内存。</p>
+<p>接下来是一系列函数调用。注意传入的内存地址参数 <code>dst</code> 即可，其他细节忽略。</p>
+<p>然后会执行到 <code>SkPngCodec.onGetPixels()</code> 方法。它使用 <a href="http://www.libpng.org/pub/png/libpng.html" target="_blank" rel="noopener">libpng 库</a>解码 PNG 图片。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">SkCodec::Result <span class="title">SkPngCodec::onGetPixels</span><span class="params">(<span class="keyword">const</span> SkImageInfo&amp; dstInfo, <span class="keyword">void</span>* dst,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        <span class="keyword">size_t</span> rowBytes, <span class="keyword">const</span> Options&amp; options,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        <span class="keyword">int</span>* rowsDecoded)</span> </span>&#123;</span><br><span class="line">    Result result = <span class="keyword">this</span>-&gt;initializeXforms(dstInfo, options);</span><br><span class="line">    <span class="keyword">if</span> (kSuccess != result) &#123;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (options.fSubset) &#123;</span><br><span class="line">        <span class="keyword">return</span> kUnimplemented;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>-&gt;allocateStorage(dstInfo);</span><br><span class="line">    <span class="keyword">this</span>-&gt;initializeXformParams();</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>-&gt;decodeAllRows(dst, rowBytes, rowsDecoded);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终，解码结果保存在 <code>dst</code> 指针指向的内存，即 <code>SkBitmap</code> 持有的内存。</p>
+<h2 id="创建Java对象"><a href="#创建Java对象" class="headerlink" title="创建Java对象"></a>创建Java对象</h2><p>解码完成后得到 Native 层的 <code>SkBitmap</code> 对象，最后一步工作是将其封装成 Java 层可以使用的 <code>Bitmap</code> 对象。</p>
+<p>这一步的过程相对简单，分为三步：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">BitmapFactory.doDecode() -&gt;</span><br><span class="line">	Bitmap.createBitmap() -&gt;</span><br><span class="line">    		Java Bitmap 的构造方法中保存 `mNativePtr` (像素数据内存块的地址)</span><br></pre></td></tr></table></figure>
+<p>对应的代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BitmapFactory.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> jobject <span class="title">doDecode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    SkBitmap decodingBitmap;    </span><br><span class="line">    ...</span><br><span class="line">    SkCodec::Result result = ...</span><br><span class="line">    SkBitmap outputBitmap;</span><br><span class="line">    outputBitmap.swap(decodingBitmap);                </span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// now create the java bitmap</span></span><br><span class="line">    <span class="keyword">return</span> bitmap::createBitmap(env, defaultAllocator.getStorageObjAndReset(),</span><br><span class="line">            bitmapCreateFlags, ninePatchChunk, ninePatchInsets, <span class="number">-1</span>);    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Bitmap.cpp</span></span><br><span class="line"><span class="function">jobject <span class="title">createBitmap</span><span class="params">(JNIEnv* env, Bitmap* bitmap,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> bitmapCreateFlags, jbyteArray ninePatchChunk, jobject ninePatchInsets,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> density)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">bool</span> isMutable = bitmapCreateFlags &amp; kBitmapCreateFlag_Mutable;</span><br><span class="line">    <span class="keyword">bool</span> isPremultiplied = bitmapCreateFlags &amp; kBitmapCreateFlag_Premultiplied;</span><br><span class="line">    <span class="comment">// The caller needs to have already set the alpha type properly, so the</span></span><br><span class="line">    <span class="comment">// native SkBitmap stays in sync with the Java Bitmap.</span></span><br><span class="line">    assert_premultiplied(bitmap-&gt;info(), isPremultiplied);</span><br><span class="line">    BitmapWrapper* bitmapWrapper = <span class="keyword">new</span> BitmapWrapper(bitmap);</span><br><span class="line">    jobject obj = env-&gt;NewObject(gBitmap_class, gBitmap_constructorMethodID,</span><br><span class="line">            <span class="keyword">reinterpret_cast</span>&lt;jlong&gt;(bitmapWrapper), bitmap-&gt;width(), bitmap-&gt;height(), density,</span><br><span class="line">            isMutable, isPremultiplied, ninePatchChunk, ninePatchInsets);</span><br><span class="line">    <span class="keyword">if</span> (env-&gt;ExceptionCheck() != <span class="number">0</span>) &#123;</span><br><span class="line">        ALOGE(<span class="string">"*** Uncaught exception returned from Java call!\n"</span>);</span><br><span class="line">        env-&gt;ExceptionDescribe();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Bitmap.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Bitmap</span> <span class="keyword">implements</span> <span class="title">Parcelable</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Convenience for JNI access</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> mNativePtr;    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Private constructor that must received an already allocated native bitmap</span></span><br><span class="line"><span class="comment">     * int (pointer).</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="comment">// called from JNI</span></span><br><span class="line">    Bitmap(<span class="keyword">long</span> nativeBitmap, <span class="keyword">int</span> width, <span class="keyword">int</span> height, <span class="keyword">int</span> density,</span><br><span class="line">            <span class="keyword">boolean</span> isMutable, <span class="keyword">boolean</span> requestPremultiplied,</span><br><span class="line">            <span class="keyword">byte</span>[] ninePatchChunk, NinePatch.InsetStruct ninePatchInsets) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nativeBitmap == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"internal error: native bitmap is 0"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">        mNativePtr = nativeBitmap;</span><br><span class="line">        ...        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至此，Java 层的 <code>Bitmap</code> 对象创建完毕，它在内存中大致是这样的：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-ref-relationship.png" alt></p>
+<h1 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h1><p>上一节重点是讲如何为 Bitmap 分配内存，这一节重点讲如何在 Bitmap 销毁时回收内存。</p>
+<p>Java 层的 Bitmap 对象有点特别，特别之处在于其像素数据保存在 native heap。我们知道， native heap 并不被 JVM 管理，那如何保证 Bitmap 对象本身被 GC 后 native heap 中的内存也能正确回收呢？</p>
+<h2 id="recycle"><a href="#recycle" class="headerlink" title="recycle()"></a>recycle()</h2><p>首先想到的是在代码主动调用 <a href="https://developer.android.com/reference/android/graphics/Bitmap.html" target="_blank" rel="noopener">Bitmap.recycle()</a> 方法来释放 native 内存。</p>
+<p><code>Bitmap.recycle()</code> 方法流程如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-free-mem.png" alt></p>
+<p>来看具体代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Free the native object associated with this bitmap, and clear the</span></span><br><span class="line"><span class="comment"> * reference to the pixel data. This will not free the pixel data synchronously;</span></span><br><span class="line"><span class="comment"> * it simply allows it to be garbage collected if there are no other references.</span></span><br><span class="line"><span class="comment"> * The bitmap is marked as "dead", meaning it will throw an exception if</span></span><br><span class="line"><span class="comment"> * getPixels() or setPixels() is called, and will draw nothing. This operation</span></span><br><span class="line"><span class="comment"> * cannot be reversed, so it should only be called if you are sure there are no</span></span><br><span class="line"><span class="comment"> * further uses for the bitmap. This is an advanced call, and normally need</span></span><br><span class="line"><span class="comment"> * not be called, since the normal GC process will free up this memory when</span></span><br><span class="line"><span class="comment"> * there are no more references to this bitmap.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">recycle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!mRecycled &amp;&amp; mNativePtr != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nativeRecycle(mNativePtr)) &#123;</span><br><span class="line">            <span class="comment">// return value indicates whether native pixel object was actually recycled.</span></span><br><span class="line">            <span class="comment">// false indicates that it is still in use at the native level and these</span></span><br><span class="line">            <span class="comment">// objects should not be collected now. They will be collected later when the</span></span><br><span class="line">            <span class="comment">// Bitmap itself is collected.</span></span><br><span class="line">            mNinePatchChunk = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mRecycled = <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Bitmap.cpp https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/Bitmap.cpp#872</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> jboolean <span class="title">Bitmap_recycle</span><span class="params">(JNIEnv* env, jobject, jlong bitmapHandle)</span> </span>&#123;</span><br><span class="line">    <span class="function">LocalScopedBitmap <span class="title">bitmap</span><span class="params">(bitmapHandle)</span></span>;</span><br><span class="line">    bitmap-&gt;freePixels();</span><br><span class="line">    <span class="keyword">return</span> JNI_TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Convenience class that does not take a global ref on the pixels, relying</span></span><br><span class="line"><span class="comment">// on the caller already having a local JNI ref</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LocalScopedBitmap</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">LocalScopedBitmap</span><span class="params">(jlong bitmapHandle)</span></span></span><br><span class="line"><span class="function">            : <span class="title">mBitmapWrapper</span><span class="params">(<span class="keyword">reinterpret_cast</span>&lt;BitmapWrapper*&gt;(bitmapHandle))</span> </span>&#123;&#125;</span><br><span class="line">    BitmapWrapper* <span class="keyword">operator</span>-&gt;() &#123;</span><br><span class="line">        <span class="keyword">return</span> mBitmapWrapper;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span>* <span class="title">pixels</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mBitmapWrapper-&gt;bitmap().pixels();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">valid</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mBitmapWrapper &amp;&amp; mBitmapWrapper-&gt;valid();</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    BitmapWrapper* mBitmapWrapper;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BitmapWrapper</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    BitmapWrapper(Bitmap* bitmap)</span><br><span class="line">        : mBitmap(bitmap) &#123; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">freePixels</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mInfo = mBitmap-&gt;info();</span><br><span class="line">        mHasHardwareMipMap = mBitmap-&gt;hasHardwareMipMap();</span><br><span class="line">        mAllocationSize = mBitmap-&gt;getAllocationByteCount();</span><br><span class="line">        mRowBytes = mBitmap-&gt;rowBytes();</span><br><span class="line">        mGenerationId = mBitmap-&gt;getGenerationID();</span><br><span class="line">        mIsHardware = mBitmap-&gt;isHardware();</span><br><span class="line">        mBitmap.reset();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Resets to its initial state; all fields are set to zero, as if SkBitmap had</span></span><br><span class="line"><span class="comment">    been initialized by SkBitmap().</span></span><br><span class="line"><span class="comment">    Sets width, height, row bytes to zero; pixel address to nullptr; SkColorType to</span></span><br><span class="line"><span class="comment">    kUnknown_SkColorType; and SkAlphaType to kUnknown_SkAlphaType.</span></span><br><span class="line"><span class="comment">    If SkPixelRef is allocated, its reference count is decreased by one, releasing</span></span><br><span class="line"><span class="comment">    its memory if SkBitmap is the sole owner.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">reset</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    fPixelRef = <span class="literal">nullptr</span>;  <span class="comment">// Free pixels.</span></span><br><span class="line">    fPixmap.reset();</span><br><span class="line">    fFlags = <span class="number">0</span>;        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>首先，App 主动调用 <code>Bitmap.recycle()</code> 方法</li>
+<li>接下来，<code>Bitmap.recycle()</code> 调用对应的 native 方法 <code>Bitmap_recycle()</code></li>
+<li>然后会进入到 <code>BitmapWrapper.freePixels()</code> 方法</li>
+<li>最后，<a href="https://github.com/google/skia/blob/master/include/core/SkBitmap.h#L334" target="_blank" rel="noopener">SkBitmap.reset()</a> 将 <code>fPixelRef</code> 置空。注：之前分配内存过程中可以看到 <code>fPixelRef</code> 是如何被赋值的</li>
+</ul>
+<p><code>fPixelRef</code> 原本指向一个 <code>SkMallocPixelRef</code> 对象。将 <code>fPixelRef</code> 置空后，该对象引用数变成0时，<code>~SkMallocPixelRef()</code> 析构方法被调用，并触发 <a href="https://github.com/google/skia/blob/master/src/core/SkMallocPixelRef.cpp#L33" target="_blank" rel="noopener">sk_free_releaseproc()</a> 方法执行，回收内存。</p>
+<p>提示：</p>
+<ul>
+<li>注意这里的 <code>SkMallocPixelRef::fReleaseProc</code> 成员变量，它是保存的是方法地址，这个方法将被用于回收内存</li>
+<li>在之前分配内存时，<code>sk_free_releaseproc()</code> 方法地址作为 <code>SkMallocPixelRef()</code> 构造方法的参数 (参数类型 <code>SkMallocPixelRef::ReleaseProc</code>) 被传进来并保存在 <code>SkMallocPixelRef::fReleaseProc</code></li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SkMemory_malloc.cpp https://github.com/google/skia/blob/master/src/ports/SkMemory_malloc.cpp#L66</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sk_free</span><span class="params">(<span class="keyword">void</span>* p)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (p) &#123;</span><br><span class="line">        <span class="built_in">free</span>(p);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SkMallocPixelRef.cpp https://github.com/google/skia/blob/master/src/core/SkMallocPixelRef.cpp#L33</span></span><br><span class="line"><span class="comment">// assumes ptr was allocated via sk_malloc</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sk_free_releaseproc</span><span class="params">(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>*)</span> </span>&#123;</span><br><span class="line">    sk_free(ptr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SkMallocPixelRef.cpp https://github.com/google/skia/blob/master/src/core/SkMallocPixelRef.cpp#L57</span></span><br><span class="line"><span class="function">sk_sp&lt;SkPixelRef&gt; <span class="title">SkMallocPixelRef::MakeAllocate</span><span class="params">(<span class="keyword">const</span> SkImageInfo&amp; info, <span class="keyword">size_t</span> rowBytes)</span> </span>&#123;</span><br><span class="line">    ... </span><br><span class="line">    <span class="keyword">void</span>* addr = sk_calloc_canfail(size);</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nullptr</span> == addr) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> sk_sp&lt;SkPixelRef&gt;(<span class="keyword">new</span> SkMallocPixelRef(info, addr, rowBytes,</span><br><span class="line">                                                  sk_free_releaseproc, <span class="literal">nullptr</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SkMallocPixelRef.cpp https://github.com/google/skia/blob/master/src/core/SkMallocPixelRef.cpp#L133</span></span><br><span class="line">SkMallocPixelRef::~SkMallocPixelRef() &#123;</span><br><span class="line">    <span class="keyword">if</span> (fReleaseProc != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        fReleaseProc(<span class="keyword">this</span>-&gt;pixels(), fReleaseProcContext);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="自动释放"><a href="#自动释放" class="headerlink" title="自动释放"></a>自动释放</h2><p>实际上现在的 Android 应用中多数场景代码不主动调用 <code>recycle()</code>， native 内存也能正确回收。这是为何？秘密在于 <a href="https://android.googlesource.com/platform/libcore/+/master/luni/src/main/java/libcore/util/NativeAllocationRegistry.java" target="_blank" rel="noopener">NativeAllocationRegistry</a>。</p>
+<blockquote>
+<p>NativeAllocationRegistry 用于将 native 内存跟 Java 对象关联，并将它们注册到 Java 运行时。注册 Java 对象关联的 native 内存有几个好处：</p>
+<ul>
+<li>Java 运行时在 GC 调度时可考虑 native 内存状态</li>
+<li>Java 运行时在 Java 对象变得不可达时可以使用用户提供的函数来自动清理 native 内存</li>
+</ul>
+</blockquote>
+<p>来看代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Bitmap(<span class="keyword">long</span> nativeBitmap, <span class="keyword">int</span> width, <span class="keyword">int</span> height, <span class="keyword">int</span> density,</span><br><span class="line">        <span class="keyword">boolean</span> isMutable, <span class="keyword">boolean</span> requestPremultiplied,</span><br><span class="line">        <span class="keyword">byte</span>[] ninePatchChunk, NinePatch.InsetStruct ninePatchInsets) &#123;</span><br><span class="line">    ...</span><br><span class="line">    NativeAllocationRegistry registry = <span class="keyword">new</span> NativeAllocationRegistry(</span><br><span class="line">        Bitmap<span class="class">.<span class="keyword">class</span>.<span class="title">getClassLoader</span>(), <span class="title">nativeGetNativeFinalizer</span>(), <span class="title">nativeSize</span>)</span>;</span><br><span class="line">    registry.registerNativeAllocation(<span class="keyword">this</span>, nativeBitmap);</span><br><span class="line">    ...           </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意到 Bitmap 构造方法有如下操作：</p>
+<ul>
+<li>向 <code>NativeAllocationRegistry</code> 提供 <code>nativeGetNativeFinalizer()</code> 方法地址</li>
+<li>将当前 Java 对象本身注册到 <code>NativeAllocationRegistry</code></li>
+<li>将当前 Java 对象关联的 native 内存地址注册到 <code>NativeAllocationRegistry</code></li>
+</ul>
+<p>当 Java 层 Bitmap 对象不可达后关联的 native 内存会由 <code>nativeGetNativeFinalizer()</code> 指定的方法来回收，流程如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-free-native-mem.png" alt></p>
+<p>来看 <code>NativeAllocationRegistry</code> 的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NativeAllocationRegistry</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Runnable <span class="title">registerNativeAllocation</span><span class="params">(Object referent, <span class="keyword">long</span> nativePtr)</span> </span>&#123;</span><br><span class="line">        CleanerThunk thunk;</span><br><span class="line">        CleanerRunner result;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            thunk = <span class="keyword">new</span> CleanerThunk();</span><br><span class="line">            Cleaner cleaner = Cleaner.create(referent, thunk);</span><br><span class="line">            result = <span class="keyword">new</span> CleanerRunner(cleaner);</span><br><span class="line">            registerNativeAllocation(<span class="keyword">this</span>.size);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (VirtualMachineError vme <span class="comment">/* probably OutOfMemoryError */</span>) &#123;</span><br><span class="line">            applyFreeFunction(freeFunction, nativePtr);</span><br><span class="line">            <span class="keyword">throw</span> vme;</span><br><span class="line">        &#125; <span class="comment">// Other exceptions are impossible.</span></span><br><span class="line">        <span class="comment">// Enable the cleaner only after we can no longer throw anything, including OOME.</span></span><br><span class="line">        thunk.setNativePtr(nativePtr);</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CleanerThunk</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">long</span> nativePtr;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">CleanerThunk</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.nativePtr = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (nativePtr != <span class="number">0</span>) &#123;</span><br><span class="line">                applyFreeFunction(freeFunction, nativePtr);</span><br><span class="line">                registerNativeFree(size);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNativePtr</span><span class="params">(<span class="keyword">long</span> nativePtr)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.nativePtr = nativePtr;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">CleanerRunner</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Cleaner cleaner;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">CleanerRunner</span><span class="params">(Cleaner cleaner)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.cleaner = cleaner;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            cleaner.clean();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Calls &lt;code&gt;freeFunction&lt;/code&gt;(&lt;code&gt;nativePtr&lt;/code&gt;).</span></span><br><span class="line"><span class="comment">     * Provided as a convenience in the case where you wish to manually free a</span></span><br><span class="line"><span class="comment">     * native allocation using a &lt;code&gt;freeFunction&lt;/code&gt; without using a</span></span><br><span class="line"><span class="comment">     * NativeAllocationRegistry.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@libcore</span>.api.CorePlatformApi</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">applyFreeFunction</span><span class="params">(<span class="keyword">long</span> freeFunction, <span class="keyword">long</span> nativePtr)</span></span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对 Bitmap 而言，<a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/oreo-release/core/jni/android/graphics/Bitmap.cpp#864" target="_blank" rel="noopener">Bitmap_destruct()</a> 方法被指定用来回收 native 内存。这个方法超级简单，相信你一眼能看明白。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Bitmap_destruct</span><span class="params">(BitmapWrapper* bitmap)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">delete</span> bitmap;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> jlong <span class="title">Bitmap_getNativeFinalizer</span><span class="params">(JNIEnv*, jobject)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">static_cast</span>&lt;jlong&gt;(<span class="keyword">reinterpret_cast</span>&lt;<span class="keyword">uintptr_t</span>&gt;(&amp;Bitmap_destruct));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/bitmap-creation-free-native-mem2.png" alt></p>
+<p>如果想了解更多细节，可以看 <a href="https://android.googlesource.com/platform/libcore/+/49965c1/ojluni/src/main/java/sun/misc/Cleaner.java" target="_blank" rel="noopener">Cleaner</a> 源码。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://developer.android.com/topic/performance/graphics/manage-memory.html" target="_blank" rel="noopener">如何管理 Bitmap 内存</a></li>
+<li><a href="https://skia.org/user/api/SkBitmap_Reference" target="_blank" rel="noopener">SkBitmap Reference</a></li>
+<li><a href="https://www.jianshu.com/p/d5714e8987f3" target="_blank" rel="noopener">Android Bitmap变迁与原理解析（4.x-8.x）</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/12/kotlin-nothing/" rel="prev" title="(译)Kotlin 之 Nothing">
+      <i class="fa fa-chevron-left"></i> (译)Kotlin 之 Nothing
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/19/hexo-and-mweb/" rel="next" title="使用 Hexo + MWeb 写博客">
+      使用 Hexo + MWeb 写博客 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#总览"><span class="nav-number">1.</span> <span class="nav-text">总览</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建"><span class="nav-number">2.</span> <span class="nav-text">创建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#资源转换"><span class="nav-number">2.1.</span> <span class="nav-text">资源转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存分配"><span class="nav-number">2.2.</span> <span class="nav-text">内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图片解码"><span class="nav-number">2.3.</span> <span class="nav-text">图片解码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建Java对象"><span class="nav-number">2.4.</span> <span class="nav-text">创建Java对象</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#销毁"><span class="nav-number">3.</span> <span class="nav-text">销毁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#recycle"><span class="nav-number">3.1.</span> <span class="nav-text">recycle()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动释放"><span class="nav-number">3.2.</span> <span class="nav-text">自动释放</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

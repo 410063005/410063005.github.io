@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="什么是 RenderObject？">
+<meta name="keywords" content="Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译) RenderObject 介绍">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/12/19/what-is-renderobject/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="什么是 RenderObject？">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.046Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译) RenderObject 介绍">
+<meta name="twitter:description" content="什么是 RenderObject？">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/12/19/what-is-renderobject/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译) RenderObject 介绍 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/12/19/what-is-renderobject/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译) RenderObject 介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-12-19 09:52:50" itemprop="dateCreated datePublished" datetime="2019-12-19T09:52:50+08:00">2019-12-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>什么是 RenderObject？</p>
+<a id="more"></a>
+<p>原文见 <a href="https://medium.com/flutter-community/flutter-what-are-widgets-renderobjects-and-elements-630a57d05208" target="_blank" rel="noopener">Flutter, what are Widgets, RenderObjects and Elements?</a></p>
+<p>每个人都想知道 Flutter 是如何将 Widget 转换成屏幕上的像素的，对不对？</p>
+<!--Ever wondered how Flutter takes those widgets and actually converts them to pixels on the screen? No?
+You should!-->
+<p>理解底层技术原理是优秀开发者跟伟大开发者的差别。</p>
+<!--Understanding how an underlying technology works makes the difference between a good developer and a great one.-->
+<p>当你知道什么是可行，什么是不可行的话，就可以更轻松地创建自定义布局和特效，这能节省你很多的时间。</p>
+<!--You can create custom layouts and special effects more easily when you know what works and what doesn’t; and knowing this will save you a few long nights at the keyboard.-->
+<p>本文的目标是介绍 Flutter 背后的原理。我们从另一个不同的方面看 Flutter 并理解它是如何工作的。</p>
+<!--The goal of this post is to introduce you to the world beyond the surface of flutter. We will take a look at different aspects of flutter and understand how it actually works.
+-->
+<h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><p>你很可能已经知道如何使用 StatelessWidget 和 StatefulWidget。但它们只能组合已有的 Widget。对 Widget 进行布局和绘制实际上发生在别的地方。</p>
+<!--You probably already know how to use the StatelessWidget & StatefulWidget. But those widgets only compose the other widgets. Laying out the widgets and rendering them happens elsewhere.-->
+<p>强烈建议你打开最喜欢的 IDE 并一步步按下面的步骤来操作，实际代码常常让你恍然大悟。Intellij 中双击 Shift 可以输出名称来打开任何类。</p>
+<!--I highly recommend opening your favorite IDE and following along, seeing the structures in the actual code often creates those “aha” moments. In Intellij you can double tap shift and enter a class name to find it.-->
+<h1 id="Opacity"><a href="#Opacity" class="headerlink" title="Opacity"></a>Opacity</h1><p>我们通过观察 <a href="https://github.com/flutter/flutter/blob/f38743593d00f13b21f49d8d8ee2d2206bf820d3/packages/flutter/lib/src/widgets/basic.dart#L150" target="_blank" rel="noopener">Opacity</a> Widget 来熟悉 Flutter 的基本概念。之所以选择 Opacity，因为它是一个非常基本的 Widget (特别简单)，可作为一个好例子来学习。</p>
+<!--To get familiar with the basic concepts of how flutter works we will take a look at the Opacity widget and examine that. Because it’s a pretty basic widget, it makes a good example to follow along.
+-->
+<p>Opacity 只接受一个子 Widget。你可以用 Opacity 来包装任何 Widget 并调整其显示方式。除了 <code>child</code> 参数，只有另外一个 <code>opacity</code> 参数，它是浮点类型，值介于 0.0 和 1.0。这个参数用于控制不透明度。</p>
+<!--It only accepts one child. Therefore you can wrap any widget in an Opacity and change the way it’s displayed. Besides the child, there is only one parameter called opacity which is a value between 0.0 and 1.0. It controls the opacity (duh).
+-->
+<h1 id="控件"><a href="#控件" class="headerlink" title="控件"></a>控件</h1><p><code>Opacity</code> 是一个 <code>SingleChildRenderObjectWidget</code>。它的继承结构如下：</p>
+<p>Opacity → SingleChildRenderObjectWidget → RenderObjectWidget → Widget</p>
+<p>StatelessWidget 和 StatefulWidget 继承结构则是这样的：</p>
+<p>StatelessWidget/StatefulWidget → Widget</p>
+<p><strong>StatelessWidget/StatefulWidget 与 Opacity 的不同在于：前者只能组合其他 Widget，而后者实际上改变了 Widget 的绘制方式</strong>。</p>
+<p>但是你在这几个类当中找不到跟实际绘制不透明度相关的任何代码。原因在于 Widget 只持有配置信息。在本例中，Opacity 持有的是 <code>opacity</code> 值。</p>
+<!--But if you look at any of those classes you won’t find any code related to actually painting the opacity.
+
+That’s because a widget only holds the configuration information. In this case, the opacity widget is only holding the opacity value.-->
+<blockquote>
+<p>每次都可以在 <code>build()</code> 函数中创建新的 Widget 的原因是创建的成本并不高，因为它们不过是配置信息的容器</p>
+</blockquote>
+<!--This is the reason why you can create new widget every time the build function is called. Because the widgets are not expensive to construct. They are merely containers for information.-->
+<h1 id="渲染"><a href="#渲染" class="headerlink" title="渲染"></a>渲染</h1><p>渲染到底发生在哪里？实际上它们发生在 RenderObject 中。</p>
+<p>你可以从名字猜到 RenderObject 负责的工作包括渲染。</p>
+<!--As you might have guessed from the name, the RenderObject is responsible for a few things, including rendering.-->
+<p>Opacity Widget 使用如下方法创建并更新 <a href="https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/widgets/basic.dart#L188" target="_blank" rel="noopener">RenderObject</a>：</p>
+<!--The Opacity widget creates and updates a RenderObject with these methods.-->
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">RenderOpacity createRenderObject(BuildContext context) =&gt; <span class="keyword">new</span> RenderOpacity(opacity: opacity);</span><br><span class="line"></span><br><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> updateRenderObject(BuildContext context, RenderOpacity renderObject) &#123;</span><br><span class="line">  renderObject.opacity = opacity;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="RenderOpacity"><a href="#RenderOpacity" class="headerlink" title="RenderOpacity"></a>RenderOpacity</h1><p><code>Opacity</code> Widget 大小跟其 child 完全一样。基本上它每个方面跟其 child 都一样，除了绘制。它会在绘制 child 前加上不透明度。</p>
+<!--The Opacity widget sizes itself to be exactly the same size as its child. It basically mimics every aspect of the child but the painting. Before painting its child it is adding an opacity to it.-->
+<p>本例中，RenderOpacity 需要实际所有方法(比如布局、点击测试、大小计算等等)并要求 child 完成实际工作。</p>
+<!--In this case, the RenderOpacity needs to implement all the methods (for example performing layout/ hit testing/ computing sizes) and ask its child to do the actual work.-->
+<p>而 <code>RenderOpacity</code> 继承自 <code>RenderProxyBox</code> (它混入了其他类)。这些类用于实际具体的方法，并将真正的计算工作推迟到 child 中进行。</p>
+<!--The RenderOpacity extends the RenderProxyBox (which mixes in a few other classes). Those are exactly implementing those methods and deferring the actual calculation to the only child.-->
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">double</span> <span class="keyword">get</span> opacity =&gt; _opacity;</span><br><span class="line"><span class="built_in">double</span> _opacity;</span><br><span class="line"><span class="keyword">set</span> opacity(<span class="built_in">double</span> value) &#123;</span><br><span class="line">  _opacity = value;</span><br><span class="line">  markNeedsPaint();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(注：这里的代码去掉了优化和断言，只保留最关键部分。完整代码见<a href="https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/rendering/proxy_box.dart#L736" target="_blank" rel="noopener">这里</a>)</p>
+<p>字段通常为私有变量暴露一个 getter。而 setter 用于设置字段，此外它还调用了 <code>markNeedsPaint()</code> 和 <code>markNeedsLayout()</code> 方法。正如名字所言，这个方法告诉系统 “我有变化啦，请重新绘制/重新布局”。</p>
+<!--Fields usually expose a getter to the private variable. And a setter, which in addition to setting the field, also calls markNeedsPaint() or markNeedsLayout(). As the name suggests, it tells the system “Hey I have changed, please repaint/relayout me”.-->
+<p>在 <code>RenderOpacity</code> 中可以找到这个方法：</p>
+<!--Inside the RenderOpacity we find this method:-->
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> paint(PaintingContext context, Offset offset) &#123;</span><br><span class="line">    context.pushOpacity(offset, _alpha, <span class="keyword">super</span>.paint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(注：这里同样只保留最关键代码，去掉了优化和断言，完整代码见<a href="https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/rendering/proxy_box.dart#L757" target="_blank" rel="noopener">这里</a>)</p>
+<p><code>PaintingContext</code> 基本上是一个高级的 canvas。这个 canvas 上有一个 <code>pushOpacity()</code> 方法。而这行代码就是不透明度的实现。</p>
+<!--The PaintingContext is basically a fancy canvas. And on this fancy canvas there is a method called pushOpacity.-->
+<p>总结一下：</p>
+<ul>
+<li><code>Opacity</code> 并非 <code>StatelessWidget</code> 或 <code>StatefulWidget</code>，而是一个 <code>SingleChildRenderObjectWidget</code></li>
+<li><code>Widget</code> 仅持有渲染器会用到的配置信息</li>
+<li><code>Opacity</code> 持有一个 double 值用于表示不透明度</li>
+<li>继承自 <code>RenderProxyBox</code> 的 <code>RenderOpacity</code> 完成实际布局/渲染工作</li>
+<li><code>Opacity</code> 几乎跟 child 行为完全一致，所以它会将其方法代理到 child</li>
+<li><code>RenderOpacity</code> 覆盖了 <code>paint</code> 方法。在这个方法中调用 <code>pushOpacity()</code> 来为 Widget 添加不透明度</li>
+</ul>
+<!--The Opacity is not a StatelessWidget or a StatefulWidget but instead a SingleChildRenderObjectWidget.
+The Widget only holds information which the renderer can use.
+In this case the Opacity is holding a double representing the opacity.
+The RenderOpacity, which extends the RenderProxyBox does the actual layouting/ rendering etc.
+Because the opacity behaves pretty much exactly as its child it delegates every method call to the child.
+It overrides the paint method and calls pushOpacity which adds the desired opacity to the widget.-->
+<h1 id="Element"><a href="#Element" class="headerlink" title="Element"></a>Element</h1><p>记住，Widget 只是配置信息，<code>RenderObject</code> 只管理布局/渲染等工作。</p>
+<!--Remember, the widget is only a configuration and the RenderObject only manages layout/rendering etc.-->
+<p>在 Flutter 中你基本上不停地重新创建 Widget。<code>build()</code> 被调用时会创建一堆的 Widget。而每次发生变化时 <code>build()</code> 方法被调用。比如，有动画效果时 <code>build()</code> 方法不停地被调用。这意味着你并不能每次都重建子树。实际上，你想做的是更新它。</p>
+<!--In Flutter you recreate widgets basically all the time. When your build() methods gets called you create a bunch of widgets. This build method is called every time something changes. When an animation happens for example, the build method gets called very often. This means you can’t rebuild the whole sub tree every time. Instead you want to update it.-->
+<p>你无法获取 Widget 屏幕上的大小和位置，因为 Widget 只是一张蓝图，而不代表屏幕上的实际内容。它仅仅是对底层  RenderObject 会用到的变量的描述。 </p>
+<!--You can’t get the size or location on the screen of a widget, because a widget is like a blueprint, it’s not actually on the screen. It’s only a description of what variables the underlying render object should use.-->
+<p>Element 是实际的树中的具体的 Widget。</p>
+<p>具体过程是这样的：首次创建 Widget 时，由它生成 <code>Element</code>。这个 Element 被插入到树中，后续如果 Wiget 发生变化，它会跟旧的 Widget 比较，并根据差异对 Element 进行相应地更新。最重要的一点是，Element 并未重新创建，而是更新！</p>
+<!--The first time when a widget is created, it is inflated to an Element. The element then gets inserted it into the tree. If the widget later changes, it is compared to the old widget and the element updates accordingly. The important thing is, the element doesn’t get rebuilt, it only gets updated.-->
+<p>Element 是核心框架的中心，我们应该对它进行更多讨论，不过现在了解这些就足够了。</p>
+<!--Elements are a central part of the core framework and there is obviously more to them, but for now this is enough information.-->
+<p>问题：在上面 Opacity 这个例子中 element 是在哪里创建的？</p>
+<p>答案是 <code>SingleChildRenderObjectWidget</code> 创建了 Element。代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">SingleChildRenderObjectElement createElement() =&gt; <span class="keyword">new</span> SingleChildRenderObjectElement(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
+<p>具体见<a href="https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/widgets/framework.dart#L1631" target="_blank" rel="noopener">源码</a>。另外，<code>SingleChildRenderObjectElement</code> 只有一个 child。</p>
+<p>问题：是Element 创建了 RenderObject 吗，但我们这个例子中看起来 Opacity Widget 创建了它自己的 RenderObject？</p>
+<!--The element creates the RenderObject, but in our case the Opacity widget creates its own RenderObject?-->
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Opacity</span> <span class="keyword">extends</span> <span class="title">SingleChildRenderObjectWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  RenderOpacity createRenderObject(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> RenderOpacity(</span><br><span class="line">      opacity: opacity,</span><br><span class="line">      alwaysIncludeSemantics: alwaysIncludeSemantics,</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个问题说的应该是指 <code>Opacity.createRenderObject()</code> 方法创建了 <code>RenderObject</code>。</p>
+<p>答案是这么做纯粹是为了更好用的 API。因为 Widget 通常需要一个 RenderObject 而不是自定义的 Element。实际上 RenderObject 是由 Element 创建的。</p>
+<!--This is just for a smooth API. Because more often then not, the widget needs a RenderObject but no custom Element. The RenderObject is actually created by the Element, let’s take a look:-->
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SingleChildRenderObjectElement(SingleChildRenderObjectWidget widget) : <span class="keyword">super</span>(widget);</span><br></pre></td></tr></table></figure>
+<p>见<a href="https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/widgets/framework.dart#L4643" target="_blank" rel="noopener">源码</a>。<code>SingleChildRenderObjectElement</code> 持有 <code>RenderObjectWidget</code> 的引用，后者拥有创建 <code>RenderObject</code> 的方法。</p>
+<p><code>mount()</code> 方法是 Element 被添加到 Element Tree 的地方。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> mount(<span class="built_in">Element</span> parent, <span class="built_in">dynamic</span> newSlot) &#123;</span><br><span class="line">  <span class="keyword">super</span>.mount(parent, newSlot);</span><br><span class="line">  _renderObject = widget.createRenderObject(<span class="keyword">this</span>);</span><br><span class="line">  attachRenderObject(newSlot);</span><br><span class="line">  _dirty = <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一旦 <code>mount()</code> 方法被调用，Element 要求 Widget “请给我你想使用的 RenderObject，好让我保存下来”。</p>
+<!--Only once (when it get’s mounted) it asks the widget “Please give me the renderobject you’d like to use so I can save it”.-->
+<h1 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h1><p>本文介绍了 Opacity Widget 内部工作机制。我的目标是介绍 Widget 背后的原理，仍然还有许多话题可以讨论，希望我能为你了解内部工作原理做一个好的指引。</p>
+<h1 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h1><p>Widget 跟 View 类比是不准确的。</p>
+<ul>
+<li>View 并不会频繁重建，Widget 会频繁重建</li>
+<li>View 有实际的大小和位置，Widget 没有具体的大小的位置</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/05/anatomy-of-material-buttons-in-flutter/" rel="prev" title="(译) Flutter Material Button 完全解析">
+      <i class="fa fa-chevron-left"></i> (译) Flutter Material Button 完全解析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/23/dart-mixin/" rel="next" title="Dart Mixin 介绍">
+      Dart Mixin 介绍 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#开始"><span class="nav-number">1.</span> <span class="nav-text">开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Opacity"><span class="nav-number">2.</span> <span class="nav-text">Opacity</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#控件"><span class="nav-number">3.</span> <span class="nav-text">控件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#渲染"><span class="nav-number">4.</span> <span class="nav-text">渲染</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RenderOpacity"><span class="nav-number">5.</span> <span class="nav-text">RenderOpacity</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Element"><span class="nav-number">6.</span> <span class="nav-text">Element</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结束"><span class="nav-number">7.</span> <span class="nav-text">结束</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#思考"><span class="nav-number">8.</span> <span class="nav-text">思考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文记录了一些关于 ExoPlayer 库的一些入门知识。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Exoplayer 介绍">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/01/14/exoplayer-usage/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="本文记录了一些关于 ExoPlayer 库的一些入门知识。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://google.github.io/ExoPlayer/images/demo-app-project.png">
+<meta property="og:image" content="https://google.github.io/ExoPlayer/images/demo-app-build-variants.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.995Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Exoplayer 介绍">
+<meta name="twitter:description" content="本文记录了一些关于 ExoPlayer 库的一些入门知识。">
+<meta name="twitter:image" content="https://google.github.io/ExoPlayer/images/demo-app-project.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/01/14/exoplayer-usage/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Exoplayer 介绍 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/01/14/exoplayer-usage/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Exoplayer 介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-14 17:00:12" itemprop="dateCreated datePublished" datetime="2019-01-14T17:00:12+08:00">2019-01-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文记录了一些关于 ExoPlayer 库的一些入门知识。<br><a id="more"></a></p>
+<p>我们的 Android 项目中可能要使用到视频播放功能。于是提前进行预研，在此记录。</p>
+<ul>
+<li><code>WebView</code> - 性能较差，用于H5页面的视频尚能接受，但作为原生播放组件体验差</li>
+<li><code>VideoView</code> - 性能尚可，但它无缓存，无缓冲动画。要自行实现这些功能有较大工作量</li>
+</ul>
+<p>官方推荐使用 <a href="https://github.com/google/ExoPlayer/" target="_blank" rel="noopener">ExoPlayer</a> 库用于音视频播放。</p>
+<h1 id="ExoPlayer"><a href="#ExoPlayer" class="headerlink" title="ExoPlayer"></a>ExoPlayer</h1><p>ExoPlayer 提供目前 MediaPlayer API 接口不支持的功能，例如 DASH 和 SmoothStreaming 自适应播放。相比 MediaPlayer，ExoPlayer 易于自定义扩展。</p>
+<h2 id="库概览"><a href="#库概览" class="headerlink" title="库概览"></a>库概览</h2><p>整个 ExoPlayer 库的核心是 <code>ExoPlayer</code> 接口。一个 <code>ExoPlayer</code> 实例对外暴露传统上常见的高级媒体播放器功能，比如媒体缓冲、播放、暂停及seek。<code>ExoPlayer</code> 的实现被设计成对媒体类型，如何存储，在哪里存储，如何渲染等问题有很少的假定和限制。<code>ExoPlayer</code> 并不是直接实现媒体加载和渲染功能，而是将这些工作代理给专门的组件。这些组件在播放器被创建时或准备播放时被注入进来。<code>ExoPlayer</code> 的常用组件包括：</p>
+<ul>
+<li><code>MediaSource</code> - 用于定义将被播放的媒体，用于加载媒体，用于指定可以从哪里读取媒体。在开始播放媒体时通过 <code>ExoPlayer.prepare()</code> 方法将 <code>MediaSource</code> 注入进来</li>
+<li><code>Renderers</code> - 用于渲染 media 中的单个组件。创建 player 时注入进来</li>
+<li><code>TrackSelector</code> - 用于选择 <code>MediaSource</code> 中的 tracks 给每个可用的 <code>Renderer</code> 来消费。创建 player 时注入进来</li>
+<li><code>LoadControl</code> - 用于控制 <code>MediaSource</code> 何时缓冲更多媒体数据，以及如何缓冲。创建 player 时注入进来</li>
+</ul>
+<p>ExoPlayer 提供了各种缺省的实现。如果仍然不能满足使用需求，也可以进行自定义。比如，自定义 <code>LoadControl</code> 来修改 player 的缓冲策略。或者自定义 <code>Renderer</code> 来使用 Android 并不能原生支持的视频解码器。</p>
+<h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><p>ExoPlayer 对比 Android MediaPlayer API 的优缺点：</p>
+<ul>
+<li>DASH(Dynamic Adaptive Streaming over HTTP) 和 SmoothStreaming 支持</li>
+<li><a href="https://google.github.io/ExoPlayer/supported-formats.html" target="_blank" rel="noopener">支持更多的媒体格式</a></li>
+<li>设备和 Android 版本兼容性更好</li>
+<li>自定义和扩展能力更好</li>
+<li>使用官方扩展跟第三方库交互的能力更好</li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>简单介绍 ExoPlayer 的用法。先保证在 <code>build.gradle</code> 中包含 Google 和 JCenter 库：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    google()</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后在 <code>build.gradle</code> 中添加依赖：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">'com.google.android.exoplayer:exoplayer:2.9.0'</span></span><br></pre></td></tr></table></figure>
+<p>另外注意 ExoPlayer 使用 Java 8 编译，所以你的 app 也必须使用 Java 8 编译。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">compileOptions &#123;</span><br><span class="line">    targetCompatibility JavaVersion.VERSION_1_8</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也可以按需要添加对特定 ExoPlayer API 的依赖，而不是整个 ExoPlayer 库。比如，只依赖 Core，DASH 和 UI：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">'com.google.android.exoplayer:exoplayer-core:2.X.X'</span></span><br><span class="line">implementation <span class="string">'com.google.android.exoplayer:exoplayer-dash:2.X.X'</span></span><br><span class="line">implementation <span class="string">'com.google.android.exoplayer:exoplayer-ui:2.X.X'</span></span><br></pre></td></tr></table></figure>
+<p>ExoPlayer 可用的模块如下：</p>
+<ul>
+<li><code>exoplayer-core</code> - 核心功能(必须)</li>
+<li><code>exoplayer-dash</code> - 支持 DASH</li>
+<li><code>exoplayer-hls</code> - 支持 HLS</li>
+<li><code>exoplayer-smoothstreaming</code> - 支持 SmoothStreaming</li>
+<li><code>exoplayer-ui</code> - 提供 ExoPlayer 使用的 UI 组件及资源</li>
+</ul>
+<p>除了以上库模块，ExoPlayer 还提供若干依赖外部库的扩展模块用于额外功能。具体见<a href="https://github.com/google/ExoPlayer/tree/release-v2/extensions/" target="_blank" rel="noopener">扩展库列表</a>。</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><p>对于简单场景，按照以下几个步骤使用 <code>ExoPlayer</code>：</p>
+<ul>
+<li>添加 <code>ExoPlayer</code> 依赖</li>
+<li>创建 <code>SimpleExoPlayer</code> 实例</li>
+<li>将 player 跟 view 关联(用于视频输出和用户输入)</li>
+<li>使用完毕后释放 player</li>
+</ul>
+<h3 id="创建-ExoPlayer"><a href="#创建-ExoPlayer" class="headerlink" title="创建 ExoPlayer"></a>创建 ExoPlayer</h3><ul>
+<li>使用 <code>ExoPlayerFactory</code> 创建 <code>SimpleExoPlayer</code></li>
+<li><code>ExoPlayerFactory</code> 中有不同的方法用于创建 <code>SimpleExoPlayer</code></li>
+<li>最常用的创建方法是 <code>ExoPlayerFactory.newSimpleInstance</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context);</span><br></pre></td></tr></table></figure>
+<p>关于线程安全问题：</p>
+<ul>
+<li>必须从同一个线程来访问 <code>ExoPlayer</code> 实例(通常来说就是主线程)</li>
+<li>访问 <code>ExoPlayer</code> 的线程必须要有 <code>Looper</code></li>
+</ul>
+<h3 id="关联-view"><a href="#关联-view" class="headerlink" title="关联 view"></a>关联 view</h3><p>ExoPlayer 库提供 <code>PlayerView</code>，它封装了 <code>PlayerControlView</code> 和用于渲染 video 的 <code>Surface</code>。可以在布局中使用 <code>PlayerView</code>，然后像下面这样进行绑定：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Bind the player to the view.</span></span><br><span class="line">playerView.setPlayer(player);</span><br></pre></td></tr></table></figure>
+<p><code>SimpleExoPlayer</code> 提供接口用于设置自定义的组件以便更精细地控制 player controls 以及 <code>Surface</code>。</p>
+<ul>
+<li><code>setVideoSurfaceView</code></li>
+<li><code>setVideoTextureView</code></li>
+<li><code>setVideoSurfaceHolder</code></li>
+<li><code>setVideoSurface</code></li>
+</ul>
+<h3 id="准备播放"><a href="#准备播放" class="headerlink" title="准备播放"></a>准备播放</h3><p>ExoPlayer 库中 每个媒体片断由 <code>MediaSource</code> 表示。首先创建媒体片断 <code>MediaSource</code>，然后将其传给 <code>ExoPlayer.prepare()</code> 方法。ExoPlayer 库提供不同的 <code>MediaSource</code> 实现：</p>
+<ul>
+<li><code>DashMediaSource</code> - DASH</li>
+<li><code>SsMediaSource</code> - SmoothStreaming    </li>
+<li><code>HlsMediaSource</code> - HLS</li>
+<li><code>ExtractorMediaSource</code> - regular media files</li>
+</ul>
+<p>这段代码用于播放 MP4 文件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Produces DataSource instances through which media data is loaded.</span></span><br><span class="line">DataSource.Factory dataSourceFactory = <span class="keyword">new</span> DefaultDataSourceFactory(context,</span><br><span class="line">    Util.getUserAgent(context, <span class="string">"yourApplicationName"</span>));</span><br><span class="line"><span class="comment">// This is the MediaSource representing the media to be played.</span></span><br><span class="line">MediaSource videoSource = <span class="keyword">new</span> ExtractorMediaSource.Factory(dataSourceFactory)</span><br><span class="line">    .createMediaSource(mp4VideoUri);</span><br><span class="line"><span class="comment">// Prepare the player with the source.</span></span><br><span class="line">player.prepare(videoSource);</span><br></pre></td></tr></table></figure>
+<h3 id="播放控制"><a href="#播放控制" class="headerlink" title="播放控制"></a>播放控制</h3><p>有两种途径进行播放控制：</p>
+<ul>
+<li>直接调用 player 相应的方法。例如：<ul>
+<li><code>setPlayWhenReady</code> - 播放或暂停</li>
+<li><code>seekTo</code> - seek</li>
+<li><code>setRepeatMode</code> - 控制是否循环以及如何循环</li>
+<li><code>setShuffleModeEnabled</code> - 控制是否乱序播放</li>
+<li><code>setPlaybackParameters</code> - 调整播放速度</li>
+</ul>
+</li>
+<li>player 绑定到 view 的情况下，用户操作也会导致调用 player 相应的方法</li>
+</ul>
+<h3 id="事件监听"><a href="#事件监听" class="headerlink" title="事件监听"></a>事件监听</h3><p>使用 <code>Player.EventListener</code> 监听播放状态及可能出现的错误。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Add a listener to receive events from the player.</span></span><br><span class="line"><span class="comment">// 有时使用 Player.DefaultEventListener 更方便</span></span><br><span class="line">player.addListener(eventListener);</span><br></pre></td></tr></table></figure>
+<p><code>SimpleExoPlayer</code> 还提供一些额外的监听器：</p>
+<ul>
+<li><code>addVideoListener</code> - 监听视频渲染相关事件，可以用于调整 UI</li>
+<li><code>addAnalyticsListener</code> - 监听详细事件，可以用于问题诊断分析</li>
+</ul>
+<h3 id="释放"><a href="#释放" class="headerlink" title="释放"></a>释放</h3><p>使用 <code>ExoPlayer.release</code> 释放资源。</p>
+<h1 id="ExoPlayer-demo"><a href="#ExoPlayer-demo" class="headerlink" title="ExoPlayer demo"></a>ExoPlayer demo</h1><p><a href="https://google.github.io/ExoPlayer/demo-application.html" target="_blank" rel="noopener">demo</a>展示了 ExoPlayer 的基本用法。</p>
+<p>从 <a href="git clone https://github.com/google/ExoPlayer.git">github</a> 下载代码后导入 Android Studio 编译成功后如下图所示。</p>
+<p><img src="https://google.github.io/ExoPlayer/images/demo-app-project.png" alt></p>
+<p><a href="https://google.github.io/ExoPlayer/faqs.html#does-exoplayer-support-emulators" target="_blank" rel="noopener">demo 可能在模拟器上无法运行</a>。我在 Genemotion 上的现象是卡在播放状态，不报错也不 crash，原因是某些模拟器并没有正确地实现 Android media stack。不过官方模拟器是支持 ExoPlayer 的(SDK level 23及以上)。</p>
+<p>建议在真机上运行 demo。</p>
+<p>demo 最终都是通过 <code>PlayerActivity</code> 来播放视频。使用如下命令在 logcat 中查看日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb logcat EventLogger:V *:E</span><br></pre></td></tr></table></figure>
+<p>可以调整 demo 的 build variants 为 <code>withExtensions</code> 以使用各种<a href="https://github.com/google/ExoPlayer/tree/release-v2/extensions/" target="_blank" rel="noopener">扩展库</a>。</p>
+<p><img src="https://google.github.io/ExoPlayer/images/demo-app-build-variants.png" alt></p>
+<p>编辑 <code>assets/media.exolist.json</code> 文件可以向 demo 中添加自己的视频 sample。</p>
+<p>关于代码混淆问题：不用特殊配置，直接混淆即可。</p>
+<h1 id="ExoPlayer-tutorial"><a href="#ExoPlayer-tutorial" class="headerlink" title="ExoPlayer tutorial"></a>ExoPlayer tutorial</h1><p><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#0" target="_blank" rel="noopener">这里</a>提供了不错的入门指导。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/11/profile-gpu/" rel="prev" title="(译)Analyze with Profile GPU Rendering">
+      <i class="fa fa-chevron-left"></i> (译)Analyze with Profile GPU Rendering
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/14/android-large-heap/" rel="next" title="largeHeap属性的作用">
+      largeHeap属性的作用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ExoPlayer"><span class="nav-number">1.</span> <span class="nav-text">ExoPlayer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#库概览"><span class="nav-number">1.1.</span> <span class="nav-text">库概览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优缺点"><span class="nav-number">1.2.</span> <span class="nav-text">优缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置"><span class="nav-number">1.3.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用法"><span class="nav-number">1.4.</span> <span class="nav-text">用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-ExoPlayer"><span class="nav-number">1.4.1.</span> <span class="nav-text">创建 ExoPlayer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关联-view"><span class="nav-number">1.4.2.</span> <span class="nav-text">关联 view</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备播放"><span class="nav-number">1.4.3.</span> <span class="nav-text">准备播放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#播放控制"><span class="nav-number">1.4.4.</span> <span class="nav-text">播放控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事件监听"><span class="nav-number">1.4.5.</span> <span class="nav-text">事件监听</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#释放"><span class="nav-number">1.4.6.</span> <span class="nav-text">释放</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ExoPlayer-demo"><span class="nav-number">2.</span> <span class="nav-text">ExoPlayer demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ExoPlayer-tutorial"><span class="nav-number">3.</span> <span class="nav-text">ExoPlayer tutorial</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

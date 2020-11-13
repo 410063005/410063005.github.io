@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="从官方技术文档的视角来看Instant Run。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译)Instant Run">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/10/26/instant-run/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="从官方技术文档的视角来看Instant Run。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.906Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译)Instant Run">
+<meta name="twitter:description" content="从官方技术文档的视角来看Instant Run。">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/10/26/instant-run/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译)Instant Run | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/10/26/instant-run/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译)Instant Run
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-26 19:39:45" itemprop="dateCreated datePublished" datetime="2018-10-26T19:39:45+08:00">2018-10-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>从官方技术文档的视角来看Instant Run。<br><a id="more"></a><br>本文翻译自<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/README.md" target="_blank" rel="noopener">Instant Run</a></p>
+<h1 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h1><p>Android应用构建工具应当提供更好的代码迭代体验。相对侧重于重新进行完整构建，工具应当以增量方式分发代码变更，可以对这些小的变更进行快速构建、安装和加载。更进一步说，简单的代码变更应当以补丁方式分发和加载到运行中的进程，以避免重新启动整个应用。</p>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><ul>
+<li>提供字节码操作技术用于加载新版本的类文件，加载时不必重新启动运行中的Android应用(称之为hotswap)</li>
+<li>提供运行时库用于加载更新后的Android资源(包括图标，布局等等)，加载时只需要重新启动Android Activity，不必重新启动运行中的Android应用(称之为warmswap)</li>
+<li>对于代码或Android manifest变更导致无法对运行中的进程打补丁的情况，提供基于原始包构建最小差异包的方式来加快分发过程和进程重启过程(称之为coldswap)</li>
+<li>最后，提供基于coldswap的增量分发机制用于发布变更到未运行的进程中，而不必重新构建和部署整个APK</li>
+</ul>
+<h1 id="运行时"><a href="#运行时" class="headerlink" title="运行时"></a>运行时</h1><p>尽管Gradle构建系统可以独立于IDE工作(它可以用命令行调用的方式完成从编译Java代码到打包最终可发布的APK的工作)，但instant run还是被设计成集成到IDE中。所以本文中没有关于在命令行中运行instant run的特性描述。</p>
+<p>一个小的服务器被内嵌到Android设备上运行的应用中。这个服务器开启端口用于跟Android Studio通信。</p>
+<p>当用户在Andriod Studio中修改代码并且重新运行时，Studio调用Gradle构建系统执行增量构建。构建系统会向Studio返回构建结果列表(以下有详细描述)。</p>
+<p>hot swap或warm swap场景下，Studio中的instant run client向Android应用中的instant run server发送构建结果，之后instant run server会收到启动类型通知(不用重启，activity重启，进程重启)并并执行对应类型的启动。对于cold swap而言，新的apk通过<code>adb install-multiple -p</code>进行安装(注：有别于完整构建时的安装方式)。</p>
+<h1 id="检查器"><a href="#检查器" class="headerlink" title="检查器"></a>检查器</h1><p>Android Studio调用Gradle构建后，它并不知道Gradle将产出何种编译结果。<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/gradle-core/src/main/java/com/android/build/gradle/internal/incremental/InstantRunBuildContext.java" target="_blank" rel="noopener">InstantRunBuilderContext</a>会跟踪检查verifier状态，这个状态会在构建过程中更新。构建结束后<code>InstantRunBuilderContext</code>将结果写入到构建信息文件(build-info.xml)中，包括所有的构建结果以及verifier状态，而Android Studio会读取构建信息文件(build-info.xml)进行相应部署。</p>
+<p>检查器(verifier)可能被设置成以下几种方式：</p>
+<ul>
+<li>没有保存任何instant run状态时，设置为<code>INITIAL_BUILD</code></li>
+<li>由Android Studio设置：Android Studio传<code>OptionalCompilationStep.FULL_APK</code>时设置为<code>FULL_BUILD_REQUESTED</code>，传<code>RESTART_ONLY</code>时设置为<code>COLD_SWAP_REQUESTED</code></li>
+<li><code>InstantRunVerifierTransform</code>检查是否可以执行hot swap</li>
+<li><code>NoChangesVerifierTransform</code>有两个实例，一个用于检查Java资源(<code>JAVA_RESOURCES_CHANGED</code>)，另一个用于检查依赖项目(<code>DEPENDENCY_CHANGED</code>)</li>
+<li>manifest发生变化时，设置为<code>MANIFEST_FILE_CHANGED</code>。内联到编译后的manifest文件的resource ID发生变化时，设置为<code>BINARY_MANIFEST_FILE_CHANGED</code></li>
+</ul>
+<p>详细的检查状态列表见<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/InstantRunVerifierStatus.java" target="_blank" rel="noopener">InstantRunVerifierStatus</a>。根据补丁策略(<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/InstantRunPatchingPolicy.java" target="_blank" rel="noopener">InstantRunPatchingPolicy</a>，每个检查状态会映射到一个<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/src/main/java/com/android/build/gradle/internal/incremental/InstantRunBuildMode.java" target="_blank" rel="noopener">InstantRunBuildMode</a>。比如Java资源变化时，在Lollipop以前的设备上会导致全量编译以及multidex，并使用cold swap方式对multi-apk进行部署。当有多个verifier检查结果时只保存一个，处理方式是将多个verifier检查结果组合成一个。比如<code>HOT_WARM</code>和<code>COLD</code>组合成<code>COLD</code>。</p>
+<p>如果<code>InstantRunBuildMode</code>如果是<code>HOT_WARM</code>，则接下来的cold swap任务会在<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/gradle-core/src/main/java/com/android/build/gradle/tasks/PreColdSwapTask.java" target="_blank" rel="noopener">PreColdeSwapTask</a>任务中被禁用。如果构建模式是<code>FULL</code>，<code>InstantRunBuildContext</code>会将之前的构建结果收集到当前构建中来，所以Android Stuio知道要部署所有构建结果。</p>
+<h1 id="Hot-swap"><a href="#Hot-swap" class="headerlink" title="Hot swap"></a>Hot swap</h1><h2 id="Instrmentation"><a href="#Instrmentation" class="headerlink" title="Instrmentation"></a>Instrmentation</h2><p>见<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/build-system/instant-run-instrumentation/README.md" target="_blank" rel="noopener">Instant run byte code instrumentation</a></p>
+<h2 id="Hot-swap分发"><a href="#Hot-swap分发" class="headerlink" title="Hot swap分发"></a>Hot swap分发</h2><p>当构建系统确定上次构建后所有代码的变更支持hot swap，它会使用将发生变更的class文件(经过instant run instrmentation处理)打包成reload.dex。Android Studio使用instant run client将reload.dex发送到instant run server(这个server在Android应用中)。instant run server将dex文件写到磁盘，并创建类加载器加载更新后的类。当方法下次被调用时，调用会重定向到新的实现(译者注：从而实现hot swap，Android进程和Activity都不必重启)。</p>
+<h1 id="Warm-swap"><a href="#Warm-swap" class="headerlink" title="Warm swap"></a>Warm swap</h1><p>当资源以兼容的变更时，用新的资源生成<code>resources._ap</code>文件</p>
+<p>instant run server收到新的资源时会创建新的asset manager(这个asset manager中包含新资源)，并通过Java反射用新的asset manager替换掉已有的asset manager。这一过程的具体实现见<a href="https://android.googlesource.com/platform/tools/base/+/studio-master-dev/instant-run/instant-run-server/src/main/java/com/android/tools/fd/runtime/MonkeyPatcher.java" target="_blank" rel="noopener">MonkeyPatcher</a></p>
+<p>(从技术角度讲)，warm swap中也可以包含hot swap变更。</p>
+<h1 id="Cold-swap"><a href="#Cold-swap" class="headerlink" title="Cold swap"></a>Cold swap</h1><p>当代码的变更超出hot swap可以处理的范围时(比如，增加一个方法或删除一个方法)，这些变更被认为是不兼容的。这种场景下会执行cold swap。</p>
+<p>cold swap的dexing和packaging任务，会从上次cold swap或全量构建中找到所有的变更(注意：上述hot swap和warm swap构建过程中dexing和packaging任务被禁用)。cold swap为发生变更的class生成split APK文件(发生变更是从上次cold swap构建或全量构建算起)。</p>
+<p>Java类在Java package范围内共享，所以如果用户只在一个Java package下修改源文件，则只有一个split APK被创建。</p>
+<p>split APK被push到设备上进行安装(译者注：使用的是<code>adb install-multiple -p</code>命令进行非完整安装)。</p>
+<h2 id="Android-Studio-2-3之前"><a href="#Android-Studio-2-3之前" class="headerlink" title="Android Studio 2.3之前"></a>Android Studio 2.3之前</h2><p>(译者注：Android Studio 2.3之后instant run的实现原理有改进。目前Android Studio 3.2已发布，所以这一节的内容可以忽略。不过为了保持翻译的完整性，还是放上来)</p>
+<p>Android Studio 2.3之前cold swap构建用于生成dex文件，我们使用classloader的黑科技将dex文件添加到应用的classpath中。</p>
+<p>dex文件被推送到设备上，它被保存在app数据目录下的inbox中。重启后应用会找到这些dex文件，并用新的覆盖旧的。instant run用新的dex文件创建application classloader，之后使用代理方式调用原先的应用代码。</p>
+<p>应用没有运行时会重新构建。接下来跟cold swap的场景是一样的，变更会累积起来直到用户最终部署和运行应用。当执行部署命令时，dex文件首先会拷贝到inbox，接着跟cold swap的流程一样，创建application classloader。在一些设备上，instant run功能不可用，这种情况下只能进行全量构建。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/19/dive-into-run/" rel="prev" title="Android Studio是如何运行app的？">
+      <i class="fa fa-chevron-left"></i> Android Studio是如何运行app的？
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/10/28/instant-run-instrumentation/" rel="next" title="(译)Instant Run Instrumentation">
+      (译)Instant Run Instrumentation <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目标"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">2.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运行时"><span class="nav-number">3.</span> <span class="nav-text">运行时</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#检查器"><span class="nav-number">4.</span> <span class="nav-text">检查器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hot-swap"><span class="nav-number">5.</span> <span class="nav-text">Hot swap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Instrmentation"><span class="nav-number">5.1.</span> <span class="nav-text">Instrmentation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hot-swap分发"><span class="nav-number">5.2.</span> <span class="nav-text">Hot swap分发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Warm-swap"><span class="nav-number">6.</span> <span class="nav-text">Warm swap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Cold-swap"><span class="nav-number">7.</span> <span class="nav-text">Cold swap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-Studio-2-3之前"><span class="nav-number">7.1.</span> <span class="nav-text">Android Studio 2.3之前</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

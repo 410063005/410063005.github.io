@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文介绍 LifecycleOwner 的主要概念和基本用法。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Jetpack 学习笔记之 Lifecycle">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/05/05/jetpack-lifecycle/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="本文介绍 LifecycleOwner 的主要概念和基本用法。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/05/05/jetpack-lifecycle/1_RqOdr-NppqAl4elgMY6Qkw.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/05/05/jetpack-lifecycle/Jietu20190506-113922.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.031Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Jetpack 学习笔记之 Lifecycle">
+<meta name="twitter:description" content="本文介绍 LifecycleOwner 的主要概念和基本用法。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2019/05/05/jetpack-lifecycle/1_RqOdr-NppqAl4elgMY6Qkw.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/05/05/jetpack-lifecycle/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android Jetpack 学习笔记之 Lifecycle | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/05/05/jetpack-lifecycle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android Jetpack 学习笔记之 Lifecycle
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-05-05 16:10:06" itemprop="dateCreated datePublished" datetime="2019-05-05T16:10:06+08:00">2019-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文介绍 LifecycleOwner 的主要概念和基本用法。<br><a id="more"></a></p>
+<h1 id="ProcessLifecycleOwner"><a href="#ProcessLifecycleOwner" class="headerlink" title="ProcessLifecycleOwner"></a><a href="https://developer.android.com/reference/androidx/lifecycle/ProcessLifecycleOwner.html" target="_blank" rel="noopener">ProcessLifecycleOwner</a></h1><p>先来看看 <code>ProcessLifecycleOwner</code>。</p>
+<p>为什么先说这个类呢？相信大家可能都有开发这样的一个常见需求：监听当前应用前后台切换，并对此进行响应。这个功能并不复杂，实现 <code>Application.ActivityLifecycleCallbacks</code> 接口即可。问题在于，在 Android 上并没有标准的方法来判断是应用是处于前台还是后台，即使使用 <code>ActivityLifecycleCallbacks</code> 接口，多多少少有些 trick 在其中，所以大部分代码写得并不优雅易读。</p>
+<p>而 <code>ProcessLifecycleOwner</code>，可以被视为 Android 上一个比较标准的监听应用前后台切换的方式。老习惯，先翻译一遍<a href="https://developer.android.com/reference/androidx/lifecycle/ProcessLifecycleOwner.html" target="_blank" rel="noopener">文档</a>。</p>
+<blockquote>
+<p>这个类提供整个应用进程的生命周期。<br>你可以将这个 LifecycleOwner 作为全体 Activity 的 LifecycleOwner，除了 <code>Lifecycle.Event.ON_CREATE</code> 事件只会分发一次，而 <code>Lifecycle.Event.ON_DESTROY</code> 永远不被分发。其他事件的分发遵守以下规则：<br>ProcessLifecycleOwner 会在第一个 Activity 经历 <code>Lifecycle.Event.ON_START</code> 和 <code>Lifecycle.Event.ON_RESUME</code> 事件时分发这些事件。 ProcessLifecycleOwner 会在最后一个 Activity 经历 <code>Lifecycle.Event.ON_PAUSE</code> 和 <code>Lifecycle.Event.ON_STOP</code> 事件 <em>延迟一段时间</em> 分发这些事件。这个延时足够长以确保 ProcessLifecycleOwner 不会在 Activity 由于配置变更而销毁重建期间发送任何事件。<br>这个类非常适用于对 app 前后台状态切换时进行响应、且对生命周期不要求毫秒级准确性的场景。</p>
+</blockquote>
+<p>再来看看 <code>ProcessLifecycleOwner</code> 的用法。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ForegroundMonitorActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_foreground_monitor)</span><br><span class="line"></span><br><span class="line">        AppLifecycleObserver.<span class="keyword">init</span>(application)</span><br><span class="line"></span><br><span class="line">        buttonStartMonitor.setOnClickListener &#123;</span><br><span class="line">            ProcessLifecycleOwner.<span class="keyword">get</span>().lifecycle.addObserver(AppLifecycleObserver)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        buttonStopMonitor.setOnClickListener &#123;</span><br><span class="line">            ProcessLifecycleOwner.<span class="keyword">get</span>().lifecycle.removeObserver(AppLifecycleObserver)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressLint(<span class="meta-string">"StaticFieldLeak"</span>)</span></span><br><span class="line"><span class="keyword">object</span> AppLifecycleObserver : LifecycleObserver &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">lateinit</span> <span class="keyword">var</span> context : Context</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">init</span><span class="params">(context: <span class="type">Context</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.context = context</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@OnLifecycleEvent(Lifecycle.Event.ON_START)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">foreground</span><span class="params">()</span></span> &#123;</span><br><span class="line">        Log.i(<span class="string">"AppLifecycleObserver"</span>, <span class="string">"goto foreground"</span>)</span><br><span class="line">        Toast.makeText(context, <span class="string">"goto foreground"</span>, Toast.LENGTH_SHORT).show()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@OnLifecycleEvent(Lifecycle.Event.ON_STOP)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">background</span><span class="params">()</span></span> &#123;</span><br><span class="line">        Log.i(<span class="string">"AppLifecycleObserver"</span>, <span class="string">"goto background"</span>)</span><br><span class="line">        Toast.makeText(context, <span class="string">"goto background"</span>, Toast.LENGTH_SHORT).show()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码使用 <code>ProcessLifecycleOwner</code> 很优雅地实现了如下功能：</p>
+<ul>
+<li>应用切换到前台时，打印日志并弹出 toast “goto foreground”</li>
+<li>应用切换到后台时，打印日志并弹出 toast “goto background”</li>
+</ul>
+<h1 id="Lifecycle-库"><a href="#Lifecycle-库" class="headerlink" title="Lifecycle 库"></a>Lifecycle 库</h1><h2 id="Lifecycle-的优势"><a href="#Lifecycle-的优势" class="headerlink" title="Lifecycle 的优势"></a>Lifecycle 的优势</h2><p>lifecycle 组件的意义在于更容易组织代码。写过 Android 代码的都知道，常常需要在 Activity/Fragment 的生命周期回调中执行一些操作。比如说：</p>
+<ul>
+<li><code>onCreate()</code> 中初始化某些资源</li>
+<li><code>onDestory()</code> 中释放某些资源</li>
+</ul>
+<p>所以 Activity/Fragment 的代码很容易就越写越多。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> MyLocationListener myLocationListener;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(...)</span> </span>&#123;</span><br><span class="line">        myLocationListener = <span class="keyword">new</span> MyLocationListener(<span class="keyword">this</span>, location -&gt; &#123;</span><br><span class="line">            <span class="comment">// update UI</span></span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStart</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onStart();</span><br><span class="line">        Util.checkUserStatus(result -&gt; &#123;</span><br><span class="line">            <span class="comment">// what if this callback is invoked AFTER activity is stopped?</span></span><br><span class="line">            <span class="keyword">if</span> (result) &#123;</span><br><span class="line">                myLocationListener.start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onStop();</span><br><span class="line">        myLocationListener.stop();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyLocationListener</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyLocationListener</span><span class="params">(Context context, Callback callback)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// connect to system location service</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// disconnect from system location service</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Activity/Fragment 代码多本身并不是问题，真正的问题在于正确性和可测试性。以上述代码为例，它就不能保证正确性和可测试性。</p>
+<ul>
+<li>先说正确性。如果 <code>Util.checkUserStatus()</code> 是一个耗时的异步操作，等到真正调用到 <code>myLocationListener.start()</code> 时可能 Activity 已经处于停止状态，所以无法保证正确性</li>
+<li>再说可测试性。写在 Activity/Fragment 中的代码基本是无法做单元测试的。</li>
+</ul>
+<p>来看 lifecycle 组件是如何解决正确性和可测试性问题的。修改后的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> MyLocationListener myLocationListener;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(...)</span> </span>&#123;</span><br><span class="line">        myLocationListener = <span class="keyword">new</span> MyLocationListener(<span class="keyword">this</span>, getLifecycle(), location -&gt; &#123;</span><br><span class="line">            <span class="comment">// update UI</span></span><br><span class="line">        &#125;);</span><br><span class="line">        Util.checkUserStatus(result -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (result) &#123;</span><br><span class="line">                myLocationListener.enable();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyLocationListener</span> <span class="keyword">implements</span> <span class="title">LifecycleObserver</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> enabled = <span class="keyword">false</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyLocationListener</span><span class="params">(Context context, Lifecycle lifecycle, Callback callback)</span> </span>&#123;</span><br><span class="line">       ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@OnLifecycleEvent</span>(Lifecycle.Event.ON_START)</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (enabled) &#123;</span><br><span class="line">           <span class="comment">// connect</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enable</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        enabled = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (lifecycle.getCurrentState().isAtLeast(STARTED)) &#123;</span><br><span class="line">            <span class="comment">// connect if not connected</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@OnLifecycleEvent</span>(Lifecycle.Event.ON_STOP)</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// disconnect if connected</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改后的代码有这几个好处：</p>
+<ul>
+<li><code>MyLocationListener</code> 可感知生命周期，将生命周期的响应与 Activity 解耦</li>
+<li><code>MyLocationListener</code> 易于测试</li>
+<li><code>MyLocationListener</code> 可以避免在不正确的生命周期时进行回调</li>
+</ul>
+<h2 id="Lifecycle-简介"><a href="#Lifecycle-简介" class="headerlink" title="Lifecycle 简介"></a>Lifecycle 简介</h2><p>lifecycle 组件包括 <code>Lifecycle</code>, <code>LifecycleOwner</code>, <code>LifecycleObserver</code> 三个主要类：</p>
+<ul>
+<li><a href="https://developer.android.com/reference/androidx/lifecycle/Lifecycle.html" target="_blank" rel="noopener">Lifecycle</a> 类持有 Fragment 和 Activity (LifecycleOwner) 的生命周期状态信息，并且允许其他对象(LifecycleObserver)观察这些信息。<ul>
+<li>此外 Lifecycle 还使用 Event 和 Status 来记录组件的生命周期状态</li>
+</ul>
+</li>
+</ul>
+<p><img src="1_RqOdr-NppqAl4elgMY6Qkw.jpg" alt></p>
+<ul>
+<li><a href="https://developer.android.com/reference/androidx/lifecycle/LifecycleOwner.html" target="_blank" rel="noopener">LifecycleOwner</a> 仅有一个 <code>getLifecycle()</code> 方法，用于返回当前对象的 <code>Lifecycle</code>。Fragment 和 Activity 实现了 <code>LifecycleOwner</code> 接口</li>
+<li><a href="https://developer.android.com/reference/androidx/lifecycle/LifecycleObserver.html" target="_blank" rel="noopener">LifecycleObserver</a>，这个接口通常由 app 来实现，用于封装那需要感知生命周期的对象或业务逻辑</li>
+</ul>
+<p>官方文档是这样描述三者的关系的：</p>
+<blockquote>
+<p>LifecycleOwner 接口将 Lifecycle 的所有权从单独的类 (Fragment 和 Activity) 中抽象出来。其他的类也可以实现 LifecycleOwner 接口<br>实现了 LifecycleObserver 接口的组件可以跟实现了 LifecycleOwner 接口的类很好地协同工作，owner 可以提供 lifecycle，而 observer 则注册到 owner 提供的 lifecycle 进行观察</p>
+</blockquote>
+<p>官方给出的关于 lifecycle 的最佳实践：</p>
+<ul>
+<li>UI controller 尽可能”瘦”</li>
+<li>编写数据驱动的 UI，UI controller 的作用仅仅是在数据更新时渲染界面</li>
+<li>数据逻辑放到 ViewModel 中</li>
+<li>使用数据绑定技术保持 view 和 UI controller 之间有干净的接口</li>
+<li>如果 UI 过于复杂，考虑使用 presenter 模式</li>
+<li>避免在 ViewModel 中持有 View 或 UI controller</li>
+</ul>
+<p>官方给出的一些应用场景：</p>
+<ul>
+<li>在精确定位和粗略定位之间切换。使用 lifecycle-aware 组件进行切换，当应用处于前台时使用精确空位，当应用处于后台时切换到粗略定位</li>
+<li>停止或开始视频流缓冲。使用 lifecycle-aware 组件尽早开始缓冲，但直到 app 完全启动后才开始播放</li>
+<li>开始或停止网络连接。使用 lifecycle-aware 组件，当应用在前台时开启网络数据，在后台时则停止</li>
+<li>停止或开始 animated drawable。使用 lifecycle-aware 组件，当应用在前台时播放 animated drawable，在后台时则停止</li>
+</ul>
+<hr>
+<blockquote>
+<p>If a library provides classes that need to work with the Android lifecycle, we recommend that you use lifecycle-aware components. Your library clients can easily integrate those components without manual lifecycle management on the client side.</p>
+</blockquote>
+<p>早期版本的 Glide (v3.7.0之前) 就已经意识到 lifecycle-aware 问题，所以它抽象出以下两个接口来作为解决方案。</p>
+<ul>
+<li><code>com.bumptech.glide.manager.Lifecycle</code></li>
+<li><code>com.bumptech.glide.manager.LifecycleListener</code></li>
+</ul>
+<p>不过 Android 官方推出 lifecycle 组件后，Glide 其实没必要使用自定义接口了。不过截至目前(2019.5.6)它仍然是使用 <a href="https://github.com/bumptech/glide/blob/master/library/src/main/java/com/bumptech/glide/manager/Lifecycle.java" target="_blank" rel="noopener">Lifecycle</a>，也许是有历史包袱，也许是不想信赖 lifecycle 库。</p>
+<h2 id="Lifecycle-与可测试"><a href="#Lifecycle-与可测试" class="headerlink" title="Lifecycle 与可测试"></a>Lifecycle 与可测试</h2><p>将代码从 Activity/Fragment 抽出来封装成 lifecycle-aware 组件后带来的一个额外好处是可以单元测试。(Activity/Fragment 中的代码几乎没办法单元测试！)</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyLifeCycleObserverTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">lateinit</span> <span class="keyword">var</span> lifeCycleObserver: MyLifeCycleObserver</span><br><span class="line">    <span class="keyword">lateinit</span> <span class="keyword">var</span> lifeCycle: LifecycleRegistry</span><br><span class="line">    <span class="keyword">val</span> logger : MyLogger = mock(MyLogger::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">setUp</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> lifeCycleOwner: LifecycleOwner = mock(LifecycleOwner::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        lifeCycle = LifecycleRegistry(lifeCycleOwner)</span><br><span class="line">        lifeCycleObserver = MyLifeCycleObserver(lifeCycle, logger)</span><br><span class="line">        lifeCycle.addObserver(lifeCycleObserver)</span><br><span class="line"></span><br><span class="line">        lifeCycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">shouldLogStart</span><span class="params">()</span></span> &#123;</span><br><span class="line">        lifeCycle.markState(Lifecycle.State.STARTED)</span><br><span class="line">        verify(logger).logStart()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">shouldLogStop</span><span class="params">()</span></span> &#123;</span><br><span class="line">        lifeCycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)</span><br><span class="line">        lifeCycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)</span><br><span class="line">        verify(logger).logStop()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="Jietu20190506-113922.png" alt></p>
+<p>Kotlin 代码中使用 mockito 时会遇到无法 mock final 类的问题，解决方法见<a href="https://antonioleiva.com/mockito-2-kotlin/" target="_blank" rel="noopener">这里</a>。</p>
+<p>完整的代码见 <a href="https://github.com/410063005/cmdemo/blob/master/app/src/main/java/com/sunmoonblog/cmdemo/lifecycle/lifecycle.kt" target="_blank" rel="noopener">Github</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://developer.android.com/topic/libraries/architecture/lifecycle.html" target="_blank" rel="noopener">lifecycle</a></li>
+<li><a href="https://medium.com/@MinaSamy/android-architecture-components-lifecycle-433ace1ec05d" target="_blank" rel="noopener">Android Architecture Components: LifeCycle – Mina Samy – Medium</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/04/30/rxjava-undeliverable-exception/" rel="prev" title="RxJava 2 异常处理分析">
+      <i class="fa fa-chevron-left"></i> RxJava 2 异常处理分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/05/06/jetpack-data-binding/" rel="next" title="(译)Android Jetpack 学习笔记之关于 DataBinding 的争论">
+      (译)Android Jetpack 学习笔记之关于 DataBinding 的争论 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ProcessLifecycleOwner"><span class="nav-number">1.</span> <span class="nav-text">ProcessLifecycleOwner</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lifecycle-库"><span class="nav-number">2.</span> <span class="nav-text">Lifecycle 库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Lifecycle-的优势"><span class="nav-number">2.1.</span> <span class="nav-text">Lifecycle 的优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lifecycle-简介"><span class="nav-number">2.2.</span> <span class="nav-text">Lifecycle 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lifecycle-与可测试"><span class="nav-number">2.3.</span> <span class="nav-text">Lifecycle 与可测试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

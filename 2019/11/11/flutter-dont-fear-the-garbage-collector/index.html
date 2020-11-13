@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="翻译自 Flutter: Don’t Fear the Garbage Collector - Flutter - Medium。这篇文章简要地说明了 Flutter 垃圾收集器的工作原理，以及它对 Flutter 应用的影响。">
+<meta name="keywords" content="Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译) Flutter：不要担心垃圾收集器">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/11/11/flutter-dont-fear-the-garbage-collector/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="翻译自 Flutter: Don’t Fear the Garbage Collector - Flutter - Medium。这篇文章简要地说明了 Flutter 垃圾收集器的工作原理，以及它对 Flutter 应用的影响。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/12/15734765481070.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/12/15734792877537.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.044Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译) Flutter：不要担心垃圾收集器">
+<meta name="twitter:description" content="翻译自 Flutter: Don’t Fear the Garbage Collector - Flutter - Medium。这篇文章简要地说明了 Flutter 垃圾收集器的工作原理，以及它对 Flutter 应用的影响。">
+<meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/12/15734765481070.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/11/11/flutter-dont-fear-the-garbage-collector/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译) Flutter：不要担心垃圾收集器 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/11/11/flutter-dont-fear-the-garbage-collector/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译) Flutter：不要担心垃圾收集器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-11-11 20:40:42" itemprop="dateCreated datePublished" datetime="2019-11-11T20:40:42+08:00">2019-11-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>翻译自 <a href="https://medium.com/flutter/flutter-dont-fear-the-garbage-collector-d69b3ff1ca30" target="_blank" rel="noopener">Flutter: Don’t Fear the Garbage Collector - Flutter - Medium</a>。这篇文章简要地说明了 Flutter 垃圾收集器的工作原理，以及它对 Flutter 应用的影响。</p>
+<a id="more"></a>
+<p>本文要点总结如下：</p>
+<ul>
+<li>Dart 运行时支持 JIT 和 AOT 两种不同模式，分别用于 debug 和 release</li>
+<li>Dart 垃圾收集器支持分代回收</li>
+<li>Dart 垃圾收集器新生代清理阶段是阻塞的，但速度比并行标记/并发清理阶段速度要快</li>
+<li>Flutter 引擎通知 Dart 垃圾收集器新生代清理阶段在应用空闲或没有用户交互时工作，减少到 UI 性能影响</li>
+<li>开发者通常不应通过持有对象引用来干预 Dart 垃圾回收</li>
+</ul>
+<p>Flutter 使用 <a href="https://www.dartlang.org/" target="_blank" rel="noopener">Dart</a> 作为开发语言和运行时。Dart 的运行时一开始就支持 debug 模式和 release 模式，但两者之间有很大差异。</p>
+<p>在 debug 模式下，Dart 的大部分模块被加载到设备：包括 Dart 运行时、JIT 编译器/解释器 (Android 下是 JIT 编译器，iOS 下是解释器)、调试服务以及分析服务。而在 release 模式下，JIT/解释器和调试服务被移除，只保留 Dart 运行时，它的体积在 Flutter 应用体积中占大头。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/12/15734765481070.jpg" alt="Debug 模式与 Release 模式"></p>
+<p>Dart 的运行时中包含一个垃圾收集器，它是实例化对象以及对象变得不可达过程中分配和回收内存的必要组件。</p>
+<p>Flutter 应用中会产生大量对象。这些对象在 Stateless Widget 渲染到屏幕时被创建，当应用状态改变或 Widget 不可见时被销毁或重建，大部分 Wiget 对象都是短生命周期。对 UI 复杂的应用来说，可能有数几千个 Widget。</p>
+<p>那么 Flutter 开发者需要担心垃圾收集器吗？Flutter 会非常频繁创建和销毁对象，开发者需要限制这种行为吗？新手 Flutter 开发者创建为一段时间内不会变化的 Widget 创建引用，并且在状态数据保留这些引用以避免 Widget 重建的做法很常见。</p>
+<p><strong>但不要这样做！</strong></p>
+<p>担心 Dart 的垃圾收集器是毫无根据的，因为它有分代回收架构，并且其实现为快速创建和销毁对象优化过。大部分场景下，你应当让 Flutter 引擎自行创建和销毁所有的 Widget。</p>
+<h1 id="Dart-垃圾收集器"><a href="#Dart-垃圾收集器" class="headerlink" title="Dart 垃圾收集器"></a>Dart 垃圾收集器</h1><p>Dart 的垃圾收集器支持分代回收 (<a href="https://en.wikipedia.org/wiki/Tracing_garbage_collection#Generational_GC_(ephemeral_GC" target="_blank" rel="noopener">generational</a>))，垃圾回收由两个阶段组成：新生代清理阶段以及并行标记收集阶段。</p>
+<h2 id="调度"><a href="#调度" class="headerlink" title="调度"></a>调度</h2><p>为最小化垃圾收集对应用和 UI 性能的影响，垃圾收集器为 Flutter 引擎提供勾子，当引擎检查到应用空闲并且没有用户交互时会通知垃圾收集器开始工作。这可以让垃圾收集器有机会在不影响性能的情况下进行收集。垃圾收集器还可以在空闲期运行滑动压缩(sliding compaction)，减少内存碎片以降低内存占用。</p>
+<h2 id="新生代清理器"><a href="#新生代清理器" class="headerlink" title="新生代清理器"></a>新生代清理器</h2><p>新生代清理器 (Young Space Scavenger)。这个阶段用于清理那短生命周期的临时对象，比如无状态的 Widget。尽管它是阻塞式，但仍然比第二阶段的标记/清理过程快得多，再加上上述的调度策略，实际上消除掉了应用运行期间可感知的暂停。</p>
+<p>分配对象实质上是分配一块连续的内存，对象被创建时会分配到下一块可用的已分配内存空间，直到已分配内存耗尽。Dart 使用 bump pointer allocation 算法在新的空间中快速分配 (原文：Dart uses bump pointer allocation to rapidly allocate in new space, making the process very fast)</p>
+<p>新的内存空间 (或称之为 nursery) 是新对象分配的地方，由两部分组成(也就是 semi spaces)。任何时刻只使用这两部分中的一部分：一部分活跃，则另一部分不活跃。新对象分配在活跃的那部分中，当这一部分被占满时，将仍然存活的对象从活跃部分拷贝到不活跃部分，忽略已死亡的对象。之后不活跃的部分变成活跃部分，如此往复。</p>
+<p>垃圾收集器从根对象开始判断哪些对象存活，哪些对象死亡，比如栈变量 (stack variables) 是一种根对象。垃圾收集器会检查栈变量引用了谁，然后移动这些被引用的对象，之后垃圾收集器又检查被移动的对象指向什么地方，并且继续移动被引用的对象。这个过程一直继续直到所有存活对象被移动。已死亡的对象不被引用，因此被直接丢弃。未来某次垃圾收集过程中存活的对象被拷贝并覆盖掉这些已死亡的对象。</p>
+<p>更多信息请参考 <a href="https://en.wikipedia.org/wiki/Cheney%27s_algorithm" target="_blank" rel="noopener">Cheney’s algorithm</a>。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/11/12/15734792877537.jpg" alt></p>
+<h2 id="并行标记和并发清理"><a href="#并行标记和并发清理" class="headerlink" title="并行标记和并发清理"></a>并行标记和并发清理</h2><p>当对象到达某个寿命，它们被提升到另一块新的内存空间，该空间由第二代收集器管理：标记清理。</p>
+<p>这个垃圾收集技术有两个阶段：首先遍历对象图并标记仍在使用的对象。在第二个阶段扫描整个内存，回收所有没被标记的对象。之后所有的标记都被清理。</p>
+<p>这种形式的垃圾收集会在标记阶段阻塞；不能进行任何内存操作，UI 线程也被阻塞。这种形式的垃圾收集不像新生代清理器处理短暂对象那样频繁，但 Dart 运行时有时会暂停以执行垃圾收集。考虑到 Flutter 垃圾收集的调度策略 (见上一节)，暂停的影响会被最小化。</p>
+<p>但是要注意如果应用并不遵守弱代假设(原文：the weak generational hypothesis， 这个假设认为大部分对象是短生命周期的)，那么这种形式的垃圾收集会运行得更多。考虑到 Flutter Widget 的工作原理，虽然这种情况的可能性并不大，但要牢记。</p>
+<h1 id="Isolates"><a href="#Isolates" class="headerlink" title="Isolates"></a>Isolates</h1><p>值得注意的是，Dart isolates 拥有自己私有的堆，每个 isolate 堆跟其他 isolate 完全独立。每个 isolate 在独立线程中运行，一个 isolate 上的垃圾收集事件并不影响另外 isolate 的性能。使用 isolate 是避免阻塞 UI 和密集计算压力的好方法。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>到此你应该知道：Dart 使用一个强大的分代垃圾收集器来最小化 Flutter 应用中的垃圾收集时的阻塞影响。不要担心垃圾收集器，它已经考虑到应用的最大利益。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/01/flutter-customappbar-safearea/" rel="prev" title="Flutter UI 问题分析小结">
+      <i class="fa fa-chevron-left"></i> Flutter UI 问题分析小结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/13/dart-type-system/" rel="next" title="Dart 的类型系统">
+      Dart 的类型系统 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dart-垃圾收集器"><span class="nav-number">1.</span> <span class="nav-text">Dart 垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调度"><span class="nav-number">1.1.</span> <span class="nav-text">调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新生代清理器"><span class="nav-number">1.2.</span> <span class="nav-text">新生代清理器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并行标记和并发清理"><span class="nav-number">1.3.</span> <span class="nav-text">并行标记和并发清理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Isolates"><span class="nav-number">2.</span> <span class="nav-text">Isolates</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近一次技术分享中遗留的两个疑问。分享时并不完全了解，下来后简单整理了一下，记录之。">
+<meta name="keywords" content="Android,Kotlin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="两个小的技术问题">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/06/04/tech-problems/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="最近一次技术分享中遗留的两个疑问。分享时并不完全了解，下来后简单整理了一下，记录之。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/06/04/tech-problems/lifecycle-states.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.875Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="两个小的技术问题">
+<meta name="twitter:description" content="最近一次技术分享中遗留的两个疑问。分享时并不完全了解，下来后简单整理了一下，记录之。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/06/04/tech-problems/lifecycle-states.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/06/04/tech-problems/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>两个小的技术问题 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/06/04/tech-problems/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          两个小的技术问题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-06-04 20:14:13" itemprop="dateCreated datePublished" datetime="2018-06-04T20:14:13+08:00">2018-06-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近一次技术分享中遗留的两个疑问。分享时并不完全了解，下来后简单整理了一下，记录之。<br><a id="more"></a></p>
+<h1 id="Java中调用Kotlin的扩展方法"><a href="#Java中调用Kotlin的扩展方法" class="headerlink" title="Java中调用Kotlin的扩展方法"></a>Java中调用Kotlin的扩展方法</h1><p>Kotlin中分别给Int和String添加如下扩展函数<code>cm()</code>。完整代码见<a href="https://github.com/410063005/FragmentLifeCircle/blob/master/demo-arch/src/test/java/com/example/cm/demo_arch/ExtensionDemoTest.java" target="_blank" rel="noopener">这里</a></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ExtensionDemo.kt</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="built_in">Int</span>.<span class="title">cm</span><span class="params">()</span></span> &#123;</span><br><span class="line">    println(<span class="string">"<span class="variable">$this</span>"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> String.<span class="title">toInt</span><span class="params">()</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">try</span> &#123;</span><br><span class="line">        Integer.parseInt(<span class="keyword">this</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">        <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如何在Java代码中调用？形式是否能像Kotlin中那样简洁？</p>
+<p><strong>答案是否</strong>。Java代码调用方式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ExtensionDemoKt.cm(<span class="number">1</span>);</span><br><span class="line">    ExtensionDemoKt.toInt(<span class="string">"123"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看看Kotlin生成的Java代码就容易明白为什么要这样调用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Metadata</span>(</span><br><span class="line">   mv = &#123;<span class="number">1</span>, <span class="number">1</span>, <span class="number">7</span>&#125;,</span><br><span class="line">   bv = &#123;<span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>&#125;,</span><br><span class="line">   k = <span class="number">2</span>,</span><br><span class="line">   d1 = &#123;<span class="string">"\u0000\u0012\n\u0000\n\u0002\u0010\u0002\n\u0002\u0010\b\n\u0000\n\u0002\u0010\u000e\n</span></span><br><span class="line"><span class="string">   \u0000\u001a\n\u0010\u0000\u001a\u00020\u0001*\u00020\u0002\u001a\n\u0010\u0003\u001a\u00020</span></span><br><span class="line"><span class="string">   \u0002*\u00020\u0004¨\u0006\u0005"</span>&#125;,</span><br><span class="line">   d2 = &#123;<span class="string">"cm"</span>, <span class="string">""</span>, <span class="string">""</span>, <span class="string">"toInt"</span>, <span class="string">""</span>, <span class="string">"test sources for module demo-arch"</span>&#125;</span><br><span class="line">)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ExtensionDemoKt</span> </span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">cm</span><span class="params">(<span class="keyword">int</span> $receiver)</span> </span>&#123;</span><br><span class="line">      String var1 = <span class="string">""</span> + $receiver;</span><br><span class="line">      System.out.println(var1);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">toInt</span><span class="params">(@NotNull String $receiver)</span> </span>&#123;</span><br><span class="line">      Intrinsics.checkParameterIsNotNull($receiver, <span class="string">"$receiver"</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">int</span> var1;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">         var1 = Integer.parseInt($receiver);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (Exception var3) &#123;</span><br><span class="line">         var1 = <span class="number">0</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> var1;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总结：Kotlin的扩展函数本质上是生成以被扩展类的对象作为”receiver”参数的static方法。所以，在Java中调用Kotlin扩展函数就只能以调用普通static方法的方式进行。</p>
+<h1 id="Lifecycle的顺序问题"><a href="#Lifecycle的顺序问题" class="headerlink" title="Lifecycle的顺序问题"></a>Lifecycle的顺序问题</h1><p>有一个LifecycleObserver，它的<code>test5()</code>响应<code>Lifecycle.Event.ON_CREATE</code>事件。在Activity.onCreate()期间执行addObserver()添加这个LifecycleObserver，<code>test5()</code>会被正确执行吗(能否输出”test5: ON_CREATE”吗) 完整代码见<a href="https://github.com/410063005/FragmentLifeCircle/blob/master/demo-arch/src/main/java/com/example/cm/demo_arch/lifecycle/MyLifecycleObserver.java" target="_blank" rel="noopener">这里</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LifecycleOwnerActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        getLifecycle().addObserver(<span class="keyword">new</span> MyLifecycleObserver());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyLifecycleObserver</span> <span class="keyword">implements</span> <span class="title">LifecycleObserver</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"MyLifecycleObserver"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@OnLifecycleEvent</span>(Lifecycle.Event.ON_CREATE)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test5</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Log.d(TAG, <span class="string">"test5: ON_CREATE"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>答案是 <strong>可以正确输出</strong>。由于<code>getLifecycle().addObserver()</code>最终会执行到<code>android.arch.lifecycle.LifecycleRegistry.addObserver()</code>方法，所以对<code>LifecycleRegistry.addObserver()</code>源码进行分析。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// android.arch.lifecycle.LifecycleRegistry.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addObserver</span><span class="params">(@NonNull LifecycleObserver observer)</span> </span>&#123;</span><br><span class="line">    State initialState = mState == DESTROYED ? DESTROYED : INITIALIZED;</span><br><span class="line">    ObserverWithState statefulObserver = <span class="keyword">new</span> ObserverWithState(observer, initialState);</span><br><span class="line">    ObserverWithState previous = mObserverMap.putIfAbsent(observer, statefulObserver);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (previous != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    LifecycleOwner lifecycleOwner = mLifecycleOwner.get();</span><br><span class="line">    <span class="keyword">if</span> (lifecycleOwner == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// it is null we should be destroyed. Fallback quickly</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">boolean</span> isReentrance = mAddingObserverCounter != <span class="number">0</span> || mHandlingEvent;</span><br><span class="line">    State targetState = calculateTargetState(observer);</span><br><span class="line">    mAddingObserverCounter++;</span><br><span class="line">    <span class="keyword">while</span> ((statefulObserver.mState.compareTo(targetState) &lt; <span class="number">0</span></span><br><span class="line">            &amp;&amp; mObserverMap.contains(observer))) &#123;</span><br><span class="line">        pushParentState(statefulObserver.mState);</span><br><span class="line">        statefulObserver.dispatchEvent(lifecycleOwner, upEvent(statefulObserver.mState));</span><br><span class="line">        popParentState();</span><br><span class="line">        <span class="comment">// mState / subling may have been changed recalculate</span></span><br><span class="line">        targetState = calculateTargetState(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!isReentrance) &#123;</span><br><span class="line">        <span class="comment">// we do sync only on the top level.</span></span><br><span class="line">        sync();</span><br><span class="line">    &#125;</span><br><span class="line">    mAddingObserverCounter--;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ObserverWithState</span> </span>&#123;</span><br><span class="line">    State mState;</span><br><span class="line">    GenericLifecycleObserver mLifecycleObserver;</span><br><span class="line"></span><br><span class="line">    ObserverWithState(LifecycleObserver observer, State initialState) &#123;</span><br><span class="line">        mLifecycleObserver = Lifecycling.getCallback(observer);</span><br><span class="line">        mState = initialState;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dispatchEvent</span><span class="params">(LifecycleOwner owner, Event event)</span> </span>&#123;</span><br><span class="line">        State newState = getStateAfter(event);</span><br><span class="line">        mState = min(mState, newState);</span><br><span class="line">        mLifecycleObserver.onStateChanged(owner, event);</span><br><span class="line">        mState = newState;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，addObserver()会将原始的observer包装成带状态的statefulObserver。由于是在Activity.onCreate()方法调用addObserver()，所以statefulObserver的当前状态是<code>INITIALIZED</code>。</p>
+<p><code>upEvent(statefulObserver.mState)</code>根据当前状态生成Event对象，这个对象被<code>statefulObserver.dispatchEvent()</code>方法分发给mLifecycleObserver(注意它是另一个对原始observer的包装)。</p>
+<p>分发Event后statefulObserver进入下一状态，<code>CREATED</code>。更多状态变化见下图。</p>
+<p><img src="lifecycle-states.png" alt></p>
+<p>而<code>ObserverWithState.mLifecycleObserver</code>是通过<code>Lifecycling.getCallback()</code>静态方法获取到的，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GenericLifecycleObserver mLifecycleObserver = Lifecycling.getCallback(observer)</span><br></pre></td></tr></table></figure>
+<p>正是通过<code>Lifecycling.getCallback()</code>方法，我们可一览<code>LifecycleObserver</code>家族全貌。其中，除<code>LifecycleObserver</code>接口对外公开之外，全部是lifecycle内部使用的类。</p>
+<ul>
+<li>LifecycleObserver</li>
+<li>FullLifecycleObserver</li>
+<li>GenericLifecycleObserver</li>
+<li>FullLifecycleObserverAdapter</li>
+<li>SingleGeneratedAdapterObserver</li>
+<li>CompositeGeneratedAdaptersObserver</li>
+<li>ReflectiveGenericLifecycleObserver</li>
+</ul>
+<p>对于我们的<code>MyLifecycleObserver</code>，<code>Lifecycling.getCallback(observer)</code>方法将其包装成ReflectiveGenericLifecycleObserver。而ReflectiveGenericLifecycleObserver的关键在于CallbackInfo和ClassesInfoCache。代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ReflectiveGenericLifecycleObserver</span> <span class="keyword">implements</span> <span class="title">GenericLifecycleObserver</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object mWrapped;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CallbackInfo mInfo;</span><br><span class="line"></span><br><span class="line">    ReflectiveGenericLifecycleObserver(Object wrapped) &#123;</span><br><span class="line">        mWrapped = wrapped;</span><br><span class="line">        mInfo = ClassesInfoCache.sInstance.getInfo(mWrapped.getClass());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStateChanged</span><span class="params">(LifecycleOwner source, Event event)</span> </span>&#123;</span><br><span class="line">        mInfo.invokeCallbacks(source, event, mWrapped);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">CallbackInfo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Map&lt;Lifecycle.Event, List&lt;MethodReference&gt;&gt; mEventToHandlers;</span><br><span class="line">    <span class="keyword">final</span> Map&lt;MethodReference, Lifecycle.Event&gt; mHandlerToEvent;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不难理解<code>ClassesInfoCache.createInfo(Class klass, @Nullable Method[] declaredMethods)</code>方法的作用是：</p>
+<p>解析其klass参数，找到带有<code>OnLifecycleEvent</code>注解的方法，将这些方法包装成<code>MethodReference</code>。最后，MethodReference会保存在mEventToHandlers。</p>
+<p>最后梳理一下，整个调用顺序是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LifecycleRegistry.addObserver()</span><br><span class="line"></span><br><span class="line">ObserverWithState.dispatchEvent()</span><br><span class="line"></span><br><span class="line">ReflectiveGenericLifecycleObserver.onStateChanged()</span><br><span class="line"></span><br><span class="line">CallbackInfo.invokeCallbacks()</span><br><span class="line"></span><br><span class="line">MethodReference.invokeCallback()</span><br><span class="line"></span><br><span class="line">Method.invoke()</span><br></pre></td></tr></table></figure>
+<p>这里的Method，正是<code>MyLifecycleObserver.test5()</code>方法，它以反射的方法被lifecycle库调用。</p>
+<h1 id="补充知识"><a href="#补充知识" class="headerlink" title="补充知识"></a>补充知识</h1><p><code>LifecycleOwner</code>是一个接口，实现该接口的类具有生命周期<code>Lifecycle</code>。<a href="https://developer.android.com/reference/android/support/v4/app/Fragment" target="_blank" rel="noopener">Fragment</a>和<a href="https://developer.android.com/reference/android/support/v7/app/AppCompatActivity.html" target="_blank" rel="noopener">AppCompatActivity</a>实现了<code>LifecycleOwner</code>接口，具有生命周期。</p>
+<p>实现了<code>LifecycleObserver</code>接口的组件可以跟<code>LifecycleOwner</code>协同工作，因为它能观察<code>LifecycleOwner</code>的<code>Lifecycle</code>。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://developer.android.com/topic/libraries/architecture/lifecycle" target="_blank" rel="noopener">lifecycle</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+              <a href="/tags/kotlin/" rel="tag"># Kotlin</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/05/31/support-library-26-0-0/" rel="prev" title="记support库兼容性相关的一个bug">
+      <i class="fa fa-chevron-left"></i> 记support库兼容性相关的一个bug
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/06/21/app-overdraw-1/" rel="next" title="记一次减少过度绘制实战">
+      记一次减少过度绘制实战 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java中调用Kotlin的扩展方法"><span class="nav-number">1.</span> <span class="nav-text">Java中调用Kotlin的扩展方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lifecycle的顺序问题"><span class="nav-number">2.</span> <span class="nav-text">Lifecycle的顺序问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充知识"><span class="nav-number">3.</span> <span class="nav-text">补充知识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

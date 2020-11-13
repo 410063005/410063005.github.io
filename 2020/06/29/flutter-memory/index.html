@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="翻译自 Using the Memory view，学习如何使用 DevTools 中的来分析 Flutter 应用的内存。">
+<meta name="keywords" content="Flutter,翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译) 使用 DevTools 分析 Flutter 内存">
+<meta property="og:url" content="http://www.sunmoonblog.com/2020/06/29/flutter-memory/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="翻译自 Using the Memory view，学习如何使用 DevTools 中的来分析 Flutter 应用的内存。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15952331308847.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15952347134525.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15952351903784.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15952353620278.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15952357576151.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15952458407426.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.049Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译) 使用 DevTools 分析 Flutter 内存">
+<meta name="twitter:description" content="翻译自 Using the Memory view，学习如何使用 DevTools 中的来分析 Flutter 应用的内存。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/15952331308847.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2020/06/29/flutter-memory/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译) 使用 DevTools 分析 Flutter 内存 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/06/29/flutter-memory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译) 使用 DevTools 分析 Flutter 内存
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-06-29 20:34:41" itemprop="dateCreated datePublished" datetime="2020-06-29T20:34:41+08:00">2020-06-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>翻译自 <a href="https://raw.githubusercontent.com/flutter/website/master/src/docs/development/tools/devtools/memory.md" target="_blank" rel="noopener">Using the Memory view</a>，学习如何使用 DevTools 中的来分析 Flutter 应用的内存。</p>
+<a id="more"></a>
+<p>个人感觉目前 DevTools (0.8.0)还不太稳定，我的 Mac 机器上查看内存一段时间后经常无响应。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; flutter pub global list</span><br><span class="line">devtools 0.8.0+2</span><br></pre></td></tr></table></figure>
+<h2 id="它是什么"><a href="#它是什么" class="headerlink" title="它是什么?"></a>它是什么?</h2><p>使用类构建方法(比如，<code>new MyClass()</code> 或 <code>MyClass()</code>)分配的 Dart 对象存活于称为堆的内存中。</p>
+<!--DevTools Memory pane lets you peek at how an isolate is using
+memory at a given moment. This pane, using Snapshot and
+Reset, can display accumulator counts. The accumulators
+can be used to study the rate of memory allocations,
+if you suspect your application is leaking memory or has
+other bugs relating to memory allocation.-->
+<p>DevTools 的内存面板用于查看指定时刻时的 isolate 内存。这个面板使用 Snapshot 和 Reset 来展示 accumulator 计数。如果你怀疑应用中存在内存泄漏或其他内存相关的 bug，可以使用 accumulator 分析内存分配情况。</p>
+<!--Memory profiling consists of four parts, each increasing
+in granularity:-->
+<p>内存分析由四部分组成，精细度从低到高分别是:</p>
+<ul>
+<li>Memory overview chart</li>
+<li>Event timeline</li>
+<li>Snapshot classes</li>
+<li>Class instances</li>
+</ul>
+<!--
+<p>  <strong>Use [profile mode][] when running your app to analyze performance.</strong><br>  Memory usage is not indicative of release performance unless your<br>  application is run in profile mode. In general, memory usage is<br>  fairly accurate, in relative terms, between debug, release, or<br>  profile modes. Profile mode might show higher absolute memory usage<br>  because a service isolate is created to profile your application.<br>  This isolate won’t exist in release mode. Absolute memory used might<br>  also be higher in debug versus release mode. In release mode,<br>  work can be computed and optimized ahead of time, while in debug<br>  mode that same work might have to be computed at runtime,<br>  requiring more information.<br>–&gt;</p>
+<blockquote>
+<p><strong>分析性能时请以 [profile mode][<a href="https://flutter.dev/docs/testing/build-modes#profile]">https://flutter.dev/docs/testing/build-modes#profile]</a> 启动应用。</strong> 除非以 profile mode 运行，否则看到的内存使用量并不代表实际发布模式的内存使用量。无论是 debug, release 还是 profile 模式，测出来的内存值都是相当准确的。不过由于要启动一个 service isolate 用于分析应用，所以 profile mode 可能会显示更高的绝对内存使用量。这个 isolate 在发布模式下并不存在。相比发布模式，debug 模式的绝对内存使用量也会更高。在发布模式中，可以提前进行计算或优化处理，而在 debug 模式中相同工作只能在运行时进行，所以需要更多信息(译者注: 也意味占用更多内存)。</p>
+</blockquote>
+<!--## Memory anatomy
+-->
+<h2 id="内存分析"><a href="#内存分析" class="headerlink" title="内存分析"></a>内存分析</h2><!--Use a timeseries graph to visualize the state of the Flutter memory
+at successive intervals of time. Each data point on the chart
+corresponds to the timestamp (x-axis) of measured quantities (y-axis)
+of the heap, for example, usage, capacity, external, garbage
+collection, and resident set size.-->
+<p>使用时间序列图形来可视化一段连续时间内的 Flutter 内存状态。图表中的每个数据点分别对应堆(heap)的时间戳(x轴)和测量值(y轴)。测量值有多种，比如 usage, capacity, external, garbage<br>collection, 和 resident set size</p>
+<p><img src="/images/15952331308847.jpg" alt></p>
+<!--<dl markdown="1">
+<dt markdown="1">**Legend**</dt>
+<dd>All collected measurements regarding the memory.
+    Clicking a legend name hides or shows that data.</dd>
+<dt markdown="1">**Range selector**</dt>
+<dd>All memory data collected (timeseries).
+    The left-most or first time/data (memory information),
+    in the selector is when the application was launched.
+    The right-most or last time/data is the continual memory
+    information being received (live) until the application is
+    stopped.</dd>
+<dt markdown="1">**Range selector view**</dt>
+<dd>Detailed view of the data collected
+    for this timeseries range (non-gray area).</dd>
+<dt markdown="1">**X-axis timestamp**</dt>
+<dd>Time of the collected memory information
+    (capacity, used, external, RSS (resident set size),
+    and GC (garbage collection).</dd>
+<dt markdown="1">**Hover information of collected data**</dt>
+<dd>At a particular time (x-axis) the detailed collected
+    memory data.</dd>
+<dt markdown="1">**Garbage collection occurred**</dt>
+<dd>Compaction of the heap occurred.</dd>
+<dt markdown="1">**Event timeline**</dt>
+<dd>When a user action occurred (such as the
+    Snapshot or Reset button being clicked).</dd>
+<dt markdown="1">**Snapshot**</dt>
+<dd markdown="1">Display a table of current active
+    memory objects (see
+    [Snapshot classes](#snapshot-classes)).
+<dt markdown="1">**Reset accumulator**</dt>
+<dd markdown="1">Reset values, to zero, under the
+    Accumulator column in the Snapshot classes table.
+<dt markdown="1">**Filtering classes**</dt>
+<dd>PENDING</dd>
+<dt markdown="1">**Snapshot classes**</dt>
+<dd>Clicking the Snapshot button (top right area)
+    displays a table of current memory objects.
+    The memory objects can be sorted by class name,
+    size, allocated instances, and so on.</dd>
+<dt markdown="1">**Accumulator counts since reset**</dt>
+<dd>Clicking the Reset button (top right area) resets
+    the accumulated instances count. Clicking Snapshot
+    after a reset displays the number of new instances
+    allocated since last reset.
+    This is useful for finding memory leaks.</dd>
+<dt markdown="1">**Class instances**</dt>
+<dd>Clicking a class in the Snapshot class table
+    displays the number of active instances for that class.</dd>
+<dt markdown="1">**Inspecting contents of an instance**</dt>
+<dd>PENDING</dd>
+<dt markdown="1">**Total active objects and classes in the heap**</dt>
+<dd>Total classes allocated in the heap and total objects
+    (instances) in the heap.</dd>
+-->
+<p><strong>图例</strong></p>
+<p>所有收集到的内存相关的测量值。点击图例名会隐藏或显示对应数据。</p>
+<p><strong>Range selector</strong></p>
+<p>所有收集到的内存数据(时间线)。selector 中最左边/第一个 time/data(或 memory information)对应于应用启动时，最右边/最后一个 time/data 对应于应用结束时收到内存信息。</p>
+<p><strong>Range selector view</strong></p>
+<p>timeserie range 中收集到的的数据的详细视图。</p>
+<p><strong>X轴 时间戳</strong></p>
+<p>收集到内存信息时对应的时间(capacity, used, external, RSS (resident set size),<br>   和 GC (garbage collection)。</p>
+<p><strong>Hover information of collected data</strong></p>
+<p>特定时间(x-axis)详细的内存数据。</p>
+<p><strong>Garbage collection occurred</strong></p>
+<p>Compaction of the heap occurred.</p>
+<p><strong>Event timeline</strong></p>
+<p>用户操作发生的时间 (such as the Snapshot or Reset button being clicked)</p>
+<p><strong>Snapshot</strong></p>
+<p>以表格形式显示内存中存活的对象</p>
+<p><strong>Reset accumulator</strong></p>
+<p>将 Snapshot class 表中 Accumulator 那一列下的值重置为 0</p>
+<p><strong>Filtering classes</strong></p>
+<p>PENDING</p>
+<p><strong>Snapshot classes</strong></p>
+<p>点击右上角的 Snapshot 按钮将显示以表格形式显示内存中的对象。这些对象可以按类名、大小、实例等条件排序。</p>
+<p><strong>Accumulator counts since reset</strong></p>
+<p>点击右上角的 Reset 按钮将重置 accumulated instances count。点击重置之后再点击 Snapshot 将展示上次重置之后新分配的实例。这在查找内存泄漏时非常有用。</p>
+<p><strong>Class instances</strong></p>
+<p>点击 Snapshot class 表中的 class 将展示该类对应的存活实例。</p>
+<p><strong>Inspecting contents of an instance</strong></p>
+<p>PENDING</p>
+<p><strong>Total active objects and classes in the heap</strong></p>
+<p>堆中分配的全部类以及全部对象</p>
+<h2 id="Memory-overview-chart"><a href="#Memory-overview-chart" class="headerlink" title="Memory overview chart"></a>Memory overview chart</h2><p><img src="/images/15952347134525.jpg" alt></p>
+<p>这是一个用于帮助可视化展示不同时间 heap 内存情况的时间序列图。</p>
+<p>图中的 x-axis 是时间线。它在应用运行时每 500ms 读取一次内存值。y-axis 上(从上到下)的分别是：</p>
+<p><strong>Capacity</strong></p>
+<p>当前堆大小</p>
+<p><strong>GC</strong></p>
+<p>是事发生 GC。更多关于 Dart 如何处理 GC 请参考 <a href="https://medium.com/flutter/flutter-dont-fear-the-garbage-collector-d69b3ff1ca30" target="_blank" rel="noopener">Don’t Fear the Garbage Collector</a></p>
+<p><strong>Used</strong></p>
+<p>堆中的 Dart 对象</p>
+<p><strong>External</strong></p>
+<p>不在 Dart 堆中但仍然是总内存的一部分的那部分内存。在 external 内存中的对象是 native object(比如，已解码的图片)。原生系统使用 Dart embedder 向 Dart VM 暴露这些对象。Dart embedder 创建 Dart wrapper 用于 Dart 代码跟这些原生资源通信。</p>
+<!--<dd markdown="1">Memory that is not in the Dart heap but is still part
+  of the total memory footprint. Objects in external memory would be
+  native objects (for example, from a memory read from a file,
+  or a decoded image). The native objects are exposed to the Dart
+  VM from the native OS (such as Android, Linux, Windows, iOS)
+  using a Dart embedder. The embedder creates a Dart wrapper with
+  a finalizer, allowing Dart code to communicate with these native
+  resources. Flutter has an embedder for Android and iOS.
+  For more information, see [Dart on the Server][server] or
+  [Custom Flutter Engine Embedders][embedder].
+-->
+<p><img src="/images/15952351903784.jpg" alt></p>
+<p>想查看 RSS (resident set size)，在图例中点击 RSS 的名字即可。</p>
+<!--To view RSS (resident set size), click the name of the RSS located
+in the legend.-->
+<ul>
+<li>RSS 显示了进程使用的全部内存。它不包含被 swap out 的内存，但包含已加载的 shared library 内存，以及全部的栈内存和堆内存。</li>
+</ul>
+<!--* The resident set size displays the amount of memory to a process.
+  It doesn't include memory that is swapped out. It includes memory
+  from shared libraries that are loaded, as well as all stack and
+  heap memory.-->
+<!--For more information, see [Dart VM internals][vm].-->
+<p>更多信息请参考 <a href="https://mrale.ph/dartvm/" target="_blank" rel="noopener">Dart VM internals</a>。</p>
+<h2 id="时间线"><a href="#时间线" class="headerlink" title="时间线"></a>时间线</h2><p><img src="/images/15952353620278.jpg" alt></p>
+<p>这个图表展示了 DevTools 事件与跟内存时间线的关系。停在时间线的标记上将展示事件发生的时机。这个功能有助于发现可能的内存泄漏。</p>
+<!--This chart displays DevTools events (such as Snapshot and Reset button
+clicks) in relation to the memory chart timeline. Hovering over the
+markers in the Event timeline displays the time when the event occurred.
+This helps identify when a memory leak might have occurred in the
+timeline (x-axis).-->
+<!--Clicking the **Snapshot** button shows the current state of the heap with
+regard to all active classes and their instances. When the **Reset** button
+is pressed, the accumulator for all classes resets to zero.
+The reset is temporally tied, using a faint blue horizontal bar,
+to the previous snapshot. Clicking the **Reset** button again resets the
+accumulators since the last reset and temporally ties the latest
+reset to the previous reset.-->
+<p><strong>Snapshot</strong> 按钮将显示当前堆中所有存活的 class 及其实例。点击 <strong>Reset</strong> 按钮时，所有 accumulator 重置成 0。使用浅蓝色水平条将 Reset 跟之前的 Snapshot 连接。再次点击 <strong>Reset</strong> 按钮时重置 accumulator 并且暂时将最新的 reset 跟上次 reset 连接。</p>
+<h2 id="Snapshot-classes"><a href="#Snapshot-classes" class="headerlink" title="Snapshot classes"></a>Snapshot classes</h2><p><img src="/images/15952357576151.jpg" alt></p>
+<p>这个面板显示堆中分配的 class 及其所有实例，已分配内存大小，以及 accumulator (从上次 reset 开始计起)</p>
+<!--This pane shows classes allocated in the heap, total instances,
+total bytes allocated, and an accumulator of allocations since
+the last reset.-->
+<p><strong>Size</strong></p>
+<p>堆中当前对象占用的全部内存</p>
+<p><strong>Count</strong></p>
+<p>堆中当前对象数量</p>
+<p><strong>Accumulator</strong></p>
+<p>上次 reset 后堆中的对象数量</p>
+<p><strong>Class</strong></p>
+<p>当前 class 的对象数量。点击类名会显示该类的实例列表</p>
+<h2 id="Class-instances"><a href="#Class-instances" class="headerlink" title="Class instances"></a>Class instances</h2><!--Displays a list of class instances by their handle name.
+[PENDING: add a link to inspecting data values.]
+-->
+<p>展示类实例列表。</p>
+<h2 id="Memory-actions"><a href="#Memory-actions" class="headerlink" title="Memory actions"></a>Memory actions</h2><p><img src="/images/15952458407426.jpg" alt></p>
+<h3 id="Liveness-of-the-memory-overview-chart"><a href="#Liveness-of-the-memory-overview-chart" class="headerlink" title="Liveness of the memory overview chart"></a>Liveness of the memory overview chart</h3><p><strong>Pause</strong></p>
+<p>暂停 memory overview 以查看当前数据。注意：此时仍然会接收数据；Range selector 继续往右更新。</p>
+<p><strong>Resume</strong></p>
+<p>memory overview 正在运行中，展示最新时间以及最新的内存数据。</p>
+<h3 id="Managing-the-objects-and-statistics-in-the-heap"><a href="#Managing-the-objects-and-statistics-in-the-heap" class="headerlink" title="Managing the objects and statistics in the heap"></a>Managing the objects and statistics in the heap</h3><p><strong>Snapshot</strong></p>
+<p>返回堆中的存活对象列表。Accumulator 那一列展示了上次 reset 后分配对象的数量</p>
+<p><strong>Reset</strong></p>
+<p>重置 Snapshot classes table 中的 Accumulator 列，并刷新数据</p>
+<p><strong>Filter</strong></p>
+<p>Snapshot classes table 只展示选中的 package 下的 class</p>
+<p><strong>GC</strong></p>
+<p>发起 GC</p>
+<!--## Glossary of VM terms-->
+<h2 id="VM-术语汇总"><a href="#VM-术语汇总" class="headerlink" title="VM 术语汇总"></a>VM 术语汇总</h2><!--Here are some computer science concepts that will help you better
+understand how your application uses memory.-->
+<p>这里是一些有助于你更好理解应用是如何使用内存的计算机科学基础概念。</p>
+<!--<dd>GC is the process of searching the
+    heap to locate, and reclaim, regions of "dead" memory&mdash;memory
+    that is no longer being used by an application. This process
+    allows the memory to be re-used and minimizes the risk of an
+    application running out of memory, causing it to crash. Garbage
+    collection is performed automatically by the Dart VM. In DevTools,
+    you can perform garbage collection on demand by clicking the
+    GC button.</dd>-->
+<p><dl markdown="1"></dl></p>
+<p><dt markdown="1"><strong>Garbage collection (GC)</strong></dt></p>
+<dd>GC 是指在堆中定位和回收已”死亡”的内存的过程&mdash;即不再被应用使用的内存。这个过程允许内存被重新使用，将应用内存不足导致崩溃的风险最小化。Dart VM 自动回收垃圾。在 DevTools 中可以点击 GC 按钮主动回收垃圾。</dd><br><dt markdown="1"><strong>Heap</strong></dt><br><dd>Dart 对象在内存上动态分配，这块内存称之为堆。堆上分配的对象不再被引用时(由 GC 完成)或应用结束时将会释放。一个对象不被引用时，认为它已死亡。一个对象被引用时，它则是存活的。</dd><br><dt markdown="1"><strong>Isolates</strong></dt><br><dd markdown="1">Dart 通过 isolate 来支持并发。可以将 isolate 理解成无开销的进程。每个 isolate 有自己的内存和代码，它们不会被其他 isolate 影响。详情请参考 [The Event Loop and Dart][event-loop].<br><dt markdown="1"><strong>Memory leak</strong></dt><br><dd>当对象仍然存活(意味着另一个对象引用它)，却不再被使用(即其他对象不应引用它)时认为发生了内存泄漏。这种对象无法被 GC，所以会仍然占用堆空间，导致内存碎片。内存泄漏给 VM 带来不必要的压力，难以调试。</dd><br><dt markdown="1"><strong>Virtual machine (VM)</strong></dt><br><dd>Dart 虚拟机是直接执行 Dart 代码的软件。</dd>
+
+<p>[embedder]: /flutter/flutter/wiki/Custom-Flutter-Engine-Embedders<br>[vm]: <a href="https://mrale.ph/dartvm/" target="_blank" rel="noopener">https://mrale.ph/dartvm/</a><br>[event-loop]: NaN/articles/archive/event-loop<br>[profile mode]: /docs/testing/build-modes#profile<br>[release mode]: /docs/testing/build-modes#release<br>[debug mode]: /docs/testing/build-modes#debug<br>[Don’t Fear the Garbage Collector]: NaN/flutter-dont-fear-the-garbage-collector-d69b3ff1ca30</p>
+</dd>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+              <a href="/tags/翻译/" rel="tag"># 翻译</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/24/dart-protobuf/" rel="prev" title="Dart Protobuf 用法简介">
+      <i class="fa fa-chevron-left"></i> Dart Protobuf 用法简介
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/30/dartvm/" rel="next" title="Introduction to Dart VM">
+      Introduction to Dart VM <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#它是什么"><span class="nav-number">1.</span> <span class="nav-text">它是什么?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存分析"><span class="nav-number">2.</span> <span class="nav-text">内存分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-overview-chart"><span class="nav-number">3.</span> <span class="nav-text">Memory overview chart</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间线"><span class="nav-number">4.</span> <span class="nav-text">时间线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Snapshot-classes"><span class="nav-number">5.</span> <span class="nav-text">Snapshot classes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Class-instances"><span class="nav-number">6.</span> <span class="nav-text">Class instances</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-actions"><span class="nav-number">7.</span> <span class="nav-text">Memory actions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Liveness-of-the-memory-overview-chart"><span class="nav-number">7.1.</span> <span class="nav-text">Liveness of the memory overview chart</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Managing-the-objects-and-statistics-in-the-heap"><span class="nav-number">7.2.</span> <span class="nav-text">Managing the objects and statistics in the heap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VM-术语汇总"><span class="nav-number">8.</span> <span class="nav-text">VM 术语汇总</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

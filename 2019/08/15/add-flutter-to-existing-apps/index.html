@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="不得不说 Flutter v1.7 仍然没有足够稳定，个人感觉玩玩 demo 还行，集成到已有工程项目仍然各种奇怪的坑。">
+<meta name="keywords" content="Android,Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter 踩坑记之集成 Flutter 到 Android 工程">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/08/15/add-flutter-to-existing-apps/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="不得不说 Flutter v1.7 仍然没有足够稳定，个人感觉玩玩 demo 还行，集成到已有工程项目仍然各种奇怪的坑。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15658346775705.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15658350152128.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.042Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flutter 踩坑记之集成 Flutter 到 Android 工程">
+<meta name="twitter:description" content="不得不说 Flutter v1.7 仍然没有足够稳定，个人感觉玩玩 demo 还行，集成到已有工程项目仍然各种奇怪的坑。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/15658346775705.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/08/15/add-flutter-to-existing-apps/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Flutter 踩坑记之集成 Flutter 到 Android 工程 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/08/15/add-flutter-to-existing-apps/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Flutter 踩坑记之集成 Flutter 到 Android 工程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-08-15 09:57:59" itemprop="dateCreated datePublished" datetime="2019-08-15T09:57:59+08:00">2019-08-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>不得不说 Flutter v1.7 仍然没有足够稳定，个人感觉玩玩 demo 还行，集成到已有工程项目仍然各种奇怪的坑。<br><a id="more"></a></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>你可能会反驳我的观点，不是很产品都已经开始在发布产品中使用 Flutter 了吗，怎么到了你这里就不成熟稳定。</p>
+<p>的确，已经不少产品使用 Flutter，我非常佩服这些将 Flutter 用于正式产品的团队，一是这得是踩过了多少坑，二是他们为后来人积累了不少宝贵经验。但我作为 Flutter 新手却仍然会轻易踩到一些坑，有些坑可能是 Flutter 代码 bug，有些坑仅仅只是 Flutter 文档更新不及时而已。这里举两个例子。</p>
+<h2 id="不存在的-flutter-build-aar-命令"><a href="#不存在的-flutter-build-aar-命令" class="headerlink" title="不存在的 flutter build aar 命令"></a>不存在的 <code>flutter build aar</code> 命令</h2><p><a href="https://github.com/flutter/flutter/wiki/Add-Flutter-to-existing-apps" target="_blank" rel="noopener">Add Flutter to existing apps · flutter/flutter Wiki</a> 是关于如何向已有 Android 工程集成 Flutter 的官方文档。</p>
+<p>截图显示该文档6天前更新。今天是 2019-08-15，所以文档最后编辑日期是 2019-08-09，可以认为它已经足够新了。</p>
+<p><img src="/images/15658346775705.jpg" alt="-w949"></p>
+<p>文档中提到两种集成 Flutter 至现有 Android 工程的方式。方式一是将 Flutter 模块编译成 aar 文件，作为 Android 工程的依赖。文档中给出的编译命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd some/path/my_flutter</span><br><span class="line">$ flutter build aar</span><br></pre></td></tr></table></figure>
+<p>我的 Flutter 版本如下(已是目前最新)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  flutter git:(stable) flutter --version</span><br><span class="line">Flutter 1.7.8+hotfix.4 • channel stable • https://github.com/flutter/flutter.git</span><br><span class="line">Framework • revision 20e59316b8 (4 weeks ago) • 2019-07-18 20:04:33 -0700</span><br><span class="line">Engine • revision fee001c93f</span><br><span class="line">Tools • Dart 2.4.0</span><br></pre></td></tr></table></figure>
+<p>但是我本地的 Flutter 运行 <code>flutter build aar</code> 后提示根本就不支持 aar 子命令！当前可支持的子命令如下：</p>
+<p><img src="/images/15658350152128.jpg" alt="-w885"></p>
+<p>推测这是一处文档错误。</p>
+<h2 id="可笑的-libflutter-so-加载失败问题"><a href="#可笑的-libflutter-so-加载失败问题" class="headerlink" title="可笑的 libflutter.so 加载失败问题"></a>可笑的 <code>libflutter.so</code> 加载失败问题</h2><p>Flutter 另一个极坑的问题是由于某种原因加载不到 <code>libflutter.so</code> 导致应用崩溃。关于这个问题的 issue 超级多，随便就能搜出一大堆，比如 <a href="https://github.com/azihsoyn/flutter_mlkit/issues/36" target="_blank" rel="noopener">issue#36</a>。官方给出的理由不少理由说这个问题不是问题，但我认为它大大减少了 Flutter 的易用性。</p>
+<p>加载 <code>libflutter.so</code> 失败的原因有很多种。这里只分析原工程中存在 <code>jniLibs/armeabi</code> 目录导致 <code>libflutter.so</code> 压根没有打包到的 APK 的情形，简单总结如下：</p>
+<p>早期的安卓普通是 armeabi 架构，而目前普遍是 armeabi-v7a 架构，可简单理解为 <strong>armeabi 架构已废弃</strong>。所以 APK 推荐使用 <code>jniLibs/armeabi-v7a</code> 目录来放 so 库，而不是放在 <code>jniLibs/armeabi</code> 目录中 。不过由于 armeabi-v7a 是兼容 armeabi 的，所以虽然很多老旧项目将 so 放在 <code>jniLibs/armeabi</code> 运行时其实也不会有问题。</p>
+<p>但是由于 Flutter 官方只提供了四种 CPU 架构的 so 库：armeabi-v7a、arm64-v8a、x86 和 x86-64，这就会导致旧的 Android 项目中集成 Flutter 时出问题。问题就是，很可能压根就没将 <code>libflutter.so</code> 打包到 APK！</p>
+<h1 id="坑"><a href="#坑" class="headerlink" title="坑"></a>坑</h1><h2 id="坑一：找不到-include-flutter-groovy-脚本"><a href="#坑一：找不到-include-flutter-groovy-脚本" class="headerlink" title="坑一：找不到 include_flutter.groovy 脚本"></a>坑一：找不到 <code>include_flutter.groovy</code> 脚本</h2><p>严格来说这个坑是我自己的问题，没有注意到项目目录结构。</p>
+<p><a href="https://github.com/flutter/flutter/wiki/Add-Flutter-to-existing-apps" target="_blank" rel="noopener">Add Flutter to existing apps · flutter/flutter Wiki</a> 使用如下命令在 <code>some/path/my_flutter</code> 中生成 Flutter 模块，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd some/path/</span><br><span class="line">$ flutter create -t module --org com.example my_flutter</span><br></pre></td></tr></table></figure>
+<p>在原有 Android 项目的 app 模块中添加如下配置用于集成 Flutter：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// MyApp/settings.gradle</span><br><span class="line">include &apos;:app&apos;                                     // assumed existing content</span><br><span class="line">setBinding(new Binding([gradle: this]))                                 // new</span><br><span class="line">evaluate(new File(                                                      // new</span><br><span class="line">  settingsDir.parentFile,                                               // new</span><br><span class="line">  &apos;my_flutter/.android/include_flutter.groovy&apos;                          // new</span><br><span class="line">))                                                                      // new</span><br></pre></td></tr></table></figure>
+<p>一开始的我的 <code>my_flutter</code> 模块目录结构是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">some/path/</span><br><span class="line">  |--- MyApp</span><br><span class="line">       |--- setting.gradle</span><br><span class="line">       |--- build.gradle</span><br><span class="line">       |--- my_flutter</span><br><span class="line">       |--- app</span><br><span class="line">             |--- build.gradle</span><br></pre></td></tr></table></figure>
+<p>提示找不到 <code>include_flutter.groovy</code>，发现是目录不正确。</p>
+<p><strong>建议将 <code>my_flutter</code> 跟 Android 根项目平级，而不是作为其子目录</strong>，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">some/path/</span><br><span class="line">  |--- my_flutter</span><br><span class="line">  |--- MyApp</span><br><span class="line">       |--- setting.gradle</span><br><span class="line">       |--- build.gradle</span><br><span class="line">       |--- app</span><br><span class="line">             |--- build.gradle</span><br></pre></td></tr></table></figure>
+<h2 id="坑二：-加载-libflutter-so-失败"><a href="#坑二：-加载-libflutter-so-失败" class="headerlink" title="坑二： 加载 libflutter.so 失败"></a>坑二： 加载 libflutter.so 失败</h2><p>前面说到我在老项目中集成 Flutter 时遇到没将 <code>libflutter.so</code> 打包到 APK 的问题，网上找到不少解决办法：</p>
+<ul>
+<li><a href="https://juejin.im/post/5c3444116fb9a049e6606bc4" target="_blank" rel="noopener">Flutter杂症</a>  </li>
+<li><a href="https://tech.meituan.com/2018/08/09/waimai-flutter-practice.html" target="_blank" rel="noopener">Flutter原理与实践</a></li>
+<li><a href="https://fucknmb.com/2019/02/26/Flutter-Engine-%E7%BC%96%E8%AF%91%E6%8C%87%E5%8C%97/" target="_blank" rel="noopener">Flutter Engine 编译指北 | 区长</a></li>
+</ul>
+<p>我嫌以上方法都太麻烦，就用了一种简单粗暴且有效的办法：找到 <code>libflutter.so</code> 放在项目的 <code>jniLibs/armeabi</code> 目录。(当然，开发中确实有效，但实际上 Flutter 为 debug, release 以及 profile 三种模式提供不同版本的 <code>libflutter.so</code>，所以这种做法在发布时是不可取的)</p>
+<p>另外我尝试将 <code>armeabi</code> 目录重命名为 <code>armeabi-v7a</code> 并将 <code>abiFilters &quot;armeabi&quot;</code> 修改 <code>abiFilters &quot;armeabi-v7a&quot;</code>也能保证将 <code>libflutter.so</code> 打包到 APK 中。</p>
+<h2 id="坑三-无法启动-Dart-VM"><a href="#坑三-无法启动-Dart-VM" class="headerlink" title="坑三 无法启动 Dart VM"></a>坑三 无法启动 Dart VM</h2><p>解决上面的坑之后，debug 包不再报找不到 <code>libflutter.so</code> 了。但是遇到类似如下的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2019-06-24 11:08:24.366 30834-30834/com.alarmnet.tc2 E/flutter: [ERROR:flutter/runtime/dart_vm_data.cc(19)] VM snapshot invalid and could not be inferred from settings.</span><br><span class="line">2019-06-24 11:08:24.366 30834-30834/com.alarmnet.tc2 E/flutter: [ERROR:flutter/runtime/dart_vm.cc(241)] Could not setup VM data to bootstrap the VM from.</span><br><span class="line">2019-06-24 11:08:24.366 30834-30834/com.alarmnet.tc2 E/flutter: [ERROR:flutter/runtime/dart_vm_lifecycle.cc(89)] Could not create Dart VM instance.</span><br><span class="line">2019-06-24 11:08:24.366 30834-30834/com.alarmnet.tc2 A/flutter: [FATAL:flutter/shell/common/shell.cc(218)] Check failed: vm. Must be able to initialize the VM.</span><br><span class="line">2019-06-24 11:08:24.368 30834-30834/com.alarmnet.tc2 A/libc: Fatal signal 6 (SIGABRT), code -6 in tid 30834 (om.alarmnet.tc2)</span><br></pre></td></tr></table></figure>
+<p>一头雾水。通过对比 Android 项目中集成 Flutter 模块生成的 debug APK，以及纯 Flutter 项目生成的 debug APK，发现前者中缺少 <code>assets/flutter_assets</code>。</p>
+<p>原来是因为打包时 <code>assets/flutter_assets</code> 丢失导致 dart 虚拟机无法启动。简单办法也简单，<code>my_flutter</code> 模块是可以直接编译的，它生成的中间文件中包含 <code>flutter_assets</code>，拷贝一份放在 <code>MyApp/app</code> 模块的 <code>assets</code> 中即可。</p>
+<p>(注：<code>assets/flutter_assets</code> 丢失的根本原因是 <code>flutter:copyFlutterAssetsDebug</code> 任务没有正确运行，原因不详)</p>
+<p>解决上面的坑之后，终于成功将 Flutter 集成到 debug APK 中并成功运行。</p>
+<p>(注：虽然成功但很失望，因为 debug 模式下 Flutter 的性能明显太低。另外，手动拷贝 <code>flutter_assets</code> 目录在发布产品时是不可行的)</p>
+<hr>
+<p>试着编个 release APK 包玩一下，又遇到另一个无法启动 Dart VM 的问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2019-08-16 18:22:46.093 32010-32010/? A/flutter: [FATAL:flutter/runtime/dart_vm.cc(380)] Error while initializing the Dart VM: Precompiled runtime requires a precompiled snapshot</span><br><span class="line">2019-08-16 18:22:46.179 32092-32092/? A/DEBUG: Abort message: &apos;[FATAL:flutter/runtime/dart_vm.cc(380)] Error while initializing the Dart VM: Precompiled runtime requires a precompiled snapshot</span><br></pre></td></tr></table></figure>
+<p>欲哭无泪。</p>
+<p>(未完待续。问题还没解决，但怕自己拖延，所以还是先发出来)。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/18/java-datainputstream-readutf/" rel="prev" title="记 Java DataInputStream.readUTF() 的一个小坑">
+      <i class="fa fa-chevron-left"></i> 记 Java DataInputStream.readUTF() 的一个小坑
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/08/20/flutter-examples/" rel="next" title="Flutter Sample 解析">
+      Flutter Sample 解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#不存在的-flutter-build-aar-命令"><span class="nav-number">1.1.</span> <span class="nav-text">不存在的 flutter build aar 命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可笑的-libflutter-so-加载失败问题"><span class="nav-number">1.2.</span> <span class="nav-text">可笑的 libflutter.so 加载失败问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#坑"><span class="nav-number">2.</span> <span class="nav-text">坑</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#坑一：找不到-include-flutter-groovy-脚本"><span class="nav-number">2.1.</span> <span class="nav-text">坑一：找不到 include_flutter.groovy 脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#坑二：-加载-libflutter-so-失败"><span class="nav-number">2.2.</span> <span class="nav-text">坑二： 加载 libflutter.so 失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#坑三-无法启动-Dart-VM"><span class="nav-number">2.3.</span> <span class="nav-text">坑三 无法启动 Dart VM</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

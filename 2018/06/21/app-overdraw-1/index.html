@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="去掉不必要的背景是减少过度绘制的一种简单的方式。如何在实际项目应该该技巧呢？">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次减少过度绘制实战">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="去掉不必要的背景是减少过度绘制的一种简单的方式。如何在实际项目应该该技巧呢？">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/merc-1-overdraw.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/no-overdraw.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/1-overdraw.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/layout-inspector.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/layout-inspector.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/layout-inspector2.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/merc-1-overdraw.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/merc-0-overdraw.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.875Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="记一次减少过度绘制实战">
+<meta name="twitter:description" content="去掉不必要的背景是减少过度绘制的一种简单的方式。如何在实际项目应该该技巧呢？">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/merc-1-overdraw.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>记一次减少过度绘制实战 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/06/21/app-overdraw-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记一次减少过度绘制实战
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-06-21 15:14:03" itemprop="dateCreated datePublished" datetime="2018-06-21T15:14:03+08:00">2018-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>去掉不必要的背景是减少过度绘制的一种简单的方式。如何在实际项目应该该技巧呢？<br><a id="more"></a></p>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><a href="https://developer.android.com/topic/performance/rendering/overdraw?hl=zh-cn#fixing" target="_blank" rel="noopener">官方</a>提供了几个减少过度绘制的常见策略：</p>
+<ul>
+<li>Removing unneeded backgrounds in layouts.</li>
+<li>Flattening the view hierarchy.</li>
+<li>Reducing transparency.</li>
+</ul>
+<p>其中第一个策略简单易用，主要涉及到的开发工具包括：</p>
+<ul>
+<li>GPU呈现模式分析 (Profile GPU Rendering)</li>
+<li>调试GPU过度绘制</li>
+<li>Layout Inspector</li>
+</ul>
+<h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>分析app过度绘制问题时发现应用中的某个页面过度绘制次数比预期中的多一次。见下图中的蓝色区域。</p>
+<p><img src="merc-1-overdraw.png" alt></p>
+<p>多次检查该页面未发现问题原因。于是重新写一个完全为空的页面，不妨称之EmptyActivity，发现有如下现象：</p>
+<ul>
+<li>如果EmptyActivity直接继承自AppCompatActivity，过度绘制次数为0，符合预期。</li>
+<li>如果EmptyActivity继承自我们自定义的BaseActivity，过度绘制次数为1，比预期中多一次。</li>
+</ul>
+<p>见对比结果</p>
+<div align="center"><br><img src="no-overdraw.png" width="50%" alt="图片说明"><img src="1-overdraw.png" width="50%" alt="图片说明"><br></div>
+
+<p>预期应该是左图，没有过度绘制(无颜色)。但实际却是右图，有一次过度绘制(蓝色)。推测问题是由BaseActivity引起。</p>
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>EmptyActivity是空白页面，所以从它开始分析BaseActivity的问题还是相当方便的。很快就找到问题，BaseActivity以id为common_base_activity_layout的LinearLayout作为根布局，子类提供的实际布局通过<code>setSubContentView()</code>被添加到根布局。而<code>setSubContentView()</code>会给根布局设置一个默认的背景色。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LinearLayout mLayout;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line"></span><br><span class="line">        setContentView(R.layout.base_activity);</span><br><span class="line">        mLayout = (LinearLayout) findViewById(R.id.common_base_activity_layout);</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">setSubContentView</span><span class="params">(View view, <span class="keyword">int</span> color)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (color != <span class="number">0</span>) &#123;</span><br><span class="line">            mLayout.setBackgroundColor(color);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        view.setLayoutParams(<span class="keyword">new</span> LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, <span class="number">1</span>));</span><br><span class="line">        mLayout.addView(view);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Layout Inspector中很容易看到上述根布局的背景色：</p>
+<p><img src="layout-inspector.png" alt></p>
+<p>而app的主题中也通过<code>android:windowBackground</code>属性给所有的Window添加了一个默认背景色，所以不可避免地多出一次过度绘制。</p>
+<h1 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h1><p>Window的背景色和根布局的背景色，我们可以只取其一。考虑到主题中设置Window背景色更直观易维护，所以去掉了根布局的背景色。</p>
+<div align="center"><br><img src="layout-inspector.png" width="50%" alt="图片说明"><img src="layout-inspector2.png" width="50%" alt="图片说明"><br></div>
+
+
+<p>还记得过度绘制的颜色规则么？参考自<a href="https://developer.android.com/studio/profile/inspect-gpu-rendering?hl=zh-cn" target="_blank" rel="noopener">官网</a></p>
+<ul>
+<li>真彩色： 没有过度绘制</li>
+<li>蓝色： 过度绘制 1 次</li>
+<li>绿色： 过度绘制 2 次</li>
+<li>粉色： 过度绘制 3 次</li>
+<li>红色： 过度绘制 4 次或更多</li>
+</ul>
+<p><strong>去掉了根布局的背景色，为App整体上减少一次不必要的过度绘制。</strong> 所以你会发现优化后app里原先的蓝色变成了无色，绿色变成了蓝色，粉色变成了绿色。</p>
+<p><img src="merc-1-overdraw.png" alt><br><img src="merc-0-overdraw.png" alt></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/06/04/tech-problems/" rel="prev" title="两个小的技术问题">
+      <i class="fa fa-chevron-left"></i> 两个小的技术问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/07/22/glide-basic/" rel="next" title="Glide基础">
+      Glide基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">2.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题分析"><span class="nav-number">3.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决方法"><span class="nav-number">4.</span> <span class="nav-text">解决方法</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

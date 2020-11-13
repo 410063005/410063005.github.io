@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Gradle学习笔记，记录一些零散的知识点。">
+<meta name="keywords" content="Gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle学习笔记">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/03/20/gradle-groovy-note/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Gradle学习笔记，记录一些零散的知识点。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/03/20/gradle-groovy-note/project-dependency.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/03/20/gradle-groovy-note/project-hierarchy.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/03/20/gradle-groovy-note/project-property.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/03/20/gradle-groovy-note/project-method.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.868Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle学习笔记">
+<meta name="twitter:description" content="Gradle学习笔记，记录一些零散的知识点。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/03/20/gradle-groovy-note/project-dependency.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/03/20/gradle-groovy-note/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Gradle学习笔记 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/03/20/gradle-groovy-note/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Gradle学习笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-03-20 16:58:08" itemprop="dateCreated datePublished" datetime="2018-03-20T16:58:08+08:00">2018-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Gradle学习笔记，记录一些零散的知识点。<br><a id="more"></a></p>
+<p>总结如下：</p>
+<ul>
+<li>project实例跟<code>build.gradle</code>是一一对应的</li>
+<li>settings实例跟<code>settings.gradle</code>是一一对应的</li>
+<li>project是由一系列task组成的</li>
+<li>task是由一系列action组成的</li>
+<li>task之间可能有依赖关系和顺序关系</li>
+<li>所有的脚本都实现了<code>Script</code>接口</li>
+<li>build script的代理对象是<code>project</code></li>
+<li>initialization script的代理对象是<code>gradle</code></li>
+</ul>
+<h1 id="Project"><a href="#Project" class="headerlink" title="Project"></a><a href="http://gradledoc.qiniudn.com/1.12/dsl/org.gradle.api.Project.html#org.gradle.api.Project:configurations(groovy.lang.Closure)" target="_blank" rel="noopener">Project</a></h1><blockquote>
+<p>There is a one-to-one relationship between a Project and a build.gradle file.  A project is essentially a collection of Task objects.</p>
+</blockquote>
+<p>project实例跟<code>build.gradle</code>是一一对应的，使用build.gradle对相应的Project实例进行配置。<br>project是由一系列task组成的。</p>
+<h2 id="project的依赖"><a href="#project的依赖" class="headerlink" title="project的依赖"></a>project的依赖</h2><ul>
+<li>依赖管理</li>
+<li>配置管理</li>
+<li>artifact管理</li>
+<li>仓库管理</li>
+</ul>
+<p><img src="project-dependency.png" alt></p>
+<h2 id="project的层级"><a href="#project的层级" class="headerlink" title="project的层级"></a>project的层级</h2><blockquote>
+<p>Projects are arranged into a hierarchy of projects. A project has a name, and a fully qualified path which uniquely identifies it in the hierarchy.</p>
+</blockquote>
+<p><img src="project-hierarchy.png" alt></p>
+<p>这个项目的project hierarchy如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">➜  demo ./gradlew  projects -q</span><br><span class="line"></span><br><span class="line">------------------------------------------------------------</span><br><span class="line">Root project</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">Root project &apos;demo&apos;</span><br><span class="line">+--- Project &apos;:sub1&apos;</span><br><span class="line">\--- Project &apos;:sub2&apos;</span><br></pre></td></tr></table></figure>
+<h2 id="project的属性和方法"><a href="#project的属性和方法" class="headerlink" title="project的属性和方法"></a>project的属性和方法</h2><blockquote>
+<p>A project has 5 property ‘scopes’, which it searches for properties. </p>
+</blockquote>
+<p>project的动态属性有5种不同的scope</p>
+<p><img src="project-property.png" alt></p>
+<blockquote>
+<p>A project has 5 method ‘scopes’, which it searches for methods</p>
+</blockquote>
+<p>project的动态method有5种不同的scope</p>
+<p><img src="project-method.png" alt></p>
+<p>Ext属性</p>
+<blockquote>
+<p>All extra properties must be created through the “ext” namespace</p>
+</blockquote>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project.ext.prop1 = <span class="string">'test'</span></span><br></pre></td></tr></table></figure>
+<h1 id="Settings"><a href="#Settings" class="headerlink" title="Settings"></a><a href="http://gradledoc.qiniudn.com/1.12/dsl/org.gradle.api.initialization.Settings.html" target="_blank" rel="noopener">Settings</a></h1><blockquote>
+<p>There is a one-to-one correspondence between a Settings instance and a settings.gradle settings file. </p>
+</blockquote>
+<p>settings实例跟<code>settings.gradle</code>是一一对应的，使用settings.gradle对相应的Settings实例进行配置<br>使用<code>Settings.include()</code>方法指定需要构建的project</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include <span class="string">':sub1'</span>, <span class="string">':sub2'</span></span><br></pre></td></tr></table></figure>
+<h1 id="Script"><a href="#Script" class="headerlink" title="Script"></a><a href="http://gradledoc.qiniudn.com/1.12/dsl/org.gradle.api.Script.html" target="_blank" rel="noopener">Script</a></h1><blockquote>
+<p>Generally, a Script object will have a delegate object attached to it </p>
+</blockquote>
+<p>编译后的脚本对应的类都实现了<code>Script</code>接口。这个接口定义了Gradle特定的方法，可以直接在脚本中使用这些方法。</p>
+<p><code>Script</code>实例都带有一个代理对象。比如build script有<code>project</code>代理对象，而initialization script有<code>gradle</code>代理对象。</p>
+<p><code>apply</code>和<code>buildscript</code>这两个我们经常使用的方法其实是来自<code>Script</code>接口。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'java'</span></span><br><span class="line">buildscript &#123;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Task"><a href="#Task" class="headerlink" title="Task"></a><a href="http://gradledoc.qiniudn.com/1.12/dsl/org.gradle.api.Task.html" target="_blank" rel="noopener">Task</a></h1><blockquote>
+<p>A Task represents a single atomic piece of work for a build. Each task belongs to a Project. A Task is made up of a sequence of Action objects. </p>
+</blockquote>
+<p>task可能对其他task有依赖，并且对执行顺序有要求<br>task是由一系列action组成的</p>
+<h1 id="理解Gradle文档"><a href="#理解Gradle文档" class="headerlink" title="理解Gradle文档"></a>理解Gradle文档</h1><p>Gradle的文档结构跟JDK的文档稍稍有所不同。JDK文档中通常只包括<code>Properties</code>和<code>Methods</code>，而Gradle文档还列出了一些特有的部分，具体如下：</p>
+<ul>
+<li>Dynamic Properties - 动态属性， 这里的属性可能是插件添加进来的</li>
+<li>Dynamic Methods - 动态方法，这里的方法可能是插件添加进来的</li>
+<li>Properties</li>
+<li>Methods</li>
+<li>Script blocks - 闭包</li>
+</ul>
+<p>另外Gradle的类和接口可以划分成以下四大类：</p>
+<ul>
+<li>Build script blocks</li>
+<li>Core types</li>
+<li>Container types</li>
+<li>Task types</li>
+</ul>
+<h1 id="理解Groovy代理"><a href="#理解Groovy代理" class="headerlink" title="理解Groovy代理"></a>理解Groovy代理</h1><p>TODO</p>
+<!--
+# 思考
+Gradle官方文档中提到
+
+> Dynamic properties will eventually be removed entirely, meaning that this will be a fatal error in future versions of Gradle. See Extra Properties to learn how to add properties dynamically.
+
+文档中的意思是未来将完全去掉project的动态属性？个
+
+人也感觉动态属性非常复杂，可能引起很多问题。
+-->
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/gradle/" rel="tag"># Gradle</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/03/08/gradle-groovy-closure/" rel="prev" title="理解Groovy闭包委托">
+      <i class="fa fa-chevron-left"></i> 理解Groovy闭包委托
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/03/30/map-sync-problem/" rel="next" title="记一个多线程并发读写HashMap时遇到的问题">
+      记一个多线程并发读写HashMap时遇到的问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Project"><span class="nav-number">1.</span> <span class="nav-text">Project</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#project的依赖"><span class="nav-number">1.1.</span> <span class="nav-text">project的依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#project的层级"><span class="nav-number">1.2.</span> <span class="nav-text">project的层级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#project的属性和方法"><span class="nav-number">1.3.</span> <span class="nav-text">project的属性和方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Settings"><span class="nav-number">2.</span> <span class="nav-text">Settings</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Script"><span class="nav-number">3.</span> <span class="nav-text">Script</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Task"><span class="nav-number">4.</span> <span class="nav-text">Task</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#理解Gradle文档"><span class="nav-number">5.</span> <span class="nav-text">理解Gradle文档</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#理解Groovy代理"><span class="nav-number">6.</span> <span class="nav-text">理解Groovy代理</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="截至Glide 4.0版本，其代码量已经相当多了。所以学习Glide源码前很有必要了解Glide中几个关键概念，并从整体上理解这些关键概念之间的关系，否则很容易迷失在代码的实现细节中。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Glide基础">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="截至Glide 4.0版本，其代码量已经相当多了。所以学习Glide源码前很有必要了解Glide中几个关键概念，并从整体上理解这些关键概念之间的关系，否则很容易迷失在代码的实现细节中。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/rel1.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/rel2.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/rel2.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/target.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/target-arch.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/resource.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/resource-arch.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/resource-decoder.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.878Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Glide基础">
+<meta name="twitter:description" content="截至Glide 4.0版本，其代码量已经相当多了。所以学习Glide源码前很有必要了解Glide中几个关键概念，并从整体上理解这些关键概念之间的关系，否则很容易迷失在代码的实现细节中。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/07/22/glide-basic/rel1.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/07/22/glide-basic/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Glide基础 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/07/22/glide-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Glide基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-07-22 21:57:50" itemprop="dateCreated datePublished" datetime="2018-07-22T21:57:50+08:00">2018-07-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>截至<a href="https://github.com/bumptech/glide/tree/v4.0.0/library" target="_blank" rel="noopener">Glide 4.0版本</a>，其代码量已经相当多了。所以学习Glide源码前很有必要了解Glide中几个关键概念，并从整体上理解这些关键概念之间的关系，否则很容易迷失在代码的实现细节中。<br><a id="more"></a></p>
+<h1 id="Glide简介"><a href="#Glide简介" class="headerlink" title="Glide简介"></a>Glide简介</h1><p>Glide涉及到的知识点很多，包括Bitmap重用，Bitmap缓存，生命周期管理，数据加载，资源解码，图片变换，线程调度，等等。另外Glide充分解耦，大量使用接口、泛型以及各种设计模式，并支持外部HttpClient和模块配置。所以学习Glide源码前很有必要了解Glide中几个关键概念，并从整体上理解这些关键概念之间的关系，否则很容易迷失在代码的实现细节中。</p>
+<p>注意，下文中的分析均基于<a href="https://github.com/bumptech/glide/tree/v4.0.0/library" target="_blank" rel="noopener">Glide 4.0版本</a>。</p>
+<p>下面分别从代码视角和包结构视角看看Glide的关键概念以及它们之间的关系。</p>
+<h2 id="代码视角"><a href="#代码视角" class="headerlink" title="代码视角"></a>代码视角</h2><p>一个典型的Glide调用如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(context).asBitmap().apply().load(model).into(target)</span><br></pre></td></tr></table></figure>
+<p>看似简单的调用实际上包含相当丰富的信息量。</p>
+<p>简单来说，Glide加载(load)模型(Model)，将返回的数据解码(decode)成资源(Resource)，并将资源设置到Target中。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>功能</th>
+<th>对应的接口和类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>with(context)</td>
+<td>生命周期管理</td>
+<td>Lifecycle</td>
+</tr>
+<tr>
+<td>asBitmap()</td>
+<td>数据解码</td>
+<td>Resource, ResourceDecoder</td>
+</tr>
+<tr>
+<td>apply()</td>
+<td>缓存等等</td>
+<td>TODO</td>
+</tr>
+<tr>
+<td>load(model)</td>
+<td>数据加载</td>
+<td>ModelLoader, ModelLoaderFactory, DataFetcher</td>
+</tr>
+<tr>
+<td>into(target)</td>
+<td>资源的显示</td>
+<td>Target</td>
+</tr>
+</tbody>
+</table>
+<p>Resouce, Data, Source的区分</p>
+<ul>
+<li>Resouce (Data) - 已解码的资源(已解码，采样，或转换)</li>
+<li>(Source) Data - 原始的数据(未解码), ResourceDecoder.decode(data)得到Resource</li>
+<li>Source - 原始的数据源，ModelLoad.load(model)得到(Source) Data</li>
+</ul>
+<p>如何理解Encode操作？ TODO, load, fetch, cache, decode, transcode都好理解</p>
+<h2 id="包结构视角"><a href="#包结构视角" class="headerlink" title="包结构视角"></a>包结构视角</h2><p>Glide作为图片加载库，其工作分为核心部分和其他部分。Glide清晰的包结构体现了这种划分：</p>
+<p><strong>核心工作</strong></p>
+<p><img src="rel1.png" alt></p>
+<p>engine负责load指定的model, 并将得到的data解码成resource。</p>
+<p><img src="rel2.png" alt></p>
+<p>对resource进行某种transition操作后将其显示到target。</p>
+<p><strong>其他工作</strong></p>
+<p><img src="rel2.png" alt></p>
+<ul>
+<li>manager - 负责各种管理工作，包括生命周期，网络连接以及网络请求</li>
+<li>module和provider - 为Glide的模块配置提供支持</li>
+</ul>
+<h1 id="生命周期管理"><a href="#生命周期管理" class="headerlink" title="生命周期管理"></a>生命周期管理</h1><p>Glide使用LifecycleListener监听Fragment和Activity的生命周期。<code>LifecycleListener</code>接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">LifecycleListener</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onStart</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onStop</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span></span>;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>详见<a href="https://www.sunmoonblog.com/2018/07/23/glide-lifecycle/">Glide生命周期管理</a>。</p>
+<h1 id="Target"><a href="#Target" class="headerlink" title="Target"></a>Target</h1><p>Target可以理解为Resource的最终载体，如ImageView。<code>Target</code>接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Target</span>&lt;<span class="title">R</span>&gt; <span class="keyword">extends</span> <span class="title">LifecycleListener</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onLoadStarted</span><span class="params">(@Nullable Drawable placeholder)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onLoadFailed</span><span class="params">(@Nullable Drawable errorDrawable)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onResourceReady</span><span class="params">(R resource, Transition&lt;? <span class="keyword">super</span> R&gt; transition)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onLoadCleared</span><span class="params">(@Nullable Drawable placeholder)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">getSize</span><span class="params">(SizeReadyCallback cb)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">removeCallback</span><span class="params">(SizeReadyCallback cb)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">setRequest</span><span class="params">(@Nullable Request request)</span></span>;</span><br><span class="line">	<span class="function">Request <span class="title">getRequest</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>load resource过程中Target会经历对应的生命周期事件，包括：</p>
+<ul>
+<li>onLoadStarted()</li>
+<li>onResourceReady()</li>
+<li>onLoadCleared()</li>
+<li>onLoadFailed()</li>
+</ul>
+<p>典型的生命周期过程如下：</p>
+<p>onLoadStarted -&gt; onResourceReady -&gt; onLoadCleared<br>onLoadStarted -&gt; onLoadFailed -&gt; onLoadCleared</p>
+<p>注意：不保证一定执行某些方法。比如，如果可以在memory中找到resource，或者mode对象为null，都会导致<code>onLoadStarted()</code>不被执行。</p>
+<p>Target接口的实现类非常多：</p>
+<p><img src="target.png" alt></p>
+<p>这些类的层级关系是这样的：</p>
+<p><img src="target-arch.png" alt></p>
+<p>FutureTarget有点特别，其行为跟<code>Future</code>类似。(注意FutureTarget.get()方法必须在工作线程中调用！)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">FutureTarget&lt;Bitmap&gt; futureTarget =</span><br><span class="line">    Glide.with(fragment)</span><br><span class="line">      .load(<span class="string">"http://goo.gl/1asf12"</span>)</span><br><span class="line">      .asBitmap()</span><br><span class="line">      .into(<span class="number">250</span>, <span class="number">250</span>);</span><br><span class="line">Bitmap myBitmap = futureTarget.get();</span><br><span class="line"> ... <span class="comment">// do things with bitmap and then release when finished:</span></span><br><span class="line">futureTarget.cancel(<span class="keyword">false</span>);</span><br></pre></td></tr></table></figure>
+<p>RequestFutureTarget是FutureTarget的实现类。可以使用RequestFutureTarget实现下载图片文件的功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> FutureTarget&lt;File&gt; target = <span class="keyword">null</span>;</span><br><span class="line"> RequestManager requestManager = Glide.with(context);</span><br><span class="line"> <span class="keyword">try</span> &#123;</span><br><span class="line"> 	target = requestManager</span><br><span class="line">		.downloadOnly()</span><br><span class="line">		.load(model)</span><br><span class="line">		.submit();</span><br><span class="line">	File downloadedFile = target.get();</span><br><span class="line">	<span class="comment">// ... do something with the file (usually throws IOException)</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (ExecutionException | InterruptedException | IOException e) &#123;</span><br><span class="line">	<span class="comment">// ... bug reporting or recovery</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	<span class="comment">// make sure to cancel pending operations and free resources</span></span><br><span class="line">	<span class="keyword">if</span> (target != <span class="keyword">null</span>) &#123;</span><br><span class="line">	target.cancel(<span class="keyword">true</span>); <span class="comment">// mayInterruptIfRunning</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Resource和ResourceDecoder"><a href="#Resource和ResourceDecoder" class="headerlink" title="Resource和ResourceDecoder"></a>Resource和ResourceDecoder</h1><p>Resource对某些类型的数据进行包装，以便池化和重用。<code>Resource</code>接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Resource</span>&lt;<span class="title">Z</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function">Class&lt;Z&gt; <span class="title">getResourceClass</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function">Z <span class="title">get</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">getSize</span><span class="params">()</span></span>;	</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">recycle</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体来说，Resource包括以下类型：</p>
+<ul>
+<li>File</li>
+<li>Bitmap</li>
+<li>Drawable</li>
+<li>BitmapDrawable</li>
+<li>GifDrawable</li>
+<li>Bytes</li>
+</ul>
+<p>(你可能会注意到RequestManager中有对应的asFile(), asBitmap(), asGif(), asDrawable()等方法)</p>
+<p>以下类实现了Resource接口：</p>
+<p><img src="resource.png" alt></p>
+<p>这些类的层级关系是这样的：</p>
+<p><img src="resource-arch.png" alt></p>
+<p>ResourceDecoder</p>
+<p>以下类实现了ResourceDecoder接口：</p>
+<p><img src="resource-decoder.png" alt></p>
+<ul>
+<li>VideoBitmapDecoder - 从一个包含视频文件的ParcelFileDescriptor中解码出一帧Bitmap</li>
+<li>StreamGifDecoder  - 一个不太高效的GifDrawable解码器</li>
+<li>StreamBitmapDecoder - 从InputStream中解码出Bitmap</li>
+<li>GifFrameResourceDecoder - 从一个表示Gif图片的GifDecoder解码出一帧</li>
+<li>FileDecoder - 从文件创建FileResource</li>
+<li>TODO</li>
+</ul>
+<h1 id="Model和ModelLoader"><a href="#Model和ModelLoader" class="headerlink" title="Model和ModelLoader"></a>Model和ModelLoader</h1><p>Model可以理解为待加载的数据。比如网络图片的url地址或者Android工程的图片id，都是Model。</p>
+<p>Glide没有将Model封装成新的类，而是直接使用已存在的数据类型，包括：</p>
+<ul>
+<li>String</li>
+<li>Uri</li>
+<li>File</li>
+<li>int (resourceId)</li>
+<li>URL</li>
+<li>byte[]</li>
+</ul>
+<p><code>RequestBuilder</code>对每一种Model类型都有一个<code>loadXXX()</code>方法。</p>
+<p>ModelLoader用于加载Model。ModelLoader可以将任意复杂的数据模型转换成具体的数据类型，以便DataFetcher可以获取为Resource获取代表Model的数据。<code>ModelLoader</code>接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ModelLoader</span>&lt;<span class="title">Model</span>, <span class="title">Data</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function">LoadData&lt;Data&gt; <span class="title">buildLoadData</span><span class="params">(Model model, <span class="keyword">int</span> width, <span class="keyword">int</span> height, Options options)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">boolean</span> <span class="title">handles</span><span class="params">(Model model)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ModelLoader中有一个静态类LoadData</li>
+<li>buildLoadData() - 根据指定的Model, width, height, options等条件返回一个能够对数据进行加载的LoadData</li>
+<li>handles() - 判断是否能够加载指定model类型的数据</li>
+</ul>
+<p>ModelLoader接口有两个作用： </p>
+<ol>
+<li>用于将特定的Model转换成可解码为Resource的数据</li>
+<li>允许Model根据View的大小获取特定尺寸的Resource</li>
+</ol>
+<p>ModelLoader是抽象的，具体实现的子类中都会实现自己的ModelLoaderFactory。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpGlideUrlLoader</span> <span class="keyword">implements</span> <span class="title">ModelLoader</span>&lt;<span class="title">GlideUrl</span>, <span class="title">InputStream</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> LoadData&lt;InputStream&gt; <span class="title">buildLoadData</span><span class="params">(GlideUrl model, <span class="keyword">int</span> width, <span class="keyword">int</span> height, Options options)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handles</span><span class="params">(GlideUrl model)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Factory</span> <span class="keyword">implements</span> <span class="title">ModelLoaderFactory</span>&lt;<span class="title">GlideUrl</span>, <span class="title">InputStream</span>&gt; </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="DataFetcher"><a href="#DataFetcher" class="headerlink" title="DataFetcher"></a>DataFetcher</h1><p>ModelLoader并不是直接加载资源，而是每次加载资源时都会创建一个新的DataFetcher，由DataFetcher延迟加载数据。</p>
+<p><code>DataFetcher</code>接口定义如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DataFetcher</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">loadData</span><span class="params">(Priority var1, DataFetcher.DataCallback&lt;? <span class="keyword">super</span> T&gt; var2)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">cleanup</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">cancel</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">Class&lt;T&gt; <span class="title">getDataClass</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">DataSource <span class="title">getDataSource</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DataCallback</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">onDataReady</span><span class="params">(@Nullable T var1)</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">onLoadFailed</span><span class="params">(Exception var1)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>见<a href="glide-registry">Glide的Registry和GlideModule</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://blog.csdn.net/yxz329130952/article/details/65447622" target="_blank" rel="noopener">Glide源码分析（二）——磁盘缓存实现 - CSDN博客</a></p>
+<p><a href="http://www.lightskystreet.com/2015/10/12/glide_source_analysis/" target="_blank" rel="noopener">Glide源码分析 | lightSky’Blog</a></p>
+<!-- http://km.oa.com/group/31047/articles/show/315884?kmref=search&from_page=1&no=1&loginParam=disposed&length=35&lengh=35&sessionKey=A64C691AE6E6D0676C7DBF8B30A7341903A66732363194626679AF92377B0D30 -->
+<!--
+Modelloader和DataFetcher两者结合起来构成了Glide的数据加载核心。当缓存中给定的数据不存在的时候，Glide就会通过指定的Modelloader和DataFetcher进行数据加载，这些数据可能来自文件、网络、byte数组等地方-->
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/06/21/app-overdraw-1/" rel="prev" title="记一次减少过度绘制实战">
+      <i class="fa fa-chevron-left"></i> 记一次减少过度绘制实战
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/07/23/glide-lifecycle/" rel="next" title="Glide生命周期绑定">
+      Glide生命周期绑定 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Glide简介"><span class="nav-number">1.</span> <span class="nav-text">Glide简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#代码视角"><span class="nav-number">1.1.</span> <span class="nav-text">代码视角</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#包结构视角"><span class="nav-number">1.2.</span> <span class="nav-text">包结构视角</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#生命周期管理"><span class="nav-number">2.</span> <span class="nav-text">生命周期管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Target"><span class="nav-number">3.</span> <span class="nav-text">Target</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Resource和ResourceDecoder"><span class="nav-number">4.</span> <span class="nav-text">Resource和ResourceDecoder</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Model和ModelLoader"><span class="nav-number">5.</span> <span class="nav-text">Model和ModelLoader</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DataFetcher"><span class="nav-number">6.</span> <span class="nav-text">DataFetcher</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置"><span class="nav-number">7.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

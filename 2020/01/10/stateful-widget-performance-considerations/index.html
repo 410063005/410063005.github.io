@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Flutter StatefulWidget 与应用性能其实有些微妙的联系。">
+<meta name="keywords" content="Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译) StatefulWidget 与性能">
+<meta property="og:url" content="http://www.sunmoonblog.com/2020/01/10/stateful-widget-performance-considerations/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Flutter StatefulWidget 与应用性能其实有些微妙的联系。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.047Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译) StatefulWidget 与性能">
+<meta name="twitter:description" content="Flutter StatefulWidget 与应用性能其实有些微妙的联系。">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2020/01/10/stateful-widget-performance-considerations/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译) StatefulWidget 与性能 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/01/10/stateful-widget-performance-considerations/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译) StatefulWidget 与性能
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-01-10 16:29:55" itemprop="dateCreated datePublished" datetime="2020-01-10T16:29:55+08:00">2020-01-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Flutter StatefulWidget 与应用性能其实有些微妙的联系。</p>
+<a id="more"></a>
+<p>Flutter 官方文档提到 widget 只是一个配置数据结构，创建是非常轻量的，加上 Flutter 团队对 widget 的创建/销毁做了优化，不用担心整个 widget 树重新创建所带来的性能问题。但实际上并非这么简单。看看这篇文章怎么说吧。</p>
+<p>本文翻译自 <a href="https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html#performance-considerations" target="_blank" rel="noopener">Performance considerations</a>。</p>
+<p>有两大类 <a href="https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html" target="_blank" rel="noopener">StatefulWidget</a>。</p>
+<!--There are two primary categories of StatefulWidgets.
+-->
+<p>一类 StatefulWidget 在 <a href="https://api.flutter.dev/flutter/widgets/State/initState.html" target="_blank" rel="noopener">State.initState</a> 方法中分配资源，并且在 <a href="https://api.flutter.dev/flutter/widgets/State/dispose.html" target="_blank" rel="noopener">State.dispose</a> 方法中释放资源，但并不依赖 <a href="https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html" target="_blank" rel="noopener">InheritedWidget</a> 或调用 <a href="https://api.flutter.dev/flutter/widgets/State/setState.html" target="_blank" rel="noopener">State.setState</a> 方法。这类 Widget 通常用于应用或页面的根节点，并且使用 <a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html" target="_blank" rel="noopener">ChangeNotifier</a>、<a href="https://api.flutter.dev/flutter/dart-async/Stream-class.html" target="_blank" rel="noopener">Stream</a> 或其他对象来跟子节点通信。遵守这种模式的 StatefulWidget 在 CPU 和 GPU 上的开销相对较低，因为它们只被创建一次且不再更新。所以这种 StatefulWidget 可以有相对复杂和较深层级的 build 方法。</p>
+<p>另一类 StatefulWidget 使用 <a href="https://api.flutter.dev/flutter/widgets/State/setState.html" target="_blank" rel="noopener">State.setState</a> 方法或依赖 <a href="https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html" target="_blank" rel="noopener">InheritedWidget</a>。这类 widget 通常在应用的生命周期中重建很多次，因此最小化其重建过程非常重要。(它们可能也会在 <a href="https://api.flutter.dev/flutter/widgets/State/initState.html" target="_blank" rel="noopener">State.initState</a> 或 <a href="https://api.flutter.dev/flutter/widgets/State/didChangeDependencies.html" target="_blank" rel="noopener">State.didChangeDependencies</a> 方法中分配资源，但重点在于<strong>重建</strong>)</p>
+<!--The first is one which allocates resources in State.initState and disposes of them in State.dispose, but which does not depend on InheritedWidgets or call State.setState. Such widgets are commonly used at the root of an application or page, and communicate with subwidgets via ChangeNotifiers, Streams, or other such objects. Stateful widgets following such a pattern are relatively cheap (in terms of CPU and GPU cycles), because they are built once then never update. They can, therefore, have somewhat complicated and deep build methods.
+
+The second category is widgets that use State.setState or depend on InheritedWidgets. These will typically rebuild many times during the application's lifetime, and it is therefore important to minimize the impact of rebuilding such a widget. (They may also use State.initState or State.didChangeDependencies and allocate resources, but the important part is that they rebuild.)-->
+<p>有若干技巧用来减小重建 StatefulWidget 对性能的影响：</p>
+<ul>
+<li>将状态下沉到叶子节点。比如，页面上有个时钟，与其将时间状态放在上层页面中(每次时间更新时重建整个页面)，不如创建一个专用的 clock widget (每次时间更新时仅仅只需更新这个 widget)</li>
+<li>最小化 build 方法创建的 widget 的数量以及相对应的 node 数量。理想状态下，一个 StatefulWidget 只用创建唯一一个 widget (类型为 <a href="https://api.flutter.dev/flutter/widgets/RenderObjectWidget-class.html" target="_blank" rel="noopener">RenderObjectWidget</a>)。(显然这并不总是可行，但 widget 越接近这个理想状态则越高效)</li>
+<li>如果一棵子树并不变化，缓存对应的 widget 并尽可能复用。复用一个 widget 比新生成一个 widget 要高效。一种常用的改进方式是，重构有状态的部分到一个接收 child 参数的 widget 中</li>
+<li>尽可能使用 <code>const</code> widget (这等同于缓存和复用 widget)</li>
+<li>避免改变已创建的子树的深度或修改子树中 widget 的类型。比如，与其直接返回子节点或将其包裹在 <a href="https://api.flutter.dev/flutter/widgets/IgnorePointer-class.html" target="_blank" rel="noopener">IgnorePointer</a>，不如总是将子节点包裹在 <a href="https://api.flutter.dev/flutter/widgets/IgnorePointer-class.html" target="_blank" rel="noopener">IgnorePointer</a> 并且操作 <a href="https://api.flutter.dev/flutter/widgets/IgnorePointer/ignoring.html" target="_blank" rel="noopener">IgnorePointer.ignoring</a> 属性值。原因是改变子树深度会导致重新 build/layout/paint 整个子树，而修改属性值只会对渲染树进行尽可能少的修改 (在 <a href="https://api.flutter.dev/flutter/widgets/IgnorePointer-class.html" target="_blank" rel="noopener">IgnorePointer</a> 这个例子中，根本不必重新 layout 和 paint)</li>
+<li>如果出于某些原因必须要改变深度，可以考虑将子树的通用部分包裹在一个带 <a href="https://api.flutter.dev/flutter/widgets/GlobalKey-class.html" target="_blank" rel="noopener">GlobalKey</a> 的 widget 中 (该 GlobalKey 在 widget 生命周期中不变。如果其他 widget 不能很方便地设置 key，可考虑使用 <a href="https://api.flutter.dev/flutter/widgets/KeyedSubtree-class.html" target="_blank" rel="noopener">KeyedSubtree</a>)</li>
+</ul>
+<!--There are several techniques one can use to minimize the impact of rebuilding a stateful widget:
+
+Push the state to the leaves. For example, if your page has a ticking clock, rather than putting the state at the top of the page and rebuilding the entire page each time the clock ticks, create a dedicated clock widget that only updates itself.
+
+Minimize the number of nodes transitively created by the build method and any widgets it creates. Ideally, a stateful widget would only create a single widget, and that widget would be a RenderObjectWidget. (Obviously this isn't always practical, but the closer a widget gets to this ideal, the more efficient it will be.)
+
+If a subtree does not change, cache the widget that represents that subtree and re-use it each time it can be used. It is massively more efficient for a widget to be re-used than for a new (but identically-configured) widget to be created. Factoring out the stateful part into a widget that takes a child argument is a common way of doing this.
+
+Use const widgets where possible. (This is equivalent to caching a widget and re-using it.)
+
+Avoid changing the depth of any created subtrees or changing the type of any widgets in the subtree. For example, rather than returning either the child or the child wrapped in an IgnorePointer, always wrap the child widget in an IgnorePointer and control the IgnorePointer.ignoring property. This is because changing the depth of the subtree requires rebuilding, laying out, and painting the entire subtree, whereas just changing the property will require the least possible change to the render tree (in the case of IgnorePointer, for example, no layout or repaint is necessary at all).
+
+If the depth must be changed for some reason, consider wrapping the common parts of the subtrees in widgets that have a GlobalKey that remains consistent for the life of the stateful widget. (The KeyedSubtree widget may be useful for this purpose if no other widget can conveniently be assigned the key.)-->
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li>减少 widget 重建 (可借助 Android Studio &gt; Flutter Performance &gt; Widget rebuild stats 来<a href="https://flutter.cn/docs/development/tools/android-studio#show-performance-data" target="_blank" rel="noopener">统计重建次数</a>)</li>
+<li>缓存不变的子树</li>
+<li>尽可能使用 <code>const</code> widget</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/26/flutter-render-object/" rel="prev" title="Flutter RenderObject 浅析">
+      <i class="fa fa-chevron-left"></i> Flutter RenderObject 浅析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/01/10/flutter-performance-tools/" rel="next" title="Flutter Performance 分析工具简介">
+      Flutter Performance 分析工具简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">1.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

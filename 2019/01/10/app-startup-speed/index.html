@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大概一两年前写的，关于app冷启动速度优化的。直到项目停了，内容也一直没写全（我也懒得可以！）。不过还是发出来，备忘。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="应用启动速度优化(一)">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/01/10/app-startup-speed/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="大概一两年前写的，关于app冷启动速度优化的。直到项目停了，内容也一直没写全（我也懒得可以！）。不过还是发出来，备忘。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/index_activity.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/from_json.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf1.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf2.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf3.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf4.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf5.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf6.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf7.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf8.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf9.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf10.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf11.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/perf12.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.994Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="应用启动速度优化(一)">
+<meta name="twitter:description" content="大概一两年前写的，关于app冷启动速度优化的。直到项目停了，内容也一直没写全（我也懒得可以！）。不过还是发出来，备忘。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/index_activity.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/01/10/app-startup-speed/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>应用启动速度优化(一) | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/01/10/app-startup-speed/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          应用启动速度优化(一)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-10 15:09:21" itemprop="dateCreated datePublished" datetime="2019-01-10T15:09:21+08:00">2019-01-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>大概一两年前写的，关于app冷启动速度优化的。直到项目停了，内容也一直没写全（我也懒得可以！）。不过还是发出来，备忘。<br><a id="more"></a></p>
+<p>本文内容还没写全，项目已停了。仅用于备忘。文章要点：</p>
+<ul>
+<li>使用 <code>adb logcat</code> 测试 Activity 启动速度的方法</li>
+<li><code>ViewPager.setOffscreenPageLimit()</code> 方法简介</li>
+<li>在 ViewPager + Fragment 模式使用懒加载的技巧</li>
+</ul>
+<p>我们项目的首页采用经典的多tab页结构(类似微信首页)。从UI上看，首页承载了”遇见”、”发现”、”消息”和”我的”四个tab页。实际实现中使用的 <code>ViewPager</code> + <code>FragmentPagerAdapter</code>，每个tab页对应一个 <code>fragment</code>。跟微信不一样的是，进入首页后我们的tab页会发请求拉取数据，而微信更多的直接显示已有的推送消息。我们的tab页中加载的图片远远多于微信，甚至还可能有视频。</p>
+<p>首页相对其他页面较重，启动慢、性能差。用户进入应用后首先看到的就是首页，它的启动最为频繁。首页启动慢除了影响用户体验，更会让用记对app产生不好的感知：这个app做得不行。</p>
+<h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>首页相对其他页面较重。所以直观上启动慢相对较慢是说得通的。但更深层次的原因是什么呢？有没有办法优化呢？</p>
+<p>我们先测一下首页启动速度。使用 logcat 抓取 <code>ActivityManager</code> 打印的 Activity 启动时间应该是最简单有效的测试方法了。</p>
+<p><code>adb logcat -v time | grep &#39;Displayed com.tencent.PmdCampus/.view.IndexActivity&#39;</code>输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">02-03 17:44:04.672 1116-1168/? I/ActivityManager: Displayed com.tencent.PmdCampus/.view.IndexActivity: +622ms</span><br></pre></td></tr></table></figure>
+<p>在我的OPPO R7sm上空页面的启动速度少于100ms，app中普通页面多数在200ms左右，而首页慢得可以，居然到了629.4ms！</p>
+<table>
+<thead>
+<tr>
+<th>第一次</th>
+<th>第二次</th>
+<th>第三次</th>
+<th>第四次</th>
+<th>第五次</th>
+<th>平均</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>622ms</td>
+<td>634ms</td>
+<td>638ms</td>
+<td>614ms</td>
+<td>639ms</td>
+<td>629.4ms</td>
+</tr>
+</tbody>
+</table>
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>通过分析代码和traceview日志，以下几个地方引起注意：</p>
+<ul>
+<li>为了避免切换tab过程中 fragment 频繁销毁和初始化，调用了 <code>ViewAdapter.setOffscreenPageLimit(3)</code>。这个调用会产生什么影响？</li>
+<li>traceview 日志显示有些在主线执行时间过长的方法。这些方法会产生什么影响？</li>
+</ul>
+<p>下面逐步展开分析。</p>
+<h2 id="fragment-的初始化"><a href="#fragment-的初始化" class="headerlink" title="fragment 的初始化"></a>fragment 的初始化</h2><p>关于 <code>ViewPager</code> 中 fragment 的初始化，我们先从 <code>ViewAdapter.setOffscreenPageLimit()</code> 方法说起。</p>
+<blockquote>
+<p>Set the number of pages that should be retained to either side of the current page in the view hierarchy in an idle state. Pages beyond this limit will be recreated from the adapter when needed.<br>This is offered as an optimization. If you know in advance the number of pages you will need to support or have lazy-loading mechanisms in place on your pages, tweaking this setting can have benefits in perceived smoothness of paging animations and interaction. If you have a small number of pages (3-4) that you can keep active all at once, less time will be spent in layout for newly created view subtrees as the user pages back and forth.<br>You should keep this limit low, especially if your pages have complex layouts. This setting defaults to 1</p>
+</blockquote>
+<p>这个方法用于设置空闲状态时当前页面两边需要保留的页面数量。超过这个数量限制的页面将被销毁，而需要时又会重新创建。这个方法可以用于调优。比如你提前知道ViewPager中的页面数量或者页面有延迟加载机制，可以调整这里的参数以便页面动画及交互更流畅。如果页面数量很少的话(3到4个页面)，完全可以同时保留全部页面。这样，在用户切换页面时可以花更少的时间用于新创建的view的布局。应当保证这里的数量较小，尤其是在页面布局较复杂时。值为1。</p>
+<p>容易理解 <code>offscreenPageLimit</code> 的含义。比如，我们有四个tab，假设 <code>offscreenPageLimit</code> 为1，</p>
+<ul>
+<li>启动时当前页为”遇见”，这时”遇见”右边的”发现”也会被初始化</li>
+<li>切换到”发现”时，左边的”遇见”页面仍被保留，右边的”消息”页面被初始化</li>
+<li>切换到”消息”页面时效果与上面的类似，但”遇见”页面则会被销毁，因为它相对当前的位置已超过 <code>offscreenPageLimit</code></li>
+</ul>
+<h2 id="traceview-分析"><a href="#traceview-分析" class="headerlink" title="traceview 分析"></a>traceview 分析</h2><p><img src="/images/index_activity.png" alt></p>
+<p><img src="/images/from_json.png" alt></p>
+<p>traceview 分析 IndexActivity 的生命周期，看不出任何异常。但 <code>UserPref.getRemoteUserInfo()</code> 方法引起我们的注意，它的耗时有些异常。而这个方法被”遇见”和”我的”等fragment 调用了一共5次。</p>
+<p>前面提到过 IndexActivity 由”遇见”，”发现”，”消息”和”我的”一共4个 fragment 组成。这里的 fragment 由 ViewAdapter 提供，而 ViewAdapter 的数据来自一个FragmentStatePagerAdapter。<code>viewAdapter.setOffscreenPageLimit(3)</code>被调用。</p>
+<h1 id="优化一"><a href="#优化一" class="headerlink" title="优化一"></a>优化一</h1><p>避免主线程中过多的JSON反序列化。</p>
+<p>UserInfo对象表示当前用户，这个对象比较大，结构复杂。该对象JSON序列化后持久化到SharedPreference当中。</p>
+<p>初始化IndexActivity的过程，会从SharedPreference读取数据反序列化为UserInfo对象。设计不当导致会频繁在主线程中进行反序列化。</p>
+<p>优化后，我们只需要一次反序列化，减轻主线程压力。</p>
+<p>优化后OPPO R7sm上首页的启动速度如下</p>
+<table>
+<thead>
+<tr>
+<th>第一次</th>
+<th>第二次</th>
+<th>第三次</th>
+<th>第四次</th>
+<th>第五次</th>
+<th>平均</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>389ms</td>
+<td>375ms</td>
+<td>429ms</td>
+<td>405ms</td>
+<td>414ms</td>
+</tr>
+</tbody>
+</table>
+<h1 id="优化二"><a href="#优化二" class="headerlink" title="优化二"></a>优化二</h1><p>优化 Fragment 的加载。主要有两个策略：</p>
+<ul>
+<li>一个最简单的做法是，调整 PageLimit 数量。 PageLimit 越小，同时加载的 Fragment 越少。</li>
+<li>Fragment 懒加载。即使 PageLimit 设置成 1，首次启动时也会同时加载两个 Fragment，可以使用懒加载进一步优化。</li>
+</ul>
+<h2 id="调整-PageLimit-数量"><a href="#调整-PageLimit-数量" class="headerlink" title="调整 PageLimit 数量"></a>调整 PageLimit 数量</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaggedFragmentPagerAdapter</span> <span class="keyword">extends</span> <span class="title">FragmentStatePagerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Fragment <span class="title">getItem</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">		Log.i(<span class="string">"TaggedFragmentPagerAdapter"</span>, <span class="string">"getItem for position="</span> + position);</span><br><span class="line">		<span class="keyword">switch</span> (position): &#123;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">				<span class="keyword">return</span> 遇见Fragment;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">				<span class="keyword">return</span> 发现Fragment;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">				<span class="keyword">return</span> 消息Fragment;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">				<span class="keyword">return</span> 我的Fragment;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>IndexActivity中四个fragment的初始化过程如下。但发现IndexActivity启动时，打印的日志表明四个fragment被马上全部创建。而fragment创建时会立即请求后台数据，导致更多的开销。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">TaggedFragmentPagerAdapter: getItem for position=0</span><br><span class="line">TaggedFragmentPagerAdapter: getItem for position=1</span><br><span class="line">TaggedFragmentPagerAdapter: getItem for position=2</span><br><span class="line">TaggedFragmentPagerAdapter: getItem for position=3</span><br></pre></td></tr></table></figure>
+<p>去掉 <code>viewAdapter.setOffscreenPageLimit(3)</code> 调用后，打印的日志如表明启动IndexActivity时只会创建前两个fragment。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TaggedFragmentPagerAdapter: getItem for position=0</span><br><span class="line">TaggedFragmentPagerAdapter: getItem for position=1</span><br></pre></td></tr></table></figure>
+<h2 id="Fragment-懒加载"><a href="#Fragment-懒加载" class="headerlink" title="Fragment 懒加载"></a>Fragment 懒加载</h2><p>“遇见”页面又细分为”随遇”和”推荐”，启动IndexActivity时只初始化”随遇”即可。但目前是”随遇”和”推荐”都被初始化了。使用<code>FragmentPagerAdapter</code> + <code>ViewPager</code>实现，ViewPager的offscreenPageLimit最小为1，所以肯定会至少加载两个fragment，导致”随遇”和”推荐”都被初始化。</p>
+<p>通过如下方式延迟”推荐”的加载过程。<a href="http://blog.csdn.net/yewei02538/article/details/50329119" target="_blank" rel="noopener">来源</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RecommendFragment</span> <span class="keyword">extends</span> <span class="title">Fragment</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">boolean</span> mViewCreated;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> View <span class="title">onCreateView</span><span class="params">(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">		...</span><br><span class="line">		view = ...</span><br><span class="line">		mViewCreated = <span class="keyword">true</span>;</span><br><span class="line">		<span class="keyword">return</span> view;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUserVisibleHint</span><span class="params">(<span class="keyword">boolean</span> isVisibleToUser)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>.setUserVisibleHint(isVisibleToUser);</span><br><span class="line">		<span class="keyword">if</span> (isVisibleToUser &amp;&amp; mViewCreated) &#123;</span><br><span class="line">			loadData();</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				mViewCreated = <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>优化后启动时间的变化</p>
+<table>
+<thead>
+<tr>
+<th>第一次</th>
+<th>第二次</th>
+<th>第三次</th>
+<th>第四次</th>
+<th>第五次</th>
+<th>平均</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>256ms</td>
+<td>274ms</td>
+<td>262ms</td>
+<td>266ms</td>
+<td>277ms</td>
+</tr>
+</tbody>
+</table>
+<p>优化后的另一个额外收益是启动时请求数的减少了</p>
+<h1 id="更多优化"><a href="#更多优化" class="headerlink" title="更多优化"></a>更多优化</h1><p>抓取<a href="/images/ddms7813906848591170267.trace">traceview文件</a>进行分析。耗时较多的方法统计如下(统计依据是IndexActivity启动过程中在主线程中运行且”Incl Cpu Time”占比超过1%)：</p>
+<p><img src="/images/perf1.png" alt><br><img src="/images/perf2.png" alt><br><img src="/images/perf3.png" alt><br><img src="/images/perf4.png" alt><br><img src="/images/perf5.png" alt><br><img src="/images/perf6.png" alt><br><img src="/images/perf7.png" alt><br><img src="/images/perf8.png" alt><br><img src="/images/perf9.png" alt><br><img src="/images/perf10.png" alt><br><img src="/images/perf11.png" alt><br><img src="/images/perf12.png" alt></p>
+<p>这里的耗时方法可以分为两类，一类是消耗时间远超预期，比如<code>CampusApplication.getVideoUrl()</code>，看名字它应该不会耗时太多。一类是是这些方法不应该运行，或者说是可以避免运行的。下面详细分析。</p>
+<ul>
+<li><code>CampusApplication.getVideoUrl()</code> 性能较低导致 <code>MostMatchAdapter.onBindViewHolder()</code> 性能低</li>
+<li>复杂布局导致 <code>MostMatchAdapter.onCreateViewHolder()</code> 性能低</li>
+<li><code>TweetResponsePref.getTweet()</code> 在主线程中反序列化，导致性能低</li>
+<li><code>NetworkUtil.isNetWorkConnectedGood()</code> 耗时多(?)</li>
+<li><code>MostMatchAdapter.onMeasure()</code> 中调用 <code>SystemUtils.getScreenWidth()</code> 和 <code>SystemUtils.getScreenHeight()</code> 耗时多</li>
+<li><code>MostMatchAdapter.onCreateViewHolder()</code> 性能低导致 <code>RecyclerViewPagerAdatper.onCreateViewHolder()</code> 耗时多</li>
+<li><code>MostMatchAdapter.onBindViewHolder()</code> 性能低导致 <code>RecyclerViewPagerAdatper.onBindViewHolder()</code> 耗时多</li>
+<li><code>TweetResponsePref.getTweet()</code> 性能低导致 <code>FindPresenterImpl.getFriendTweets()</code> 的回调耗时多</li>
+<li>布局复杂导致 <code>RecommendPresenterImpl.getLikeRank()</code> 的回调耗时多(根源在于 <code>RecommendFragment.onGetLikeRank()</code> 的 inflate 有问题)</li>
+<li>布局复杂导致 <code>RecommendFragment.onGetNewStudents()</code> 耗时较多</li>
+<li><code>TweetResponsePref.getTweet()</code> 性能低导致 <code>FindFragment.initHeaderView()</code> 和 <code>FindFragment.onCreateView()</code> 耗时多</li>
+<li><code>TweetResponsePref.getTweet()</code> 性能低导致 <code>FindFragment.onGetFriendTweets()</code> 耗时较多</li>
+<li>布局复杂导致 <code>RecommendFragment.onCreateView()</code> 耗时较多</li>
+<li><code>NetworkUtil.isNetWorkConnectedGood()</code> 耗时多导致 <code>autoPlayVideo()</code> 耗时多</li>
+</ul>
+<p><code>TweetResponsePref.getTweet()</code>中有JSON反序列化的操作，在主线程中调用时会严重拖慢UI。修改调用方式，将这些操作放到后台线程中。</p>
+<table>
+<thead>
+<tr>
+<th>第一次</th>
+<th>第二次</th>
+<th>第三次</th>
+<th>第四次</th>
+<th>第五次</th>
+<th>平均</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>315ms</td>
+<td>307ms</td>
+<td>325ms</td>
+<td>312ms</td>
+<td>305ms</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/14/android-studio-shortcut/" rel="prev" title="android-studio-shortcut">
+      <i class="fa fa-chevron-left"></i> android-studio-shortcut
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/10/app-startup-speed2/" rel="next" title="应用启动速度优化(二)">
+      应用启动速度优化(二) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题分析"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fragment-的初始化"><span class="nav-number">2.1.</span> <span class="nav-text">fragment 的初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#traceview-分析"><span class="nav-number">2.2.</span> <span class="nav-text">traceview 分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化一"><span class="nav-number">3.</span> <span class="nav-text">优化一</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化二"><span class="nav-number">4.</span> <span class="nav-text">优化二</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调整-PageLimit-数量"><span class="nav-number">4.1.</span> <span class="nav-text">调整 PageLimit 数量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fragment-懒加载"><span class="nav-number">4.2.</span> <span class="nav-text">Fragment 懒加载</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更多优化"><span class="nav-number">5.</span> <span class="nav-text">更多优化</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

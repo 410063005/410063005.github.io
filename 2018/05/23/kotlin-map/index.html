@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Kotlin的Map相对于Java的Map在设计上有更好的”不变性”，在使用上也更加方便。">
+<meta name="keywords" content="Kotlin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="谈谈Kotlin中的Map">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/05/23/kotlin-map/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Kotlin的Map相对于Java的Map在设计上有更好的”不变性”，在使用上也更加方便。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/05/23/kotlin-map/array-vs-map.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/05/23/kotlin-map/mutable-map.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/05/23/kotlin-map/map.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.871Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="谈谈Kotlin中的Map">
+<meta name="twitter:description" content="Kotlin的Map相对于Java的Map在设计上有更好的”不变性”，在使用上也更加方便。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/05/23/kotlin-map/array-vs-map.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/05/23/kotlin-map/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>谈谈Kotlin中的Map | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/05/23/kotlin-map/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          谈谈Kotlin中的Map
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-05-23 21:05:14" itemprop="dateCreated datePublished" datetime="2018-05-23T21:05:14+08:00">2018-05-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Kotlin的Map相对于Java的Map在设计上有更好的”不变性”，在使用上也更加方便。<br><a id="more"></a></p>
+<h1 id="Java-Map介绍"><a href="#Java-Map介绍" class="headerlink" title="Java Map介绍"></a>Java Map介绍</h1><p>谈Kotlin的Map前，首先看看Java的Map。先看看Map是什么。</p>
+<p><img src="array-vs-map.png" alt></p>
+<p>可以将Map理解成一个广义上的数组。普通数组的索引只能是数字，0、1、2，普通数组在物理上是连续的。而Map的索引可以是任何具有不变性的对象，比如可以是字符a、b、c。</p>
+<p>在Java中Map具体指<code>java.util.Map</code>。<code>java.util.Map</code>是接口，实际中最常用的类是<code>java.util.HashMap</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Integer, String&gt; m = <span class="keyword">new</span> HashMap&lt;Integer, String&gt;();</span><br><span class="line">m.put(<span class="number">1</span>, <span class="string">"a"</span>);</span><br><span class="line">m.put(<span class="number">2</span>, <span class="string">"b"</span>);</span><br></pre></td></tr></table></figure>
+<p><code>java.util.HashMap</code>常被用来作为最简单的内存缓存。一个典型的场景是先检查缓存中是否有结果，没有的话重新计算并更新缓存。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Object value = cache.get(key);</span><br><span class="line"><span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">    value = doWork();</span><br><span class="line">    cache.put(key, value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然而学习Kotlin时发现似乎官方更推荐使用<code>mapOf()</code>或<code>mutableMapOf()</code>，而不是直接使用HashMap()。原因有两点</p>
+<p>一方面是<code>mapOf()</code>和<code>mutableMapOf()</code>写起来更简单。下面这个例子用HashMap写的话，显然繁琐很多。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> m = mapOf(<span class="number">1</span> to <span class="string">"a"</span>, <span class="number">2</span> to <span class="string">"b"</span>)</span><br><span class="line"><span class="keyword">val</span> m2 = mutableMapOf(<span class="number">1</span> to <span class="string">"a"</span>, <span class="number">2</span> to <span class="string">"b"</span>)</span><br></pre></td></tr></table></figure>
+<p>更重要的是，Kotlin的Map在设计上考虑得更全面。</p>
+<h1 id="Java-Map的问题"><a href="#Java-Map的问题" class="headerlink" title="Java Map的问题"></a>Java Map的问题</h1><p>我们知道，编程中准确地控制<code>HashMap</code>是否可以只读，可以减少意外写操作的风险。这通常意味着代码中更少的bug。</p>
+<p>比如，一个<code>HashMap</code>是只读的(也可以说是不可写的、不能修改的)，假如你意外地修改了它的值，代码编译期就会报错，而不是等到运行期间出现某些难以跟踪的bug，世界是不是更美好。(可能你会说，谁会蠢到不小心去修改Map中的值。可是，哪个bug归根结底不是愚蠢的)</p>
+<p>很可惜这种看似理解当然的结果，在Java世界却并非如此。Java的确在<code>java.util.Collections</code>工具类中提供了大量的<code>unmodifiableXXX()</code>方法用于生成不可修改的集合，其中包括<code>unmodifiableMap()</code>，以解决只读Map的问题。可惜这些小的修补并不完美</p>
+<p>请看这段代码。它在运行时抛出异常，<code>java.lang.UnsupportedOperationException at java.util.Collections$UnmodifiableMap.put(Collections.java:1457)</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unsupportedOperationException</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Map&lt;Integer, String&gt; modifiableMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    Map&lt;Integer, String&gt; unmodifiableMap = Collections.unmodifiableMap(modifiableMap);</span><br><span class="line">    unmodifiableMap.put(<span class="number">1</span>, <span class="string">"a"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">foo</span><span class="params">(Map&lt;Integer, String&gt; map)</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>你能容易地判断modifiableMap和unmodifiableMap是否只读的吗？ 不能</li>
+<li>你能容易地判断foo()的map参数是否只读的吗？ 不能</li>
+<li>unmodifiableMap.put(1, “a”)在编译期会报错吗？不会</li>
+</ul>
+<p>三个问题都是因为Java中的Map接口在设计上并没有考虑变(可写)与不变(只读)的问题。结果，你无法用Java的Map设计清晰、明确的API，你只能等到运行时眼睁睁地看Java的Map抛出UnsupportedOperationException。</p>
+<p>是不是很搞笑，早知会UnsupportedOperationException，何必提供<code>put()</code>操作？ (当然，不得不承认运行期的UnsupportedOperationException好过运行期的bug)</p>
+<p>于是，Kotlin改进了Java中Map的设计。</p>
+<h1 id="Kotlin中的Map"><a href="#Kotlin中的Map" class="headerlink" title="Kotlin中的Map"></a>Kotlin中的Map</h1><p>如果我看得比别人更远些，那是因为我站在巨人的肩膀上。 ————牛顿</p>
+<p>如果Kotlin的Map比Java的更好，同样也是因为它站在了Java的肩膀上。Kotlin并没有将Java的Map全部推倒重来，相反，它大量使用Java代码。Kotlin中仍然可以使用<code>java.util.HashMap</code>。而且由于Kotlin给<code>java.util.HashMap</code>定义了别名，使用起来反而省去了import的繁琐。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 文件 kotlin.collections.TypeAliases.kt</span></span><br><span class="line"><span class="meta">@file:kotlin</span>.jvm.JvmVersion</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> kotlin.collections</span><br><span class="line"></span><br><span class="line"><span class="meta">@SinceKotlin(<span class="meta-string">"1.1"</span>)</span> <span class="keyword">public</span> <span class="keyword">typealias</span> RandomAccess = java.util.RandomAccess</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@SinceKotlin(<span class="meta-string">"1.1"</span>)</span> <span class="keyword">public</span> <span class="keyword">typealias</span> ArrayList&lt;E&gt; = java.util.ArrayList&lt;E&gt;</span><br><span class="line"><span class="meta">@SinceKotlin(<span class="meta-string">"1.1"</span>)</span> <span class="keyword">public</span> <span class="keyword">typealias</span> LinkedHashMap&lt;K, V&gt; = java.util.LinkedHashMap&lt;K, V&gt;</span><br><span class="line"><span class="meta">@SinceKotlin(<span class="meta-string">"1.1"</span>)</span> <span class="keyword">public</span> <span class="keyword">typealias</span> HashMap&lt;K, V&gt; = java.util.HashMap&lt;K, V&gt;</span><br><span class="line"><span class="meta">@SinceKotlin(<span class="meta-string">"1.1"</span>)</span> <span class="keyword">public</span> <span class="keyword">typealias</span> LinkedHashSet&lt;E&gt; = java.util.LinkedHashSet&lt;E&gt;</span><br><span class="line"><span class="meta">@SinceKotlin(<span class="meta-string">"1.1"</span>)</span> <span class="keyword">public</span> <span class="keyword">typealias</span> HashSet&lt;E&gt; = java.util.HashSet&lt;E&gt;</span><br></pre></td></tr></table></figure>
+<p>在Kotlin中使用HashMap的例子如下，可以看到没有 import java.util.HashMap</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">kotlinJavaMap</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> m = HashMap&lt;<span class="built_in">Int</span>, String&gt;()</span><br><span class="line">    println(m.javaClass.name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注：虽然Kotlin中可以使用HashMap，并不建议直接使用HashMap。</p>
+<h2 id="更好的设计"><a href="#更好的设计" class="headerlink" title="更好的设计"></a>更好的设计</h2><p>Kotlin对Java Map的最大改进在于严格地定义了不变性。kotlin.collections.Collections.kt中定义了如下接口</p>
+<p><img src="mutable-map.png" alt></p>
+<p>可以看到对可迭代接口以及所有的集合接口，Kotlin都区分了可变与不可变。我们这里只关注Map和MutableMap，其他接口类似。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Map</span>&lt;<span class="type">K, out V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">val</span> size: <span class="built_in">Int</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="title">isEmpty</span><span class="params">()</span></span>: <span class="built_in">Boolean</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="title">containsKey</span><span class="params">(key: <span class="type">K</span>)</span></span>: <span class="built_in">Boolean</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="title">containsValue</span><span class="params">(value: @<span class="type">UnsafeVariance</span> <span class="type">V</span>)</span></span>: <span class="built_in">Boolean</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">operator</span> <span class="function"><span class="keyword">fun</span> <span class="title">get</span><span class="params">(key: <span class="type">K</span>)</span></span>: V?</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MutableMap</span>&lt;<span class="type">K, V</span>&gt; : <span class="type">Map</span>&lt;<span class="type">K, V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="title">put</span><span class="params">(key: <span class="type">K</span>, value: <span class="type">V</span>)</span></span>: V?</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="title">remove</span><span class="params">(key: <span class="type">K</span>)</span></span>: V?</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="title">remove</span><span class="params">(key: <span class="type">K</span>, value: <span class="type">V</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">        <span class="comment">// See default implementation in JDK sources</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="title">putAll</span><span class="params">(from: <span class="type">Map</span>&lt;<span class="type">out</span> <span class="type">K</span>, V&gt;)</span></span>: <span class="built_in">Unit</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="title">clear</span><span class="params">()</span></span>: <span class="built_in">Unit</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不难看到，Map接口少了一个很关键的<code>put()</code>方法，这是有意为之，一切修改Map的方法都被移到MutableMap中去了。所以Map是只读的，MutableMap继承自Map的，可读可写。</p>
+<p>这是<code>unsupportedOperationException()</code>的Kotlin版本，更新只读HashMap会在编译期立马报错。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">noUnsupportedOperationException</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> unmodifiableMap = mapOf(<span class="number">1</span> to <span class="string">"a"</span>)</span><br><span class="line">    <span class="comment">// 更新只读HashMap会在编译期报错</span></span><br><span class="line">    <span class="comment">// unmodifiableMap[1] = "b"</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> modifiableMap = mutableMapOf(<span class="number">1</span> to <span class="string">"a"</span>)</span><br><span class="line">    modifiableMap[<span class="number">1</span>] = <span class="string">"b"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="map.png" alt></p>
+<p>更新只读HashMap会在编译期立马报错，可以很直观地看到IDE的报错提示。</p>
+<hr>
+<p>有人会抬杠，Kotlin的设计是完美的吗，真的无法修改unmodifiableMap？其实也不是</p>
+<p>最后，由于可以区分MutableMap跟Map接口，很容易设计更为清晰的API。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">foo</span><span class="params">(<span class="keyword">val</span> map: <span class="type">MutableMap</span>)</span></span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">bar</span><span class="params">(<span class="keyword">val</span> map: <span class="type">Map</span>)</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="更方便的方法"><a href="#更方便的方法" class="headerlink" title="更方便的方法"></a>更方便的方法</h2><p><a href="https://github.com/googlesamples/android-architecture-components/tree/master/PagingWithNetworkSample" target="_blank" rel="noopener">PagingWithNetworkSample</a>的<a href="https://github.com/googlesamples/android-architecture-components/blob/master/PagingWithNetworkSample/app/src/test-common/java/com/android/example/paging/pagingwithnetwork/repository/FakeRedditApi.kt#L33" target="_blank" rel="noopener">FakeRedditApi.kt</a>中的一段代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FakeRedditApi</span> : <span class="type">RedditApi &#123;</span></span></span><br><span class="line">    <span class="comment">// subreddits keyed by name</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> model = mutableMapOf&lt;String, SubReddit&gt;()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">addPost</span><span class="params">(post: <span class="type">RedditPost</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> subreddit = model.getOrPut(post.subreddit) &#123;</span><br><span class="line">            SubReddit(items = arrayListOf())</span><br><span class="line">        &#125;</span><br><span class="line">        subreddit.items.add(post)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还记得本文开头Java中使用HashMap作为缓存的示例代码吗？改写成Kotlin代码大约是这样的。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> value = cache.getOrPut(key) &#123; doWork() &#125;</span><br></pre></td></tr></table></figure>
+<p>嗯，没错，<strong>一行Kotlin代码</strong>。</p>
+<p>相比Java，Kotlin给Map添加了许多非常实用的方法，这里简单列举几个。更多方法可参考源码或<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/index.html" target="_blank" rel="noopener">文档</a>。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">mapUsage</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> map = mapOf(<span class="number">1</span> to <span class="string">"a"</span>, <span class="number">2</span> to <span class="string">"b"</span>, <span class="number">3</span> to <span class="string">"c"</span>)</span><br><span class="line"></span><br><span class="line">    println(map.getOrDefault(<span class="number">20</span>, <span class="string">"NONE"</span>))</span><br><span class="line">    println(map.filter &#123; it.key % <span class="number">2</span> != <span class="number">0</span> &#125;)</span><br><span class="line">    map.forEach &#123; k, v -&gt; println(<span class="string">"<span class="variable">$k</span> -&gt; <span class="variable">$v</span>"</span>) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">NONE</span><br><span class="line">&#123;1=a, 3=c&#125;</span><br><span class="line">1 -&gt; a</span><br><span class="line">2 -&gt; b</span><br><span class="line">3 -&gt; c</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li>对于不可变的Map，Kotlin中使用<code>mapOf()</code></li>
+<li>对于可变的Map，Kotlin中使用<code>mutableMapOf()</code></li>
+<li>坚持要用HashMap的话，Kotlin中使用<code>hashMapOf()</code> (<code>mutableMapOf()</code>并不是HashMap，而是LinkedHashMap)</li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://kotlinlang.org/docs/reference/collections.html" target="_blank" rel="noopener">Kotlin collections介绍</a><br><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/index.html" target="_blank" rel="noopener">Kotlin collections文档</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kotlin/" rel="tag"># Kotlin</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/04/28/kotlin-view-binding-ext-bug/" rel="prev" title="使用Kotlin Android Extensions时碰到的一个问题">
+      <i class="fa fa-chevron-left"></i> 使用Kotlin Android Extensions时碰到的一个问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/05/24/kotlin-thread/" rel="next" title="Kotlin中thread的用法">
+      Kotlin中thread的用法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-Map介绍"><span class="nav-number">1.</span> <span class="nav-text">Java Map介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-Map的问题"><span class="nav-number">2.</span> <span class="nav-text">Java Map的问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlin中的Map"><span class="nav-number">3.</span> <span class="nav-text">Kotlin中的Map</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#更好的设计"><span class="nav-number">3.1.</span> <span class="nav-text">更好的设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更方便的方法"><span class="nav-number">3.2.</span> <span class="nav-text">更方便的方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

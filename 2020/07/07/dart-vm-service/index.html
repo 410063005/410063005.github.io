@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Flutter 开发工具 DevTools 是不是有些神奇？移动端开发中用到的性能工具通常是原生应用，而 DevTools 却是基于浏览器的。为什么要基于浏览器开发，Dart VM Service Protocol 又是什么？简单了解一下。">
+<meta name="keywords" content="Flutter,Dart">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dart VM Service 简介">
+<meta property="og:url" content="http://www.sunmoonblog.com/2020/07/07/dart-vm-service/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Flutter 开发工具 DevTools 是不是有些神奇？移动端开发中用到的性能工具通常是原生应用，而 DevTools 却是基于浏览器的。为什么要基于浏览器开发，Dart VM Service Protocol 又是什么？简单了解一下。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15941055868454.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.050Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dart VM Service 简介">
+<meta name="twitter:description" content="Flutter 开发工具 DevTools 是不是有些神奇？移动端开发中用到的性能工具通常是原生应用，而 DevTools 却是基于浏览器的。为什么要基于浏览器开发，Dart VM Service Protocol 又是什么？简单了解一下。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/15941055868454.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2020/07/07/dart-vm-service/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Dart VM Service 简介 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/07/07/dart-vm-service/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Dart VM Service 简介
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-07 15:28:13" itemprop="dateCreated datePublished" datetime="2020-07-07T15:28:13+08:00">2020-07-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Flutter 开发工具 DevTools 是不是有些神奇？移动端开发中用到的性能工具通常是原生应用，而 DevTools 却是基于浏览器的。为什么要基于浏览器开发，Dart VM Service Protocol 又是什么？简单了解一下。</p>
+<a id="more"></a>
+<p>Dart DevTools 提供 hot reload、UI 调试和内存分析等各种功能。</p>
+<p><img src="/images/15941055868454.jpg" alt></p>
+<h1 id="Dart-VM-Service-Protocol"><a href="#Dart-VM-Service-Protocol" class="headerlink" title="Dart VM Service Protocol"></a>Dart VM Service Protocol</h1><p>先来看看 Dart VM Service Protocol 是什么。</p>
+<p><a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service.md#rpcs-requests-and-responses" target="_blank" rel="noopener">Dart VM Service Protocol 3.36</a> 介绍如下：</p>
+<blockquote>
+<p>Service Protocol 协议用于跟运行中的 Dart VM 通信</p>
+<p>使用 <code>--observe</code> 启动 Dart VM 后就能使用 Service Protocol。VM 会启动一个 webserver 并通过 WebSocket 为 protocol request 提供服务。也可发送 HTTP (非WebSocket)请求，但这种情况下无法访问 VM <em>event</em></p>
+<p>Service Protocol 使用 <a href="http://www.jsonrpc.org/specification" target="_blank" rel="noopener">JSON-RPC 2.0</a> 来通信</p>
+</blockquote>
+<h2 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h2><p>通过 <a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service.md#getversion" target="_blank" rel="noopener">getVersion</a> 这个例子来看看 RPC 请求和响应。</p>
+<p>RPC request 是一个发送到 server 的 JSON 对象。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"jsonrpc"</span>: <span class="string">"2.0"</span>, <span class="comment">// jsonprc 属性可选</span></span><br><span class="line">  <span class="attr">"method"</span>: <span class="string">"getVersion"</span>, <span class="comment">//</span></span><br><span class="line">  <span class="attr">"params"</span>: &#123;&#125;, <span class="comment">// params 属性在 Dart 代码中以 named parameters 形式提供</span></span><br><span class="line">  <span class="attr">"id"</span>: <span class="string">"1"</span> <span class="comment">// id 属性可以是 string, number, null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>RPC response 也是一个 JSON 对象。</p>
+<p>这是一个成功的 RPC response：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"jsonrpc"</span>: <span class="string">"2.0"</span>,</span><br><span class="line">  <span class="attr">"result"</span>: &#123; <span class="comment">// 请求成功时返回 result 属性</span></span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"Version"</span>, <span class="comment">// type 参数可用于判断准确的返回类型，它是 Response 类的子类</span></span><br><span class="line">    <span class="attr">"major"</span>: <span class="number">3</span>,</span><br><span class="line">    <span class="attr">"minor"</span>: <span class="number">5</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="string">"id"</span>: <span class="string">"1"</span> <span class="comment">// id 属性跟对应请求中的 id 匹配</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个失败的 RPC response：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"jsonrpc"</span>: <span class="string">"2.0"</span>,</span><br><span class="line">  <span class="attr">"error"</span>: &#123; <span class="comment">// 请求失败时返回 error 属性，它包括 code, message 和 data</span></span><br><span class="line">    <span class="attr">"code"</span>: <span class="number">103</span>,</span><br><span class="line">    <span class="attr">"message"</span>: <span class="string">"Stream already subscribed"</span>,</span><br><span class="line">    <span class="attr">"data"</span>: &#123;</span><br><span class="line">      <span class="attr">"details"</span>: <span class="string">"The stream 'GC' is already subscribed"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="string">"id"</span>: <span class="string">"2"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="error codes">JSON-RPC 规范</a>的基础上，Service Protocol 定义了一些额外的错误码。具体错误见 Service Protocol 文档，这里不展开。</p>
+<h2 id="Event-和-Binary-Event"><a href="#Event-和-Binary-Event" class="headerlink" title="Event 和 Binary Event"></a>Event 和 Binary Event</h2><ul>
+<li>通过使用 <a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service.md#streamlisten" target="_blank" rel="noopener">streamListen</a> 和 <a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service.md#streamcancel" target="_blank" rel="noopener">streamCancel</a> RPC，客户端可以收到 VM 中特定 stream 上的事件通通知</li>
+<li>每个 stream 跟一个 <em>stream id</em> 关联</li>
+<li>每个 stream 跟某种类型的事件关联。比如 <em>Isolate</em> stream 提供 isolate 相关的创建和销毁等事件</li>
+<li>客户端通过 WebSocket 异步接收 stream event</li>
+<li>某些事件跟二进制数据关联，通过 WebSocket binary frame 而不是 text frame 发送这些事件</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"json-rpc"</span>: <span class="string">"2.0"</span>,</span><br><span class="line">  <span class="attr">"method"</span>: <span class="string">"streamNotify"</span>,</span><br><span class="line">  <span class="attr">"params"</span>: &#123; <span class="comment">// 参数中包括 streamId 和 event 属性</span></span><br><span class="line">    <span class="attr">"streamId"</span>: <span class="string">"Isolate"</span>,</span><br><span class="line">    <span class="attr">"event"</span>: &#123;</span><br><span class="line">      <span class="attr">"type"</span>: <span class="string">"Event"</span>,</span><br><span class="line">      <span class="attr">"kind"</span>: <span class="string">"IsolateExit"</span>,</span><br><span class="line">      <span class="attr">"isolate"</span>: &#123;</span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"@Isolate"</span>,</span><br><span class="line">        <span class="attr">"id"</span>: <span class="string">"isolates/33"</span>,</span><br><span class="line">        <span class="attr">"number"</span>: <span class="string">"51048743613"</span>,</span><br><span class="line">        <span class="attr">"name"</span>: <span class="string">"worker-isolate"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Types"><a href="#Types" class="headerlink" title="Types"></a>Types</h2><p>Service Protocol 中的每个响应或事件均有 <code>type</code> 属性，它是 <a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service.md#response" target="_blank" rel="noopener">Response</a> 子类。客户端可以通过 <code>type</code> 属性判断每种响应或事件的准确类型。</p>
+<ul>
+<li>以 <code>@</code> 开头的 type 表示当前响应是一个 <code>reference</code></li>
+<li>不以 <code>@</code> 开头的 type 表示当前响应是一个 <code>object</code></li>
+</ul>
+<p><code>reference</code> 可提供的信息是 <code>object</code> 的子集</p>
+<h1 id="Dart-VM-Service-Protocol-Extension"><a href="#Dart-VM-Service-Protocol-Extension" class="headerlink" title="Dart VM Service Protocol Extension"></a>Dart VM Service Protocol Extension</h1><p><a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service_extension.md" target="_blank" rel="noopener">Dart VM Service Protocol Extension</a> 与 VM 通信的方式跟 Service Protocol 类似跟类似，但它们并不是核心 <a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service.md" target="_blank" rel="noopener">Dart VM Service Protocol</a> 的一部分，仅允许通过某些核心库访问。</p>
+<p>通过添加前缀名来调用对应的 RPC 接口，类似 “ext.dart.libraryName”。比如，调用 <code>ext.dart.io.getSocketProfile</code> 来执行 dart:io 暴露的 <code>getSocketProfile</code> RPC 接口。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>简单了解 Dart VM Service Protocol 和 Dart VM Service Protocol Extension 后，我们有以下认识：</p>
+<ul>
+<li>Service Protocol 和 Service Protocol Extension 是一套 RPC-JSON 协议</li>
+<li>Service Protocol 兼容性好，可以很容易地集成到现有 IDE</li>
+<li>VM 会启动一个 webserver 并通过 WebSocket 为客户端提供服务</li>
+</ul>
+<p>为什么要基于浏览器来开发 DevTools？有以下几个原因</p>
+<ul>
+<li>浏览器天生支持 WebSocket，所以基于浏览器开发 DevTools 是水到渠成</li>
+<li>基于浏览器开发 DevTools，可兼容多平台</li>
+<li>当前的 DevTools 是使用 Flutter 框架开发的 (没错，Flutter。以前是纯 Dart 开发)，部署成 Web 应用很方便</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service.md#rpcs-requests-and-responses" target="_blank" rel="noopener">sdk/service.md at master · dart-lang/sdk</a></li>
+<li><a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service_extension.md" target="_blank" rel="noopener">sdk/service_extension.md at master · dart-lang/sdk</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&amp;mid=2652058622&amp;idx=1&amp;sn=3551e237325a72a99ac71ec8c8747a43&amp;chksm=808c93bbb7fb1aad62acae899e59e36596d719c1194a912b26cccf565641c5a2683e675b691e&amp;mpshare=1&amp;scene=1&amp;srcid=0707V7mgrCqByikjM5WbdfpD&amp;sharer_sharetime=1594105478505&amp;sharer_shareid=b5535657e3516bd6d7252ce5f5ed09f4#rd" target="_blank" rel="noopener">​我们用 Flutter 写了一套全新的 Flutter 开发者工具</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+              <a href="/tags/dart/" rel="tag"># Dart</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/04/flutter-engine-crash-track/" rel="prev" title="Flutter 引擎崩溃分析方法简介">
+      <i class="fa fa-chevron-left"></i> Flutter 引擎崩溃分析方法简介
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/11/how-flutter-works/" rel="next" title="(译) Flutter 原理">
+      (译) Flutter 原理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dart-VM-Service-Protocol"><span class="nav-number">1.</span> <span class="nav-text">Dart VM Service Protocol</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RPC"><span class="nav-number">1.1.</span> <span class="nav-text">RPC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Event-和-Binary-Event"><span class="nav-number">1.2.</span> <span class="nav-text">Event 和 Binary Event</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Types"><span class="nav-number">1.3.</span> <span class="nav-text">Types</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dart-VM-Service-Protocol-Extension"><span class="nav-number">2.</span> <span class="nav-text">Dart VM Service Protocol Extension</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

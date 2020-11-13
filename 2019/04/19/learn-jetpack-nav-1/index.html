@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Android Jetpack Navigation 学习笔记。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Jetpack 学习笔记之 Navigation">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/04/19/learn-jetpack-nav-1/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Android Jetpack Navigation 学习笔记。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2019/04/19/learn-jetpack-nav-1/atrributes.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.015Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Jetpack 学习笔记之 Navigation">
+<meta name="twitter:description" content="Android Jetpack Navigation 学习笔记。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2019/04/19/learn-jetpack-nav-1/atrributes.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/04/19/learn-jetpack-nav-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android Jetpack 学习笔记之 Navigation | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/04/19/learn-jetpack-nav-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android Jetpack 学习笔记之 Navigation
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-04-19 19:11:10" itemprop="dateCreated datePublished" datetime="2019-04-19T19:11:10+08:00">2019-04-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Android Jetpack Navigation 学习笔记。<br><a id="more"></a></p>
+<p>学习内容来自官方文档 <a href="https://developer.android.com/guide/navigation/" target="_blank" rel="noopener">Navigation</a>。</p>
+<h1 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h1><p>Android Jetpack 中的 Navigation 组件用于 app 导航。Navigation 组件主要有三个部分：</p>
+<ul>
+<li>Navigation graph - 这是一个包括所有导航相关信息的 XML 文件<ul>
+<li>destination - 应用中的内容承载区域，简单来说就是 Fragment 或者 Activity</li>
+</ul>
+</li>
+<li><code>NavHost</code> - 一个空的容器，用于展示 destination<ul>
+<li><a href="https://developer.android.com/reference/androidx/navigation/fragment/NavHostFragment.html" target="_blank" rel="noopener">NavHostFragment</a> - Navigation 组件中提供 <code>NavHost</code> 实现，用于展示 Fragment</li>
+</ul>
+</li>
+<li><code>NavController</code> - 管理 app 导航</li>
+</ul>
+<p>使用 Navigation 组件的好处：</p>
+<ul>
+<li>Handling fragment transactions</li>
+<li>Handling Up and Back actions correctly by default</li>
+<li>Providing standardized resources for animations and transitions</li>
+<li>Implementing and handling deep linking</li>
+<li>Including Navigation UI patterns</li>
+<li><a href="https://developer.android.com/guide/navigation/navigation-pass-data#Safe-args" target="_blank" rel="noopener">Safe Args</a></li>
+</ul>
+<p>使用 Navigation 组件需要使用 Android Studio 3.3 及以上版本。</p>
+<h1 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h1><h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>第一步是创建 navigation graph 文件。navigation graph 文件位置 <code>res/navigation/nav_graph.xml</code>。可以使用 Navigation Editor 预览和编辑该文件。</p>
+<p><em>A navigation graph is a resource file that contains all of your destinations and actions</em>. </p>
+<ul>
+<li>Destinations are the different content areas in your app</li>
+<li>Actions are logical connections between your destinations that represent paths that users can take</li>
+</ul>
+<p>第二步是在 Activity 中添加 <code>NavHost</code>。这是一个空的容器，当用户在 app 内导航时 destination 被添加到该容器或从容器中移除。</p>
+<p>navigation host 必须继承自 <a href="https://developer.android.com/reference/androidx/navigation/NavHost.html" target="_blank" rel="noopener">NavHost</a>。<a href="https://developer.android.com/reference/androidx/navigation/fragment/NavHostFragment.html" target="_blank" rel="noopener">NavHostFragment</a> 是 Navigation 组件的缺省实现，你也可以提供自己的实现。</p>
+<p>添加了 <code>NavHostFragment</code> 作为 navigation host。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">android.support.constraint.ConstraintLayout</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:context</span>=<span class="string">".MainActivity"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">androidx.appcompat.widget.Toolbar</span></span></span><br><span class="line"><span class="tag">        <span class="attr">...</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">fragment</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/nav_host_fragment"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:name</span>=<span class="string">"androidx.navigation.fragment.NavHostFragment"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"0dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"0dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintLeft_toLeftOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintRight_toRightOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintBottom_toBottomOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag"></span></span><br><span class="line"><span class="tag">        <span class="attr">app:defaultNavHost</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:navGraph</span>=<span class="string">"@navigation/nav_graph"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">com.google.android.material.bottomnavigation.BottomNavigationView</span></span></span><br><span class="line"><span class="tag">        <span class="attr">...</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">android.support.constraint.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>以上 XML 文件中</p>
+<ul>
+<li><code>android:name</code> - 指定 <code>NavHost</code> 实现类的名字</li>
+<li><code>app:navGraph</code> - 将 <code>NavHost</code> 跟 <code>nav_graph.xml</code> 文件关联</li>
+<li><code>app:defaultNavHost=&quot;true&quot;</code> - 指定 <code>NavHost</code> 是否处理系统 Back 键<ul>
+<li>同一布局中可以有多个 <code>NavHost</code></li>
+<li>同一布局中只能有一个 default 的 <code>NavHost</code></li>
+</ul>
+</li>
+</ul>
+<p>第三步是编辑 navigation graph 文件。在 Editor 中点 “New Destination”，</p>
+<ul>
+<li>可以创建新的 Fragment 以新建 destination</li>
+<li>可以从已有的 Fragment 来新建 destination</li>
+<li>可以创建一个 placeholder destination (占位符，不影响编译)</li>
+</ul>
+<p>以下是一个例子。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">navigation</span> <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:startDestination</span>=<span class="string">"@id/blankFragment"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">fragment</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/blankFragment"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:name</span>=<span class="string">"com.example.cashdog.cashdog.BlankFragment"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">"Blank"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">tools:layout</span>=<span class="string">"@layout/fragment_blank"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">navigation</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>切换到 Design 模式可以看到4个重要属性：</p>
+<ul>
+<li>Type - 指定 destination 是由 Fragment, Activity 还是其他的某个代码来实现</li>
+<li>Label - 展示 destination 时的标题名</li>
+<li>ID - destination ID，用于在代码中引用这个 destination</li>
+<li>Class - 跟 destination 关联的 Java 类</li>
+</ul>
+<p><img src="atrributes.png" alt></p>
+<p>对 navigation graph 的编辑操作主要有以下几个：</p>
+<ul>
+<li>指定 <a href="https://developer.android.com/guide/navigation/navigation-principles" target="_blank" rel="noopener">start destination</a>，即进入该 Activity 后看到的第一屏界面</li>
+<li>为 destination 添加连接</li>
+</ul>
+<p>完成以上三步后，就可以开始在 app 内导航了。</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>使用 <a href="https://developer.android.com/reference/androidx/navigation/NavController.html" target="_blank" rel="noopener">NavController</a> 导航至 destination。NavController 是在一个 <code>NavHost</code> 范围内进行导航管理的对象。每个 <code>NavHost</code> 都有自己的 <code>NavController</code>。</p>
+<h3 id="获取-NavController"><a href="#获取-NavController" class="headerlink" title="获取 NavController"></a>获取 <code>NavController</code></h3><p>Kotlin 代码</p>
+<ul>
+<li>Fragment.findNavController()</li>
+<li>View.findNavController()</li>
+<li>Activity.findNavController(viewId: Int)</li>
+</ul>
+<p>Java 代码</p>
+<ul>
+<li>NavHostFragment.findNavController(Fragment)</li>
+<li>Navigation.findNavController(Activity, @IdRes int viewId)</li>
+<li>Navigation.findNavController(View)</li>
+</ul>
+<h3 id="导航至-destination"><a href="#导航至-destination" class="headerlink" title="导航至 destination"></a>导航至 destination</h3><p>使用 <code>NavController.navigate()</code> 导航至指定的 destination。</p>
+<ul>
+<li>NavController.navigateUp() </li>
+<li>NavController.popBackStack()</li>
+</ul>
+<h3 id="高级用法"><a href="#高级用法" class="headerlink" title="高级用法"></a>高级用法</h3><p>场景：在用户首次注册流程中，一旦注册成功，就应该从 back stack 中清空所有注册相关的 destination 以免用户退回到这些 destination</p>
+<p>场景：<a href="https://developer.android.com/guide/navigation/navigation-getting-started#popupto_example_circular_logic" target="_blank" rel="noopener">循环跳转问题</a> </p>
+<h1 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h1><ul>
+<li><a href="https://developer.android.com/guide/navigation/navigation-design-graph#nested_graphs" target="_blank" rel="noopener">Nested graphs</a></li>
+<li>跨 module 跳转</li>
+<li><a href="https://developer.android.com/guide/navigation/navigation-conditional" target="_blank" rel="noopener">Conditional navigation</a></li>
+<li><a href="https://developer.android.com/guide/navigation/navigation-design-graph#global_actions" target="_blank" rel="noopener">Global actions</a></li>
+<li><a href="https://developer.android.com/guide/navigation/navigation-pass-data" target="_blank" rel="noopener">Pass data between destinations</a></li>
+</ul>
+<h2 id="Nested-graphs"><a href="#Nested-graphs" class="headerlink" title="Nested graphs"></a>Nested graphs</h2><p>可以将一组 destination 组合成一个 nested graphs。needed graphs 适用于用户注册、<a href="https://developer.android.com/guide/navigation/navigation-conditional#first-time_user_experience" target="_blank" rel="noopener">滑屏页</a>等场景，可以更好地组织特定流程。</p>
+<ul>
+<li>nested graph 必须有一个 start destination</li>
+<li>nested graph 以外的 destination 只能通过 start destination 来访问这个 nested graph</li>
+</ul>
+<p>小技巧：使用 <include> 标签包含其他 navigation graph。</include></p>
+<h2 id="跨-module-跳转"><a href="#跨-module-跳转" class="headerlink" title="跨 module 跳转"></a>跨 module 跳转</h2><h2 id="Conditional-navigation"><a href="#Conditional-navigation" class="headerlink" title="Conditional navigation"></a>Conditional navigation</h2><p>根据 <a href="https://developer.android.com/guide/navigation/navigation-conditional" target="_blank" rel="noopener">文档</a>，可知 Navigation 组件自身并没有真正实现 conditional navigation，而是需要开发者自己使用 ViewModel + NavController 来实现</p>
+<h2 id="传参"><a href="#传参" class="headerlink" title="传参"></a>传参</h2><h3 id="参数类型"><a href="#参数类型" class="headerlink" title="参数类型"></a>参数类型</h3><p>支持的参数类型：</p>
+<ul>
+<li>基本类型</li>
+<li>string - app:argType=”string”    </li>
+<li>Resource Reference - app:argType=”reference”    </li>
+<li>Custom Parcelable - app:argType=”<type>“, where <type> is the fully-qualified class name of the Parcelable    </type></type></li>
+<li>Custom Serializable - app:argType=”<type>“, where <type> is the fully-qualified class name of the Serializable    </type></type></li>
+<li>Custom Enum - app:argType=”<type>“, where <type> is the fully-qualified name of the enum</type></type></li>
+</ul>
+<p>如果参数支持 null 值，可以填 “@null”</p>
+<h3 id="Safe-Args"><a href="#Safe-Args" class="headerlink" title="Safe Args"></a>Safe Args</h3><h3 id="混淆配置"><a href="#混淆配置" class="headerlink" title="混淆配置"></a><a href="https://developer.android.com/guide/navigation/navigation-pass-data#use_keep_annotations" target="_blank" rel="noopener">混淆配置</a></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Keep class ParcelableArg : Parcelable &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">@Keep class SerializableArg : Serializable &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">@Keep enum class EnumArg &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="其他话题"><a href="#其他话题" class="headerlink" title="其他话题"></a>其他话题</h1><p>Navigation 组件内容很丰富。限于时间和精力，我略过了以下内容：</p>
+<ul>
+<li>Deep Link</li>
+<li>动画</li>
+<li>手动创建 <code>NavHostFragment</code></li>
+<li>测试</li>
+<li>添加新的 destination type</li>
+<li><a href="https://developer.android.com/guide/navigation/navigation-migrate" target="_blank" rel="noopener">如何迁移</a></li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="https://www.youtube.com/watch?v=9O1D_Ytk0xg" target="_blank" rel="noopener">10 Best Practices for Moving to a Single Activity</a></li>
+<li><a href="https://www.youtube.com/watch?v=2k8x8V77CrU" target="_blank" rel="noopener">Single Activity: Why, When, and How (Android Dev Summit ‘18)</a></li>
+<li><a href="https://github.com/googlesamples/android-architecture-components/tree/master/NavigationBasicSample" target="_blank" rel="noopener">https://github.com/googlesamples/android-architecture-components/tree/master/NavigationBasicSample</a></li>
+<li><a href="https://developer.android.com/guide/navigation/" target="_blank" rel="noopener">Navigation</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/19/groovy-basic/" rel="prev" title="Groovy与Gradle">
+      <i class="fa fa-chevron-left"></i> Groovy与Gradle
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/25/learn-jetpack-livedata-1/" rel="next" title="(译)Android Jetpack 学习笔记之 LiveData">
+      (译)Android Jetpack 学习笔记之 LiveData <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#总览"><span class="nav-number">1.</span> <span class="nav-text">总览</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用法"><span class="nav-number">2.</span> <span class="nav-text">用法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准备"><span class="nav-number">2.1.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">2.2.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#获取-NavController"><span class="nav-number">2.2.1.</span> <span class="nav-text">获取 NavController</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导航至-destination"><span class="nav-number">2.2.2.</span> <span class="nav-text">导航至 destination</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高级用法"><span class="nav-number">2.2.3.</span> <span class="nav-text">高级用法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进阶"><span class="nav-number">3.</span> <span class="nav-text">进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Nested-graphs"><span class="nav-number">3.1.</span> <span class="nav-text">Nested graphs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#跨-module-跳转"><span class="nav-number">3.2.</span> <span class="nav-text">跨 module 跳转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conditional-navigation"><span class="nav-number">3.3.</span> <span class="nav-text">Conditional navigation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#传参"><span class="nav-number">3.4.</span> <span class="nav-text">传参</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数类型"><span class="nav-number">3.4.1.</span> <span class="nav-text">参数类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Safe-Args"><span class="nav-number">3.4.2.</span> <span class="nav-text">Safe Args</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#混淆配置"><span class="nav-number">3.4.3.</span> <span class="nav-text">混淆配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他话题"><span class="nav-number">4.</span> <span class="nav-text">其他话题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

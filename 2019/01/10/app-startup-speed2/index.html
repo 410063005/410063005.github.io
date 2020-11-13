@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="再谈谈冷启动速度优化。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="应用启动速度优化(二)">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/01/10/app-startup-speed2/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="再谈谈冷启动速度优化。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hukai.me/images/android_perf_6_launch_time_start_process.png">
+<meta property="og:image" content="http://hukai.me/images/android_perf_6_launch_time_report_fully_drawn.png">
+<meta property="og:image" content="https://qqadapt.qpic.cn/txdocpic/0/84d9a3d2a3eb54970ef5c507f2be529d/0">
+<meta property="og:image" content="https://qqadapt.qpic.cn/txdocpic/0/91e60ddde3d330b12d6660afa4911f82/0">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.994Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="应用启动速度优化(二)">
+<meta name="twitter:description" content="再谈谈冷启动速度优化。">
+<meta name="twitter:image" content="http://hukai.me/images/android_perf_6_launch_time_start_process.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/01/10/app-startup-speed2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>应用启动速度优化(二) | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/01/10/app-startup-speed2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          应用启动速度优化(二)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-10 16:53:26" itemprop="dateCreated datePublished" datetime="2019-01-10T16:53:26+08:00">2019-01-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>再谈谈冷启动速度优化。<br><a id="more"></a><br>这是之前写的另一篇(不好意思，半成品)，<a href="/2019/01/10/app-startup-speed/" title="应用启动速度优化(一)">应用启动速度优化(一)</a>。对冷启动速度优化有了一些新的认识，所以今天再次旧话重提。</p>
+<p>本文的主要内容包括：</p>
+<ul>
+<li>优化冷启动速度的关注点<ul>
+<li><code>Application.onCreate()</code> 中的初始化过程。注意多进程对这个方法的影响</li>
+<li><code>Activity.onCreate()</code> 中的初始化过程。重点关注应用的第一个 Activity</li>
+</ul>
+</li>
+<li>冷启动耗时的测量方法<ul>
+<li><code>Debug.startMethodTracing()</code> 的用法</li>
+<li><a href="https://developer.android.com/studio/profile/cpu-profiler" target="_blank" rel="noopener"><code>.trace</code> 文件的分析方法</a></li>
+</ul>
+</li>
+<li>闪屏页的优化方法</li>
+</ul>
+<h1 id="启动速度的关注点"><a href="#启动速度的关注点" class="headerlink" title="启动速度的关注点"></a>启动速度的关注点</h1><p>应用冷启动过程是这样的：</p>
+<p><img src="http://hukai.me/images/android_perf_6_launch_time_start_process.png" alt></p>
+<p><a href="http://hukai.me/android-performance-patterns-season-6/" target="_blank" rel="noopener">Android性能优化典范</a>中提到应用开发者能够控制并且需要特别关注的地方主要有三处：</p>
+<ul>
+<li><code>Application.onCreate()</code> 流程，对于大型的APP来说，通常会在这里做大量的通用组件的初始化操作</li>
+<li><code>Activity.onCreate()</code> 流程，特别是UI的布局与渲染操作，如果布局过于复杂很可能导致严重的启动性能问题</li>
+<li>自定义的启动窗口(也就是通常所说的闪屏页)</li>
+</ul>
+<p>我根据自己的开发经验补充一个关注点：现在的app动不动就多进程，多进程app会多次调用 <code>Application.onCreate()</code> 方法进行初始化，而实际上某些初始化过程仅仅对主进程才有意义。反复调用 <code>Application.onCreate()</code> 不仅拖慢启动速度，还会无意义地占用内存。</p>
+<p>有两种简单的测试 Activity 启动时间的方法：</p>
+<ul>
+<li>在 Android Studio logcat 中搜索 <code>ActivityManager: Displayed ...</code> 日志</li>
+<li><code>adb logcat -v time | grep &#39;Displayed com.tencent.PmdCampus/.view.IndexActivity&#39;</code></li>
+</ul>
+<p>小知识：Displayed Time 是界面 inflate 完成的时间，是区别于界面真实加载完成的时间的(比如说，inflate 完成后可能会异步加载图片，图片加载完才算真实加载完成)。如果关注这里的差异的话，一个解决方法是使用 <code>activity.reportFullyDrawn()</code> 告诉系统以便获取真实加载时间。</p>
+<p><img src="http://hukai.me/images/android_perf_6_launch_time_report_fully_drawn.png" alt></p>
+<h1 id="Method-Tracing"><a href="#Method-Tracing" class="headerlink" title="Method Tracing"></a>Method Tracing</h1><p>上述提到的三个关注点完全适用于我们的app。</p>
+<ul>
+<li>首先，我们app在 <code>Application.onCreate()</code> 中初始化了大量第三方 SDK</li>
+<li>其次，我们app在 <code>IndexActivity.onCreate()</code> 中加载了复杂布局。IndexActivity 作为首页承载了5个Tab页</li>
+<li>最后，我们app使用了不完全合理的闪屏实现方式</li>
+</ul>
+<p>在 <code>Application.onCreate()</code> 中初始化大量第三方 SDK 到底有多耗时呢？需要先测出数据。</p>
+<a href="/2019/01/10/app-startup-speed/" title="应用启动速度优化(一)">应用启动速度优化(一)</a>使用了一个笨办法，通过 <code>Log.i</code> 输出各个方法调用的耗时。<br><br>容易想到另外一个工具，<a href="https://developer.android.com/studio/profile/cpu-profiler" target="_blank" rel="noopener">Android Studio 中的 CPU Profiler</a>。但使用 CPU Profiler 的有个问题，它不便于精确分析应用启动时的 cpu 状态。<br><br>所以更好的办法是使用 <code>Debug.startMethodTracing()</code>。方法如下：<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate();</span><br><span class="line">        Debug.startMethodTracing();</span><br><span class="line">        ...</span><br><span class="line">        Debug.stopMethodTracing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>缺省的文件为 <code>dmtrace.trace</code>，通过如下方式导出来：</p>
+<p><code>adb pull /sdcard/Android/data/&lt;package&gt;/files/dmtrace.trace</code></p>
+<p>Android Studio 3.0 之后 traceview 工具已废弃，我们直接在 Studio 中分析 <code>.trace</code> 文件就可以了。方法如下：</p>
+<p>Profiler &gt; SESSIONS &gt; Load from file，然后选择 <code>.trace</code> 文件</p>
+<p><img src="https://qqadapt.qpic.cn/txdocpic/0/84d9a3d2a3eb54970ef5c507f2be529d/0" alt="Call Chart"></p>
+<p><img src="https://qqadapt.qpic.cn/txdocpic/0/91e60ddde3d330b12d6660afa4911f82/0" alt="Top Down"></p>
+<p>通过 Top Down 这张图，拎出启动速度慢的罪魁祸首简直易于反掌。名单整理如下：</p>
+<ul>
+<li>IGameApplication.initBugly() - 初始化 bugly SDK，耗时 389.62.ms<ul>
+<li>RqdHotfix.init() - 389.26ms</li>
+</ul>
+</li>
+<li>ReservoirHelper.init() - 初始化 Reservoir 库，耗时 101.43ms</li>
+<li>LoginHelper.getInstance() - 初始化 Wtlogin SDK，耗时 755.6ms<ul>
+<li>WtloginHelper() - 755.42.ms</li>
+</ul>
+</li>
+</ul>
+<h1 id="首页启动速度优化"><a href="#首页启动速度优化" class="headerlink" title="首页启动速度优化"></a>首页启动速度优化</h1><p>首页承载多个 Tab 导致启动慢时，一般通过懒加载的方法来避免启动时立即加载全部 Fragment。可以参考<a href="https://blog.csdn.net/yewei02538/article/details/50329119" target="_blank" rel="noopener">这里</a>，不再赘述。</p>
+<h1 id="闪屏页的优化"><a href="#闪屏页的优化" class="headerlink" title="闪屏页的优化"></a>闪屏页的优化</h1><p>我们 app 中闪屏页跟首页是分离的。每次启动时都会先显示闪屏页再跳转到首页 (注意是每次，而不仅仅是冷启动时）。 感觉这一做法有背离闪屏页初衷的嫌疑，而且从技术角度上讲多启动了一个 Activity 增加了启动耗时。</p>
+<ul>
+<li>闪屏页 - SplashActivity，</li>
+<li>首页 - IndexActivity，有5个Tab</li>
+</ul>
+<p>更好的做法是将闪屏页与首页合并。要点如下：</p>
+<ul>
+<li>创建一个用于闪屏的主题 <code>Laucher</code> 以及一个应用主题 <code>MyApp</code></li>
+<li>创建 <code>laucher_drawable</code>，它包含跟 <code>MyApp</code> 主题相近的背景色以及一个居中的小 logo</li>
+<li><code>Laucher</code> 主题使用 <code>laucher_drawable</code> 作为 <code>windowBackground</code></li>
+<li>manifest 中将 IndexActivity 的主题设置为 <code>Laucher</code></li>
+<li><code>IndexActivity.onCreate()</code> 方法中使用 <code>setTheme()</code> 方法将主题从 <code>Laucher</code> 切换到 <code>MyApp</code></li>
+</ul>
+<p>注意：在调用 <code>super.onCreate()</code> 之前调用 <code>setTheme()</code></p>
+<p>核心代码如下：</p>
+<p><code>laucher_drawable.xml</code> 文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">layer-list</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">"@color/color_app"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;<span class="name">bitmap</span> <span class="attr">android:src</span>=<span class="string">"@drawable/logo"</span> <span class="attr">android:gravity</span>=<span class="string">"center"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">layer-list</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>Laucher</code> 主题：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">"AppTheme.Laucher"</span> <span class="attr">parent</span>=<span class="string">"@style/Theme.AppCompat.NoActionBar"</span>&gt;</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:windowBackground"</span>&gt;</span>@drawable/laucher_drawable<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>manifest 文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">name</span>=<span class="string">".view.IndexActivity"</span> <span class="attr">theme</span>=<span class="string">"@style/AppTheme.Laucher"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>IndexActivity.java 文件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IndexActivity</span> <span class="keyword">extends</span> <span class="title">AppCompactActivity</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 在 `super.onCreate()` 之调用 `setTheme()`</span></span><br><span class="line">        setTheme(R.style.Theme_MyApp);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/10/app-startup-speed/" rel="prev" title="应用启动速度优化(一)">
+      <i class="fa fa-chevron-left"></i> 应用启动速度优化(一)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/10/manage-your-memory/" rel="next" title="(译)Manage Your App's Memory">
+      (译)Manage Your App's Memory <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#启动速度的关注点"><span class="nav-number">1.</span> <span class="nav-text">启动速度的关注点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Method-Tracing"><span class="nav-number">2.</span> <span class="nav-text">Method Tracing</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#首页启动速度优化"><span class="nav-number">3.</span> <span class="nav-text">首页启动速度优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#闪屏页的优化"><span class="nav-number">4.</span> <span class="nav-text">闪屏页的优化</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="翻译自Analyze with Profile GPU Rendering">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(译)Analyze with Profile GPU Rendering">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/01/11/profile-gpu/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="翻译自Analyze with Profile GPU Rendering">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.995Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(译)Analyze with Profile GPU Rendering">
+<meta name="twitter:description" content="翻译自Analyze with Profile GPU Rendering">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/01/11/profile-gpu/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>(译)Analyze with Profile GPU Rendering | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/01/11/profile-gpu/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译)Analyze with Profile GPU Rendering
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-11 12:07:47" itemprop="dateCreated datePublished" datetime="2019-01-11T12:07:47+08:00">2019-01-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>翻译自<a href="https://developer.android.com/topic/performance/rendering/profile-gpu#psb" target="_blank" rel="noopener">Analyze with Profile GPU Rendering</a><br><a id="more"></a></p>
+<hr>
+<p>疑问：</p>
+<ul>
+<li>Unlike Issue Commands, which captures the time it takes to send drawing commands to the GPU, the Draw metric represents the time that it took to capture the issued commands into the display list.</li>
+</ul>
+<h2 id="如何理解这一句？"><a href="#如何理解这一句？" class="headerlink" title="如何理解这一句？"></a>如何理解这一句？</h2><p>Profile GPU Rendering tool 表示渲染前一帧时每个阶段消耗的相对时间。可以使用这个相对时间用于定位渲染流水线中的性能瓶颈，并用于优化app渲染性能。</p>
+<p>本文简单介绍每个流水线阶段发生了什么，并且讨论了可能引起性能瓶颈的问题。读本文前，你应该先熟悉<a href="https://developer.android.com/studio/profile/inspect-gpu-rendering.html#profile_rendering" target="_blank" rel="noopener">Profile GPU rendering</a>中的内容。另外，想想从整体上了解每个阶段是如何工作的也可以参考<a href="https://www.youtube.com/watch?v=we6poP0kw6E&amp;index=64&amp;list=PLWz5rJ2EKKc9CBxr3BVjPTPoDPLdPIFCE" target="_blank" rel="noopener">how the rendering pipeline works.</a>。</p>
+<p>Profile GPU Rendering tool 在图表中展示每个阶段和它们的相对时间：彩色直方图。</p>
+<p>图中每个直条表示流水线中的一个阶段，每个阶段使用特定的颜色高亮。</p>
+<p>一旦你理解每种颜色的含义，就可以针对app中特定目标进行渲染性能优化。</p>
+<h1 id="不同阶段及含义"><a href="#不同阶段及含义" class="headerlink" title="不同阶段及含义"></a>不同阶段及含义</h1><h2 id="Input-handling"><a href="#Input-handling" class="headerlink" title="Input handling"></a>Input handling</h2><p>input handling 阶段用于测量 app 花了多久时间处理 input events。这个值表示 app 花了多少时间用于执行 input event 回调中的代码。</p>
+<p>当这个阶段的时间变多时，通常是因为在 input-handler event 回调中执行太多或太复杂的工作。而这些回调一般总是在主线程中，所以解决方法是优化代码本身，或将代码移到工作线程。</p>
+<p>另外要注意的是，RecyclerView 的滚动也是发生在这个阶段。RecyclerView 消耗 touch event 时会马上滚动。而滚动后，RecyclerView 会 inflate 或 populate 新的 item views。所以，inflate 或 populate 操作要尽可能快。Traceview 或 Systrace 可以用于更深入的分析。</p>
+<h2 id="Animation"><a href="#Animation" class="headerlink" title="Animation"></a>Animation</h2><p>动画阶段表示你在这一帧中使用 animator 花了多少时间。常用的 animator 包括：ObjectAnimator，ViewPropertyAnimator 和 Transitions。</p>
+<p>当这个阶段的时间变多时，通常是因为动画一些属性变化引起某些工作的结果。比如，在滚动 ListView 或 RecyclerView 时 fling 动画会导致大量的 inflate 或 populate 操作。</p>
+<h2 id="Measurement-layout"><a href="#Measurement-layout" class="headerlink" title="Measurement/layout"></a>Measurement/layout</h2><p>Android 将 view 绘制到屏幕上时，会在 view hierarchy 中的 layout 和 view 上执行两个特定的操作。</p>
+<p>首先，系统测量 view items。每个 view 和 layout 有特定数据用于描述对象在屏幕上的大小。一些 view 有特定大小，另一些则适应父容器的大小。</p>
+<p>其次，系统对 view items进行布局。一旦系统计算完每个 children view 的大小，就会继续对它们进行布局。</p>
+<p>系统不仅对将要绘制的 view 进行测量和布局，也会对这些 view 的父容器进行测量和布局，直到 root view。</p>
+<p>当这个阶段的时间变多时，通常是要么是因为要处理的 view 太多，可者 view hierarchy 遇到了 “double taxation” 问题。</p>
+<p><code>onLayout(boolean, int, int, int, int)</code> 和 <code>onMeasure(int, int)</code> 中的代码也会导致性能问题。Traceview 和 Systrace 可以帮助检查这些回调，以定位代码问题。</p>
+<h2 id="Draw"><a href="#Draw" class="headerlink" title="Draw"></a>Draw</h2><p>绘制阶段将 view 上的渲染操作，比如绘制背景或绘制文本，转换成一系列的绘制命令。系统将这些命令放在 <a href="#">display list</a> 中。</p>
+<p>这个阶段记录了将绘制命令放在 display list 中的耗时(用于更新到屏幕上的所有 view 的绘制命令)。这个时间适用于任何你添加到 UI 对象中代码。比如，<code>onDraw()</code>，<code>dispatchDraw()</code>，以及不同的 <code>Drawable.draw()</code> 方法。</p>
+<p>当这个阶段的时间变多时，简单来说以将这个值视为为每个 invalidated view 调用 <code>onDraw()</code> 方法的耗时总和。这个值包含分发绘制命令到 children 以及 drawable 的耗时。基于这个原因，它这阶段耗时变多时，也可能是因为一堆 view 突然执行 <code>invalidate()</code>。让 view 无效会导致重新生成 view display list。另外，在自定义 view 的 <code>onDraw()</code> 方法中执行复杂逻辑的自定义 view 也会导致耗时变长。</p>
+<h2 id="Sync-upload"><a href="#Sync-upload" class="headerlink" title="Sync/upload"></a>Sync/upload</h2><p>Sync &amp; Upload 值表示这一帧中将 bitmap 对象从 CPU memory 传输到 GPU memory 的耗时。</p>
+<p>作为不同的处理器，CPU 和 GPU 有不同的专用 RAM 区域。它你绘制 bitmap 时，系统会在渲染 bitmap 之前 将其传输到 GPU memory。接着 GPU 会缓存这个 bitmap，以免系统重新传输数据，除非这个在 GPU 中的缓存数据被清理。</p>
+<p>当这个阶段的时间变长时，一帧的所有资源都在 GPU 内存中才能绘制这一帧，较大的值表示加载了大量的小资源或少量的过大资源。一个典型的场景是 app 展示了一个接近屏幕大小的 bitmap。另一个场景是 app 展示了很多小图标。</p>
+<p>要减少这个阶段的耗时，可采用的技巧如下：</p>
+<ul>
+<li>保证 bitmap 的分辨率不会比将要展示的大太多。比如，你应该避免在一个 48x48 的 ImageView 上展示一个 1024x1024 的 bitmap</li>
+<li>使用 <code>prepareToDraw()</code> 方法在下一帧之前异步预加载 bitmap</li>
+</ul>
+<h2 id="Issue-commands"><a href="#Issue-commands" class="headerlink" title="Issue commands"></a>Issue commands</h2><p>The Issue Commands segment represents the time it takes to issue all of the commands necessary for drawing display lists to the screen.</p>
+<p>示发送所有的必要 display list 绘制命令的耗时。系统将 display list 绘制到屏幕时，它会向 GPU 发送必要的命令。通常是通过 OpenGL ES API 进行发送。</p>
+<p>这个过程需要一些时间，因为系统要在发送命令到 GPU 前对每个命令进行最终的转换和裁剪。另外的开销来自 GPU 侧，它会计算最终的命令。这些命令包含最终的转换和附加的裁剪。</p>
+<p>当这个阶段的时间变长时，这个时间是对系统在给定的帧进行渲染时 display lists 复杂性和数量的直接度量。比如，进行非常多的绘制操作，特别是过多无关的原子绘制，会极大的增加这个时间。比如：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">0</span> until <span class="number">1000</span>) &#123;</span><br><span class="line">    canvas.drawPoint()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这个代码就比下面的代码要耗时得多：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">canvas.drawPoints(mThousandPointArray)</span><br></pre></td></tr></table></figure>
+<p>发送命令跟实际绘制 display lists 并不总是 1:1 的关系。Unlike Issue Commands, which captures the time it takes to send drawing commands to the GPU, the Draw metric represents the time that it took to capture the issued commands into the display list. (?? 没太明白)</p>
+<p>系统会尽可能缓存 display lists，导致差异更大。所以在滚动、transform、以及动画场景下，系统会重新发送 display list，但并不用真的重建 (As a result, there are situations where a scroll, transform, or animation requires the system to re-send a display list, but not have to actually rebuild it—recapture the drawing commands—from scratch)。所以你会看到 “Issue Commands” 升高的同时 “Draw” 并没有变高。</p>
+<h2 id="Process-swap-buffers"><a href="#Process-swap-buffers" class="headerlink" title="Process/swap buffers"></a>Process/swap buffers</h2><p>当 Android 将所有 display list 提交给 GPU 后，系统会发送一个最终的命令通知 graphics driver 这一帧已经完成。这时起，driver 就可以将更新的 image 显示成屏幕。</p>
+<p>当这个阶段的时间变长时，需要理解提 GPU 是跟 CPU 并行工作。Android 系统发送命令给 GPU，并进入下一个任务。而 GPU 从队伍读取绘制命令并进行处理。</p>
+<p>当 CPU 发送绘制命令的速度比 GPU 的处理速度快时，处理器之间的通信队列满了。这种情况下，CPU 阻塞并等待直到队列有新的位置给下一条绘制命令。队列满的状态经常发生在 Swap Buffers 阶段，因为这个时间点整个帧的绘制命令被提交。(This full-queue state arises often during the Swap Buffers stage, because at that point, a whole frame’s worth of commands have been submitted.)</p>
+<p>解决这个问题的关键是降低 GPU 中工作的复杂性。</p>
+<h2 id="Miscellaneous"><a href="#Miscellaneous" class="headerlink" title="Miscellaneous"></a>Miscellaneous</h2><p>渲染系统除了花时间处理其工作，还有一些额外的工作发生在主线程中所以不能渲染(there’s an additional set of work that occurs on the main thread and has nothing to do with rendering)。这些时间被统计为 misc time。Misc time 通常表示两个连接帧之间 UI 线程发生的工作。</p>
+<p>如果这个值变高，很可能是app有某些回调、intents或其他工作应当放在工作线程处理。Method tracing 和 Systrace 可以用于分析主线程中运行的任务，这些信息有助于进行性能优化。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/10/memory-profile-1/" rel="prev" title="(译)Memory Profiler">
+      <i class="fa fa-chevron-left"></i> (译)Memory Profiler
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/14/exoplayer-usage/" rel="next" title="Exoplayer 介绍">
+      Exoplayer 介绍 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何理解这一句？"><span class="nav-number">1.</span> <span class="nav-text">如何理解这一句？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不同阶段及含义"><span class="nav-number"></span> <span class="nav-text">不同阶段及含义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Input-handling"><span class="nav-number">1.</span> <span class="nav-text">Input handling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Animation"><span class="nav-number">2.</span> <span class="nav-text">Animation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Measurement-layout"><span class="nav-number">3.</span> <span class="nav-text">Measurement/layout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Draw"><span class="nav-number">4.</span> <span class="nav-text">Draw</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sync-upload"><span class="nav-number">5.</span> <span class="nav-text">Sync/upload</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Issue-commands"><span class="nav-number">6.</span> <span class="nav-text">Issue commands</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Process-swap-buffers"><span class="nav-number">7.</span> <span class="nav-text">Process/swap buffers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Miscellaneous"><span class="nav-number">8.</span> <span class="nav-text">Miscellaneous</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

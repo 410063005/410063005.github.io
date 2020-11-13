@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Flutter 开发指南中提到 Widget 是 Android View 的对等物。虽然形象，但不准确。Flutter 文档说一切皆 Widget，同时又说 Widget 只是 UI 配置/蓝图，到底该如何理解？本文带你揭开 Widget 的神秘面纱，探寻背后藏着的 RenderObject。">
+<meta name="keywords" content="Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter RenderObject 浅析">
+<meta property="og:url" content="http://www.sunmoonblog.com/2019/12/26/flutter-render-object/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Flutter 开发指南中提到 Widget 是 Android View 的对等物。虽然形象，但不准确。Flutter 文档说一切皆 Widget，同时又说 Widget 只是 UI 配置/蓝图，到底该如何理解？本文带你揭开 Widget 的神秘面纱，探寻背后藏着的 RenderObject。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773323688839.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773505764400.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773503347545.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773516364547.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773523142153.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774111904123.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774121792952.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773529078805.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774456110882.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774366867668.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774370864830.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774403469638.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/15878833456674.jpg">
+<meta property="og:updated_time" content="2020-11-13T02:18:59.046Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flutter RenderObject 浅析">
+<meta name="twitter:description" content="Flutter 开发指南中提到 Widget 是 Android View 的对等物。虽然形象，但不准确。Flutter 文档说一切皆 Widget，同时又说 Widget 只是 UI 配置/蓝图，到底该如何理解？本文带你揭开 Widget 的神秘面纱，探寻背后藏着的 RenderObject。">
+<meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773323688839.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2019/12/26/flutter-render-object/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Flutter RenderObject 浅析 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/12/26/flutter-render-object/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Flutter RenderObject 浅析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-12-26 11:19:40" itemprop="dateCreated datePublished" datetime="2019-12-26T11:19:40+08:00">2019-12-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Flutter 开发指南中提到 Widget 是 Android View 的对等物。虽然形象，但不准确。Flutter 文档说一切皆 Widget，同时又说 Widget 只是 UI 配置/蓝图，到底该如何理解？本文带你揭开 Widget 的神秘面纱，探寻背后藏着的 RenderObject。</p>
+<a id="more"></a>
+<p>[TOC]</p>
+<p>本文转自<a href="https://www.sunmoonblog.com/2019/12/26/flutter-render-object/">我的博客</a>，内容整理自我的一份<a href="https://docs.google.com/presentation/d/1yfBqORVrDXmSSCMWei_29WaccaCL5B2qaFPMayQk-18/edit?usp=sharing" target="_blank" rel="noopener">PPT</a>。</p>
+<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><blockquote>
+<p>in Flutter, the rough equivalent to a View is a Widget。Flutter Widget 是 Android View 的对等物<br><a href="https://flutter.dev/docs/get-started/flutter-for/android-devs#what-is-the-equivalent-of-a-view-in-flutter" target="_blank" rel="noopener">参考</a></p>
+</blockquote>
+<p>当你使用 Flutter 一段时间后你会发现两者并不完全对等。比如，Android 中这些我们熟悉的用于操作 View 的方法，在 Flutter Widget 中并不存在。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">View.getWidth();</span><br><span class="line">View.getHeight();</span><br><span class="line">View.getLocationInWindow();</span><br><span class="line">ViewGroup.addView();</span><br><span class="line">ViewGroup.removeView();</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Flutter 中 一切 UI 皆 Widget。不过，Widget 生而不同<br><a href="https://flutter.dev/docs/resources/technical-overview#everythings-a-widget" target="_blank" rel="noopener">参考</a></p>
+</blockquote>
+<p>不同种类的 Widget 存在着非常大的差异，包括：</p>
+<ul>
+<li>功能差异</li>
+<li>类结构差异</li>
+<li>树结构差异</li>
+</ul>
+<h2 id="功能差异"><a href="#功能差异" class="headerlink" title="功能差异"></a>功能差异</h2><p>以 Flutter 生成的缺省工程为例，UI 截图 和 Widget Outline 分别如下：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773323688839.jpg" alt="StatelessWidget w600"></p>
+<p>从上图看 Widget 相当强大，可以通过 StatelessWidget 和 StatefulWidget 将已有的各种 Widget <strong>组合</strong>成复杂的界面，但即便如此，StatelessWidget 和 StatefulWidget 等 Widget 实际上并没有任何<strong>自定义绘制</strong> 能力(它们似乎充当了 Android ViewGroup 的角色)。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773505764400.jpg" alt="ErrorWidget -w300"></p>
+<p>相反，Opacity、ErrorWidget 等 Widget 没有强大的组合能力，却有<strong>自定义绘制能力</strong>(它们更像是 Android View)。</p>
+<p>所以我们可以根据自定义绘制能力将它们粗略分成两大类：<strong>只支持组合</strong>与<strong>可自定义绘制</strong>。追根溯源我们将发现这种不同其实来自于 RenderObject。</p>
+<h2 id="类结构差异"><a href="#类结构差异" class="headerlink" title="类结构差异"></a>类结构差异</h2><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773503347545.jpg" alt="Widget的类结构 -w800"></p>
+<p>观察不同 Widget 的类结构，不难发现 Opacity 和 ErrorWidget 这些可自定义绘制的控件与 StatelessWidget 和 StatefulWidget 这些不支持自定义绘制的控件不同，前两者并非直接继承自 <code>Widget</code>，而是继承自 <code>RenderObjectWidget</code>。</p>
+<p>看名字，不难发现 <code>RenderObjectWidget</code> 跟 RenderObject 存在某种关联。</p>
+<h2 id="树结构差异"><a href="#树结构差异" class="headerlink" title="树结构差异"></a>树结构差异</h2><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">    runApp(Container(child: ErrorWidget(<span class="string">'hello, world'</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773516364547.jpg" alt="渲染树与RenderObject -w600"></p>
+<p>同样是 Widget，渲染树中可以看到 ErrorWidget 有一个关联的 renderObject 对象，而 Container 并没有关联的 renderObject 对象。产生这种差异的原因是什么？</p>
+<h1 id="RenderObject-介绍"><a href="#RenderObject-介绍" class="headerlink" title="RenderObject 介绍"></a>RenderObject 介绍</h1><h2 id="Widget，Element-与-RenderObject"><a href="#Widget，Element-与-RenderObject" class="headerlink" title="Widget，Element 与 RenderObject"></a>Widget，Element 与 RenderObject</h2><p>Element 是联系 Widget 和 RenderObject 的纽带。</p>
+<ul>
+<li>Widget - 存放渲染内容、视图布局信息</li>
+<li>Element - 存放上下文信息，通过 Element 遍历视图树，Element 同时持有Widget和RenderObject</li>
+<li>RenderObject - 根据 Widget 的布局属性进行 layout，对 widget 传入的内容进行渲染绘制</li>
+</ul>
+<p>先来快速地了解一下。</p>
+<p>首先通过一张图来看 Element 是如何发挥其纽带作用的：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773523142153.jpg" alt="Widget,Element与RenderObject -w800"></p>
+<ul>
+<li>每个 Widget 会创建一个对应的 Element 对象 (通过 <code>Widget.createElement()</code>)</li>
+<li>每个 Element 会持有对应 Widget 对象的引用 (注意 <code>createElement()</code> 方法第一个参数)</li>
+<li>RenderObjectElement 是 Element 的子类，这种 Element 持有一个 RenderObject 对象的引用</li>
+</ul>
+<p>其次，Element 也是树形结构。我们常说 Widget 是配置/蓝图，其实更具体来说 Widget 是 Element 的配置/蓝图。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774111904123.jpg" alt="Element数据结构 -w800"></p>
+<p>配置(Widget)的变更导致 Element 树进行相应地更新。<code>Element.updateChild()</code> 是 Widget 系统的核心方法，它负责处理这个更新。</p>
+<p><code>Element.updateChild()</code> 的更新策略见下图：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774121792952.jpg" alt="Element.updateChild() -w800"></p>
+<p>注意区分 Widget 的更新和 Element 的更新有着非常重大的差别：</p>
+<ul>
+<li>Widget 是配置数据，是轻量级对象。Widget 的更新对应着 <code>Stateless.build()</code> 和 <code>StatefulWidget.build()</code>，<strong>重新创建整个 Widget 树</strong>，是个全量过程</li>
+<li>Element 是重量级对象。Element 的更新对应着 <code>Element.updateChild()</code>，<strong>更新整个 Element 树</strong>，是个增量过程</li>
+</ul>
+<p>最后，如果非要找一段代码来体现三者之间的联系，非 <code>Element.inflateWidget()</code> 方法莫属。该方法简化后的代码如下，完整代码见 <a href="https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/widgets/framework.dart#L3247" target="_blank" rel="noopener">Github</a>。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Element</span> inflateWidget(Widget newWidget, <span class="built_in">dynamic</span> newSlot) &#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">Element</span> newChild = newWidget.createElement();</span><br><span class="line">  newChild.mount(<span class="keyword">this</span>, newSlot);</span><br><span class="line">  <span class="keyword">return</span> newChild;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果上述代码中的 Element 和 Widget 实际类型分别是 <code>RenderObjectElement</code> 和 <code>RenderObjectWidget</code>，则 <code>mount()</code> 方法会创建 <code>renderObject</code>。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> mount(<span class="built_in">Element</span> parent, <span class="built_in">dynamic</span> newSlot) &#123;</span><br><span class="line">  <span class="keyword">super</span>.mount(parent, newSlot);</span><br><span class="line">  _renderObject = widget.createRenderObject(<span class="keyword">this</span>);</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15773529078805.jpg" alt="RenderObject创建流程 -w600"></p>
+<p>注意：只有 RenderObjectElement/RednerObjectWidget 的子类才能创建 RenderObject 对象。</p>
+<p>了解 Widget，Element 与 RenderObject 三者之间关系后我们再来重点看 RenderObject。</p>
+<h2 id="初识-RenderObject"><a href="#初识-RenderObject" class="headerlink" title="初识 RenderObject"></a>初识 RenderObject</h2><blockquote>
+<p>The Flutter render tree is a low-level layout and painting system based on a retained tree of objects that inherit from RenderObject. Most developers using Flutter won’t need to interact directly with the rendering tree. Instead, most developers should use widgets, which are built using the render tree.<br>The base class for every node in the render tree is RenderObject , which defines the base layout model<br><a href="https://flutter.dev/docs/resources/rendering#introduction" target="_blank" rel="noopener">参考</a></p>
+</blockquote>
+<blockquote>
+<p>The RenderObject class hierarchy is the core of the rendering library’s reason for being.<br>The RenderObject class also implements the layout and paint protocols.<br><a href="https://api.flutter.dev/flutter/rendering/RenderObject-class.html" target="_blank" rel="noopener">参考</a></p>
+</blockquote>
+<p>翻译过来就是：</p>
+<ul>
+<li>RenderObject 类层级是渲染库的核心，定义了基本的布局模型</li>
+<li>RenderObject 类实现了布局和绘制协议</li>
+<li>RenderObject 及其子类是渲染树(低层布局和绘制系统)的基础</li>
+<li>开发者应当使用 Widget 来构建渲染树，而不是直接操作渲染树</li>
+</ul>
+<h2 id="RenderObject-结构"><a href="#RenderObject-结构" class="headerlink" title="RenderObject 结构"></a>RenderObject 结构</h2><p>RenderObject 的结构如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RenderObject</span> <span class="keyword">extends</span> <span class="title">AbstractNode</span> </span>&#123;</span><br><span class="line">  <span class="comment">/// The parent of this node in the tree.</span></span><br><span class="line">  AbstractNode _parent;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/// Data for use by the parent render object.</span></span><br><span class="line">  ParentData parentData;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// The layout constraints most recently supplied by the parent.</span></span><br><span class="line">  Constraints _constraints;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/// The owner for this node (null if unattached).</span></span><br><span class="line">  <span class="built_in">Object</span> _owner;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">/// Whether this node is in a tree whose root is attached to something.</span></span><br><span class="line">  <span class="built_in">bool</span> <span class="keyword">get</span> attached =&gt; _owner != <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 注意: 这个方法需要子类正确重写</span></span><br><span class="line">  <span class="comment">/// Override to setup parent data correctly for your children.</span></span><br><span class="line">  <span class="keyword">void</span> setupParentData(<span class="keyword">covariant</span> RenderObject child) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// Called by subclasses when they decide a render object is a child.  </span></span><br><span class="line">  <span class="keyword">void</span> adoptChild(RenderObject child) &#123;&#125;</span><br><span class="line">  <span class="comment">/// Called by subclasses when they decide a render object is no longer a child.  </span></span><br><span class="line">  <span class="keyword">void</span> dropChild(RenderObject child) &#123;&#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/// Mark this node as attached to the given owner.  </span></span><br><span class="line">  <span class="keyword">void</span> attach(PipelineOwner owner) &#123;&#125;</span><br><span class="line">  <span class="comment">/// Mark this node as detached.</span></span><br><span class="line">  <span class="keyword">void</span> detach() &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以将 RenderObject 的属性及相关方法分成三类：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>属性</th>
+<th>方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>与 parent 交互</td>
+<td><strong>_parent</strong>, <strong>parentData</strong>, _constraints</td>
+<td>setupParentData()</td>
+</tr>
+<tr>
+<td>与 owner 交互</td>
+<td>_owner</td>
+<td>attach(), detach(), attached</td>
+</tr>
+<tr>
+<td>与 child 交互</td>
+<td>-</td>
+<td>adoptChild(), dropChild()</td>
+</tr>
+</tbody>
+</table>
+<p>RenderObject 中两个重要的属性是 <code>_parent</code> 和 <code>parentData</code>。</p>
+<ul>
+<li><code>_parent</code> 用于将各 RenderObject 组合成一棵树</li>
+<li><code>parentData</code> 是个比较神奇的存在。(不过，回想一样 <code>View.mLayoutParams</code> 字段就不觉得神奇了)。逻辑上讲，这个字段的所有者是当前 RenderObject 的 parent；物理上讲，这个字段被保存在当前 RenderObject。这个字段通常保存类似于子节点位置这样的信息。</li>
+</ul>
+<p>简单来说，RenderObject 定义了<strong>布局/绘制协议</strong>，但并没定义具体<strong>布局/绘制模型</strong>。(RenderBox 是 RenderObject 的子类，它遵守 RenderObject 定义的布局/绘制协议，实现了一个具体的布局/绘制模型。)</p>
+<p>什么是布局/绘制协议？举例来说，我们自己继承 RenderObject 实现一个新的子类时，必须遵守一系列的要求(完整协议见 <a href="https://api.flutter.dev/flutter/rendering/RenderBox-class.html" target="_blank" rel="noopener">文档</a>)：</p>
+<ul>
+<li>要实现 <code>performLayout()</code> 方法，该方法接受一个 <code>Constraints</code> 参数</li>
+<li>要实现 <code>paint()</code> 方法</li>
+<li>使用 <code>dropChild()</code> 方法添加子节点</li>
+<li>使用 <code>adoptChild()</code> 方法移除子节点</li>
+<li>…</li>
+</ul>
+<p>这些要求就是协议。Android 中也有类似”协议” (或称之为约定 Contract)，比如覆盖 <code>View.onMeasure()</code> 方法时要求必须调用 <code>setMeasuredDimension()</code> 保存相关值。</p>
+<hr>
+<p>什么是布局/绘制模型？可以看到协议中并没有指定该如何处理如下这些问题：</p>
+<ul>
+<li>是允许0个，1个还是多个子节点？ （子节点模型 children model)</li>
+<li>使用什么坐标系，笛卡尔坐标系还是极坐标系或是别的？</li>
+</ul>
+<p>这些问题描述了模型。RenderBox (RenderObject 子类) 正是一个具体的模型，它要求使用笛卡尔坐标系，并提供定义了明确的子节点模型：</p>
+<ul>
+<li>如果子节点数量为0 (例如 RenderImage, RenderParagraph, RenderErrorBox)，不必处理</li>
+<li>如果子节点数量为1 (例如 RenderOpacity)，通常继承 RenderProxyBox 即可</li>
+<li>…</li>
+</ul>
+<h2 id="RenderObject-的方法"><a href="#RenderObject-的方法" class="headerlink" title="RenderObject 的方法"></a>RenderObject 的方法</h2><p>或许你已经发现 RenderObject 更像 Android View 的对应物。的确如此，两者不仅从概念上类似，很多方法也几乎一一对应。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Flutter RenderObject</th>
+<th>Android View</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>绘制</td>
+<td><strong>paint()</strong></td>
+<td>draw()/onDraw()</td>
+</tr>
+<tr>
+<td>布局</td>
+<td><strong>performLayout()</strong>/layout()</td>
+<td>measure()/onMeasure(), layout()/onLayout()</td>
+</tr>
+<tr>
+<td>布局约束</td>
+<td>Constraints</td>
+<td>MeasureSpec</td>
+</tr>
+<tr>
+<td>布局协议1</td>
+<td>performLayout() 的 Constraints 参数表示父节点对子节点的布局限制</td>
+<td>measure() 的两个参数表示父节点对子节点的布局限制</td>
+</tr>
+<tr>
+<td>布局协议2</td>
+<td>performLayout() 应调用各子节点的 layout()</td>
+<td>onLayout() 应调用各子节点的 layout()</td>
+</tr>
+<tr>
+<td>布局参数</td>
+<td>parentData</td>
+<td>mLayoutParams</td>
+</tr>
+<tr>
+<td>请求布局</td>
+<td>markNeedsLayout()</td>
+<td>requestLayout()</td>
+</tr>
+<tr>
+<td>请求绘制</td>
+<td>markNeedsPaint()</td>
+<td>invalidate()</td>
+</tr>
+<tr>
+<td>添加 child</td>
+<td>adoptChild()</td>
+<td>addView()</td>
+</tr>
+<tr>
+<td>移除 child</td>
+<td>dropChild()</td>
+<td>removeView()</td>
+</tr>
+<tr>
+<td>关联到窗口/树</td>
+<td>attach()</td>
+<td>onAttachedToWindow()</td>
+</tr>
+<tr>
+<td>从窗口/树取消关联</td>
+<td>detach()</td>
+<td>onDetachedFromWindow()</td>
+</tr>
+<tr>
+<td>获取 parent</td>
+<td>parent</td>
+<td>getParent()</td>
+</tr>
+<tr>
+<td>触摸事件</td>
+<td>hitTest()</td>
+<td>onTouch()</td>
+</tr>
+<tr>
+<td>用户输入事件</td>
+<td>handleEvent()</td>
+<td>onKey()</td>
+</tr>
+<tr>
+<td>旋转事件</td>
+<td>rotate()</td>
+<td>onConfigurationChanged()</td>
+</tr>
+</tbody>
+</table>
+<p>此外，一些方法调用规则也类似。比如：</p>
+<blockquote>
+<p>The setter will typically finish with either a call to markNeedsLayout, if the layout uses this property, or markNeedsPaint, if only the painter function does. (No need to call both, markNeedsLayout implies markNeedsPaint.)</p>
+</blockquote>
+<ul>
+<li>setter() 方法最后通常会调用 <code>markNeedsLayout()</code> 或 <code>markNeedsPaint()</code></li>
+<li>调用 <code>markNeedsLayout()</code> 意味着也自动调用了 <code>markNeedsPaint()</code></li>
+</ul>
+<p>以这段 Android 代码为例，<code>ColorDrawable.setColor()</code> 方法修改颜色主动调用 <code>invalidateSelf()</code>，最终会调用到某个 View 的 <code>invalidate()</code> 导致重新绘制。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ColorDrawable</span> <span class="keyword">extends</span> <span class="title">Drawable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setColor</span><span class="params">(@ColorInt <span class="keyword">int</span> color)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mColorState.mBaseColor != color || mColorState.mUseColor != color) &#123;</span><br><span class="line">            mColorState.mBaseColor = mColorState.mUseColor = color;</span><br><span class="line">            invalidateSelf();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>RenderObject 的方法串起来大致是这样：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774456110882.jpg" alt="RenderObject lifecycle -w600"></p>
+<h1 id="RenderBox-示例"><a href="#RenderBox-示例" class="headerlink" title="RenderBox 示例"></a>RenderBox 示例</h1><p>最后通过一个示例来加深前面提到一些知识点。</p>
+<p>我实现了自定义的 <code>CircleTextWidget</code>，直接将其展示出来：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">  runApp(Center(</span><br><span class="line">      child: SizedBox(</span><br><span class="line">          width: <span class="number">200</span>,</span><br><span class="line">          height: <span class="number">200</span>,</span><br><span class="line">          child: Center(</span><br><span class="line">            child: CircleTextWidget(</span><br><span class="line">              child: Text(</span><br><span class="line">                <span class="string">'hello, renderBox'</span>,</span><br><span class="line">                textDirection: TextDirection.ltr,</span><br><span class="line">              ),</span><br><span class="line">            ),</span><br><span class="line">          ))));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Widget 树和渲染树如下图：</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774366867668.jpg" alt="Widget树和渲染树 -w800"></p>
+<p>CircleTextWidget 运行起来的效果图如下，</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774370864830.jpg" alt="CircleTextWidget -w800"></p>
+<p>再来看 CircleTextWidget 的代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CircleTextWidget</span> <span class="keyword">extends</span> <span class="title">SingleChildRenderObjectWidget</span> </span>&#123;</span><br><span class="line">  CircleTextWidget(&#123;</span><br><span class="line">    Key key,</span><br><span class="line">    Widget child,</span><br><span class="line">  &#125;) : <span class="keyword">super</span>(key: key, child: child);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  RenderCircleText createRenderObject(BuildContext context) =&gt;</span><br><span class="line">      RenderCircleText();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RenderCircleText</span> <span class="keyword">extends</span> <span class="title">RenderProxyBox</span> </span>&#123;</span><br><span class="line">  RenderCircleText(&#123;RenderBox child&#125;) : <span class="keyword">super</span>(child);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> paint(PaintingContext context, Offset offset) &#123;</span><br><span class="line">    <span class="keyword">super</span>.paint(context, offset);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 父节点的宽高分别是 200, 200，由前面的 SizedBox 指定</span></span><br><span class="line">    <span class="comment">// dx, dy 分别是 100, 100</span></span><br><span class="line">    <span class="built_in">double</span> dx = constraints.constrainWidth() / <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">double</span> dy = constraints.constrainHeight() / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 中心点坐标</span></span><br><span class="line">    Offset center = offset.translate(size.width / <span class="number">2</span>, size.height / <span class="number">2</span>);</span><br><span class="line">    <span class="comment">// 左上角坐标</span></span><br><span class="line">    Offset topLeft = center.translate(-dx, -dy);</span><br><span class="line">    <span class="comment">// 右上角坐标</span></span><br><span class="line">    Offset topRight = center.translate(dx, -dy);</span><br><span class="line">    <span class="comment">// 左下角坐标</span></span><br><span class="line">    Offset bottomLeft = center.translate(-dx, dy);</span><br><span class="line">    <span class="comment">// 右下角坐标</span></span><br><span class="line">    Offset bottomRight = center.translate(dx, dy);</span><br><span class="line"></span><br><span class="line">    Paint paint = Paint()..color = Colors.amber;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 绘制蓝色矩形中心点</span></span><br><span class="line">    context.canvas.drawRect(</span><br><span class="line">        Rect.fromCenter(center: center, width: <span class="number">18</span>, height: <span class="number">18</span>),</span><br><span class="line">        paint..color = Colors.blue);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 绘制四角的圆形点</span></span><br><span class="line">    context.canvas.drawCircle(topLeft, <span class="number">10</span>, paint..color = Colors.red);</span><br><span class="line">    context.canvas.drawCircle(topRight, <span class="number">10</span>, paint..color = Colors.yellow);</span><br><span class="line">    context.canvas.drawCircle(bottomLeft, <span class="number">10</span>, paint..color = Colors.orange);</span><br><span class="line">    context.canvas.drawCircle(bottomRight, <span class="number">10</span>, paint..color = Colors.green);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 绘制子节点</span></span><br><span class="line">    <span class="keyword">if</span> (child != <span class="keyword">null</span>) &#123;</span><br><span class="line">      context.paintChild(child, offset);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="RenderCircleText-类"><a href="#RenderCircleText-类" class="headerlink" title="RenderCircleText 类"></a>RenderCircleText 类</h2><p>RenderCircleText 继承自 RenderProxyBox。RenderObject 定义了布局和绘制协议，但没有实现具体的布局模型。RenderBox 是 RenderObject 子类，实现了 box 布局模型。RenderProxyBox 是 RenderBox 的子类，它特别适合这种情形：父节点几乎跟子节点完全一样。</p>
+<p>我们这里的 RenderCircleText 其实只是为其子节点绘制了自定义背景，所以继承自 RenderProxyBox 是个不错的选择。</p>
+<h2 id="paint-方法"><a href="#paint-方法" class="headerlink" title="paint() 方法"></a>paint() 方法</h2><p>RenderCircleText 实现了 <a href="https://api.flutter.dev/flutter/rendering/RenderObject/paint.html" target="_blank" rel="noopener">paint()</a> 方法。它的原型如下：</p>
+<p><code>void paint(PaintingContext context, Offset offset)</code></p>
+<p><code>paint()</code> 方法涉及到的几个要点：</p>
+<ul>
+<li><code>PaintingContext</code> 参数 - PaintingContext 是一个高级画布，它的绘制对象是各种 RenderBox。PaintingContext 还持有一个 Canvas 对象(低级画布)，它的绘制对象各种形状、path、图像、文本等元素</li>
+<li><code>Offset</code> 参数 - Offset 表示当前 RenderObject 的绘制起点(屏幕左上角是原点 Offset(0,0))。在本例当中这个绘制起点为 Offset(130.0, 350.3)</li>
+<li><code>constraints</code> 成员 - 父节点给当前 RenderBox 设置的约束，见下图</li>
+<li><code>size</code> 成员 -  当前 RenderBox 的大小，见下图</li>
+</ul>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2019/12/27/15774403469638.jpg" alt="paint()方法 -w800"></p>
+<p>结合 <code>constraints</code> 和 <code>offset</code> 我们不难计算出这几个点的坐标：</p>
+<ul>
+<li>中心点</li>
+<li>左上角</li>
+<li>右上角</li>
+<li>左下角</li>
+<li>右下角</li>
+</ul>
+<p>先调用 Canvas 的方法给子节点绘制出背景：</p>
+<ul>
+<li>canvas.drawRect()</li>
+<li>canvas.drawCircle()</li>
+</ul>
+<p>再调用 PaintingContext 的方法绘制出子节点：</p>
+<ul>
+<li>context.paintChild()</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文先从 Widget 是否具备自定义绘制能力出发，引出 RenderObject，然后梳理了 Widget、Element 和 RenderObject 三者之间的关系。接下来通过与 Android View 类比的方式介绍了 RenderObject。</p>
+<p>理解 RenderObject 的几个关键在于：</p>
+<ul>
+<li>RenderObject 类层级是渲染库的核心</li>
+<li>RenderObject 定义布局和绘制协议</li>
+<li>RenderObject 是 Android View 的对应物</li>
+<li>RenderBox 实现一种布局和绘制模型</li>
+</ul>
+<p>最后的示例中实现了一个可自定义绘制的 Widget，以加深对 RenderObject 的理解。 </p>
+<h1 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h1><p>2020-04-26 Update</p>
+<p>补充一张 render tree 生命周期相关的图</p>
+<p><img src="/images/15878833456674.jpg" alt></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://github.com/flutter/website/blob/master/src/docs/resources/rendering.md" target="_blank" rel="noopener">Flutter rendering</a></li>
+<li><a href="https://medium.com/flutter-community/flutter-what-are-widgets-renderobjects-and-elements-630a57d05208" target="_blank" rel="noopener">Flutter, what are Widgets, RenderObjects and Elements?</a></li>
+<li><a href="https://juejin.im/post/5c7cd2f4e51d4537b05b0974" target="_blank" rel="noopener">Flutter框架分析（一）– 总览和Window - 掘金</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/23/dart-mixin/" rel="prev" title="Dart Mixin 介绍">
+      <i class="fa fa-chevron-left"></i> Dart Mixin 介绍
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/01/10/stateful-widget-performance-considerations/" rel="next" title="(译) StatefulWidget 与性能">
+      (译) StatefulWidget 与性能 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#功能差异"><span class="nav-number">1.1.</span> <span class="nav-text">功能差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类结构差异"><span class="nav-number">1.2.</span> <span class="nav-text">类结构差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#树结构差异"><span class="nav-number">1.3.</span> <span class="nav-text">树结构差异</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RenderObject-介绍"><span class="nav-number">2.</span> <span class="nav-text">RenderObject 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Widget，Element-与-RenderObject"><span class="nav-number">2.1.</span> <span class="nav-text">Widget，Element 与 RenderObject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初识-RenderObject"><span class="nav-number">2.2.</span> <span class="nav-text">初识 RenderObject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RenderObject-结构"><span class="nav-number">2.3.</span> <span class="nav-text">RenderObject 结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RenderObject-的方法"><span class="nav-number">2.4.</span> <span class="nav-text">RenderObject 的方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RenderBox-示例"><span class="nav-number">3.</span> <span class="nav-text">RenderBox 示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RenderCircleText-类"><span class="nav-number">3.1.</span> <span class="nav-text">RenderCircleText 类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#paint-方法"><span class="nav-number">3.2.</span> <span class="nav-text">paint() 方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更新"><span class="nav-number">5.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

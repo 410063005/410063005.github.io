@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近又折腾了一下博客的主题以及HTTPS，记录一下。">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个不错的Hexo主题">
+<meta property="og:url" content="http://www.sunmoonblog.com/2018/08/12/blog-tools/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="最近又折腾了一下博客的主题以及HTTPS，记录一下。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.sunmoonblog.com/2018/08/12/blog-tools/enforce-https.png">
+<meta property="og:updated_time" content="2020-11-13T02:18:58.899Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一个不错的Hexo主题">
+<meta name="twitter:description" content="最近又折腾了一下博客的主题以及HTTPS，记录一下。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/08/12/blog-tools/enforce-https.png">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2018/08/12/blog-tools/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>一个不错的Hexo主题 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/08/12/blog-tools/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一个不错的Hexo主题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-12 21:08:41" itemprop="dateCreated datePublished" datetime="2018-08-12T21:08:41+08:00">2018-08-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近又折腾了一下博客的主题以及HTTPS，记录一下。<br><a id="more"></a></p>
+<h1 id="next主题"><a href="#next主题" class="headerlink" title="next主题"></a>next主题</h1><p>首先是关于博客主题。上周看到一个超级对眼的主题，<a href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">next</a>，赶紧将自己的博客主题替换成next了。它很简单，看起来也舒服，简单让我有了更多动力写博客。</p>
+<h1 id="https"><a href="#https" class="headerlink" title="https"></a>https</h1><h2 id="letsencrypt"><a href="#letsencrypt" class="headerlink" title="letsencrypt"></a>letsencrypt</h2><p>Chrome现在直接将HTTP网站标记为不安全，所以我的博客也不得不支持HTTPS。原本抱着简单省事的心态打算上阿里云自己买一个，发现价格居然高达几千。作为个人博客，当然没必要买这么贵的啦。</p>
+<p>那就找免费的吧。<a href="https://community.letsencrypt.org/" target="_blank" rel="noopener">Let’s encrypt</a>是大家推荐得最多的免费SSL证书提供者。一方面是，很多第三方web托管服务支持<a href="https://community.letsencrypt.org/" target="_blank" rel="noopener">Let’s encrypt</a>，见<a href="https://community.letsencrypt.org/t/web-hosting-who-support-lets-encrypt/6920" target="_blank" rel="noopener">这里</a>，当然，其中包括我们熟知的Github Pages。我自己的博客也是直接放Github。另一方面，letsencrypt提供了非常便捷的自动化工具<a href="https://certbot.eff.org/" target="_blank" rel="noopener">certbot</a>来简化申请HTTPS证书的过程，降低使用门槛。letsencrypt有90天的使用期限，到期后必须续期才能继续使用，这一点稍显不便。不过，对于免费的东西我们要求也不能过高。</p>
+<p>这里有几篇关于letsencrypt使用参考：</p>
+<ul>
+<li><a href="https://blog.csdn.net/xs18952904/article/details/79262646" target="_blank" rel="noopener">让网站永久拥有HTTPS - 申请免费SSL证书并自动续期</a></li>
+<li><a href="https://blog.csdn.net/andylau00j/article/details/54603975" target="_blank" rel="noopener">Let’s Encrypt 给网站加 HTTPS 完全指南</a></li>
+</ul>
+<h2 id="Github-Pages"><a href="#Github-Pages" class="headerlink" title="Github Pages"></a>Github Pages</h2><p>Github Pages一直在改进(不得不赞)。Github Pages在2009年时就开始支持自定义域名，2016年开始<code>*.github.io</code>域名开始支持HTTPS，2018年5月1日自定义域名也开始支持HTTPS。<a href="https://blog.github.com/2018-05-01-github-pages-custom-domains-https/" target="_blank" rel="noopener">参考</a>。</p>
+<p>所以托管在Github博客想要支持HTTPS其实很简单。</p>
+<p>首先，为你的站点勾选“Enforce HTTPS”</p>
+<p><img src="enforce-https.png" alt></p>
+<p>然后，更新A记录</p>
+<p>185.199.108.153<br>185.199.109.153<br>185.199.110.153<br>185.199.111.153</p>
+<p>两步即让你的博客支持HTTPS了，简单吧。据称，这几个新的IP不仅能让你的博客支持HTTPS，而且由于它们提供CDN功能，所以博客访问速度会变快。另外，还提供保护避免DDoS攻击。</p>
+<p>mixed content的问题。现在你的博客由HTTP访问切换到HTTPS了，但博客中免不了可能有HTTP链接资源，如图片，CSS文件，Javascript文件等等。所以你的站点变成了mixed content站点，加载资源时可能失败导致页面解析问题。解决办法就是将HTTP链接修改成HTTPS链接。</p>
+<h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><p><a href="https://www.jianshu.com/p/3884e5cb63e5" target="_blank" rel="noopener">hexo定制&amp;优化 - 简书</a></p>
+<p>优化方法是使用gulp对各种资源进行压缩。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo clean    //清除public文件夹</span><br><span class="line">hexo g     //编译文章，生成public文件夹</span><br><span class="line">gulp build    //压缩js、css、img文件</span><br><span class="line">hexo d    //部署到github</span><br></pre></td></tr></table></figure>
+<p><a href="https://www.jianshu.com/p/3884e5cb63e5" target="_blank" rel="noopener">hexo定制&amp;优化 - 简书</a></p>
+<p><a href="https://www.cnblogs.com/jarson-7426/p/5660424.html" target="_blank" rel="noopener">hexo博客－性能优化 - luckykun - 博客园</a></p>
+<p><a href="https://yq.aliyun.com/articles/8608" target="_blank" rel="noopener">Hexo折腾记——性能优化篇-博客-云栖社区-阿里云</a></p>
+<h1 id="post-目录"><a href="#post-目录" class="headerlink" title="_post 目录"></a>_post 目录</h1><p>所有已发布的文章都放在 _post 目录下。_post 目录下文件数会越来越多，导致编辑和查找变得困难。解决办法如下：</p>
+<ul>
+<li>修改 <code>_config.xml</code> 配置</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new_post_name: :year-:month-:day-:title.md # File name of new posts</span><br></pre></td></tr></table></figure>
+<p>修改成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new_post_name: :year/:month-:day-:title.md # File name of new posts</span><br></pre></td></tr></table></figure>
+<ul>
+<li>将 <code>_post</code> 目录下的文件移到 <code>_post/2019</code>, <code>_post/2018</code>, <code>_post/2017</code></li>
+<li>将文件名中的年份去掉。 <code>2019-05-22-a-blog.md</code> 改成 <code>05-22-a-blog.md</code></li>
+</ul>
+<h1 id="评论"><a href="#评论" class="headerlink" title="评论"></a>评论</h1><h2 id="gitment"><a href="#gitment" class="headerlink" title="gitment"></a>gitment</h2><p>2019-06-25 更新: gitment 不可用</p>
+<p>主要参考 <a href="https://segmentfault.com/a/1190000016286358" target="_blank" rel="noopener">hexo加入gitment评论功能</a></p>
+<ul>
+<li>Github 注册 application，并获取 Client ID 和 Client Secret。<a href="https://github.com/settings/applications/new" target="_blank" rel="noopener">注册地址</a><ul>
+<li>Homepage URL 填域名</li>
+<li>Authorization callback URL 填域名</li>
+</ul>
+</li>
+<li>Github 上创建一个新的公开 repo，用于存储评论数据</li>
+<li>Next 主题直接支持 gitment，配置即可</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Gitment</span></span><br><span class="line"><span class="comment"># Introduction: https://imsun.net/posts/gitment-introduction/</span></span><br><span class="line"><span class="comment"># You can get your Github ID from https://api.github.com/users/&lt;Github username&gt;</span></span><br><span class="line"><span class="attr">gitment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">mint:</span> <span class="literal">true</span> <span class="comment"># RECOMMEND, A mint on Gitment, to support count, language and proxy_gateway</span></span><br><span class="line">  <span class="attr">count:</span> <span class="literal">true</span> <span class="comment"># Show comments count in post meta area</span></span><br><span class="line">  <span class="attr">lazy:</span> <span class="literal">false</span> <span class="comment"># Comments lazy loading with a button</span></span><br><span class="line">  <span class="attr">cleanly:</span> <span class="literal">true</span> <span class="comment"># Hide 'Powered by ...' on footer, and more</span></span><br><span class="line">  <span class="attr">language:</span> <span class="comment"># Force language, or auto switch by theme</span></span><br><span class="line">  <span class="attr">github_user:</span> <span class="number">10010</span> <span class="comment"># MUST HAVE, Your Github ID</span></span><br><span class="line">  <span class="attr">github_repo:</span> <span class="string">abc</span> <span class="comment"># MUST HAVE, The repo you use to store Gitment comments</span></span><br><span class="line">  <span class="attr">client_id:</span> <span class="string">5fa35f83ad3a055bc1af</span> <span class="comment"># MUST HAVE, Github client id for the Gitment</span></span><br><span class="line">  <span class="attr">client_secret:</span> <span class="string">abcdefg</span> <span class="comment"># EITHER this or proxy_gateway, Github access secret token for the Gitment</span></span><br><span class="line">  <span class="attr">proxy_gateway:</span> <span class="comment"># Address of api proxy, See: https://github.com/aimingoo/intersect</span></span><br><span class="line">  <span class="attr">redirect_protocol:</span> <span class="comment"># Protocol of redirect_uri with force_redirect_protocol when mint enabled</span></span><br></pre></td></tr></table></figure>
+<p>遇到以下错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;message&quot;: &quot;API rate limit exceeded for 203.205.141.52. (But here&apos;s the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)&quot;,</span><br><span class="line">  &quot;documentation_url&quot;: &quot;https://developer.github.com/v3/#rate-limiting&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="gitalk"><a href="#gitalk" class="headerlink" title="gitalk"></a>gitalk</h2><ul>
+<li><a href="https://github.com/iissnan/hexo-theme-next/pull/1814/files" target="_blank" rel="noopener">参考</a></li>
+<li><a href="https://github.com/gitalk/gitalk/issues/115" target="_blank" rel="noopener">hexo next 主题配置 gitalk 评论后无法初始化创建 issue · Issue #115 · gitalk/gitalk</a></li>
+<li><a href="https://github.com/mzlogin/mzlogin.github.io/issues/63" target="_blank" rel="noopener">发布的新文章提示“未找到相关的 Issues 进行评论，请联系xxx初始化创建</a></li>
+<li><a href="https://iochen.com/2018/01/06/use-gitalk-in-hexo/" target="_blank" rel="noopener">Hexo中Gitalk配置使用教程-可能是目前最详细的教程 | ioChen’s Blog</a></li>
+</ul>
+<p>主要的坑在于中文文章名 url 编码过长导致调用 Github API 时出现 <code>Error: Validation Failed</code>，原因是 Github issue 不支持超过 50 个字符的 label。</p>
+<p>出现错误时 Github API 的接口响应如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"message"</span>: <span class="string">"Validation Failed"</span>,</span><br><span class="line">  <span class="attr">"errors"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"value"</span>: <span class="string">"/2018/02/03/%E2%80%9C%E5%9F%83%E6%B0%8F%E7%AD%9B%E6%B3%95%E2%80%9D%E6%80%9D%E6%83%B3%E8%BF%90%E7%94%A8/"</span>,</span><br><span class="line">      <span class="attr">"resource"</span>: <span class="string">"Label"</span>,</span><br><span class="line">      <span class="attr">"field"</span>: <span class="string">"name"</span>,</span><br><span class="line">      <span class="attr">"code"</span>: <span class="string">"invalid"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">"documentation_url"</span>: <span class="string">"https://developer.github.com/v3/issues/#create-an-issue"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>方案一 - 使用 <code>md5()</code> 方法得到当前页面 url 的 MD5</li>
+<li>方案二 - <a href="https://github.com/mzlogin/mzlogin.github.io/commit/5ef353c011b21c04193df19096bc67a7b7140bec" target="_blank" rel="noopener">截取标题前50个字符</a></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://blog.csdn.net/Cowry5/article/details/80310052" target="_blank" rel="noopener">GitHub Pages自定义域名如何支持https - CSDN博客</a></li>
+<li><a href="https://help.github.com/articles/setting-up-an-apex-domain/" target="_blank" rel="noopener">如何添加A记录 Setting up an apex domain - User Documentation</a></li>
+<li><a href="https://blog.csdn.net/u011244202/article/details/57106544/" target="_blank" rel="noopener">让个人域名下GithubPage完美支持https - CSDN博客</a></li>
+<li><a href="https://help.github.com/articles/securing-your-github-pages-site-with-https/" target="_blank" rel="noopener">Securing your GitHub Pages site with HTTPS - User Documentation</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/07/work-tips/" rel="prev" title="curl用法小记">
+      <i class="fa fa-chevron-left"></i> curl用法小记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/27/javac-source/" rel="next" title="如何使用Javac的source参数">
+      如何使用Javac的source参数 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#next主题"><span class="nav-number">1.</span> <span class="nav-text">next主题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#https"><span class="nav-number">2.</span> <span class="nav-text">https</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#letsencrypt"><span class="nav-number">2.1.</span> <span class="nav-text">letsencrypt</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Github-Pages"><span class="nav-number">2.2.</span> <span class="nav-text">Github Pages</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化"><span class="nav-number">3.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#post-目录"><span class="nav-number">4.</span> <span class="nav-text">_post 目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#评论"><span class="nav-number">5.</span> <span class="nav-text">评论</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#gitment"><span class="nav-number">5.1.</span> <span class="nav-text">gitment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gitalk"><span class="nav-number">5.2.</span> <span class="nav-text">gitalk</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">138</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
