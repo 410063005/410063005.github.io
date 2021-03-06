@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近处理一些对第三方应用中HTTPS请求抓包工作。杂七杂八挺烦琐，又容易遗忘。记录之，备不时之需。">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP抓包小记">
+<meta property="og:url" content="http://www.sunmoonblog.com/2021/02/18/http-cap/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="最近处理一些对第三方应用中HTTPS请求抓包工作。杂七杂八挺烦琐，又容易遗忘。记录之，备不时之需。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16136148646757.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16136152558859.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16136153959387.jpg">
+<meta property="og:updated_time" content="2021-02-19T04:22:40.077Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HTTP抓包小记">
+<meta name="twitter:description" content="最近处理一些对第三方应用中HTTPS请求抓包工作。杂七杂八挺烦琐，又容易遗忘。记录之，备不时之需。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/16136148646757.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2021/02/18/http-cap/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>HTTP抓包小记 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2021/02/18/http-cap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HTTP抓包小记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-18 10:01:02" itemprop="dateCreated datePublished" datetime="2021-02-18T10:01:02+08:00">2021-02-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-19 12:22:40" itemprop="dateModified" datetime="2021-02-19T12:22:40+08:00">2021-02-19</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近处理一些对第三方应用中HTTPS请求抓包工作。杂七杂八挺烦琐，又容易遗忘。记录之，备不时之需。<br><a id="more"></a></p>
+<h1 id="抓包工具"><a href="#抓包工具" class="headerlink" title="抓包工具"></a>抓包工具</h1><p>抓包工具有很多，选一个顺手的就行。我用的是 whistle。启动方式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">whistle run</span><br><span class="line">[i] whistle@2.6.3 started</span><br><span class="line">[i] 1. use your device to visit the following URL list, gets the IP of the URL you can access:</span><br><span class="line">       http://127.0.0.1:8899/</span><br><span class="line">       http://172.30.209.45:8899/</span><br><span class="line">       http://172.20.209.88:8899/</span><br><span class="line">       Note: If all the above URLs are unable to access, check the firewall settings</span><br><span class="line">             For help see https://github.com/avwo/whistle</span><br><span class="line">[i] 2. configure your device to use whistle as its HTTP and HTTPS proxy on IP:8899</span><br><span class="line">[i] 3. use Chrome to visit http://local.whistlejs.com/ to get started</span><br><span class="line">Press [Ctrl+C] to stop whistle...</span><br></pre></td></tr></table></figure>
+<p>启动后直接在浏览器中打开对应地址开始抓包。</p>
+<h1 id="HTTPS-抓包"><a href="#HTTPS-抓包" class="headerlink" title="HTTPS 抓包"></a>HTTPS 抓包</h1><p>抓 HTTP 一般不会遇到什么问题，这里要说的主要是 HTTPS 抓包时遇到的问题。</p>
+<h2 id="问题一：Android-iOS安装和信任证书"><a href="#问题一：Android-iOS安装和信任证书" class="headerlink" title="问题一：Android/iOS安装和信任证书"></a>问题一：Android/iOS安装和信任证书</h2><ul>
+<li>Android 直接下载后从 SD 卡安装即可。安装成功后在<code>设置 &gt; 受信任的凭据 &gt; 用户</code>中查看</li>
+<li>iOS 使用 Safari 浏览器打开证书链接来安装。安装成功后在<code>设置 &gt; 通用 &gt; 描述文件与设备管理</code>中查看。注意iOS上需要手动设置信任第三方证书</li>
+</ul>
+<p><img src="/images/16136148646757.jpg" alt="-w336"></p>
+<p><img src="/images/16136152558859.jpg" alt="-w396"></p>
+<p><img src="/images/16136153959387.jpg" alt="-w426"></p>
+<p>经过如上设置后，可以抓到部分应用中的 HTTPS 请求了。但另一些应用的 HTTPS 请求，仍然无法抓取。大致可以归纳为两种原因(<a href="https://www.cnblogs.com/lulianqi/p/11380794.html#_label2" target="_blank" rel="noopener">部分APP无法代理抓包的原因及解决方法（flutter 抓包）</a>一文总结得不错)：</p>
+<ul>
+<li>HTTP 客户端没有走系统代理。这种情况比较少见，一个典型的例子是 Flutter</li>
+<li>HTTP 客户端不信任第三方证书。这种情况比较多见，例如 Android 平台上滴滴出行、微信(7.0版本之后)</li>
+</ul>
+<p>接下来看Android系统中如何避免应用不信任第三方证书。</p>
+<h2 id="问题二：应用不信任第三方证书"><a href="#问题二：应用不信任第三方证书" class="headerlink" title="问题二：应用不信任第三方证书"></a>问题二：应用不信任第三方证书</h2><p>两个解决办法：</p>
+<ul>
+<li>模拟器(开启root) + 安装系统证书</li>
+<li>真机(无root) +  <a href="https://vxposed.com/" target="_blank" rel="noopener">VirtualXposed</a> + JustTrustMe</li>
+</ul>
+<h3 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h3><p>有多种模拟器可供选择。这里推荐两个自带root功能，并且可成功运行大部分主流应用的模拟器。</p>
+<ul>
+<li>Windows 上可以使用夜神模拟器</li>
+<li>Mac 上可以使用 <a href="http://mumu.163.com/help/func/20190129/30131_797867.html" target="_blank" rel="noopener">MuMu模拟器</a></li>
+</ul>
+<p>第一步，将whistle 证书下载到电脑上，名字是 <code>root.crt</code>。执行如下命令得到类似 <code>b4a43da9</code> 这样的字符串。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -subject_hash_old -in getssl.crt</span><br></pre></td></tr></table></figure>
+<p>第二步，将 <code>root.crt</code> 重命名成 <code>b4a43da9.0</code>，安装到模拟器上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb push b4a43da9.0 /system/etc/security/cacerts/</span><br></pre></td></tr></table></figure>
+<p>第三步，<code>设置 &gt; 受信任的凭据 &gt; 系统</code>中检查证书是否安装成功。</p>
+<p>将 whistle 证书安装成系统证书后，就可以正常抓取部分应用中的 HTTPS 请求。</p>
+<h3 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h3><ul>
+<li>安装 VirtualXposed.apk 和 JustTrustme.apk</li>
+<li>给 VirtualXposed 足够的权限</li>
+<li>在 VirtualXposed 中安装 JustTrustme 和需要抓包测试的应用</li>
+<li>重启 VirtualXposed</li>
+<li>在 VirtualXposed 中打开待抓包的应用</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://www.cnblogs.com/lulianqi/p/11380794.html#_label2" target="_blank" rel="noopener">部分APP无法代理抓包的原因及解决方法（flutter 抓包） - lulianqi15 - 博客园</a></li>
+<li><a href="https://www.jianshu.com/p/3d981ae674c5" target="_blank" rel="noopener">安卓高版本安装系统证书 HTTPS 抓包 - 简书</a></li>
+<li><a href="https://gaojiajun.cn/2018/08/charles-notTrust-in-android7.0/" target="_blank" rel="noopener">Android7.0及以上charles抓包提示证书无效的解决方法 | 高嘉君的个人博客</a></li>
+<li><a href="https://www.jianshu.com/p/a818a0d0aa9f" target="_blank" rel="noopener">Android 7.0+ 抓包https的一种方案(支持微信7.0) - 简书</a></li>
+<li><a href="https://github.com/asLody/VirtualApp" target="_blank" rel="noopener">asLody/VirtualApp: Virtual Engine for Android(Support 11.0 in business version)</a></li>
+<li><a href="https://www.cnblogs.com/h2zZhou/p/7759889.html" target="_blank" rel="noopener">VirtualApp技术黑产利用研究报告 - h2z - 博客园</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/27/ios-pod-package/" rel="prev" title="ios-pod-package">
+      <i class="fa fa-chevron-left"></i> ios-pod-package
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/06/variables-debug-info/" rel="next" title="20210306 问题小记">
+      20210306 问题小记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#抓包工具"><span class="nav-number">1.</span> <span class="nav-text">抓包工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTPS-抓包"><span class="nav-number">2.</span> <span class="nav-text">HTTPS 抓包</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题一：Android-iOS安装和信任证书"><span class="nav-number">2.1.</span> <span class="nav-text">问题一：Android/iOS安装和信任证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题二：应用不信任第三方证书"><span class="nav-number">2.2.</span> <span class="nav-text">问题二：应用不信任第三方证书</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一"><span class="nav-number">2.2.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法二"><span class="nav-number">2.2.2.</span> <span class="nav-text">方法二</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
