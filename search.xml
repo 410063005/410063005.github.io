@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>提升 AppCode 性能的几个小技巧</title>
+      <link href="2021/05/01/enhance-appcode-performane/"/>
+      <url>2021/05/01/enhance-appcode-performane/</url>
+      
+        <content type="html"><![CDATA[<p>AppCode 好用是好用，但这性能比起 Xcode 让人很无语。不过，AppCode 的性能是可以优化的。<br><a id="more"></a></p><p>最近的开发过程中发现 AppCode 占了 5GB 内存却仍然卡得干不了活，忍无可忍之下了解了一下如何优化 AppCode 性能。主要的参考资料来自 AppCode 官网。</p><ul><li><a href="https://www.jetbrains.com/help/objc/performance-tuning-tips.html" target="_blank" rel="noopener">Enhance performance | AppCode</a></li></ul><p>资料中提到几个点总结下来就是：</p><ul><li>加大 AppCode 内存</li><li>提升 AppCode code analysis﻿ 速度</li><li>提升 AppCode indexing﻿ 速度</li><li>关闭不必要的 Plugin</li></ul><h1 id="加大内存"><a href="#加大内存" class="headerlink" title="加大内存"></a>加大内存</h1><h2 id="打开内存指示器"><a href="#打开内存指示器" class="headerlink" title="打开内存指示器"></a>打开内存指示器</h2><p>AppCode 卡顿的一个主要原因是堆内存过低。所以我们很<em>有必要打开 AppCode 内存指示器</em>。</p><p>在 AppCode 底部状态上右键点击后出现如下菜单，勾选 “Memory Indicator” 即可打开内存指示器。</p><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198615366659.jpg" alt="-w267"></p><p>我的内存指示器已打开，显示 “264 of 6131M”。内存状态良好。</p><p>注意：当可用的堆内存大小低于最大堆内存的5%时，会有低内存告警。</p><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198618640390.jpg" alt></p><h2 id="加大堆内存"><a href="#加大堆内存" class="headerlink" title="加大堆内存"></a>加大堆内存</h2><p>从 AppCode 顶部菜单中 <strong>Help | Change Memory Settings</strong> 调整堆内存大小。</p><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198617067248.jpg" alt="-w875"></p><p>我的 MacBook 内存大小 16G，已经给 AppCode 分了 6144 MB。已经相当奢侈，不能再加了。(即便 6G 内存，AppCode 还是卡，所以就我遇到的问题而言，瓶颈并不在内存)</p><h1 id="提高代码分析速度"><a href="#提高代码分析速度" class="headerlink" title="提高代码分析速度"></a>提高代码分析速度</h1><blockquote><p>On-the-fly code analysis is one of the most performance-consuming processes in AppCode.</p></blockquote><p>AppCode 的实时代码检查过程是最吃电脑性能的一个过程。针对这个问题，我们可以对实时代码检查进行配置，减少检查过程的性能消耗。</p><p>简单来说，就是减少实时代码检查甚至干脆不要实时检查(等要要检查时再启动)。</p><h2 id="调整代码检查项"><a href="#调整代码检查项" class="headerlink" title="调整代码检查项"></a>调整代码检查项</h2><p>AppCode 默认状态下会打开全部的检查类型(作者：不卡才怪？)，我们可以根据自己的需要进行调整。</p><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198622243684.jpg" alt="-w992"></p><p>其实我们可以放心大胆地全关，因为完全可以在需要时通过 <strong>Code | Inspect Code</strong> 命令来检查。</p><h2 id="调整检查级别"><a href="#调整检查级别" class="headerlink" title="调整检查级别"></a>调整检查级别</h2><p>此外，还可以使用 <strong>Code | Configure Current File Analysis</strong> 命令调整当前已打开文件的检查级别。</p><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198625862232.jpg" alt></p><p>分三种级别：</p><ul><li>None - 不检查</li><li>Syntax - 语法检查</li><li>Inspections - 检查</li></ul><p>不过个人感觉这个功能不太实用。</p><h1 id="提升索引速度"><a href="#提升索引速度" class="headerlink" title="提升索引速度"></a>提升索引速度</h1><p>AppCode 对文件进行索引(代码检查、代码自动补全、代码生成、自动导入功能依赖索引)。不过，不索引那些包含二进制文件、日志以及构建产物的目录并不会影响 AppCode 的代码检查等功能，所以进行索引时我们完全可以将这些目录排除。</p><p>另外，某些文件因过太大或是位于远程机器，索引的代价非常大。所以也应将这些文件排除在外。</p><p>排除文件或目录的方法很简单，在 <strong>Project</strong> 窗口将工程切换到 <strong>Files</strong> 视图，右击想要排除的文件，然后选择 <strong>Mark Directory as | Excluded</strong> </p><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198705760997.jpg" alt="-w321"></p><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198713192648.jpg" alt></p><hr><p>回到前面我提到分配6G内存的情况下 AppCode 仍然卡顿的问题，发现卡顿时 AppCode 一直在索引。检查后发现 <font color="red">AppCode 打开该工程后，索引范围是当前用户的所有文件</font>(即整个 <code>/Users/username/</code> 目录。发现 AppCode 打开其他工程时只会索引当前工程目录中的文件，所以这是 AppCode 的 bug？)。对数量巨大的文件进行索引，几个小时也完成不了吧？</p><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198709164361.jpg" alt="-w318"></p><p>解决办法：果断排除掉不相关的目录，减少索引时间。</p><h1 id="其他优化技巧"><a href="#其他优化技巧" class="headerlink" title="其他优化技巧"></a>其他优化技巧</h1><p>另外一些优化手段包括：</p><ul><li>关闭 AppCode 中不必要的插件。AppCode 默认加载了很多插件，我们可以关闭不需要的插件以减少内存占用、提升速度</li></ul><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198717657700.jpg" alt></p><ul><li>保证 AppCode 和 Xcode 版本兼容。如下图，这是我自己遇到的一个情况：AppCode 提示当前 Xcode 版本为 12.4，版本过高。</li></ul><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198716155390.jpg" alt="-w967"></p><p>不清楚到底有什么影响，不过还是升级到跟 Xcode 12.4 兼容的 AppCode。如下图，AppCode 和 Xcode 兼容时，没有上述的警告。</p><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198719580894.jpg" alt="-w898"></p><ul><li>Download Xcode caches﻿。如下图，勾选这里的 Download Xcode cacheds automatically，某些情况下能提升索引性能。(作者：按官方解释，这里的”某些情况”其实并不多，主要是指升级 Xcode 的情况)</li></ul><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198720197701.jpg" alt="-w898"></p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>一番折腾之后，AppCode 速度果然上来了。虽然 AppCode 响应速度相对 Xcode 还是有些差距，不过考虑到 AppCode 强大的重构功能还是非常值得使用的！</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> iOS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>20210306 问题小记</title>
       <link href="2021/03/06/variables-debug-info/"/>
       <url>2021/03/06/variables-debug-info/</url>
@@ -952,9 +971,9 @@
       
         <tags>
             
-            <tag> Java </tag>
-            
             <tag> Dart </tag>
+            
+            <tag> Java </tag>
             
         </tags>
       
