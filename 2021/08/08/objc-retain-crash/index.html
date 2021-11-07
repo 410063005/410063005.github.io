@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近收到 iOS 上一个偶现的 SIGSEGV SEGV_ACCERR 崩溃。错误信息显示该崩溃发生在 _objc_retain 方法，让我困惑了很久。经过分析，发现看似内存问题，实则线程问题。">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次 _objc_retain 崩溃分析">
+<meta property="og:url" content="http://www.sunmoonblog.com/2021/08/08/objc-retain-crash/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="最近收到 iOS 上一个偶现的 SIGSEGV SEGV_ACCERR 崩溃。错误信息显示该崩溃发生在 _objc_retain 方法，让我困惑了很久。经过分析，发现看似内存问题，实则线程问题。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16283922797911.jpg">
+<meta property="og:updated_time" content="2021-08-08T09:05:48.469Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="记一次 _objc_retain 崩溃分析">
+<meta name="twitter:description" content="最近收到 iOS 上一个偶现的 SIGSEGV SEGV_ACCERR 崩溃。错误信息显示该崩溃发生在 _objc_retain 方法，让我困惑了很久。经过分析，发现看似内存问题，实则线程问题。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/16283922797911.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2021/08/08/objc-retain-crash/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>记一次 _objc_retain 崩溃分析 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2021/08/08/objc-retain-crash/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记一次 _objc_retain 崩溃分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-08-08 10:13:17 / 修改时间：17:05:48" itemprop="dateCreated datePublished" datetime="2021-08-08T10:13:17+08:00">2021-08-08</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近收到 iOS 上一个偶现的 <code>SIGSEGV SEGV_ACCERR</code> 崩溃。错误信息显示该崩溃发生在 <code>_objc_retain</code> 方法，让我困惑了很久。经过分析，发现看似内存问题，实则线程问题。<br><a id="more"></a></p>
+<h1 id="错误日志"><a href="#错误日志" class="headerlink" title="错误日志"></a>错误日志</h1><p>一条典型的错误如下：</p>
+<!-- https://bugly.qq.com/v2/crash-reporting/crashes/9067e7d4ff/2334154/report?pid=2&crashDataType=unSystemExit&start=40 -->
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0 libobjc.A.dylib       _objc_retain + 16</span><br><span class="line">1 AbcDriver_Example     -[AbcRecorder startRecordWithType:] (AbcLocationRecorder.m:151)</span><br><span class="line">2 AbcDriver_Example     __40-[AbcLocationReporter onCollectTimer:]_block_invoke (AbcLocationReporter.m:0)</span><br><span class="line">3 Foundation            ___NSBLOCKOPERATION_IS_CALLING_OUT_TO_A_BLOCK__ + 16</span><br><span class="line">4 Foundation            -[NSBlockOperation main] + 100</span><br><span class="line">5 Foundation            ___NSOPERATION_IS_INVOKING_MAIN__ + 20</span><br><span class="line">6 Foundation            -[NSOperation start] + 784</span><br><span class="line">7 Foundation            ___NSOPERATIONQUEUE_IS_STARTING_AN_OPERATION__ + 20</span><br><span class="line">8 Foundation            ___NSOQSchedule_f + 180</span><br></pre></td></tr></table></figure>
+<p>显示错误发生在 <code>AbcLocationRecorder.m</code> 第151行。第151行代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AbcLocationSample *locationSample = [self prepareDataFromAbcLocation:self.latestLocation regeocode:nil];</span><br></pre></td></tr></table></figure>
+<p>代码看起来没有任何问题，也很难将其跟 <code>_objc_retain</code> 方法联系起来。</p>
+<h1 id="类似案例"><a href="#类似案例" class="headerlink" title="类似案例"></a>类似案例</h1><p>处理 iOS 崩溃的经验不多，所以先在网上找了一圈看是否有人遇到类似问题，还果真找到了。</p>
+<h2 id="案例一"><a href="#案例一" class="headerlink" title="案例一"></a>案例一</h2><p><a href="https://www.cnblogs.com/song-jw/p/11691715.html" target="_blank" rel="noopener">iOS崩溃分析 - Lightning_S - 博客园</a> 提到了两个崩溃。</p>
+<p>一个是 <code>objc_release</code>，错误如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0  libobjc.A.dylib                0x1b394f150 objc_release + 16</span><br><span class="line">1  _appstore                      0x10184b694 -[YNP_VRHomeCoreViewModel voiceRoomDidChangeSpeakingUser:] + 373 (YNP_VRHomeCoreViewModel.m:373)</span><br><span class="line">2  Aipai_appstore                 0x1015a6144 __63-[YNP_VoiceRoomManager makeDelegatesPerformSelector:obj:async:]_block_invoke + 1633 (YNP_VoiceRoomManager.m:1633)</span><br></pre></td></tr></table></figure>
+<p>另一个是 <code>objc_retain</code>，错误如下：</p>
+<p><img src="/images/16283922797911.jpg" alt></p>
+<p>文章的结论是：</p>
+<ul>
+<li>以上崩溃都是对象引用计数变化时没有正确加锁(线程不安全)导致</li>
+<li>编译器在代码中插入 <code>objc_retainAutoreleasedReturnValue</code>，所以错误日志中会看到 <code>_objc_retain</code></li>
+</ul>
+<h2 id="案例二"><a href="#案例二" class="headerlink" title="案例二"></a>案例二</h2><p><a href="https://www.jianshu.com/p/298c69ce33b2" target="_blank" rel="noopener">从一个crash分析到苹果的代码问题 - 简书</a> 提到属性被声明为 <code>nonatomic</code> 时，当对象在一个线程中释放了，另一个线程访问时就可能出问题。</p>
+<p>至于 <code>nonatomic</code> 的线程安全问题，原因如下：</p>
+<blockquote>
+<p>nonatomic取到函数地址后，直接返回指针指向的值，如果这时 *slot 正好被释放，那么返回的就是一个错误的值<br>而atomic会先retain，然后放到自动释放池，这样就能保证返回的对象一定不会被释放</p>
+</blockquote>
+<p>这里直接贴上相关的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">id objc_getProperty(id self, SEL _cmd, ptrdiff_t offset, BOOL atomic) &#123;</span><br><span class="line">    if (offset == 0) &#123;</span><br><span class="line">        return object_getClass(self);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Retain release world</span><br><span class="line">    id *slot = (id*) ((char*)self + offset);</span><br><span class="line">    if (!atomic) return *slot;</span><br><span class="line">        </span><br><span class="line">    // Atomic retain release world</span><br><span class="line">    spinlock_t&amp; slotlock = PropertyLocks[slot];</span><br><span class="line">    slotlock.lock();</span><br><span class="line">    id value = objc_retain(*slot);</span><br><span class="line">    slotlock.unlock();</span><br><span class="line">    </span><br><span class="line">    // for performance, we (safely) issue the autorelease OUTSIDE of the spinlock.</span><br><span class="line">    return objc_autoreleaseReturnValue(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="问题复现"><a href="#问题复现" class="headerlink" title="问题复现"></a>问题复现</h1><p>看过两个类似案例，再来分析自己的问题就有头绪了。出错的第151行代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 主线程中读 self.latestLocation</span><br><span class="line">AbcLocationSample *locationSample = [self prepareDataFromAbcLocation:self.latestLocation regeocode:nil];</span><br></pre></td></tr></table></figure>
+<p>我们很自然地把怀疑目标锁定在 <code>self.latestLocation</code> 这里。<code>latestLocation</code> 属性定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@interface AbcLocationRecorder () &lt;AbcLocationManagerDelegate&gt;</span><br><span class="line">// latestLocation 访问修饰符为 nonatomic</span><br><span class="line">@property (nonatomic, strong) AbcLocation *latestLocation;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<p>位置更新时通过如下回调来更新 <code>self.latestLocation</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (void)mapLocationManager:(AbcLocationManager *)manager didUpdateLocations:(NSArray&lt;AbcLocation *&gt; *)locations &#123;</span><br><span class="line">    if (locations.count &gt; 0) &#123;</span><br><span class="line">        AbcLocation* location = [locations firstObject];</span><br><span class="line">        AbcLog_C(@&quot;定位坐标: %f, %f&quot;, location.location.coordinate.latitude, location.location.coordinate.longitude);</span><br><span class="line">        // 子线程中写 self.latestLocation</span><br><span class="line">        self.latestLocation = location;</span><br><span class="line">        AbcLOCATION_UNLOCK(self.lock);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总结一下：</p>
+<ul>
+<li>latestLocation 访问修饰符为 <code>nonatomic</code></li>
+<li>主线程中读 <code>self.latestLocation</code></li>
+<li>子线程中写 <code>self.latestLocation</code></li>
+<li><font color="red">读写 <code>self.latestLocation</code> 没有加锁！</font>
+
+</li>
+</ul>
+<p>前面提到这个 <code>SIGSEGV SEGV_ACCERR</code> 崩溃在我们 App 中是偶现的，Bugly 上有不少上报，但实际中跟进问题时却一次也没复现。怎么办？</p>
+<p>我们写个 demo 吧。demo 如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">@interface ViewController ()</span><br><span class="line">@property (nonatomic, strong) AbcLocation *latestLocation;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation ViewController</span><br><span class="line">- (void)testFun2</span><br><span class="line">&#123;</span><br><span class="line">    dispatch_queue_t queue1 = dispatch_queue_create(&quot;queue1&quot;, 0);</span><br><span class="line">    dispatch_queue_t queue2 = dispatch_queue_create(&quot;queue2&quot;, 0);</span><br><span class="line">    dispatch_queue_t queue3 = dispatch_queue_create(&quot;queue3&quot;, 0);</span><br><span class="line">    </span><br><span class="line">    dispatch_async(queue1, ^&#123;</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            [NSThread sleepForTimeInterval:0.2f];</span><br><span class="line">            //@synchronized (self) &#123;</span><br><span class="line">                NSLog(@&quot;last location %@&quot;, self.latestLocation);</span><br><span class="line">            //&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    dispatch_async(queue3, ^&#123;</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            [NSThread sleepForTimeInterval:0.2f];</span><br><span class="line">            //@synchronized (self) &#123;</span><br><span class="line">                NSLog(@&quot;last location %@&quot;, self.latestLocation);</span><br><span class="line">            //&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    dispatch_async(queue2, ^&#123;</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            //@synchronized (self) &#123;</span><br><span class="line">                self.latestLocation = [[AbcLocation alloc] init];</span><br><span class="line">            //&#125;</span><br><span class="line">            [NSThread sleepForTimeInterval:0.2f];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<p>运行几次很快就会产生崩溃。找到复现方法后，解决问题就很简单了。多线程读写 <code>self.latestLocation</code> 属性中正确地加锁，保证线程安全就能避免崩溃。</p>
+<h1 id="更多知识"><a href="#更多知识" class="headerlink" title="更多知识"></a>更多知识</h1><p>网上寻找相似案例，是为了快速弄清问题原因。写demo是为了快速找到问题复现方法和解决办法。但我们不能就此止步，因为很多问题还可以更深入。</p>
+<h2 id="objc-autoreleaseReturnValue-和-objc-retainAutoreleasedReturnValue"><a href="#objc-autoreleaseReturnValue-和-objc-retainAutoreleasedReturnValue" class="headerlink" title="objc_autoreleaseReturnValue 和 objc_retainAutoreleasedReturnValue"></a>objc_autoreleaseReturnValue 和 objc_retainAutoreleasedReturnValue</h2><blockquote>
+<p>编译器在代码中插入 <code>objc_retainAutoreleasedReturnValue</code>，所以错误日志中会看到 <code>_objc_retain</code></p>
+</blockquote>
+<p>那什么是 <code>objc_autoreleaseReturnValue</code> 呢？</p>
+<p>在 MRC 的环境里有以下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// MRC</span><br><span class="line">+ (id) array &#123;</span><br><span class="line">    return [[NSMutableArray alloc] init];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们知道内存分配的原则是”谁分配，谁释放”。这个原则让上述代码很为难，</p>
+<ul>
+<li>不能在 return 之前释放，因为分配出来的对象还没交给调用方法使用</li>
+<li>也不可能在 return 之后释放，因为 return 之后作为分配方没法负责释放了(没有对象指针)</li>
+</ul>
+<p>所以需要将分配出来的对象注册到自动释放池，也延迟释放</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// MRC</span><br><span class="line">+ (id) array &#123;</span><br><span class="line">    return [[[NSMutableArray alloc] init] autorelease];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ARC 为我们自动调用了 <code>autorelease</code> 和 <code>retain</code> 两个方法 (自动释放)。考虑到兼容 MRC 时，ARC 自动调用 <code>autorelease</code> 和 <code>retain</code> 两个方法会带来不必要的开销，所以 ARC 使用 <code>objc_autoreleaseReturnValue</code> 和<br><code>objc_retainAutoreleasedReturnValue</code> 对多余操作优化，以提升性能优化。</p>
+<hr>
+<p><a href="https://www.galloway.me.uk/2012/02/how-does-objc_retainautoreleasedreturnvalue-work/" target="_blank" rel="noopener">How does objc_retainAutoreleasedReturnValue work? - Matt Galloway</a> 中对 <code>objc_retainAutoreleasedReturnValue</code> 有更多解释。这里挑关键点翻译出来。</p>
+<p><code>objc_retainAutoreleasedReturnValue</code> 背后的思路是这样的：如果一个函数返回的对象是 autoreleased 的，并且接下来的对这个对象执行的操作是 <code>retain</code>，那么这里的 <code>autorelease</code> 和 <code>retain</code> 完全是无意义的，不过是在浪费 CPU 时间。如果某些情况下我们可以检测出这种情况，就能节省CPU时间。在App整个运行期间，节省的CPU时间累计下来就是个不小的优化。</p>
+<p><a href="http://www.opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-arr.mm" target="_blank" rel="noopener">Apple’s code</a>提到：</p>
+<blockquote>
+<p>objc_autoreleaseReturnValue() 检查 return 之后调用方的指令。如果调用方是立即调用 objc_retainAutoreleasedReturnValue，则被调用方不会做 autorelease 操作，而是将结果以 thread-local 方式保存。如果调用方并没有调用 objc_retainAutoreleasedReturnValue，则被调用方会做 autorelease 操作。<br>objc_retainAutoreleasedReturnValue 会检查返回值是否跟 thread-local 变量中保存的值一致。如果一致，则直接返回结果。如果不一致，则会执行一次 autorelease 和 retain。无论哪种方式，调用方都能拿到一个 retained reference</p>
+</blockquote>
+<p>考虑你有如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">- (SomeClass*)createMeAnObject &#123;</span><br><span class="line">   SomeClass *obj = [[SomeClass alloc] init];</span><br><span class="line">   obj.string = @&quot;Badger&quot;;</span><br><span class="line">   obj.number = 10;</span><br><span class="line">   return obj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (id)init &#123;</span><br><span class="line">    if ((self = [super init])) &#123;</span><br><span class="line">        self.myObject = [self createMeAnObject];</span><br><span class="line">    &#125;</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以重写以上代码，重写后如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">- (SomeClass*)createMeAnObject &#123;</span><br><span class="line">   SomeClass *obj = [[SomeClass alloc] init];</span><br><span class="line">   obj.string = @&quot;Badger&quot;;</span><br><span class="line">   obj.number = 10;</span><br><span class="line">   return [obj autorelease];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (id)init &#123;</span><br><span class="line">    if ((self = [super init])) &#123;</span><br><span class="line">        [myObject release];</span><br><span class="line">        SomeClass *temp = [self createMeAnObject];</span><br><span class="line">        myObject = [temp retain];</span><br><span class="line">    &#125;</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果将 <code>createMeAnObject</code> 内联到 <code>init</code>，则代码变成这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (id)init &#123;</span><br><span class="line">    if ((self = [super init])) &#123;</span><br><span class="line">        [myObject release];</span><br><span class="line">        SomeClass *temp = [[SomeClass alloc] init];</span><br><span class="line">        obj.string = @&quot;Badger&quot;;</span><br><span class="line">        obj.number = 10;</span><br><span class="line">        [temp autorelease];</span><br><span class="line">        myObject = [temp retain];</span><br><span class="line">    &#125;</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意以上代码中 <code>[temp autorelease]</code> 后紧接着一个 <code>[temp retain]</code>。这正是新的 Objective-C 运行时可以优化的一个点。</p>
+<p>(译者注：有很多细节的分析，这里略过) 编译一个调用 <code>objc_autoreleaseReturnValue()</code> 和 <code>objc_retainAutoreleasedReturnValue()</code> 的方法时，编译器会添加如下指令作为标记。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Thumb mode:</span><br><span class="line">f7ffef56   blx  _objc_msgSend</span><br><span class="line">    463f  mov  r7, r7</span><br><span class="line">f7ffef54   blx  _objc_retainAutoreleasedReturnValue</span><br><span class="line"></span><br><span class="line">ARM mode:</span><br><span class="line">ebffffa0   bl   _objc_msgSend</span><br><span class="line">e1a07007   mov  r7, r7</span><br><span class="line">ebffff9e   bl   _objc_retainAutoreleasedReturnValue</span><br></pre></td></tr></table></figure>
+<p>无论哪种模式，编译器均会添加 <code>mov r7, r7</code>这条看似无任何意义的指令(它将 r7 寄存器的值 move 到 r7寄存器)。不过这条指令是有意义的，编译器将它作为标识，用于告知 <code>objc_autoreleaseReturnValue</code> 方法：调用方接下来会调用 <code>objc_retainAutoreleasedReturnValue</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">id objc_autoreleaseReturnValue(id object) &#123;</span><br><span class="line">    if (thumb_mode &amp;&amp; next_instruction_after_return == 0x463f ||</span><br><span class="line">        arm_mode   &amp;&amp; next_instruction_after_return == 0xe1a07007)</span><br><span class="line">    &#123;</span><br><span class="line">        set_flag(object);</span><br><span class="line">        return object;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        return objc_autorelease(object);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">id objc_retainAutoreleasedReturnValue(id object) &#123;</span><br><span class="line">    if (get_flag(object)) &#123;</span><br><span class="line">        clear_flag();</span><br><span class="line">        return object;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        return objc_retain(object);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注：以上是伪代码，x86 版本的代码见<a href="https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-arr.mm" target="_blank" rel="noopener">这里</a>。</p>
+<p>总结一下：ARC 出现之前，我们不得不在代码中写 autorelease 和 retain。ARC 出现之后，虽然不用再写 autorelease 和 retain，但是遗留代码中的 autorelease 和 retain 会导致很多冗余操作，<code>objc_autoreleaseReturnValue</code> 和 <code>objc_retainAutoreleasedReturnValue</code> 正是为了应对这些冗余操作的优化。</p>
+<h2 id="问题二"><a href="#问题二" class="headerlink" title="问题二"></a>问题二</h2><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://www.jianshu.com/p/2f05060fa377?spm=a2c4e.11153940.blogcont690541.7.575f3c89jeD8IS" target="_blank" rel="noopener">objc_autoreleaseReturnValue和objc_retainAutoreleasedReturnValue函数对ARC的优化 - 简书</a></li>
+<li><a href="https://www.galloway.me.uk/2012/02/how-does-objc_retainautoreleasedreturnvalue-work/" target="_blank" rel="noopener">How does objc_retainAutoreleasedReturnValue work? - Matt Galloway</a></li>
+<li><a href="https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-arr.mm" target="_blank" rel="noopener">https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-arr.mm</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ios/" rel="tag"># iOS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/20/oc-weakify/" rel="prev" title="关于 OC 中的 @weakify">
+      <i class="fa fa-chevron-left"></i> 关于 OC 中的 @weakify
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#错误日志"><span class="nav-number">1.</span> <span class="nav-text">错误日志</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类似案例"><span class="nav-number">2.</span> <span class="nav-text">类似案例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#案例一"><span class="nav-number">2.1.</span> <span class="nav-text">案例一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案例二"><span class="nav-number">2.2.</span> <span class="nav-text">案例二</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题复现"><span class="nav-number">3.</span> <span class="nav-text">问题复现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更多知识"><span class="nav-number">4.</span> <span class="nav-text">更多知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#objc-autoreleaseReturnValue-和-objc-retainAutoreleasedReturnValue"><span class="nav-number">4.1.</span> <span class="nav-text">objc_autoreleaseReturnValue 和 objc_retainAutoreleasedReturnValue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题二"><span class="nav-number">4.2.</span> <span class="nav-text">问题二</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

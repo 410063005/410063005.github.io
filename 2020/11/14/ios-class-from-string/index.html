@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="OC的NSClassFromString跟Java的Class.forName非常类似。快速了解一下。">
+  <meta name="description" content="简单了解如何使用 NSClassFromString() 函数动态加载类。">
 <meta name="keywords" content="android">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ios-class-from-string">
+<meta property="og:title" content="NSClassFromString 用法简介">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/11/14/ios-class-from-string/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
-<meta property="og:description" content="OC的NSClassFromString跟Java的Class.forName非常类似。快速了解一下。">
+<meta property="og:description" content="简单了解如何使用 NSClassFromString() 函数动态加载类。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-14T08:35:14.740Z">
+<meta property="og:updated_time" content="2021-08-08T02:16:27.027Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ios-class-from-string">
-<meta name="twitter:description" content="OC的NSClassFromString跟Java的Class.forName非常类似。快速了解一下。">
+<meta name="twitter:title" content="NSClassFromString 用法简介">
+<meta name="twitter:description" content="简单了解如何使用 NSClassFromString() 函数动态加载类。">
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/11/14/ios-class-from-string/">
 
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>ios-class-from-string | Sunmoon的博客</title>
+  <title>NSClassFromString 用法简介 | Sunmoon的博客</title>
   
 
 
@@ -193,7 +193,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ios-class-from-string
+          NSClassFromString 用法简介
         </h1>
 
         <div class="post-meta">
@@ -202,10 +202,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-14 16:09:17 / 修改时间：16:35:14" itemprop="dateCreated datePublished" datetime="2020-11-14T16:09:17+08:00">2020-11-14</time>
+              <time title="创建时间：2020-11-14 16:09:17" itemprop="dateCreated datePublished" datetime="2020-11-14T16:09:17+08:00">2020-11-14</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-08 10:16:27" itemprop="dateModified" datetime="2021-08-08T10:16:27+08:00">2021-08-08</time>
+              </span>
 
           
 
@@ -218,37 +224,100 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>OC的<code>NSClassFromString</code>跟Java的<code>Class.forName</code>非常类似。快速了解一下。<br><a id="more"></a></p>
-<h1 id="相关知识"><a href="#相关知识" class="headerlink" title="相关知识"></a>相关知识</h1><h2 id="通过名字获取类"><a href="#通过名字获取类" class="headerlink" title="通过名字获取类"></a>通过名字获取类</h2><p><code>NSClassFromString</code> - Obtains a class by name.</p>
-<p>备注：对应于Java的<code>Class.forName()</code></p>
-<p>OC代码如下：</p>
+        <p>简单了解如何使用 <code>NSClassFromString()</code> 函数动态加载类。</p>
+<a id="more"></a>
+<h1 id="NSClassFromString-及相关函数"><a href="#NSClassFromString-及相关函数" class="headerlink" title="NSClassFromString 及相关函数"></a>NSClassFromString 及相关函数</h1><table>
+<thead>
+<tr>
+<th></th>
+<th>OC</th>
+<th>Java</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通过名字获取类</td>
+<td>NSClassFromString()</td>
+<td>Class.forName()</td>
+<td></td>
+</tr>
+<tr>
+<td>通过名字获取方法</td>
+<td>NSSelectorFromString()</td>
+<td>Class.getDeclaredMethod()</td>
+<td></td>
+</tr>
+<tr>
+<td>判断方法能否调用</td>
+<td>[NSObject respondsToSelector]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>动态调用方法</td>
+<td>[NSInvocation invoke]</td>
+<td>Method.invoke()</td>
+</tr>
+</tbody>
+</table>
+<h2 id="NSClassFromString-介绍"><a href="#NSClassFromString-介绍" class="headerlink" title="NSClassFromString 介绍"></a>NSClassFromString 介绍</h2><p><code>NSClassFromString()</code> 函数的作用是通过名字来获取类 (原文：Obtains a class by name.)。</p>
+<p>这个函数接受类的名字(一个字符串)作为参数，返回值是对应的类对象(如果这个名字对应的类未加载，则返回 <code>nil</code>)。如果参数为 <code>nil</code>，则直接返回 <code>nil</code>。</p>
+<p>OC 的 <code>NSClassFromString()</code> 跟 Java 的 <code>Class.forName()</code> 类似。</p>
+<p>OC 代码如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSObject *target = [[NSClassFromString(className) alloc] init];</span><br></pre></td></tr></table></figure>
-<p>对应的Java代码如下：</p>
+<p>对应的 Java 代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 简单起见这里忽略异常处理</span></span><br><span class="line">Class&lt;?&gt; clazz = Class.forName(className);</span><br><span class="line">Object target = clazz.newInstance();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Java 9</span></span><br><span class="line"><span class="comment">// Object target = clazz.getDeclaredConstructor().newInstance()</span></span><br></pre></td></tr></table></figure>
-<h2 id="通过名字获取方法"><a href="#通过名字获取方法" class="headerlink" title="通过名字获取方法"></a>通过名字获取方法</h2><p><code>NSSelectorFromString</code> - Returns the selector with a given name.</p>
-<p>OC代码如下：</p>
+<h2 id="NSSelectorFromString-介绍"><a href="#NSSelectorFromString-介绍" class="headerlink" title="NSSelectorFromString 介绍"></a>NSSelectorFromString 介绍</h2><p><code>NSSelectorFromString()</code> 函数的作用是通过名字来获取 selector (原文：Returns the selector with a given name)。</p>
+<p>这个函数接受 selector 的名字(一个字符串)作为参数，返回值是对应的 selector。如果参数为 <code>nil</code> 或者无法转换成 UTF-8 字符串，则直接返回 <code>(SEL)0</code>。</p>
+<p>OC 的 <code>NSSelectorFromString()</code> 跟 Java 的 <code>Class.getDeclaredMethod()</code> 方法类似。</p>
+<p>OC 代码如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SEL action = NSSelectorFromString(methodName);</span><br></pre></td></tr></table></figure>
-<p>对应的Java代码如下：</p>
+<p>对应的 Java 代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Method catMethod = SomeClass<span class="class">.<span class="keyword">class</span>.<span class="title">getDeclaredMethod</span>(<span class="title">methodName</span>)</span>;</span><br></pre></td></tr></table></figure>
-<p>上面代码中需要说明一下的是<code>SEL</code>。它的定义是：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typedef struct objc_selector *SEL;</span><br></pre></td></tr></table></figure>
-<p>它的作用是 Defines an opaque type that represents a method selector.</p>
-<p>另一个要注意的OC中通过可以直接通过名字获取到对应的selector，并不需要借助Object或Class；而Java中不能直接通过名字获取到对应的Method，而需要借助Class。</p>
+<p>注意：</p>
+<p><code>SEL</code> 的定义是 <code>typedef struct objc_selector *SEL;</code>。它的用于定义代表 method selector 的类型 (原文：Defines an opaque type that represents a method selector)。</p>
 <h2 id="判断方法是否能调用"><a href="#判断方法是否能调用" class="headerlink" title="判断方法是否能调用"></a>判断方法是否能调用</h2><p><code>[NSObject] - (BOOL)respondsToSelector:(SEL)aSelector;</code> - Returns a Boolean value that indicates whether the receiver implements or inherits a method that can respond to a specified message. </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (![target respondsToSelector:action])&#123;</span><br><span class="line">   // ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>Java中没有对应的用法</p>
+<p>Java中没有对应的用法。</p>
 <h2 id="动态调用方法"><a href="#动态调用方法" class="headerlink" title="动态调用方法"></a>动态调用方法</h2><p><code>[NSInvocation invoke]</code> - Sends the receiver’s message (with arguments) to its target and sets the return value.</p>
 <p>OC代码如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NSMethodSignature* methodSig = [target methodSignatureForSelector:action];</span><br><span class="line">NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSig];</span><br><span class="line">[invocation invoke];</span><br></pre></td></tr></table></figure>
 <p>对应的Java代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Method action = ...</span><br><span class="line">action.invoke(target);</span><br></pre></td></tr></table></figure>
-<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>问题现象：</p>
+<h1 id="NSStringClass-使用案例"><a href="#NSStringClass-使用案例" class="headerlink" title="NSStringClass 使用案例"></a>NSStringClass 使用案例</h1><p>可以使用 <code>NSStringClass()</code> 动态加载类。如果返回 <code>nil</code>，表示不能加载此类。</p>
+<p>如下面代码所示，有不同的方式创建对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 方式一</span><br><span class="line">id myObj = [[NSClassFromString(@&quot;MyClass&quot;) alloc] init];</span><br><span class="line"></span><br><span class="line">// 方式二</span><br><span class="line">id myObj2 = [[MyClass alloc] init];</span><br></pre></td></tr></table></figure>
+<p>通常来说这两种方式没有太多区别。但是，如果并不存在 <code>MyClass</code> 这个类，那么方式二编译报错。所以如果不确定是否存在 <code>MyClass</code> 这个类的情况下，应当使用方式一来创建对象。</p>
+<p>方式一有这样两个好处：</p>
 <ul>
-<li>反序列化时不成功</li>
-<li>提交加载相关类后，反序列化成功</li>
+<li>“弱”链接</li>
+<li>不需要使用 <code>import</code>。即使没有头文件，只要类存在，就可以创建其对象</li>
 </ul>
-<p>代码：</p>
-<p>原因：</p>
+<p>再来看一个实例。某项目需要兼容 v4.3 和 v6.0 版本的百度地图SDK(有点怪，是吧)</p>
+<ul>
+<li>百度地图SDK v4.3 - 没有 <code>BMKCustomMapStyleOption</code>，不支持自定义地图功能</li>
+<li>百度地图SDK v6.0 - 有 <code>BMKCustomMapStyleOption</code>，支持自定义地图功能</li>
+</ul>
+<p>原先的代码是这样写的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BMKCustomMapStyleOption *options = [[BMKCustomMapStyleOption alloc] init];</span><br></pre></td></tr></table></figure>
+<p>当使用百度地图SDK v6.0时，这行代码工作正常；当使用百度地图SDK v4.3时，这行代码<font color="red">无法编译</font>，提示 <code>BMKCustomMapStyleOption</code> 引起 “Undefined symbols”。</p>
+<p>我们可以使用 <code>NSClassFromString</code> 避免这里的编译错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id options = [[NSClassFromString(@&quot;BMKCustomMapStyleOption&quot;) alloc] init];</span><br></pre></td></tr></table></figure>
+<p>完整代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">// MyBMapSettingsAdapter.m</span><br><span class="line"></span><br><span class="line">- (void)setCustomMapStyleOptions:(MyCustomStyleOptions *)styleOptions &#123;</span><br><span class="line">    if (styleOptions) &#123;</span><br><span class="line">        // BMKCustomMapStyleOption *options = [[BMKCustomMapStyleOption alloc] init];</span><br><span class="line">        // options.customMapStyleID = styleOptions.styleId;</span><br><span class="line">        // options.customMapStyleFilePath = styleOptions.stylePath;</span><br><span class="line">        // self.bMapView setCustomMapStyleWithOption...</span><br><span class="line">        </span><br><span class="line">        id options = [[NSClassFromString(@&quot;BMKCustomMapStyleOption&quot;) alloc] init];</span><br><span class="line">        </span><br><span class="line">        if (options) &#123;</span><br><span class="line">            SEL idMethod = NSSelectorFromString(@&quot;setCustomMapStyleID:&quot;);</span><br><span class="line">            [MyBMapSettingsAdapter invokeMethod:options selector:idMethod arg1:styleOptions.styleId];</span><br><span class="line">        </span><br><span class="line">            SEL pathMethod = NSSelectorFromString(@&quot;setCustomMapStyleFilePath:&quot;);</span><br><span class="line">            [MyBMapSettingsAdapter invokeMethod:options selector:pathMethod arg1:styleOptions.stylePath];</span><br><span class="line">            </span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        ...</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 用于解决 &quot;performSelector may cause a leak because its selector is unknown&quot;.</span><br><span class="line">+ (void)invokeMethod:(id)obj selector:(SEL)selector arg1:(id)arg1 &#123;</span><br><span class="line">    if (!obj) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    if ([obj respondsToSelector:selector]) &#123;</span><br><span class="line">        IMP imp = [obj methodForSelector:selector];</span><br><span class="line">        void (*func)(id, SEL, id) = (void*)imp;</span><br><span class="line">        func(obj, selector, arg1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<!--问题现象：
+
++ 反序列化时不成功
++ 提交加载相关类后，反序列化成功
+
+代码：
+
+原因：-->
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://www.jianshu.com/p/3ed2c7bc6653" target="_blank" rel="noopener">OC的反射机制 - 简书</a></li>
+<li><a href="https://stackoverflow.com/questions/7017281/performselector-may-cause-a-leak-because-its-selector-is-unknown" target="_blank" rel="noopener">ios - performSelector may cause a leak because its selector is unknown - Stack Overflow</a></li>
+</ul>
 
     </div>
 
@@ -329,7 +398,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#相关知识"><span class="nav-number">1.</span> <span class="nav-text">相关知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#通过名字获取类"><span class="nav-number">1.1.</span> <span class="nav-text">通过名字获取类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过名字获取方法"><span class="nav-number">1.2.</span> <span class="nav-text">通过名字获取方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#判断方法是否能调用"><span class="nav-number">1.3.</span> <span class="nav-text">判断方法是否能调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态调用方法"><span class="nav-number">1.4.</span> <span class="nav-text">动态调用方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实例"><span class="nav-number">2.</span> <span class="nav-text">实例</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#NSClassFromString-及相关函数"><span class="nav-number">1.</span> <span class="nav-text">NSClassFromString 及相关函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#NSClassFromString-介绍"><span class="nav-number">1.1.</span> <span class="nav-text">NSClassFromString 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSSelectorFromString-介绍"><span class="nav-number">1.2.</span> <span class="nav-text">NSSelectorFromString 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#判断方法是否能调用"><span class="nav-number">1.3.</span> <span class="nav-text">判断方法是否能调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态调用方法"><span class="nav-number">1.4.</span> <span class="nav-text">动态调用方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NSStringClass-使用案例"><span class="nav-number">2.</span> <span class="nav-text">NSStringClass 使用案例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -343,7 +412,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">144</span>
+          <span class="site-state-item-count">146</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
