@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="[TOC]">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ClickHosue 入门(一)">
+<meta property="og:url" content="http://www.sunmoonblog.com/2022/06/29/clickhosue-1/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="[TOC]">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16564715665938.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16564716127327.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16567536616501.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16567543203933.jpg">
+<meta property="og:updated_time" content="2022-07-02T09:39:07.613Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ClickHosue 入门(一)">
+<meta name="twitter:description" content="[TOC]">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/16564715665938.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2022/06/29/clickhosue-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ClickHosue 入门(一) | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2022/06/29/clickhosue-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ClickHosue 入门(一)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-29 10:46:46" itemprop="dateCreated datePublished" datetime="2022-06-29T10:46:46+08:00">2022-06-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-02 17:39:07" itemprop="dateModified" datetime="2022-07-02T17:39:07+08:00">2022-07-02</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>[TOC]</p>
+<a id="more"></a>
+<p>翻译 <a href="https://clickhouse.com/docs/en/quick-start" target="_blank" rel="noopener">Quick Start | ClickHouse Docs</a></p>
+<h1 id="安装和启动"><a href="#安装和启动" class="headerlink" title="安装和启动"></a>安装和启动</h1><p>第一步，本地下载 ClickHouse 最简单的方式是运行 <code>curl https://clickhouse.com/ | sh</code> 命令。如果系统支持 ClickHouse，会自动下载 ClickHouse 二进制包并且添加可执行权限。</p>
+<p>第二步，运行 <code>sudo ./clickhouse install</code> 命令，会为 ClickHouse 创建相应的软链接。</p>
+<p>第三步，脚本运行结束后会提示用户输入密码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Creating log directory /var/log/clickhouse-server.</span><br><span class="line">Creating data directory /var/lib/clickhouse.</span><br><span class="line">Creating pid directory /var/run/clickhouse-server.</span><br><span class="line"> chown -R clickhouse:clickhouse &apos;/var/log/clickhouse-server&apos;</span><br><span class="line"> chown -R clickhouse:clickhouse &apos;/var/run/clickhouse-server&apos;</span><br><span class="line"> chown  clickhouse:clickhouse &apos;/var/lib/clickhouse&apos;</span><br><span class="line">Enter password for default user:</span><br></pre></td></tr></table></figure>
+<p>ClickHouse 安装成功后输出以下日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Start clickhouse-server with:</span><br><span class="line"> sudo clickhouse start</span><br><span class="line"></span><br><span class="line">Start clickhouse-client with:</span><br><span class="line"> clickhouse-client</span><br></pre></td></tr></table></figure>
+<p>第四步，运行以下命令来启动服务器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo clickhouse start</span><br></pre></td></tr></table></figure>
+<h1 id="连接-ClickHouse"><a href="#连接-ClickHouse" class="headerlink" title="连接 ClickHouse"></a>连接 ClickHouse</h1><p>缺省时 ClickHouse 在 8123 端口启动 Http 服务。<a href="http://127.0.0.1:8123/play" target="_blank" rel="noopener">http://127.0.0.1:8123/play</a> 提供内置的SQL查询器(根据实际情况修改hostname)</p>
+<p><img src="/images/16564715665938.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW databases</span><br></pre></td></tr></table></figure>
+<p>点击 RUN 按钮后结果展示如下：</p>
+<p><img src="/images/16564716127327.jpg" alt></p>
+<h1 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h1><p>跟大部分数据库管理系统类似，ClickHouse 从逻辑上将以数据库(databases)的形式对数据表(tables)分组。</p>
+<p>ClickHouse 中即使最简单的表也必须指定表引擎(<code>table engine</code>)。表引擎决定以下细节：</p>
+<ul>
+<li>数据如何存放，数据存放到哪里</li>
+<li>支持哪些查询</li>
+<li>数据是否可复制</li>
+</ul>
+<p>有许多种引擎可供使用，但对单节点的 ClickHouse 服务器来说<a href="https://clickhouse.com/docs/en/engines/table-engines/mergetree-family/mergetree" target="_blank" rel="noopener">MergeTree</a>是常见的选择。以下命令在数据库 <code>helloworld</code> 中创建名为 <code>my_first_table</code> 的数据表。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE helloworld.my_first_table</span><br><span class="line">(</span><br><span class="line">    user_id UInt32,</span><br><span class="line">    message String,</span><br><span class="line">    timestamp DateTime,</span><br><span class="line">    metric Float32</span><br><span class="line">)</span><br><span class="line">ENGINE = MergeTree()</span><br><span class="line">PRIMARY KEY (user_id, timestamp)</span><br></pre></td></tr></table></figure>
+<h1 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h1><p>使用 <code>INSERT INTO TABLE</code> 在 ClickHouse 中插入数据。不过要注意的是每次向 MergeTree 表中插入数据时都会导致数据存储中生成一个 <strong>part</strong>。</p>
+<p>使用 ClickHouse 的最佳实践是一次性批量插入大量数据，比如说上万行甚至百万行。(别担心，ClickHouse 可以处理这种量级的数据)。</p>
+<ul>
+<li>即使对于简单的例子，我们也是一次插入多条数据：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO helloworld.my_first_table (user_id, message, timestamp, metric) VALUES</span><br><span class="line">    (101, &apos;Hello, ClickHouse!&apos;,                                 now(),       -1.0    ),</span><br><span class="line">    (102, &apos;Insert a lot of rows per batch&apos;,                     yesterday(), 1.41421 ),</span><br><span class="line">    (102, &apos;Sort your data based on your commonly-used queries&apos;, today(),     2.718   ),</span><br><span class="line">    (101, &apos;Granules are the smallest chunks of data read&apos;,      now() + 5,   3.14159 )</span><br></pre></td></tr></table></figure>
+<ul>
+<li>确认是否正常工作</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM helloworld.my_first_table</span><br></pre></td></tr></table></figure>
+<p>可以看到已经插入了四行数据：</p>
+<p><img src="/images/16567536616501.jpg" alt></p>
+<h1 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h1><p>可以使用 clickhouse-client 命令行工具连接 ClickHouse server。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clickhouse-client</span><br></pre></td></tr></table></figure>
+<p>如果看到笑脸提示符，说明已经成功连接到 ClickHouse server。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:)</span><br></pre></td></tr></table></figure>
+<p>连接成功后可以尝试查询。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT *</span><br><span class="line">FROM helloworld.my_first_table</span><br><span class="line">ORDER BY timestamp</span><br></pre></td></tr></table></figure>
+<p>注意返回结果以表格形式展示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SELECT *</span><br><span class="line">FROM helloworld.my_first_table</span><br><span class="line">ORDER BY timestamp ASC</span><br><span class="line"></span><br><span class="line">Query id: f7a33012-bc8c-4f0f-9641-260ee1ffe4b8</span><br><span class="line"></span><br><span class="line">┌─user_id─┬─message────────────────────────────────────────────┬───────────timestamp─┬──metric─┐</span><br><span class="line">│     102 │ Insert a lot of rows per batch                     │ 2022-03-21 00:00:00 │ 1.41421 │</span><br><span class="line">│     102 │ Sort your data based on your commonly-used queries │ 2022-03-22 00:00:00 │   2.718 │</span><br><span class="line">│     101 │ Hello, ClickHouse!                                 │ 2022-03-22 14:04:09 │      -1 │</span><br><span class="line">│     101 │ Granules are the smallest chunks of data read      │ 2022-03-22 14:04:14 │ 3.14159 │</span><br><span class="line">└─────────┴────────────────────────────────────────────────────┴─────────────────────┴─────────┘</span><br><span class="line"></span><br><span class="line">4 rows in set. Elapsed: 0.008 sec.</span><br></pre></td></tr></table></figure>
+<p>可以添加 <strong>FORMAT</strong> 子句来指定<a href="https://clickhouse.com/docs/en/interfaces/formats/" target="_blank" rel="noopener">输出格式</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT *</span><br><span class="line">FROM helloworld.my_first_table</span><br><span class="line">ORDER BY timestamp</span><br><span class="line">FORMAT TabSeparated</span><br></pre></td></tr></table></figure>
+<p>上述查询中，输出结果以 tab 分隔符返回：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Query id: 3604df1c-acfd-4117-9c56-f86c69721121</span><br><span class="line"></span><br><span class="line">102 Insert a lot of rows per batch  2022-03-21 00:00:00 1.41421</span><br><span class="line">102 Sort your data based on your commonly-used queries  2022-03-22 00:00:00 2.718</span><br><span class="line">101 Hello, ClickHouse!  2022-03-22 14:04:09 -1</span><br><span class="line">101 Granules are the smallest chunks of data read   2022-03-22 14:04:14 3.14159</span><br><span class="line"></span><br><span class="line">4 rows in set. Elapsed: 0.005 sec.</span><br></pre></td></tr></table></figure>
+<p>使用 <strong>exit</strong> 命令退出 clickhouse-client</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:) exit</span><br><span class="line">Bye.</span><br></pre></td></tr></table></figure>
+<h1 id="导入CSV"><a href="#导入CSV" class="headerlink" title="导入CSV"></a>导入CSV</h1><p>A common task when getting started with a database is to insert some data that you already have in files. We have some sample data online that you can insert that represents clickstream data - it includes a user ID, a URL that was visited, and the timestamp of the event.</p>
+<p>一个常见任务是将文件中的数据导入到数据库。我们有一些在线的点击流示例数据，包括用户ID、访问的URL以及事件戳。</p>
+<p>假设一个名为 <code>data.csv</code> 的文件中有以下数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">102,This is data in a file,2022-02-22 10:43:28,123.45</span><br><span class="line">101,It is comma-separated,2022-02-23 00:00:00,456.78</span><br><span class="line">103,Use FORMAT to specify the format,2022-02-21 10:43:30,678.90</span><br></pre></td></tr></table></figure>
+<p>以下命令将数据插入 <strong>my_first_table</strong> 表。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clickhouse-client --query=&apos;INSERT INTO helloworld.my_first_table FORMAT CSV&apos; &lt; data.csv</span><br></pre></td></tr></table></figure>
+<p>可以看到新的数据入库了。</p>
+<p><img src="/images/16567543203933.jpg" alt></p>
+<h1 id="下一步"><a href="#下一步" class="headerlink" title="下一步"></a>下一步</h1><ul>
+<li>这份<a href="https://clickhouse.com/docs/en/tutorial" target="_blank" rel="noopener">教程</a>教你如何将两百万条数据插入ClickHouse并且写一些分析查询</li>
+<li>这里有一些<a href="https://clickhouse.com/docs/en/getting-started/example-datasets/" target="_blank" rel="noopener">示例数据集</a></li>
+<li>这是一个25分钟的视频<a href="https://clickhouse.com/company/events/getting-started-with-clickhouse/" target="_blank" rel="noopener">Getting Started with ClickHouse</a></li>
+<li>如果你的数据来自外部，可以通过<a href="https://clickhouse.com/docs/en/integrations/" target="_blank" rel="noopener">集成指南集合</a>来了解如何连接到消息队列、数据库、流水线</li>
+<li>如果你使用UI/BI可视化分析工具，可以通过<a href="https://clickhouse.com/docs/en/connect-a-ui/" target="_blank" rel="noopener">user guides for connecting a UI to ClickHouse</a>了解更多技巧</li>
+<li>通过<a href="https://clickhouse.com/docs/en/guides/improving-query-performance/sparse-primary-indexes/sparse-primary-indexes-intro" target="_blank" rel="noopener">primary keys</a>一文来了解如何在ClickHouse中定义主键</li>
+</ul>
+<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><p>问题一：启动时提示监控端口失败，无法访问 ClickHouse</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2022.06.29 11:44:33.144576 [ 23415 ] &#123;&#125; &lt;Warning&gt; Application: Listen [::1]:8123 failed: Poco::Exception. Code: 1000, e.code() = 99, Net Exception: Cannot assign requested address: [::1]:8123 (version 22.7.1.823 (official build)). If it is an IPv6 or IPv4 address and your host has disabled IPv6 or IPv4, then consider to specify not disabled IPv4 or IPv6 address to listen in &lt;listen_host&gt; element of configuration file. Example for disabled IPv6: &lt;listen_host&gt;0.0.0.0&lt;/listen_host&gt; . Example for disabled IPv4: &lt;listen_host&gt;::&lt;/listen_host&gt;</span><br><span class="line">2022.06.29 11:44:33.144986 [ 23415 ] &#123;&#125; &lt;Warning&gt; Application: Listen [::1]:9000 failed: Poco::Exception. Code: 1000, e.code() = 99, Net Exception: Cannot assign requested address: [::1]:9000 (version 22.7.1.823 (official build)). If it is an IPv6 or IPv4 address and your host has disabled IPv6 or IPv4, then consider to specify not disabled IPv4 or IPv6 address to listen in &lt;listen_host&gt; element of configuration file. Example for disabled IPv6: &lt;listen_host&gt;0.0.0.0&lt;/listen_host&gt; . Example for disabled IPv4: &lt;listen_host&gt;::&lt;/listen_host&gt;</span><br><span class="line">2022.06.29 11:44:33.145252 [ 23415 ] &#123;&#125; &lt;Warning&gt; Application: Listen [::1]:9004 failed: Poco::Exception. Code: 1000, e.code() = 99, Net Exception: Cannot assign requested address: [::1]:9004 (version 22.7.1.823 (official build)). If it is an IPv6 or IPv4 address and your host has disabled IPv6 or IPv4, then consider to specify not disabled IPv4 or IPv6 address to listen in &lt;listen_host&gt; element of configuration file. Example for disabled IPv6: &lt;listen_host&gt;0.0.0.0&lt;/listen_host&gt; . Example for disabled IPv4: &lt;listen_host&gt;::&lt;/listen_host&gt;</span><br></pre></td></tr></table></figure>
+<p>解决办法：<code>clickhouse-server -- --listen_host=0.0.0.0</code></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/04/space-commander/" rel="prev" title="Space Commander 介绍">
+      <i class="fa fa-chevron-left"></i> Space Commander 介绍
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装和启动"><span class="nav-number">1.</span> <span class="nav-text">安装和启动</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#连接-ClickHouse"><span class="nav-number">2.</span> <span class="nav-text">连接 ClickHouse</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建表"><span class="nav-number">3.</span> <span class="nav-text">创建表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#插入数据"><span class="nav-number">4.</span> <span class="nav-text">插入数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#客户端"><span class="nav-number">5.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#导入CSV"><span class="nav-number">6.</span> <span class="nav-text">导入CSV</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下一步"><span class="nav-number">7.</span> <span class="nav-text">下一步</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">8.</span> <span class="nav-text">常见问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="记录使用 Puppeteer 时遇到的两个小问题，以备忘。">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Puppeteer 问题小记">
+<meta property="og:url" content="http://www.sunmoonblog.com/2022/05/23/puppeteer-in-practice/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="记录使用 Puppeteer 时遇到的两个小问题，以备忘。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16532726175570.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/images/16544952632684.jpg">
+<meta property="og:updated_time" content="2022-06-06T06:45:10.169Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Puppeteer 问题小记">
+<meta name="twitter:description" content="记录使用 Puppeteer 时遇到的两个小问题，以备忘。">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/images/16532726175570.jpg">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2022/05/23/puppeteer-in-practice/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Puppeteer 问题小记 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2022/05/23/puppeteer-in-practice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Puppeteer 问题小记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-23 09:33:24" itemprop="dateCreated datePublished" datetime="2022-05-23T09:33:24+08:00">2022-05-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-06-06 14:45:10" itemprop="dateModified" datetime="2022-06-06T14:45:10+08:00">2022-06-06</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>记录使用 Puppeteer 时遇到的两个小问题，以备忘。<br><a id="more"></a></p>
+<h1 id="安装-puppeteer-失败"><a href="#安装-puppeteer-失败" class="headerlink" title="安装 puppeteer 失败"></a>安装 puppeteer 失败</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">$ npm i puppeteer</span><br><span class="line">&gt; puppeteer@14.1.1 install /home/gitlab-runner/builds/deaaa930/0/project-abc/node_modules/puppeteer</span><br><span class="line">&gt; node install.js</span><br><span class="line">ERROR: Failed to set up Chromium r991974! Set &quot;PUPPETEER_SKIP_DOWNLOAD&quot; env variable to skip download.</span><br><span class="line">Error: connect ETIMEDOUT 172.217.31.16:443</span><br><span class="line">    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1144:16) &#123;</span><br><span class="line">  errno: &apos;ETIMEDOUT&apos;,</span><br><span class="line">  code: &apos;ETIMEDOUT&apos;,</span><br><span class="line">  syscall: &apos;connect&apos;,</span><br><span class="line">  address: &apos;172.217.31.16&apos;,</span><br><span class="line">  port: 443</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">npm WARN notsup Unsupported engine for puppeteer@14.1.1: wanted: &#123;&quot;node&quot;:&quot;&gt;=14.1.0&quot;&#125; (current: &#123;&quot;node&quot;:&quot;12.22.7&quot;,&quot;npm&quot;:&quot;6.14.15&quot;&#125;)</span><br><span class="line">npm WARN notsup Not compatible with your version of node/npm: puppeteer@14.1.1</span><br><span class="line">npm WARN enoent ENOENT: no such file or directory, open &apos;/home/gitlab-runner/builds/deaaa930/0/project-abc/package.json&apos;</span><br><span class="line">npm WARN project-abc No description</span><br><span class="line">npm WARN project-abc No repository field.</span><br><span class="line">npm WARN project-abc No README data</span><br><span class="line">npm WARN project-abc No license field.</span><br><span class="line">npm ERR! code ELIFECYCLE</span><br><span class="line">npm ERR! errno 1</span><br><span class="line">npm ERR! puppeteer@14.1.1 install: `node install.js`</span><br><span class="line">npm ERR! Exit status 1</span><br><span class="line">npm ERR! </span><br><span class="line">npm ERR! Failed at the puppeteer@14.1.1 install script.</span><br></pre></td></tr></table></figure>
+<p>看错误日志是在执行 <code>npm i puppeteer</code> 时出现失败，猜测是当时出现网络故障。</p>
+<p>解决办法：实际上已经在 gitlab runner 所在的机器上全局安装过 <a href="mailto:puppeteer@14.1.1" target="_blank" rel="noopener">puppeteer@14.1.1</a>，且设置了 gitlab CI 缓存，所以没必要每次构建时都重新安装。<code>.gitlab-ci.yml</code> 优化如下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">stages:</span><br><span class="line">  - build</span><br><span class="line">  - test</span><br><span class="line">  - deploy</span><br><span class="line"></span><br><span class="line">before_script:</span><br><span class="line">  #- whoami</span><br><span class="line">  - npm list puppeteer</span><br><span class="line">  - npm list puppeteer || npm install puppeteer@14.1.1  </span><br><span class="line"></span><br><span class="line">bugly:</span><br><span class="line">  stage: build</span><br><span class="line">  cache:</span><br><span class="line">    key: $&#123;CI_BUILD_REF_NAME&#125;</span><br><span class="line">    paths:</span><br><span class="line">      - node_modules/</span><br><span class="line">  script:</span><br><span class="line">    ./bugly.sh &quot;$&#123;IS_PRD&#125;&quot;</span><br><span class="line">  tags:</span><br><span class="line">    - android</span><br><span class="line">  only:</span><br><span class="line">    - bugly-trigger</span><br><span class="line">  allow_failure: true</span><br></pre></td></tr></table></figure>
+<p>优化后的另一个意想不到的好处是 gitlab CI速度加快了 (省去了安装 重新安装 puppeteer 的过程)</p>
+<p><img src="/images/16532726175570.jpg" alt></p>
+<h1 id="puppeteer-脚本执行失败"><a href="#puppeteer-脚本执行失败" class="headerlink" title="puppeteer 脚本执行失败"></a>puppeteer 脚本执行失败</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ ./bugly.sh &quot;$&#123;IS_PRD&#125;&quot;</span><br><span class="line">(node:4711) UnhandledPromiseRejectionWarning: TypeError: Cannot read property &apos;waitForSelector&apos; of undefined</span><br><span class="line">    at /home/gitlab-runner/builds/deaaa930/0/project-abc/pp.js:33:17</span><br><span class="line">    at processTicksAndRejections (internal/process/task_queues.js:97:5)</span><br><span class="line">(node:4711) UnhandledPromiseRejectionWarning: Unhandled promise rejection. </span><br><span class="line">  This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)</span><br><span class="line">(node:4711) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.</span><br><span class="line">Session terminated, killing shell... ...killed.</span><br><span class="line">ERROR: Job failed: execution took longer than 1h0m0s seconds</span><br></pre></td></tr></table></figure>
+<p>错误原因：脚本中找不到指定元素后出错了，但是没有进行异常处理。正常情况下会执行 <code>await browser.close()</code> 及时关闭浏览器，异常时不会关闭浏览器而是无限等待，直到到达 gitlab CI的超时时间(60分钟)后才被外部杀死。</p>
+<p>解决办法：增加异常处理和重试。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 无异常处理</span></span><br><span class="line"><span class="comment">//(async () =&gt; &#123;</span></span><br><span class="line"><span class="comment">//    const browser = await puppeteer.launch(&#123;&#125;);</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">//    // page: 用于模拟登录流程</span></span><br><span class="line"><span class="comment">//    const page = (await browser.pages())[0];</span></span><br><span class="line">      </span><br><span class="line"><span class="comment">//      // 原脚本</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//    console.log(c);</span></span><br><span class="line"><span class="comment">//    await browser.close();</span></span><br><span class="line"><span class="comment">//&#125;)();</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 有异常处理</span></span><br><span class="line">(<span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> browser = <span class="keyword">await</span> puppeteer.launch(&#123;&#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// page: 用于模拟登录流程</span></span><br><span class="line">        <span class="keyword">const</span> page = (<span class="keyword">await</span> browser.pages())[<span class="number">0</span>];</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 原脚本</span></span><br><span class="line">        </span><br><span class="line">        <span class="built_in">console</span>.log(c);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(error);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">await</span> browser.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>此外，还在增加异常处理的基础上补充了重试机制。重试代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">retry</span>(<span class="params">promiseFactory, retryCount</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> promiseFactory();</span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="keyword">if</span> (retryCount &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> error;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> retry(promiseFactory, retryCount - <span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考自<a href="https://stackoverflow.com/questions/56884276/best-practice-for-retrying-page-goto-page-waitfornavigation-etc-in-puppeteer-j" target="_blank" rel="noopener">这里</a>。</p>
+<h2 id="自动登录"><a href="#自动登录" class="headerlink" title="自动登录"></a>自动登录</h2><p>两个办法。一是直接使用 <strong>用户数据</strong>。注意这里的 <code>userDataDir</code> 参数，它指定了当前浏览器的数据目录。<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/user_data_dir.md#Command-Line" target="_blank" rel="noopener">User Data Directory</a></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> browser = <span class="keyword">await</span> puppeteer.launch(&#123;</span><br><span class="line">    headless: <span class="literal">true</span>,</span><br><span class="line">    userDataDir: <span class="string">'./puppeteer_data'</span>,</span><br><span class="line">    ignoreHTTPSErrors: <span class="literal">true</span>,</span><br><span class="line">    defaultViewport: <span class="literal">false</span>,</span><br><span class="line">    devtools: <span class="literal">true</span>,</span><br><span class="line">    <span class="comment">// args: ['--disable-features=site-per-process', '--no-sandbox', '--disable-setuid-sandbox', '--disable-infobars']</span></span><br><span class="line">    args: [<span class="string">'--disable-features=site-per-process'</span>, <span class="string">'--no-sandbox'</span>],</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>另一个思路是复用cookie。步骤如下：</p>
+<ul>
+<li>第一步，导出chrome登录态</li>
+<li>第二步，导入登录态至puppeteer</li>
+<li>第三步，访问页面</li>
+</ul>
+<p><a href="https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg/related?hl=en" target="_blank" rel="noopener">EditThisCookie</a>是一款Chrome插件，支持从Chrome中导出cookie。</p>
+<p><img src="/images/16544952632684.jpg" alt></p>
+<p>导出的cookie是一个json字符串。可以直接使用 <code>await page.setCookie(...cookies)</code> 将该json串设置给 puppeteer。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">    <span class="attr">"domain"</span>: <span class="string">".feishu.cn"</span>,</span><br><span class="line">    <span class="attr">"expirationDate"</span>: <span class="number">1662259808.850663</span>,</span><br><span class="line">    <span class="attr">"hostOnly"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"httpOnly"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"__tea__ug__uid"</span>,</span><br><span class="line">    <span class="attr">"path"</span>: <span class="string">"/"</span>,</span><br><span class="line">    <span class="attr">"sameSite"</span>: <span class="string">"unspecified"</span>,</span><br><span class="line">    <span class="attr">"secure"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"session"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"storeId"</span>: <span class="string">"0"</span>,</span><br><span class="line">    <span class="attr">"value"</span>: <span class="string">"7105953789148546601"</span>,</span><br><span class="line">    <span class="attr">"id"</span>: <span class="number">1</span></span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> browser = <span class="keyword">await</span> puppeteer.launch(&#123;</span><br><span class="line">    headless: <span class="literal">false</span>,</span><br><span class="line">    <span class="comment">// userDataDir: './puppeteer_data',</span></span><br><span class="line">    ignoreHTTPSErrors: <span class="literal">true</span>,</span><br><span class="line">    defaultViewport: <span class="literal">false</span>,</span><br><span class="line">    devtools: <span class="literal">true</span>,</span><br><span class="line">    <span class="comment">// args: ['--disable-features=site-per-process', '--no-sandbox', '--disable-setuid-sandbox', '--disable-infobars']</span></span><br><span class="line">    args: [<span class="string">'--disable-features=site-per-process'</span>, <span class="string">'--no-sandbox'</span>],</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// page: 用于模拟登录流程</span></span><br><span class="line"><span class="keyword">const</span> page = (<span class="keyword">await</span> browser.pages())[<span class="number">0</span>];</span><br><span class="line">  </span><br><span class="line"><span class="keyword">await</span> page.goto(<span class="string">'http://femap-ci.huolala.work/#/monitor/index'</span>, &#123; <span class="attr">waitUntil</span>: <span class="string">"networkidle2"</span> &#125;);</span><br><span class="line">    </span><br><span class="line"><span class="keyword">const</span> cookies = fs.readFileSync(<span class="string">'crash_toke.json'</span>, <span class="string">'utf8'</span>)</span><br><span class="line"><span class="keyword">const</span> deserializedCookies = <span class="built_in">JSON</span>.parse(cookies)</span><br><span class="line"><span class="keyword">await</span> page.setCookie(...deserializedCookies)</span><br></pre></td></tr></table></figure>
+<p><a href="https://kth.instructure.com/courses/11/pages/running-a-second-puppeteer-script-using-the-same-session-cookies" target="_blank" rel="noopener">Running a second Puppeteer script using the same session cookies: Chip sandbox</a> 提到了 <code>userDataDir</code> 和 <code>page.setCookie</code> 的区别：</p>
+<blockquote>
+<p>前者使用了相同的用户数据来启动下一次测试。但实际上并不需要完全相同的用户数据，通常只需要使用相同的 cookie 来启动下一次测试即可。</p>
+</blockquote>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://stackoverflow.com/questions/30667239/is-it-possible-to-install-npm-package-only-if-it-has-not-been-already-installed" target="_blank" rel="noopener">node.js - Is it possible to install npm package only if it has not been already installed? - Stack Overflow</a></li>
+<li><a href="https://stackoverflow.com/questions/63187371/puppeteer-not-able-to-install-error-failed-to-set-up-chromium-r782078-set-pu" target="_blank" rel="noopener">node.js - puppeteer not able to install: ERROR: Failed to set up Chromium r782078! Set “PUPPETEER_SKIP_DOWNLOAD” env variable to skip download - Stack Overflow</a></li>
+<li><a href="https://blog.csdn.net/Maybe_Lee/article/details/78604927" target="_blank" rel="noopener">shell脚本中判断上一个命令是否执行成功</a></li>
+<li><a href="https://stackoverflow.com/questions/50418994/pass-signed-cookie-to-puppeteer" target="_blank" rel="noopener">node.js - Pass signed cookie to puppeteer - Stack Overflow</a></li>
+<li><a href="https://stackoverflow.com/questions/56514877/how-to-save-cookies-and-load-it-in-another-puppeteer-session" target="_blank" rel="noopener">How to save cookies and load it in another puppeteer session? - Stack Overflow</a></li>
+<li><a href="https://www.checklyhq.com/learn/headless/managing-cookies/" target="_blank" rel="noopener">Setting state using cookies | Checkly</a></li>
+<li><a href="https://zhaoqize.github.io/puppeteer-api-zh_CN/#/" target="_blank" rel="noopener">Puppeteer v14.2.1</a> 中文文档，优质</li>
+<li><a href="https://devdocs.io/puppeteer/" target="_blank" rel="noopener">Puppeteer documentation — DevDocs</a> 英文文档，官方</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/19/network-monitor-roadmap/" rel="prev" title="移动端网络监控小结">
+      <i class="fa fa-chevron-left"></i> 移动端网络监控小结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/03/git-hooks/" rel="next" title="Git Hooks 小记">
+      Git Hooks 小记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装-puppeteer-失败"><span class="nav-number">1.</span> <span class="nav-text">安装 puppeteer 失败</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#puppeteer-脚本执行失败"><span class="nav-number">2.</span> <span class="nav-text">puppeteer 脚本执行失败</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#自动登录"><span class="nav-number">2.1.</span> <span class="nav-text">自动登录</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476732191547.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476911150553.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476917603072.jpg">
-<meta property="og:updated_time" content="2022-03-19T12:24:18.532Z">
+<meta property="og:updated_time" content="2022-03-19T12:39:24.616Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Gradle Transform 简介">
 <meta name="twitter:description" content="[TOC] 回顾一下 Transform 相关的知识。">
@@ -209,7 +209,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-03-19 11:58:23 / 修改时间：20:24:18" itemprop="dateCreated datePublished" datetime="2022-03-19T11:58:23+08:00">2022-03-19</time>
+              <time title="创建时间：2022-03-19 11:58:23 / 修改时间：20:39:24" itemprop="dateCreated datePublished" datetime="2022-03-19T11:58:23+08:00">2022-03-19</time>
             </span>
 
           
@@ -254,6 +254,7 @@
 <li>Transform API 是一套用来修改构建产物的标准API</li>
 </ul>
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476732191547.jpg" alt></p>
+<p>Android App 打包过程中的代码混淆、desugar等过程，其实都是一个个的 Transform。</p>
 <h1 id="使用-Transform-的场景"><a href="#使用-Transform-的场景" class="headerlink" title="使用 Transform 的场景"></a>使用 Transform 的场景</h1><ul>
 <li>对编译产生的class文件做自定义的处理。</li>
 <li>读取编译产生的class文件，并不修改</li>
@@ -262,7 +263,8 @@
 <li><a href="https://www.sunmoonblog.com/2018/10/28/instant-run-instrumentation/">(译)Instant Run Instrumentation | Sunmoon的博客</a></li>
 <li><a href="https://www.sunmoonblog.com/2018/10/30/instant-run-1/">Instant Run浅析(二) | Sunmoon的博客</a></li>
 </ul>
-<h2 id="示例二-Network-Profiler"><a href="#示例二-Network-Profiler" class="headerlink" title="示例二 - Network Profiler"></a>示例二 - Network Profiler</h2><h1 id="Transform-API-介绍"><a href="#Transform-API-介绍" class="headerlink" title="Transform API 介绍"></a>Transform API 介绍</h1><p>自定义的 transform 要继承自 <code>Transform</code>。</p>
+<h2 id="示例二-Network-Profiler"><a href="#示例二-Network-Profiler" class="headerlink" title="示例二 - Network Profiler"></a>示例二 - Network Profiler</h2><p>TODO</p>
+<h1 id="Transform-API-介绍"><a href="#Transform-API-介绍" class="headerlink" title="Transform API 介绍"></a>Transform API 介绍</h1><p>自定义的 transform 要继承自 <code>Transform</code>。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Transform</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">getName</span><span class="params">()</span></span>; <span class="comment">// 自定义 Transform的名字</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Set&lt;ContentType&gt; <span class="title">getInputTypes</span><span class="params">()</span></span>; <span class="comment">// 自定义 Transform 的输入类型</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> Set&lt;? <span class="keyword">super</span> Scope&gt; getScopes();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">isIncremental</span><span class="params">()</span></span>; <span class="comment">// 是否支持增量编译</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="输入类型"><a href="#输入类型" class="headerlink" title="输入类型"></a>输入类型</h2><p><code>getInputTypes()</code> 指定 transform 的输入类型。</p>
 <ul>
@@ -303,7 +305,10 @@
     <a href="/2022/03/18/gradle-best-practices/" rel="prev" title="(译) Organizing Gradle Projects">
       <i class="fa fa-chevron-left"></i> (译) Organizing Gradle Projects
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/19/network-monitor-roadmap/" rel="next" title="移动端网络监控小结">
+      移动端网络监控小结 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -376,7 +381,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">151</span>
+          <span class="site-state-item-count">156</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -405,6 +410,8 @@
         
 
         
+  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  </div>
 
 <div class="copyright">
   

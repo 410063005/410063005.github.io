@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Space Commander 是 Square 开源的一款 Objective C 代码格式化工具，这个工具可以为 iOS 开发者向 Git 仓库提交代码时提供统一的格式化能力。">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Space Commander 介绍">
+<meta property="og:url" content="http://www.sunmoonblog.com/2022/06/04/space-commander/index.html">
+<meta property="og:site_name" content="Sunmoon的博客">
+<meta property="og:description" content="Space Commander 是 Square 开源的一款 Objective C 代码格式化工具，这个工具可以为 iOS 开发者向 Git 仓库提交代码时提供统一的格式化能力。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-06-04T13:33:59.318Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Space Commander 介绍">
+<meta name="twitter:description" content="Space Commander 是 Square 开源的一款 Objective C 代码格式化工具，这个工具可以为 iOS 开发者向 Git 仓库提交代码时提供统一的格式化能力。">
+
+<link rel="canonical" href="http://www.sunmoonblog.com/2022/06/04/space-commander/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Space Commander 介绍 | Sunmoon的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sunmoon的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2022/06/04/space-commander/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Space Commander 介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-04 16:57:05 / 修改时间：21:33:59" itemprop="dateCreated datePublished" datetime="2022-06-04T16:57:05+08:00">2022-06-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Space Commander 是 Square 开源的一款 Objective C 代码格式化工具，这个工具可以为 iOS 开发者向 Git 仓库提交代码时提供统一的格式化能力。<br><a id="more"></a></p>
+<p>以下一节翻译自 <a href="https://github.com/square/spacecommander/blob/master/README.md" target="_blank" rel="noopener">Space Commander README.md</a></p>
+<p>Space Commander 让一组 iOS 开发人员可以向 git 仓库提交统一格式的代码，无需任何人工修复。</p>
+<p>你可以使用它完成以下工作：</p>
+<ul>
+<li>在代码提交前强制使用统一的格式</li>
+<li>一键格式化代码(单个文件或整个仓库)</li>
+<li>未格式化的代码提交时编译失败</li>
+</ul>
+<p>在 Square，Space Commander 有一个针对 pull request 的工作流水线。应用格式化标准时无需人工干预，时间可以花在更有意义的地方。</p>
+<p>你可以 for Space Commander，然后使用自己的格式化规则，或者直接使用 Square 的 Objective-C 格式化规则。</p>
+<ul>
+<li>本地安装</li>
+</ul>
+<p>从 git 仓库根目录，运行 <code>path/to/spacecommander/setup-repo.sh</code> 即可为当前仓库添加 <code>pre-commit</code>。</p>
+<ul>
+<li>用法</li>
+</ul>
+<p>运行 <code>setup-repo.sh</code> 之后每次提交代码时会自动进行格式化检查。</p>
+<p>运行 <code>format-objc-file.sh &lt;file&gt;</code> 可以对单个文件进行格式化。运行 <code>format-objc-file-dry-run.sh &lt;file&gt;</code> 可以对单个文件进行格式化，但不修改文件本身。</p>
+<p>运行 <code>format-objc-files-in-repo.sh</code> 格式化仓库中所有的的 OC 文件。</p>
+<ul>
+<li>详情</li>
+</ul>
+<p>项目中的每个开发者运行 setup script 后就会安装 pre-commit 钩子。这个钩子会在 commit 成功前检查代码是否有格式化。</p>
+<p>commit 时如果有格式错误，会自动运行一个修复代码的脚本。</p>
+<p>在 Square，这个提供格式化脚本的仓库是更大规模的 iOS 项目中的一个子模块，所以格式化规则及脚本会锁定到父仓库的某个版本。我们以这种方式检出格式化的代码，作为构建过程中的一部分。如果格式不正确，构建会中止。</p>
+<ul>
+<li>配置</li>
+</ul>
+<p>为了只格式化特定目录中的 OC 文件，需要在 <code>.formatting-directory</code> 指定每个目录的名字。否则，将检查仓库中所有的 OC 文件。</p>
+<p>为了忽略特定目录中的 OC 文件，需要在 <code>.formatting-directory-ignore</code> 指定每个目录的名字。</p>
+<p>编辑以下文件来修改格式化输出：</p>
+<ul>
+<li>编辑 <code>.clang-format</code> 修改内置的 <code>clang-format</code> 选项</li>
+<li><code>format-objc-file-dry-run.sh</code>和 <code>format-objc-file.sh</code> 来修改 <code>custom/</code> 中的规则</li>
+<li><code>Testing Support/</code> 用于验证修改</li>
+</ul>
+<p>如果期望 formatter 忽略某些文件，可以在文件的第一行添加 <code>#pragma Formatter Exempt</code> 或 <code>// MARK: Formatter Exempt</code>。</p>
+<ul>
+<li>自定义规则</li>
+</ul>
+<p><code>clang-format</code> 非常赞，我们喜欢它。但它仍然有许多限制。我们在 <code>custom/</code> 中添加了自己的格式化规则。你也可以在 <code>custom/</code> 中添加自己的规则，然后调用 <code>format-objc-file.sh</code> 和 <code>format-objc-file-dry-run.sh</code> 来应用新的规则。输入输出示例添加到 <code>Testing Support/</code> 目录下。</p>
+<ul>
+<li>预期外的输出</li>
+</ul>
+<p>formatter 并不能完成所有的事情。偶尔会产生预期外的结果，此时的处理办法如下：</p>
+<ul>
+<li>重构代码，以便 formatter 更容易识别代码</li>
+<li>使用 <code>// clang-format off</code> 或 <code>// clang-format on</code> 来选择性地为文件中的指定行开启或关闭 <code>clang-format</code></li>
+<li>在文件首行添加 <code>#pragma Formatter Exempt</code> 或 <code>// MARK: Formatter Exempt</code>，当前文件不会被格式化</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://www.jianshu.com/p/1b402a68c325" target="_blank" rel="noopener">Xcode代码格式化 .clang-format配置与使用 - 简书</a></li>
+<li><a href="https://www.jianshu.com/p/561739ae03e1" target="_blank" rel="noopener">使用spacecommander 格式化iOS项目代码 - 简书</a></li>
+<li><a href="https://github.com/travisjeffery/ClangFormat-Xcode" target="_blank" rel="noopener">travisjeffery/ClangFormat-Xcode: Xcode plug-in to to use clang-format from in Xcode and consistently format your code with Clang</a></li>
+<li><a href="https://stackoverflow.com/questions/17476859/xcode-and-checking-for-code-convention" target="_blank" rel="noopener">objective c - Xcode and checking for code convention - Stack Overflow</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/03/git-hooks/" rel="prev" title="Git Hooks 小记">
+      <i class="fa fa-chevron-left"></i> Git Hooks 小记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/29/clickhosue-1/" rel="next" title="ClickHosue 入门(一)">
+      ClickHosue 入门(一) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunmoon</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
