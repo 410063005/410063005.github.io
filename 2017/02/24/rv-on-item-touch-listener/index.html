@@ -20,23 +20,23 @@
     var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="如何给RecyclerView中的Item添加点击事件呢？本文介绍了几种不同的方法。">
+  <meta name="description" content="如何给RecyclerView中的Item添加点击事件呢？本文介绍几种不同的实现方法。">
 <meta name="keywords" content="Android">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RecyclerView.OnItemTouchListener的用法">
 <meta property="og:url" content="http://www.sunmoonblog.com/2017/02/24/rv-on-item-touch-listener/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
-<meta property="og:description" content="如何给RecyclerView中的Item添加点击事件呢？本文介绍了几种不同的方法。">
+<meta property="og:description" content="如何给RecyclerView中的Item添加点击事件呢？本文介绍几种不同的实现方法。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://www.sunmoonblog.com/2017/02/24/rv-on-item-touch-listener/rv_demo1.webp">
 <meta property="og:image" content="http://www.sunmoonblog.com/2017/02/24/rv-on-item-touch-listener/rv_demo2.webp">
 <meta property="og:image" content="http://www.sunmoonblog.com/2017/02/24/rv-on-item-touch-listener/rv_demo3.webp">
 <meta property="og:image" content="http://www.sunmoonblog.com/2017/02/24/rv-on-item-touch-listener/rv_demo2.webp">
 <meta property="og:image" content="http://www.sunmoonblog.com/2017/02/24/rv-on-item-touch-listener/rv_demo3.webp">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.837Z">
+<meta property="og:updated_time" content="2022-09-26T14:44:53.046Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RecyclerView.OnItemTouchListener的用法">
-<meta name="twitter:description" content="如何给RecyclerView中的Item添加点击事件呢？本文介绍了几种不同的方法。">
+<meta name="twitter:description" content="如何给RecyclerView中的Item添加点击事件呢？本文介绍几种不同的实现方法。">
 <meta name="twitter:image" content="http://www.sunmoonblog.com/2017/02/24/rv-on-item-touch-listener/rv_demo1.webp">
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2017/02/24/rv-on-item-touch-listener/">
@@ -216,7 +216,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+                <time title="修改时间：2022-09-26 22:44:53" itemprop="dateModified" datetime="2022-09-26T22:44:53+08:00">2022-09-26</time>
               </span>
 
           
@@ -230,12 +230,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>如何给<code>RecyclerView</code>中的Item添加点击事件呢？本文介绍了几种不同的方法。<br><a id="more"></a></p>
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>给RecyclverView中的item添加点击处理事件最简单的做法是给item中的view添加OnClickListener监听器。这是一个实际的例子：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(<span class="keyword">final</span> ViewHolder holder, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    holder.rlRoot.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="http://stackoverflow.com/questions/24471109/recyclerview-onclick" target="_blank" rel="noopener">这篇帖子</a>中提出了一个疑问，认为虽然这种做法并没有严重不妥，但每次绑定数据时就重新创建一个listener总觉得不是很自然。有没有更好的办法呢？比如说类似ListView的OnItemClickListener，用起来应该方便很多。</p>
+        <p>如何给<code>RecyclerView</code>中的Item添加点击事件呢？本文介绍几种不同的实现方法。<br><a id="more"></a></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>RecyclverView的item上添加点击事件响应的最简单做法是给item的view添加OnClickListener监听器。比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(<span class="keyword">final</span> ViewHolder holder, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    holder.rlRoot.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// here is your code</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="http://stackoverflow.com/questions/24471109/recyclerview-onclick" target="_blank" rel="noopener">这篇帖子</a>认为虽然这种做法并无严重不妥，但每次绑定数据时就重新创建一个listener总觉不是很自然。对此我也深表认同。</p>
+<p>那有没有更好的办法呢？比如说类似ListView的OnItemClickListener，用起来方便很多。</p>
 <h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><p>一种建议的做法是从Fragment或Activity中向Adapter传一个listener。示例如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Activity的代码</span></span><br><span class="line"><span class="keyword">private</span> View.OnClickListener mItemClick = <span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">        MainActivity.start();</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">MainAdapter mainAdapter = <span class="keyword">new</span> MainAdapter(<span class="keyword">this</span>, mItemClick);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Adapter的代码</span></span><br><span class="line"> <span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> MainAdapter.<span class="function">ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(ViewGroup viewGroup, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    View itemView = activity.getLayoutInflater().inflate(R.layout.main_adapter_item, viewGroup, <span class="keyword">false</span>);</span><br><span class="line">    ViewHolder holder = <span class="keyword">new</span> ViewHolder(itemView);</span><br><span class="line">    itemView.setOnClickListener(mItemClick);</span><br><span class="line">    <span class="keyword">return</span> holder;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Activity的代码</span></span><br><span class="line"><span class="keyword">private</span> View.OnClickListener mItemClick = <span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">        MainActivity.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">MainAdapter mainAdapter = <span class="keyword">new</span> MainAdapter(<span class="keyword">this</span>, mItemClick);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Adapter的代码</span></span><br><span class="line"> <span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> MainAdapter.<span class="function">ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(ViewGroup viewGroup, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    View itemView = activity.getLayoutInflater().inflate(R.layout.main_adapter_item, viewGroup, <span class="keyword">false</span>);</span><br><span class="line">    ViewHolder holder = <span class="keyword">new</span> ViewHolder(itemView);</span><br><span class="line">    itemView.setOnClickListener(mItemClick);</span><br><span class="line">    <span class="keyword">return</span> holder;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p><a href="http://stackoverflow.com/questions/24471109/recyclerview-onclick/26196831#26196831" target="_blank" rel="noopener">这里</a>给出了一种更好的做法。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RecyclerView recyclerView = findViewById(R.id.recycler);</span><br><span class="line">recyclerView.addOnItemTouchListener(</span><br><span class="line">    <span class="keyword">new</span> RecyclerItemClickListener(context, recyclerView ,<span class="keyword">new</span> RecyclerItemClickListener.OnItemClickListener() &#123;</span><br><span class="line">      <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemClick</span><span class="params">(View view, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// do whatever</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLongItemClick</span><span class="params">(View view, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// do whatever</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 <p>而<code>RecyclerItemClickListener</code>的实现如下：</p>
@@ -247,15 +248,16 @@
 <p><img src="rv_demo2.webp" alt><br><img src="rv_demo3.webp" alt></p>
 <p>注意：这里的绿色方框中的内容是由RecyclerView的特殊item来实现的。</p>
 <ol>
-<li>第一个截图中，需求是蓝色按钮点击跳转到加好友页面</li>
-<li>第二个截图中，需求是绿色方框中的用户区域点击跳转到个人主页，蓝色按钮点击跳转加好友页面</li>
+<li>第一个截图，点击红色框中的按钮跳转到加”绑定手机”页面</li>
+<li>第二个截图，点击绿色框中的用户信息区域跳转到个人主页，点击红色框中的按钮跳转”加好友”</li>
 </ol>
 <p>使用RecyclerItemClickListener不太好实现，看来它有其局限性，所以还是乖乖给需要点击事件的控件添加相应的OnClickListener吧。给”绑定手机”，”加好友”，以及用户区域添加OnClickListener后，问题来了：</p>
 <ol>
 <li>第一个截图中，点击”绑定手机”不起作用，双击倒是可以跳转到加好友页面</li>
 <li>第二个截图中，点击绿色方框中的用户区域不起作用，点击”加好友”也不起作用</li>
 </ol>
-<p>怎么办？完全去掉<code>RecyclerItemClickListener</code>，然后回退到给需求点击事件的控件单独添加OnClickListener？又作了如下尝试：</p>
+<p>怎么办？完全去掉<code>RecyclerItemClickListener</code>，然后回退到给需要点击事件的控件逐个添加OnClickListener？不甘心啊不甘心(关键是不想大改)。</p>
+<p>于是又作了如下尝试：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RecyclerView recyclerView = findViewById(R.id.recycler);</span><br><span class="line">recyclerView.addOnItemTouchListener(</span><br><span class="line">    <span class="keyword">new</span> RecyclerItemClickListener(context, recyclerView ,<span class="keyword">new</span> RecyclerItemClickListener.OnItemClickListener() &#123;</span><br><span class="line">      <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemClick</span><span class="params">(View view, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 在这里进行处理</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLongItemClick</span><span class="params">(View view, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// do whatever</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 <ol>
 <li>第一个截图中，点击绿色方框部分任何一处，均可跳转到加好友页面</li>
@@ -354,7 +356,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方法一"><span class="nav-number">1.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法二"><span class="nav-number">1.2.</span> <span class="nav-text">方法二</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题"><span class="nav-number">2.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#思考"><span class="nav-number">3.</span> <span class="nav-text">思考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方法一"><span class="nav-number">1.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法二"><span class="nav-number">1.2.</span> <span class="nav-text">方法二</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题"><span class="nav-number">2.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#思考"><span class="nav-number">3.</span> <span class="nav-text">思考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -368,13 +370,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-count">157</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
