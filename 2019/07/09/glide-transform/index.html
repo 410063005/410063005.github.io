@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,21 +14,19 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="Glide 很强大也很复杂。多数时候 Glide 可以提高我们的生产力，也有少数时候我们不小心会踩到坑里。本文来自一个真实案例：布局文件中一处不起眼的疏忽，导致 Glide 生成一个超大的 Bitmap。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Glide 很强大也很复杂。多数时候 Glide 可以提高我们的生产力，也有少数时候我们不小心会踩到坑里。本文来自一个真实案例：布局文件中一处不起眼的疏忽，导致 Glide 生成一个超大的 Bitmap。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Glide transform 问题分析">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/07/09/glide-transform/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="Glide 很强大也很复杂。多数时候 Glide 可以提高我们的生产力，也有少数时候我们不小心会踩到坑里。本文来自一个真实案例：布局文件中一处不起眼的疏忽，导致 Glide 生成一个超大的 Bitmap。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626421386129.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626422390998.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/glide-dont-transform.gif">
@@ -38,78 +37,52 @@
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626539754464.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626615206181.jpg">
 <meta property="og:image" content="https://game.gtimg.cn/images/user/cp/wxsystemToC20170712/store_2/list0517/img-label/shangxin-f.png">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.042Z">
+<meta property="article:published_time" content="2019-07-09T03:07:30.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.042Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Glide transform 问题分析">
-<meta name="twitter:description" content="Glide 很强大也很复杂。多数时候 Glide 可以提高我们的生产力，也有少数时候我们不小心会踩到坑里。本文来自一个真实案例：布局文件中一处不起眼的疏忽，导致 Glide 生成一个超大的 Bitmap。">
 <meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626421386129.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/07/09/glide-transform/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Glide transform 问题分析 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/07/09/glide-transform/","path":"2019/07/09/glide-transform/","title":"Glide transform 问题分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Glide transform 问题分析 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -123,19 +96,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -146,23 +108,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -170,61 +131,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E4%B8%80"><span class="nav-number">2.1.</span> <span class="nav-text">图一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E4%BA%8C"><span class="nav-number">2.2.</span> <span class="nav-text">图二</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%9F%E6%88%90%E5%A4%A7%E7%9A%84-Bitmap"><span class="nav-number">2.3.</span> <span class="nav-text">为什么生成大的 Bitmap</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transform-%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">Transform 分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#getSize"><span class="nav-number">3.1.</span> <span class="nav-text">getSize()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#transform"><span class="nav-number">3.2.</span> <span class="nav-text">transform()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Transformation"><span class="nav-number">3.3.</span> <span class="nav-text">Transformation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%89-transformation"><span class="nav-number">3.3.1.</span> <span class="nav-text">为什么有 transformation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Transformation-%E7%AD%96%E7%95%A5"><span class="nav-number">3.3.2.</span> <span class="nav-text">Transformation 策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/07/09/glide-transform/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Glide transform 问题分析 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Glide transform 问题分析
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-09 11:07:30" itemprop="dateCreated datePublished" datetime="2019-07-09T11:07:30+08:00">2019-07-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-07-09 11:07:30" itemprop="dateCreated datePublished" datetime="2019-07-09T11:07:30+08:00">2019-07-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/07/09/glide-transform/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/07/09/glide-transform/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -233,21 +275,25 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>Glide 很强大也很复杂。多数时候 Glide 可以提高我们的生产力，也有少数时候我们不小心会踩到坑里。本文来自一个真实案例：布局文件中一处不起眼的疏忽，导致 Glide 生成一个超大的 Bitmap。</p>
+<span id="more"></span>
 
-      
-        <p>Glide 很强大也很复杂。多数时候 Glide 可以提高我们的生产力，也有少数时候我们不小心会踩到坑里。本文来自一个真实案例：布局文件中一处不起眼的疏忽，导致 Glide 生成一个超大的 Bitmap。<br><a id="more"></a></p>
-<h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626421386129.jpg" width="40%" height="40%"></p>
+<h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626421386129.jpg" width="40%" height="40%">
+
 <p>上图中的英雄头像上有一个小角标，角标大小为180x180像素。但我们通过 Bitmap Profiler 看到的这个角标对应的 Bitmap 大小超过 4MB，显然不合理。</p>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626422390998.jpg" width="40%" height="40%"></p>
-<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>为了容易定位问题，我写了一个 demo 来进行分析。demo 源码见 <a href="https://github.com/410063005/GlideDontTransformDemo" target="_blank" rel="noopener">Github</a>。</p>
-<h2 id="图一"><a href="#图一" class="headerlink" title="图一"></a>图一</h2><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/glide-dont-transform.gif" height="40%" width="40%"></p>
+<img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626422390998.jpg" width="40%" height="40%">
+
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>为了容易定位问题，我写了一个 demo 来进行分析。demo 源码见 <a target="_blank" rel="noopener" href="https://github.com/410063005/GlideDontTransformDemo">Github</a>。</p>
+<h2 id="图一"><a href="#图一" class="headerlink" title="图一"></a>图一</h2><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/glide-dont-transform.gif" height="40%" width="40%">
+
 <p>上图中分别使用 Glide 和 Picasso 加载图片。结果，</p>
 <ul>
 <li>第一次使用 Glide 加载图片，这时生成了两个 Bitmap</li>
 <li>第二次使用 Picasso 加载图片，这时只生成一个 Bitmap</li>
 </ul>
 <p>由此可以初步断定，Glide 加载图片会多生成一个 Bitmap。</p>
-<h2 id="图二"><a href="#图二" class="headerlink" title="图二"></a>图二</h2><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/glide-vs-picasso.gif" height="40%" width="40%"></p>
+<h2 id="图二"><a href="#图二" class="headerlink" title="图二"></a>图二</h2><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/glide-vs-picasso.gif" height="40%" width="40%">
+
 <p>上图中只使用 Glide 加载图片，两次加载稍有不同：</p>
 <ul>
 <li>第一次使用 Glide 加载图片时调用 <code>dontTransform()</code> 方法，这时只生一个 Bitmap</li>
@@ -255,7 +301,8 @@
 </ul>
 <p>由此可以初步断定，Glide 加载图片时的 transform 处理导致多生成一个 Bitmap。</p>
 <h2 id="为什么生成大的-Bitmap"><a href="#为什么生成大的-Bitmap" class="headerlink" title="为什么生成大的 Bitmap"></a>为什么生成大的 Bitmap</h2><p>Glide 对原始 Bitamp 进行 transform 处理导致生成新的 Bitmap 对象，这是可以理解的。但是问题是，原始图片只有180x180像素，为什么生成了4MB的 Bitmap？</p>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626539754464.jpg" width="40%" height="40%"></p>
+<img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626539754464.jpg" width="40%" height="40%">
+
 <h1 id="Transform-分析"><a href="#Transform-分析" class="headerlink" title="Transform 分析"></a>Transform 分析</h1><p>Glide 加载图片过程比较复杂，所以我们只挑相关步骤来说，忽略不相关细节。另外，简单起见这里的讨论暂不考虑图片缓存问题，认为所有的图片都是从服务器上拉取的。</p>
 <p>下面从以下几个方面进行讨论：</p>
 <ul>
@@ -263,42 +310,51 @@
 <li>Bitmap 变换 - transform()</li>
 <li>transformation 的选择策略</li>
 </ul>
-<h2 id="getSize"><a href="#getSize" class="headerlink" title="getSize()"></a>getSize()</h2><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626573011974.jpg" width="40%" height="40%"></p>
-<p>Glide 实际发请求加载图片前有一个判断当前 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/Target.java" target="_blank" rel="noopener">Target</a> 大小的过程。这里 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/Target.java" target="_blank" rel="noopener">Target</a> 通常是指 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/ViewTarget.java" target="_blank" rel="noopener">ViewTarget</a>。</p>
-<p>获取当前 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/ViewTarget.java" target="_blank" rel="noopener">ViewTarget</a> 大小的原因很简单：将一个大小超过控件实际大小的 Bitmap 显示在控件上显然是不合理的。所以 Glide 加载图片前会先获取控件实际大小，后面按这个实际大小 transform 成一个尺寸更小的 Bitmap。Glide 的磁盘缓存对象也是 transform 后的 Bitmap，这样通常可以更省存储空间，并且之后读取磁盘缓存性能也更好。不过其他一些图片加载库，比如 Picasso，并没有进行类似的处理。</p>
-<p>获取当前 ViewTarget 大小是从 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/ViewTarget.java#L99" target="_blank" rel="noopener">ViewTarget.getSize(SizeReadyCallback cb)</a> 方法开始的。</p>
+<h2 id="getSize"><a href="#getSize" class="headerlink" title="getSize()"></a>getSize()</h2><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626573011974.jpg" width="40%" height="40%">
+
+<p>Glide 实际发请求加载图片前有一个判断当前 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/Target.java">Target</a> 大小的过程。这里 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/Target.java">Target</a> 通常是指 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/ViewTarget.java">ViewTarget</a>。</p>
+<p>获取当前 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/ViewTarget.java">ViewTarget</a> 大小的原因很简单：将一个大小超过控件实际大小的 Bitmap 显示在控件上显然是不合理的。所以 Glide 加载图片前会先获取控件实际大小，后面按这个实际大小 transform 成一个尺寸更小的 Bitmap。Glide 的磁盘缓存对象也是 transform 后的 Bitmap，这样通常可以更省存储空间，并且之后读取磁盘缓存性能也更好。不过其他一些图片加载库，比如 Picasso，并没有进行类似的处理。</p>
+<p>获取当前 ViewTarget 大小是从 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/request/target/ViewTarget.java#L99">ViewTarget.getSize(SizeReadyCallback cb)</a> 方法开始的。</p>
 <ul>
 <li>首先，检查 <code>View.getWidth()</code> 和 <code>View.getHeight()</code>。如果其中某一个为0，进入下一步。否则，结束</li>
 <li>检查 view 的 <code>LayoutParams</code>。如果其中宽和高其中某一个小于等于0，进入下一步。否则，结束</li>
 <li>创建 <code>SizeDeterminerLayoutListener</code>，等待 measure 过程结束。结束后回调 <code>SizeDeterminerLayoutListener</code></li>
 </ul>
 <p>代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getSize</span><span class="params">(SizeReadyCallback cb)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> currentWidth = getViewWidthOrParam();</span><br><span class="line">    <span class="keyword">int</span> currentHeight = getViewHeightOrParam();</span><br><span class="line">    <span class="keyword">if</span> (isSizeValid(currentWidth) &amp;&amp; isSizeValid(currentHeight)) &#123;</span><br><span class="line">        cb.onSizeReady(currentWidth, currentHeight);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getViewWidthOrParam</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> LayoutParams layoutParams = view.getLayoutParams();</span><br><span class="line">    <span class="keyword">if</span> (isSizeValid(view.getWidth())) &#123;</span><br><span class="line">        <span class="keyword">return</span> view.getWidth();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (layoutParams != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> getSizeForParam(layoutParams.width, <span class="keyword">false</span> <span class="comment">/*isHeight*/</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> PENDING_SIZE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getSizeForParam</span><span class="params">(<span class="keyword">int</span> param, <span class="keyword">boolean</span> isHeight)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (param == LayoutParams.WRAP_CONTENT) &#123;</span><br><span class="line">        Point displayDimens = getDisplayDimens();</span><br><span class="line">        <span class="keyword">return</span> isHeight ? displayDimens.y : displayDimens.x;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> param;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getSize</span><span class="params">(SizeReadyCallback cb)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">currentWidth</span> <span class="operator">=</span> getViewWidthOrParam();</span><br><span class="line">    <span class="type">int</span> <span class="variable">currentHeight</span> <span class="operator">=</span> getViewHeightOrParam();</span><br><span class="line">    <span class="keyword">if</span> (isSizeValid(currentWidth) &amp;&amp; isSizeValid(currentHeight)) &#123;</span><br><span class="line">        cb.onSizeReady(currentWidth, currentHeight);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">getViewWidthOrParam</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">LayoutParams</span> <span class="variable">layoutParams</span> <span class="operator">=</span> view.getLayoutParams();</span><br><span class="line">    <span class="keyword">if</span> (isSizeValid(view.getWidth())) &#123;</span><br><span class="line">        <span class="keyword">return</span> view.getWidth();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (layoutParams != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> getSizeForParam(layoutParams.width, <span class="literal">false</span> <span class="comment">/*isHeight*/</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> PENDING_SIZE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">getSizeForParam</span><span class="params">(<span class="type">int</span> param, <span class="type">boolean</span> isHeight)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (param == LayoutParams.WRAP_CONTENT) &#123;</span><br><span class="line">        <span class="type">Point</span> <span class="variable">displayDimens</span> <span class="operator">=</span> getDisplayDimens();</span><br><span class="line">        <span class="keyword">return</span> isHeight ? displayDimens.y : displayDimens.x;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> param;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>获取 ViewTarget 大小一般不会有什么问题。但是，如果 ImageView 宽高为 <code>wrap_content</code> 时就要小心了。以下面布局为例，</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">android.support.constraint.ConstraintLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:context</span>=<span class="string">".MainActivity"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">RelativeLayout</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"90dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"140dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:gravity</span>=<span class="string">"center_horizontal"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintEnd_toEndOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintStart_toStartOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">"parent"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">ImageView</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:id</span>=<span class="string">"@+id/iv_bg"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_width</span>=<span class="string">"90dp"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_height</span>=<span class="string">"140dp"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_gravity</span>=<span class="string">"center_horizontal"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:background</span>=<span class="string">"@color/colorAccent"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:scaleType</span>=<span class="string">"fitXY"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">ImageView</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:scaleType</span>=<span class="string">"fitStart"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:id</span>=<span class="string">"@+id/iv_tag"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_alignStart</span>=<span class="string">"@id/iv_bg"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_alignTop</span>=<span class="string">"@id/iv_bg"</span></span></span><br><span class="line"><span class="tag">             /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">RelativeLayout</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">android.support.constraint.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">android.support.constraint.ConstraintLayout</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">&quot;http://schemas.android.com/apk/res-auto&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">&quot;http://schemas.android.com/tools&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:context</span>=<span class="string">&quot;.MainActivity&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">RelativeLayout</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;90dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;140dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:gravity</span>=<span class="string">&quot;center_horizontal&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintEnd_toEndOf</span>=<span class="string">&quot;parent&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintStart_toStartOf</span>=<span class="string">&quot;parent&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">&quot;parent&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">ImageView</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:id</span>=<span class="string">&quot;@+id/iv_bg&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_width</span>=<span class="string">&quot;90dp&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_height</span>=<span class="string">&quot;140dp&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_gravity</span>=<span class="string">&quot;center_horizontal&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:background</span>=<span class="string">&quot;@color/colorAccent&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:scaleType</span>=<span class="string">&quot;fitXY&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">ImageView</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:scaleType</span>=<span class="string">&quot;fitStart&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:id</span>=<span class="string">&quot;@+id/iv_tag&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_width</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_alignStart</span>=<span class="string">&quot;@id/iv_bg&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_alignTop</span>=<span class="string">&quot;@id/iv_bg&quot;</span></span></span><br><span class="line"><span class="tag">             /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">RelativeLayout</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">android.support.constraint.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p>注意 <code>iv_tag</code> 这个 ImageView 的宽高为 <code>wrap_content</code>。但是按照上述代码逻辑，Glide 认为 <code>iv_tag</code> 这个控件的大小是 1080x2150 (即当前屏幕大小)！</p>
 <p>我打断点看了下，确认无误。</p>
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626590721810.jpg" alt="-w1612"></p>
-<h2 id="transform"><a href="#transform" class="headerlink" title="transform()"></a>transform()</h2><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626539754464.jpg" width="40%" height="40%"></p>
-<p>Glide 从后台拉取到图片后并解码为 Bitmap，即下面代码中的 <code>decoded</code>。但 Glide 并不是将 <code>decoded</code> 直接显示在控件上，而是先 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/engine/DecodeJob.java#L231" target="_blank" rel="noopener">transform()</a> 得到一个新的 Bitmap <code>transformed</code>。具体的 transform 由 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/Transformation.java#L32" target="_blank" rel="noopener">transformation.transform()</a> 完成。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Resource&lt;Z&gt; <span class="title">decodeFromSource</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    Resource&lt;T&gt; decoded = decodeSource();</span><br><span class="line">    <span class="keyword">return</span> transformEncodeAndTranscode(decoded);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> Resource&lt;Z&gt; <span class="title">transformEncodeAndTranscode</span><span class="params">(Resource&lt;T&gt; decoded)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> startTime = LogTime.getLogTime();</span><br><span class="line">    Resource&lt;T&gt; transformed = transform(decoded);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">"Transformed resource from source"</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    writeTransformedToCache(transformed);</span><br><span class="line"></span><br><span class="line">    startTime = LogTime.getLogTime();</span><br><span class="line">    Resource&lt;Z&gt; result = transcode(transformed);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">"Transcoded transformed from source"</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> Resource&lt;T&gt; <span class="title">transform</span><span class="params">(Resource&lt;T&gt; decoded)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (decoded == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Resource&lt;T&gt; transformed = transformation.transform(decoded, width, height);</span><br><span class="line">    <span class="keyword">if</span> (!decoded.equals(transformed)) &#123;</span><br><span class="line">        decoded.recycle();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> transformed;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里的 transformation 为 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/resource/bitmap/FitCenter.java" target="_blank" rel="noopener">FitCenter</a>。<code>FitCenter</code> 似乎与 <code>iv_tag</code> 的 <code>scaleType</code> 属性对应不上，稍后我们在讨论 transformation 选择策略时再来说这个问题。</p>
-<p><code>FitCenter</code> 实际上是调用 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/resource/bitmap/TransformationUtils.java#L85" target="_blank" rel="noopener">TransformationUtils.fitCenter()</a> 方法来处理原始的 Bitmap。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Scales the image uniformly (maintaining the image's aspect ratio) so that one of the dimensions of the image</span></span><br><span class="line"><span class="comment"> * will be equal to the given dimension and the other will be less than the given dimension.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FitCenter</span> <span class="keyword">extends</span> <span class="title">BitmapTransformation</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Bitmap <span class="title">transform</span><span class="params">(BitmapPool pool, Bitmap toTransform, <span class="keyword">int</span> outWidth, <span class="keyword">int</span> outHeight)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> TransformationUtils.fitCenter(toTransform, pool, outWidth, outHeight);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">TransformationUtils</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * An expensive operation to resize the given Bitmap down so that it fits within the given dimensions maintain</span></span><br><span class="line"><span class="comment">     * the original proportions.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> toFit The Bitmap to shrink.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pool The BitmapPool to try to reuse a bitmap from.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> width The width in pixels the final image will fit within.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> height The height in pixels the final image will fit within.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> A new Bitmap shrunk to fit within the given dimensions, or toFit if toFit's width or height matches the</span></span><br><span class="line"><span class="comment">     * given dimensions and toFit fits within the given dimensions</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Bitmap <span class="title">fitCenter</span><span class="params">(Bitmap toFit, BitmapPool pool, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (toFit.getWidth() == width &amp;&amp; toFit.getHeight() == height) &#123;</span><br><span class="line">            <span class="keyword">return</span> toFit;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> widthPercentage = width / (<span class="keyword">float</span>) toFit.getWidth();</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> heightPercentage = height / (<span class="keyword">float</span>) toFit.getHeight();</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> minPercentage = Math.min(widthPercentage, heightPercentage);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// take the floor of the target width/height, not round. If the matrix</span></span><br><span class="line">        <span class="comment">// passed into drawBitmap rounds differently, we want to slightly</span></span><br><span class="line">        <span class="comment">// overdraw, not underdraw, to avoid artifacts from bitmap reuse.</span></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> targetWidth = (<span class="keyword">int</span>) (minPercentage * toFit.getWidth());</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> targetHeight = (<span class="keyword">int</span>) (minPercentage * toFit.getHeight());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (toFit.getWidth() == targetWidth &amp;&amp; toFit.getHeight() == targetHeight) &#123;</span><br><span class="line">            <span class="keyword">return</span> toFit;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Bitmap.Config config = getSafeConfig(toFit);</span><br><span class="line">        Bitmap toReuse = pool.get(targetWidth, targetHeight, config);</span><br><span class="line">        <span class="keyword">if</span> (toReuse == <span class="keyword">null</span>) &#123;</span><br><span class="line">            toReuse = Bitmap.createBitmap(targetWidth, targetHeight, config);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// We don't add or remove alpha, so keep the alpha setting of the Bitmap we were given.</span></span><br><span class="line">        TransformationUtils.setAlpha(toFit, toReuse);</span><br><span class="line"></span><br><span class="line">        Canvas canvas = <span class="keyword">new</span> Canvas(toReuse);</span><br><span class="line">        Matrix matrix = <span class="keyword">new</span> Matrix();</span><br><span class="line">        matrix.setScale(minPercentage, minPercentage);</span><br><span class="line">        Paint paint = <span class="keyword">new</span> Paint(PAINT_FLAGS);</span><br><span class="line">        canvas.drawBitmap(toFit, matrix, paint);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> toReuse;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/resource/bitmap/TransformationUtils.java#L85" target="_blank" rel="noopener">TransformationUtils.fitCenter()</a> 将传入的 <code>toFit</code> 转换成 <code>toReuse</code>。</p>
+<h2 id="transform"><a href="#transform" class="headerlink" title="transform()"></a>transform()</h2><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626539754464.jpg" width="40%" height="40%">
+
+<p>Glide 从后台拉取到图片后并解码为 Bitmap，即下面代码中的 <code>decoded</code>。但 Glide 并不是将 <code>decoded</code> 直接显示在控件上，而是先 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/engine/DecodeJob.java#L231">transform()</a> 得到一个新的 Bitmap <code>transformed</code>。具体的 transform 由 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/Transformation.java#L32">transformation.transform()</a> 完成。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Resource&lt;Z&gt; <span class="title function_">decodeFromSource</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    Resource&lt;T&gt; decoded = decodeSource();</span><br><span class="line">    <span class="keyword">return</span> transformEncodeAndTranscode(decoded);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Resource&lt;Z&gt; <span class="title function_">transformEncodeAndTranscode</span><span class="params">(Resource&lt;T&gt; decoded)</span> &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">startTime</span> <span class="operator">=</span> LogTime.getLogTime();</span><br><span class="line">    Resource&lt;T&gt; transformed = transform(decoded);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">&quot;Transformed resource from source&quot;</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    writeTransformedToCache(transformed);</span><br><span class="line"></span><br><span class="line">    startTime = LogTime.getLogTime();</span><br><span class="line">    Resource&lt;Z&gt; result = transcode(transformed);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">&quot;Transcoded transformed from source&quot;</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Resource&lt;T&gt; <span class="title function_">transform</span><span class="params">(Resource&lt;T&gt; decoded)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (decoded == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Resource&lt;T&gt; transformed = transformation.transform(decoded, width, height);</span><br><span class="line">    <span class="keyword">if</span> (!decoded.equals(transformed)) &#123;</span><br><span class="line">        decoded.recycle();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> transformed;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的 transformation 为 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/resource/bitmap/FitCenter.java">FitCenter</a>。<code>FitCenter</code> 似乎与 <code>iv_tag</code> 的 <code>scaleType</code> 属性对应不上，稍后我们在讨论 transformation 选择策略时再来说这个问题。</p>
+<p><code>FitCenter</code> 实际上是调用 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/resource/bitmap/TransformationUtils.java#L85">TransformationUtils.fitCenter()</a> 方法来处理原始的 Bitmap。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Scales the image uniformly (maintaining the image&#x27;s aspect ratio) so that one of the dimensions of the image</span></span><br><span class="line"><span class="comment"> * will be equal to the given dimension and the other will be less than the given dimension.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FitCenter</span> <span class="keyword">extends</span> <span class="title class_">BitmapTransformation</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Bitmap <span class="title function_">transform</span><span class="params">(BitmapPool pool, Bitmap toTransform, <span class="type">int</span> outWidth, <span class="type">int</span> outHeight)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> TransformationUtils.fitCenter(toTransform, pool, outWidth, outHeight);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">TransformationUtils</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * An expensive operation to resize the given Bitmap down so that it fits within the given dimensions maintain</span></span><br><span class="line"><span class="comment">     * the original proportions.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> toFit The Bitmap to shrink.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pool The BitmapPool to try to reuse a bitmap from.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> width The width in pixels the final image will fit within.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> height The height in pixels the final image will fit within.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> A new Bitmap shrunk to fit within the given dimensions, or toFit if toFit&#x27;s width or height matches the</span></span><br><span class="line"><span class="comment">     * given dimensions and toFit fits within the given dimensions</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Bitmap <span class="title function_">fitCenter</span><span class="params">(Bitmap toFit, BitmapPool pool, <span class="type">int</span> width, <span class="type">int</span> height)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (toFit.getWidth() == width &amp;&amp; toFit.getHeight() == height) &#123;</span><br><span class="line">            <span class="keyword">return</span> toFit;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">float</span> <span class="variable">widthPercentage</span> <span class="operator">=</span> width / (<span class="type">float</span>) toFit.getWidth();</span><br><span class="line">        <span class="keyword">final</span> <span class="type">float</span> <span class="variable">heightPercentage</span> <span class="operator">=</span> height / (<span class="type">float</span>) toFit.getHeight();</span><br><span class="line">        <span class="keyword">final</span> <span class="type">float</span> <span class="variable">minPercentage</span> <span class="operator">=</span> Math.min(widthPercentage, heightPercentage);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// take the floor of the target width/height, not round. If the matrix</span></span><br><span class="line">        <span class="comment">// passed into drawBitmap rounds differently, we want to slightly</span></span><br><span class="line">        <span class="comment">// overdraw, not underdraw, to avoid artifacts from bitmap reuse.</span></span><br><span class="line">        <span class="keyword">final</span> <span class="type">int</span> <span class="variable">targetWidth</span> <span class="operator">=</span> (<span class="type">int</span>) (minPercentage * toFit.getWidth());</span><br><span class="line">        <span class="keyword">final</span> <span class="type">int</span> <span class="variable">targetHeight</span> <span class="operator">=</span> (<span class="type">int</span>) (minPercentage * toFit.getHeight());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (toFit.getWidth() == targetWidth &amp;&amp; toFit.getHeight() == targetHeight) &#123;</span><br><span class="line">            <span class="keyword">return</span> toFit;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Bitmap.<span class="type">Config</span> <span class="variable">config</span> <span class="operator">=</span> getSafeConfig(toFit);</span><br><span class="line">        <span class="type">Bitmap</span> <span class="variable">toReuse</span> <span class="operator">=</span> pool.get(targetWidth, targetHeight, config);</span><br><span class="line">        <span class="keyword">if</span> (toReuse == <span class="literal">null</span>) &#123;</span><br><span class="line">            toReuse = Bitmap.createBitmap(targetWidth, targetHeight, config);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// We don&#x27;t add or remove alpha, so keep the alpha setting of the Bitmap we were given.</span></span><br><span class="line">        TransformationUtils.setAlpha(toFit, toReuse);</span><br><span class="line"></span><br><span class="line">        <span class="type">Canvas</span> <span class="variable">canvas</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Canvas</span>(toReuse);</span><br><span class="line">        <span class="type">Matrix</span> <span class="variable">matrix</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Matrix</span>();</span><br><span class="line">        matrix.setScale(minPercentage, minPercentage);</span><br><span class="line">        <span class="type">Paint</span> <span class="variable">paint</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Paint</span>(PAINT_FLAGS);</span><br><span class="line">        canvas.drawBitmap(toFit, matrix, paint);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> toReuse;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/resource/bitmap/TransformationUtils.java#L85">TransformationUtils.fitCenter()</a> 将传入的 <code>toFit</code> 转换成 <code>toReuse</code>。</p>
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/mweb/2019/07/09/15626615206181.jpg" alt="-w1278"></p>
 <p>然而断点看一下发现 <code>toFit</code> 大小是 180x180，<code>toReuse</code> 大小是 1080x1080。简单算一下，可知之前看到的那个 4MB 的 Bitmap 正是这里的 <code>toReuse</code>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1080 * 1080 * 4 / 1024 = 4556.3 KB</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1080 * 1080 * 4 / 1024 = 4556.3 KB</span><br></pre></td></tr></table></figure>
+
 <p>到这里，基本可以看出问题原因：</p>
 <ul>
 <li>Glide 认为 <code>wrap_content</code> 的 ImageView 大小为 1080x2150</li>
 <li>Glide 先将大小为 180x180 的图片 <code>decode</code> 成 180x180 的 Bitmap，之后又该 Bitmap <code>transform</code> 成 1080x1080 的 Bitmap</li>
 </ul>
 <h2 id="Transformation"><a href="#Transformation" class="headerlink" title="Transformation"></a>Transformation</h2><h3 id="为什么有-transformation"><a href="#为什么有-transformation" class="headerlink" title="为什么有 transformation"></a>为什么有 transformation</h3><p>前文提到过，Glide 的磁盘缓存对象也是 transform 后的 Bitmap，这样通常可以更省存储空间，并且之后读取磁盘缓存性能也更好。</p>
-<p><a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/engine/DecodeJob.java#L127" target="_blank" rel="noopener">DecodeJob</a> 相关代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Resource&lt;Z&gt; <span class="title">decodeFromSource</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    Resource&lt;T&gt; decoded = decodeSource();</span><br><span class="line">    <span class="keyword">return</span> transformEncodeAndTranscode(decoded);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> Resource&lt;Z&gt; <span class="title">transformEncodeAndTranscode</span><span class="params">(Resource&lt;T&gt; decoded)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> startTime = LogTime.getLogTime();</span><br><span class="line">    Resource&lt;T&gt; transformed = transform(decoded);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">"Transformed resource from source"</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    writeTransformedToCache(transformed);</span><br><span class="line"></span><br><span class="line">    startTime = LogTime.getLogTime();</span><br><span class="line">    Resource&lt;Z&gt; result = transcode(transformed);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">"Transcoded transformed from source"</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">writeTransformedToCache</span><span class="params">(Resource&lt;T&gt; transformed)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (transformed == <span class="keyword">null</span> || !diskCacheStrategy.cacheResult()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">long</span> startTime = LogTime.getLogTime();</span><br><span class="line">    SourceWriter&lt;Resource&lt;T&gt;&gt; writer = <span class="keyword">new</span> SourceWriter&lt;Resource&lt;T&gt;&gt;(loadProvider.getEncoder(), transformed);</span><br><span class="line">    diskCacheProvider.getDiskCache().put(resultKey, writer);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">"Wrote transformed from source to cache"</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="Transformation-策略"><a href="#Transformation-策略" class="headerlink" title="Transformation 策略"></a>Transformation 策略</h3><p>Transformation 的选择策略见 <a href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/GenericRequestBuilder.java" target="_blank" rel="noopener">GenericRequestBuilder</a>，源码如下。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Transform resources with the given &#123;<span class="doctag">@link</span> Transformation&#125;s. Replaces any existing transformation or</span></span><br><span class="line"><span class="comment"> * transformations.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> transformations the transformations to apply in order.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> This request builder.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> GenericRequestBuilder&lt;ModelType, DataType, ResourceType, TranscodeType&gt; <span class="title">transform</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        Transformation&lt;ResourceType&gt;... transformations)</span> </span>&#123;</span><br><span class="line">    isTransformationSet = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">if</span> (transformations.length == <span class="number">1</span>) &#123;</span><br><span class="line">        transformation = transformations[<span class="number">0</span>];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        transformation = <span class="keyword">new</span> MultiTransformation&lt;ResourceType&gt;(transformations);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Removes the current &#123;<span class="doctag">@link</span> com.bumptech.glide.load.Transformation&#125;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> This request builder.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> GenericRequestBuilder&lt;ModelType, DataType, ResourceType, TranscodeType&gt; <span class="title">dontTransform</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Transformation&lt;ResourceType&gt; transformation = UnitTransformation.get();</span><br><span class="line">    <span class="keyword">return</span> transform(transformation);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> Target&lt;TranscodeType&gt; <span class="title">into</span><span class="params">(ImageView view)</span> </span>&#123;</span><br><span class="line">    Util.assertMainThread();</span><br><span class="line">    <span class="keyword">if</span> (view == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"You must pass in a non null View"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!isTransformationSet &amp;&amp; view.getScaleType() != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span> (view.getScaleType()) &#123;</span><br><span class="line">            <span class="keyword">case</span> CENTER_CROP:</span><br><span class="line">                applyCenterCrop();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> FIT_CENTER:</span><br><span class="line">            <span class="keyword">case</span> FIT_START:</span><br><span class="line">            <span class="keyword">case</span> FIT_END:</span><br><span class="line">                applyFitCenter();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="comment">//$CASES-OMITTED$</span></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="comment">// Do nothing.</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> into(glide.buildImageViewTarget(view, transcodeClass));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/load/engine/DecodeJob.java#L127">DecodeJob</a> 相关代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Resource&lt;Z&gt; <span class="title function_">decodeFromSource</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    Resource&lt;T&gt; decoded = decodeSource();</span><br><span class="line">    <span class="keyword">return</span> transformEncodeAndTranscode(decoded);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Resource&lt;Z&gt; <span class="title function_">transformEncodeAndTranscode</span><span class="params">(Resource&lt;T&gt; decoded)</span> &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">startTime</span> <span class="operator">=</span> LogTime.getLogTime();</span><br><span class="line">    Resource&lt;T&gt; transformed = transform(decoded);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">&quot;Transformed resource from source&quot;</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    writeTransformedToCache(transformed);</span><br><span class="line"></span><br><span class="line">    startTime = LogTime.getLogTime();</span><br><span class="line">    Resource&lt;Z&gt; result = transcode(transformed);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">&quot;Transcoded transformed from source&quot;</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">writeTransformedToCache</span><span class="params">(Resource&lt;T&gt; transformed)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (transformed == <span class="literal">null</span> || !diskCacheStrategy.cacheResult()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">long</span> <span class="variable">startTime</span> <span class="operator">=</span> LogTime.getLogTime();</span><br><span class="line">    SourceWriter&lt;Resource&lt;T&gt;&gt; writer = <span class="keyword">new</span> <span class="title class_">SourceWriter</span>&lt;Resource&lt;T&gt;&gt;(loadProvider.getEncoder(), transformed);</span><br><span class="line">    diskCacheProvider.getDiskCache().put(resultKey, writer);</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">        logWithTimeAndKey(<span class="string">&quot;Wrote transformed from source to cache&quot;</span>, startTime);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Transformation-策略"><a href="#Transformation-策略" class="headerlink" title="Transformation 策略"></a>Transformation 策略</h3><p>Transformation 的选择策略见 <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/blob/v3.7.0/library/src/main/java/com/bumptech/glide/GenericRequestBuilder.java">GenericRequestBuilder</a>，源码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Transform resources with the given &#123;<span class="doctag">@link</span> Transformation&#125;s. Replaces any existing transformation or</span></span><br><span class="line"><span class="comment"> * transformations.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> transformations the transformations to apply in order.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> This request builder.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> GenericRequestBuilder&lt;ModelType, DataType, ResourceType, TranscodeType&gt; <span class="title function_">transform</span><span class="params">(</span></span><br><span class="line"><span class="params">        Transformation&lt;ResourceType&gt;... transformations)</span> &#123;</span><br><span class="line">    isTransformationSet = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">if</span> (transformations.length == <span class="number">1</span>) &#123;</span><br><span class="line">        transformation = transformations[<span class="number">0</span>];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        transformation = <span class="keyword">new</span> <span class="title class_">MultiTransformation</span>&lt;ResourceType&gt;(transformations);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Removes the current &#123;<span class="doctag">@link</span> com.bumptech.glide.load.Transformation&#125;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> This request builder.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line"><span class="keyword">public</span> GenericRequestBuilder&lt;ModelType, DataType, ResourceType, TranscodeType&gt; <span class="title function_">dontTransform</span><span class="params">()</span> &#123;</span><br><span class="line">    Transformation&lt;ResourceType&gt; transformation = UnitTransformation.get();</span><br><span class="line">    <span class="keyword">return</span> transform(transformation);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Target&lt;TranscodeType&gt; <span class="title function_">into</span><span class="params">(ImageView view)</span> &#123;</span><br><span class="line">    Util.assertMainThread();</span><br><span class="line">    <span class="keyword">if</span> (view == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;You must pass in a non null View&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!isTransformationSet &amp;&amp; view.getScaleType() != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span> (view.getScaleType()) &#123;</span><br><span class="line">            <span class="keyword">case</span> CENTER_CROP:</span><br><span class="line">                applyCenterCrop();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> FIT_CENTER:</span><br><span class="line">            <span class="keyword">case</span> FIT_START:</span><br><span class="line">            <span class="keyword">case</span> FIT_END:</span><br><span class="line">                applyFitCenter();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="comment">//$CASES-OMITTED$</span></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="comment">// Do nothing.</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> into(glide.buildImageViewTarget(view, transcodeClass));</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>默认是基于 <code>ImageView</code> 的 <code>scaleType</code> 自动选择 transformation<ul>
 <li>CENTER_CROP 时选择 <code>CenterCrop</code></li>
@@ -311,9 +367,11 @@
 <p>用户可以调用 <code>GenericRequestBuilder.dontTransform()</code> 方法来禁用 transform 操作。<code>dontTransform()</code> 实际上是调用 <code>transform()</code> 方法来指定 <code>UnitTransformation</code> 作为 transformation。<code>UnitTransformation</code> 并不进行任何操作，而是直接返回原始的 Bitmap。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>对于大小为 <code>wrap_content</code> 的 ImageView，Glide 会”误认为”其大小为屏幕大小，所以可能将一个原本较小地图片错误地 transform 成一个较大的 Bitmap，从而引起不必要的内存开销。</p>
 <p>建议使用 Glide 时不要将 ImageView 的大小设置为 <code>wrap_content</code>。以这个布局中的 <code>iv_tag</code> 为例，</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ImageView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:scaleType</span>=<span class="string">"fitStart"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">"@+id/iv_tag"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_alignStart</span>=<span class="string">"@id/iv_bg"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_alignTop</span>=<span class="string">"@id/iv_bg"</span></span></span><br><span class="line"><span class="tag">     /&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ImageView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:scaleType</span>=<span class="string">&quot;fitStart&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">&quot;@+id/iv_tag&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_alignStart</span>=<span class="string">&quot;@id/iv_bg&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_alignTop</span>=<span class="string">&quot;@id/iv_bg&quot;</span></span></span><br><span class="line"><span class="tag">     /&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p>考虑到这个图片的实际大小为 180x180 像素，</p>
-<p><img src="https://game.gtimg.cn/images/user/cp/wxsystemToC20170712/store_2/list0517/img-label/shangxin-f.png" width="90" height="90"></p>
+<img src="https://game.gtimg.cn/images/user/cp/wxsystemToC20170712/store_2/list0517/img-label/shangxin-f.png" width="90" height="90">
+
 <p>如果将 <code>iv_tag</code> 大小由 <code>wrap_content</code> 修改为 <code>60dp</code>：</p>
 <ul>
 <li>在华为 nova 2 (3倍屏) 上不再生成一个额外的大小为 4MB 的 Bitmap </li>
@@ -327,130 +385,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/" rel="prev" title="(译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法">
-      <i class="fa fa-chevron-left"></i> (译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/07/15/inline-hook-basic/" rel="next" title="Android inline hook 浅析">
-      Android inline hook 浅析 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/" rel="prev" title="(译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法">
+                  <i class="fa fa-chevron-left"></i> (译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/07/15/inline-hook-basic/" rel="next" title="Android inline hook 浅析">
+                  Android inline hook 浅析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题分析"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#图一"><span class="nav-number">2.1.</span> <span class="nav-text">图一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图二"><span class="nav-number">2.2.</span> <span class="nav-text">图二</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么生成大的-Bitmap"><span class="nav-number">2.3.</span> <span class="nav-text">为什么生成大的 Bitmap</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transform-分析"><span class="nav-number">3.</span> <span class="nav-text">Transform 分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#getSize"><span class="nav-number">3.1.</span> <span class="nav-text">getSize()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#transform"><span class="nav-number">3.2.</span> <span class="nav-text">transform()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Transformation"><span class="nav-number">3.3.</span> <span class="nav-text">Transformation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么有-transformation"><span class="nav-number">3.3.1.</span> <span class="nav-text">为什么有 transformation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Transformation-策略"><span class="nav-number">3.3.2.</span> <span class="nav-text">Transformation 策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -458,29 +431,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -489,22 +454,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/07/09/glide-transform/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

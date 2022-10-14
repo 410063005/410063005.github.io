@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,95 +14,68 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="感觉 mockjs 真是个好东西。简单了解下用法。">
-<meta name="keywords" content="Javascript,Vue">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="感觉 mockjs 真是个好东西。简单了解下用法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="mockjs 入门">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/07/02/mockjs-basic/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="感觉 mockjs 真是个好东西。简单了解下用法。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15936783153589.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15936788801014.jpg">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.049Z">
+<meta property="article:published_time" content="2020-07-02T08:17:46.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.049Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Javascript">
+<meta property="article:tag" content="Vue">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="mockjs 入门">
-<meta name="twitter:description" content="感觉 mockjs 真是个好东西。简单了解下用法。">
 <meta name="twitter:image" content="http://www.sunmoonblog.com/images/15936783153589.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/07/02/mockjs-basic/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>mockjs 入门 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2020/07/02/mockjs-basic/","path":"2020/07/02/mockjs-basic/","title":"mockjs 入门"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>mockjs 入门 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -115,19 +89,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -138,23 +101,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -162,61 +124,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%98%E7%BD%91"><span class="nav-number">1.</span> <span class="nav-text">官网</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%A8%A1%E6%8B%9F%E6%96%B9%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">其他模拟方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/07/02/mockjs-basic/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="mockjs 入门 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           mockjs 入门
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-02 16:17:46" itemprop="dateCreated datePublished" datetime="2020-07-02T16:17:46+08:00">2020-07-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2020-07-02 16:17:46" itemprop="dateCreated datePublished" datetime="2020-07-02T16:17:46+08:00">2020-07-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2020/07/02/mockjs-basic/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/07/02/mockjs-basic/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -225,10 +268,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>感觉 mockjs 真是个好东西。简单了解下用法。</p>
+<span id="more"></span>
 
-      
-        <p>感觉 mockjs 真是个好东西。简单了解下用法。<br><a id="more"></a></p>
-<h1 id="官网"><a href="#官网" class="headerlink" title="官网"></a>官网</h1><p>先直接上文档 <a href="http://mockjs.com/examples.html#Image" target="_blank" rel="noopener">Mock.js</a>。文档中列出了 mockjs 可以模拟的数据类型，包括：</p>
+<h1 id="官网"><a href="#官网" class="headerlink" title="官网"></a>官网</h1><p>先直接上文档 <a target="_blank" rel="noopener" href="http://mockjs.com/examples.html#Image">Mock.js</a>。文档中列出了 mockjs 可以模拟的数据类型，包括：</p>
 <ul>
 <li>string</li>
 <li>number</li>
@@ -252,27 +295,30 @@
 <p><img src="/images/15936783153589.jpg" alt="-w795"></p>
 <h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><p>这里列举几个我用到的模拟数据。</p>
 <p>模拟 title：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; Mock.mock(&#123;<span class="string">'title'</span>: <span class="string">'@title(1)'</span>&#125;)</span><br><span class="line"><span class="comment">// &#123;title: "Qoqhdl"&#125;</span></span><br><span class="line">&gt; Mock.mock(&#123;<span class="string">'title'</span>: <span class="string">'@csentence(6)'</span>&#125;)</span><br><span class="line"><span class="comment">// &#123;title: "容约声量局有。"&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="title class_">Mock</span>.<span class="title function_">mock</span>(&#123;<span class="string">&#x27;title&#x27;</span>: <span class="string">&#x27;@title(1)&#x27;</span>&#125;)</span><br><span class="line"><span class="comment">// &#123;title: &quot;Qoqhdl&quot;&#125;</span></span><br><span class="line">&gt; <span class="title class_">Mock</span>.<span class="title function_">mock</span>(&#123;<span class="string">&#x27;title&#x27;</span>: <span class="string">&#x27;@csentence(6)&#x27;</span>&#125;)</span><br><span class="line"><span class="comment">// &#123;title: &quot;容约声量局有。&quot;&#125;</span></span><br></pre></td></tr></table></figure>
+
 <p>模拟图片：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; Mock.mock(&#123;<span class="string">'head'</span>: <span class="string">'@image()'</span>&#125;)</span><br><span class="line"><span class="comment">// &#123;head: "http://dummyimage.com/234x60"&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="title class_">Mock</span>.<span class="title function_">mock</span>(&#123;<span class="string">&#x27;head&#x27;</span>: <span class="string">&#x27;@image()&#x27;</span>&#125;)</span><br><span class="line"><span class="comment">// &#123;head: &quot;http://dummyimage.com/234x60&quot;&#125;</span></span><br></pre></td></tr></table></figure>
+
 <p>模拟图片打开之后的效果如下：</p>
 <p><img src="/images/15936788801014.jpg" alt="-w938"></p>
-<h1 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h1><p>mockjs 的语法还是比较简单易懂的，感觉不必花时间专门研究。不过不妨找一批较全的示例，实在不记得怎么写时可以照着示例来写。这里直接贴上一个示例，它来自<a href="https://github.com/ToNiQian/mockjs" target="_blank" rel="noopener">这里</a>。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 Mock</span></span><br><span class="line"><span class="keyword">let</span> Mock = <span class="built_in">require</span>(<span class="string">'mockjs'</span>);</span><br><span class="line">Mock.mock(<span class="string">'http://1.json'</span>,<span class="string">'get'</span>,&#123;</span><br><span class="line">    <span class="comment">// 属性 list 的值是一个数组，其中含有 1 到 3 个元素</span></span><br><span class="line">    <span class="string">'list|1-3'</span>: [&#123;</span><br><span class="line">        <span class="comment">// 属性 sid 是一个自增数，起始值为 1，每次增 1</span></span><br><span class="line">        <span class="string">'sid|+1'</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="comment">// 属性 userId 是一个5位的随机码</span></span><br><span class="line">        <span class="string">'userId|5'</span>: <span class="string">''</span>,</span><br><span class="line">        <span class="comment">// 属性 sex 是一个bool值</span></span><br><span class="line">        <span class="string">"sex|1-2"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="comment">// 属性 city对象 是对象值中2-4个的值</span></span><br><span class="line">        <span class="string">"city|2-4"</span>: &#123;</span><br><span class="line">            <span class="string">"110000"</span>: <span class="string">"北京市"</span>,</span><br><span class="line">            <span class="string">"120000"</span>: <span class="string">"天津市"</span>,</span><br><span class="line">            <span class="string">"130000"</span>: <span class="string">"河北省"</span>,</span><br><span class="line">            <span class="string">"140000"</span>: <span class="string">"山西省"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">//属性 grade 是数组当中的一个值</span></span><br><span class="line">        <span class="string">"grade|1"</span>: [</span><br><span class="line">            <span class="string">"1年级"</span>,</span><br><span class="line">            <span class="string">"2年级"</span>,</span><br><span class="line">            <span class="string">"3年级"</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="comment">//属性 guid 是唯一机器码</span></span><br><span class="line">        <span class="string">'guid'</span>: <span class="string">'@guid'</span>,</span><br><span class="line">        <span class="comment">//属性 id 是随机id</span></span><br><span class="line">        <span class="string">'id'</span>: <span class="string">'@id'</span>,</span><br><span class="line">        <span class="comment">//属性 title 是一个随机长度的标题</span></span><br><span class="line">        <span class="string">'title'</span>: <span class="string">'@title()'</span>,</span><br><span class="line">        <span class="comment">//属性 paragraph 是一个随机长度的段落</span></span><br><span class="line">        <span class="string">'paragraph'</span>: <span class="string">'@cparagraph'</span>,</span><br><span class="line">        <span class="comment">//属性 image 是一个随机图片 参数分别为size, background, text</span></span><br><span class="line">        <span class="string">'image'</span>: <span class="string">"@image('200x100', '#4A7BF7', 'Hello')"</span>,</span><br><span class="line">        <span class="comment">//属性 address 是一个随机地址</span></span><br><span class="line">        <span class="string">'address'</span>: <span class="string">'@county(true)'</span>,</span><br><span class="line">        <span class="comment">//属性 date 是一个yyyy-MM-dd 的随机日期</span></span><br><span class="line">        <span class="string">'date'</span>: <span class="string">'@date("yyyy-MM-dd")'</span>,</span><br><span class="line">        <span class="comment">//属性 time 是一个 size, background, text 的随机时间</span></span><br><span class="line">        <span class="string">'time'</span>: <span class="string">'@time("HH:mm:ss")'</span>,</span><br><span class="line">        <span class="comment">//属性 url 是一个随机的url</span></span><br><span class="line">        <span class="string">'url'</span>: <span class="string">'@url'</span>,</span><br><span class="line">        <span class="comment">//属性 email 是一个随机email</span></span><br><span class="line">        <span class="string">'email'</span>: <span class="string">'@email'</span>,</span><br><span class="line">        <span class="comment">//属性 ip 是一个随机ip</span></span><br><span class="line">        <span class="string">'ip'</span>: <span class="string">'@ip'</span>,</span><br><span class="line">        <span class="comment">//属性 regexp 是一个正则表达式匹配到的值 如aA1</span></span><br><span class="line">        <span class="string">'regexp'</span>: <span class="regexp">/[a-z][A-Z][0-9]/</span>,</span><br><span class="line">    &#125;]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h1 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h1><p>mockjs 的语法还是比较简单易懂的，感觉不必花时间专门研究。不过不妨找一批较全的示例，实在不记得怎么写时可以照着示例来写。这里直接贴上一个示例，它来自<a target="_blank" rel="noopener" href="https://github.com/ToNiQian/mockjs">这里</a>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 Mock</span></span><br><span class="line"><span class="keyword">let</span> <span class="title class_">Mock</span> = <span class="built_in">require</span>(<span class="string">&#x27;mockjs&#x27;</span>);</span><br><span class="line"><span class="title class_">Mock</span>.<span class="title function_">mock</span>(<span class="string">&#x27;http://1.json&#x27;</span>,<span class="string">&#x27;get&#x27;</span>,&#123;</span><br><span class="line">    <span class="comment">// 属性 list 的值是一个数组，其中含有 1 到 3 个元素</span></span><br><span class="line">    <span class="string">&#x27;list|1-3&#x27;</span>: [&#123;</span><br><span class="line">        <span class="comment">// 属性 sid 是一个自增数，起始值为 1，每次增 1</span></span><br><span class="line">        <span class="string">&#x27;sid|+1&#x27;</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="comment">// 属性 userId 是一个5位的随机码</span></span><br><span class="line">        <span class="string">&#x27;userId|5&#x27;</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="comment">// 属性 sex 是一个bool值</span></span><br><span class="line">        <span class="string">&quot;sex|1-2&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="comment">// 属性 city对象 是对象值中2-4个的值</span></span><br><span class="line">        <span class="string">&quot;city|2-4&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;110000&quot;</span>: <span class="string">&quot;北京市&quot;</span>,</span><br><span class="line">            <span class="string">&quot;120000&quot;</span>: <span class="string">&quot;天津市&quot;</span>,</span><br><span class="line">            <span class="string">&quot;130000&quot;</span>: <span class="string">&quot;河北省&quot;</span>,</span><br><span class="line">            <span class="string">&quot;140000&quot;</span>: <span class="string">&quot;山西省&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">//属性 grade 是数组当中的一个值</span></span><br><span class="line">        <span class="string">&quot;grade|1&quot;</span>: [</span><br><span class="line">            <span class="string">&quot;1年级&quot;</span>,</span><br><span class="line">            <span class="string">&quot;2年级&quot;</span>,</span><br><span class="line">            <span class="string">&quot;3年级&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="comment">//属性 guid 是唯一机器码</span></span><br><span class="line">        <span class="string">&#x27;guid&#x27;</span>: <span class="string">&#x27;@guid&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 id 是随机id</span></span><br><span class="line">        <span class="string">&#x27;id&#x27;</span>: <span class="string">&#x27;@id&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 title 是一个随机长度的标题</span></span><br><span class="line">        <span class="string">&#x27;title&#x27;</span>: <span class="string">&#x27;@title()&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 paragraph 是一个随机长度的段落</span></span><br><span class="line">        <span class="string">&#x27;paragraph&#x27;</span>: <span class="string">&#x27;@cparagraph&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 image 是一个随机图片 参数分别为size, background, text</span></span><br><span class="line">        <span class="string">&#x27;image&#x27;</span>: <span class="string">&quot;@image(&#x27;200x100&#x27;, &#x27;#4A7BF7&#x27;, &#x27;Hello&#x27;)&quot;</span>,</span><br><span class="line">        <span class="comment">//属性 address 是一个随机地址</span></span><br><span class="line">        <span class="string">&#x27;address&#x27;</span>: <span class="string">&#x27;@county(true)&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 date 是一个yyyy-MM-dd 的随机日期</span></span><br><span class="line">        <span class="string">&#x27;date&#x27;</span>: <span class="string">&#x27;@date(&quot;yyyy-MM-dd&quot;)&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 time 是一个 size, background, text 的随机时间</span></span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;@time(&quot;HH:mm:ss&quot;)&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 url 是一个随机的url</span></span><br><span class="line">        <span class="string">&#x27;url&#x27;</span>: <span class="string">&#x27;@url&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 email 是一个随机email</span></span><br><span class="line">        <span class="string">&#x27;email&#x27;</span>: <span class="string">&#x27;@email&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 ip 是一个随机ip</span></span><br><span class="line">        <span class="string">&#x27;ip&#x27;</span>: <span class="string">&#x27;@ip&#x27;</span>,</span><br><span class="line">        <span class="comment">//属性 regexp 是一个正则表达式匹配到的值 如aA1</span></span><br><span class="line">        <span class="string">&#x27;regexp&#x27;</span>: <span class="regexp">/[a-z][A-Z][0-9]/</span>,</span><br><span class="line">    &#125;]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
 <h1 id="其他模拟方式"><a href="#其他模拟方式" class="headerlink" title="其他模拟方式"></a>其他模拟方式</h1><p>以下是另外两个 mock 库，看起来更为强大。</p>
 <ul>
-<li><a href="https://github.com/APIJSON/APIJSON" target="_blank" rel="noopener">APIJSON/APIJSON: 🏆码云最有价值开源项目 🚀后端接口和文档自动化，前端(客户端) 定制返回 JSON 的数据和结构！🏆Gitee Most Valuable Project 🚀A JSON Transmission Protocol and an ORM Library for automatically providing APIs and Docs.</a></li>
-<li><a href="https://github.com/chinesedfan/parrot-mocker-web/blob/master/README-zh.md" target="_blank" rel="noopener">parrot-mocker-web/README-zh.md at master · chinesedfan/parrot-mocker-web</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/APIJSON/APIJSON">APIJSON&#x2F;APIJSON: 🏆码云最有价值开源项目 🚀后端接口和文档自动化，前端(客户端) 定制返回 JSON 的数据和结构！🏆Gitee Most Valuable Project 🚀A JSON Transmission Protocol and an ORM Library for automatically providing APIs and Docs.</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/chinesedfan/parrot-mocker-web/blob/master/README-zh.md">parrot-mocker-web&#x2F;README-zh.md at master · chinesedfan&#x2F;parrot-mocker-web</a></li>
 </ul>
-<p><a href="https://segmentfault.com/a/1190000011230904" target="_blank" rel="noopener">AntDesign结合mockjs随机生成图片</a> 提供了另外一种思路：上传一批图片到云端(保证名字有规律)，再使用 mockjs 来拿到图片地址，从而实现在模拟自定义图片。</p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000011230904">AntDesign结合mockjs随机生成图片</a> 提供了另外一种思路：上传一批图片到云端(保证名字有规律)，再使用 mockjs 来拿到图片地址，从而实现在模拟自定义图片。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>mockjs 本身并不是特别有用，不过它结合 vue-admin-template 中的 mock-server，可以直接模拟线上接口，方便在后台尚未提供接口的情况下开始前端页面开发。这一点在某些情况下特别有用，如果事先后台能提供接口协议，保证模拟接口跟实际接口基本一致，生产力应该能大大提高。</p>
 <p>vue-admin-template 中 mock-server 的用法见<a href="https://www.sunmoonblog.com/2020/07/01/vue-mockserver-watch-not-working/">前一篇</a>。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://github.com/nuysoft/Mock" target="_blank" rel="noopener">nuysoft/Mock: A simulation data generator</a></li>
-<li><a href="http://mockjs.com/examples.html#Image" target="_blank" rel="noopener">Mock.js</a></li>
-<li><a href="https://github.com/ToNiQian/mockjs" target="_blank" rel="noopener">ToNiQian/mockjs: 一个webpack 搭建的 mock 案例演示</a></li>
-<li><a href="https://juejin.im/post/599c1bfaf265da248d0cc6b6" target="_blank" rel="noopener">Mockjs,再也不用追着后端小伙伴要接口了 - 掘金</a></li>
-<li><a href="https://juejin.im/post/5ce2a960e51d455a2f2201c3" target="_blank" rel="noopener">vue-vue项目中mock.js的使用 - 掘金</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/nuysoft/Mock">nuysoft&#x2F;Mock: A simulation data generator</a></li>
+<li><a target="_blank" rel="noopener" href="http://mockjs.com/examples.html#Image">Mock.js</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ToNiQian/mockjs">ToNiQian&#x2F;mockjs: 一个webpack 搭建的 mock 案例演示</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/599c1bfaf265da248d0cc6b6">Mockjs,再也不用追着后端小伙伴要接口了 - 掘金</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5ce2a960e51d455a2f2201c3">vue-vue项目中mock.js的使用 - 掘金</a></li>
 </ul>
 
     </div>
@@ -281,7 +327,7 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/javascript/" rel="tag"># Javascript</a>
               <a href="/tags/vue/" rel="tag"># Vue</a>
@@ -289,123 +335,38 @@
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/07/01/vue-mockserver-watch-not-working/" rel="prev" title="vue-admin-template 中 mock-server 的用法">
-      <i class="fa fa-chevron-left"></i> vue-admin-template 中 mock-server 的用法
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/04/flutter-engine-crash-track/" rel="next" title="Flutter 引擎崩溃分析方法简介">
-      Flutter 引擎崩溃分析方法简介 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/01/vue-mockserver-watch-not-working/" rel="prev" title="vue-admin-template 中 mock-server 的用法">
+                  <i class="fa fa-chevron-left"></i> vue-admin-template 中 mock-server 的用法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/04/flutter-engine-crash-track/" rel="next" title="Flutter 引擎崩溃分析方法简介">
+                  Flutter 引擎崩溃分析方法简介 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#官网"><span class="nav-number">1.</span> <span class="nav-text">官网</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#示例"><span class="nav-number">2.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#语法"><span class="nav-number">3.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他模拟方式"><span class="nav-number">4.</span> <span class="nav-text">其他模拟方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -413,29 +374,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -444,22 +397,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2020/07/02/mockjs-basic/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

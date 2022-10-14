@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,21 +14,19 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="介绍 Flutter 引擎编译、运行与调试的操作步骤。">
-<meta name="keywords" content="Flutter">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="介绍 Flutter 引擎编译、运行与调试的操作步骤。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flutter 引擎编译、运行与调试">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/06/10/compile-flutter-engine/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="介绍 Flutter 引擎编译、运行与调试的操作步骤。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15917899522184.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15919469811663.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15917910631520.jpg">
@@ -49,78 +48,52 @@
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15919523220636.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15919524582827.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15919533524350.jpg">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.048Z">
+<meta property="article:published_time" content="2020-06-10T11:36:30.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.048Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Flutter">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Flutter 引擎编译、运行与调试">
-<meta name="twitter:description" content="介绍 Flutter 引擎编译、运行与调试的操作步骤。">
 <meta name="twitter:image" content="http://www.sunmoonblog.com/images/15917899522184.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/06/10/compile-flutter-engine/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Flutter 引擎编译、运行与调试 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2020/06/10/compile-flutter-engine/","path":"2020/06/10/compile-flutter-engine/","title":"Flutter 引擎编译、运行与调试"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Flutter 引擎编译、运行与调试 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -134,19 +107,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -157,23 +119,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -181,61 +142,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%AF%91"><span class="nav-number">1.</span> <span class="nav-text">编译</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.1.</span> <span class="nav-text">操作步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%BC%96%E8%AF%91%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">常见编译问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.1.</span> <span class="nav-text">Python 版本问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E7%9C%81%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.2.</span> <span class="nav-text">缺省头文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C"><span class="nav-number">2.</span> <span class="nav-text">运行</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4-1"><span class="nav-number">2.1.</span> <span class="nav-text">操作步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E8%BF%90%E8%A1%8C%E9%94%99%E8%AF%AF"><span class="nav-number">2.2.</span> <span class="nav-text">常见运行错误</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">调试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E8%AF%95-Java-%E4%BB%A3%E7%A0%81"><span class="nav-number">3.1.</span> <span class="nav-text">调试 Java 代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E8%AF%95-C-%E4%BB%A3%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">调试 C++ 代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/06/10/compile-flutter-engine/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Flutter 引擎编译、运行与调试 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Flutter 引擎编译、运行与调试
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-10 19:36:30" itemprop="dateCreated datePublished" datetime="2020-06-10T19:36:30+08:00">2020-06-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2020-06-10 19:36:30" itemprop="dateCreated datePublished" datetime="2020-06-10T19:36:30+08:00">2020-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2020/06/10/compile-flutter-engine/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/06/10/compile-flutter-engine/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -244,22 +286,25 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>介绍 Flutter 引擎编译、运行与调试的操作步骤。</p>
+<span id="more"></span>
 
-      
-        <p>介绍 Flutter 引擎编译、运行与调试的操作步骤。<br><a id="more"></a></p>
 <h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><ul>
-<li>安装 <a href="https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up" target="_blank" rel="noopener"><code>depot_tools</code></a> 并<font color="red">添加到环境变量</font>。<code>gclient</code> 来自 depot_tools 工具</li>
-<li>fork <a href="https://github.com/flutter/engine" target="_blank" rel="noopener">flutter/engine</a> (注意配置 ssh 访问)</li>
+<li>安装 <a target="_blank" rel="noopener" href="https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up"><code>depot_tools</code></a> 并<font color="red">添加到环境变量</font>。<code>gclient</code> 来自 depot_tools 工具</li>
+<li>fork <a target="_blank" rel="noopener" href="https://github.com/flutter/engine">flutter&#x2F;engine</a> (注意配置 ssh 访问)</li>
 <li>创建空的 <code>engine</code> 目录并在目录中创建 <code>.gclient</code> 配置文件</li>
 <li>在 <code>engine</code> 目录中执行 <code>gclient sync</code> (它会 <code>git clone</code> 必要的项目及其依赖)</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://chromium.googlesource.com/chromium/tools/depot_tools.git</span><br><span class="line"><span class="built_in">export</span> PATH=/path/to/depot_tools:<span class="variable">$PATH</span></span><br><span class="line">mkdir engine</span><br><span class="line"><span class="built_in">cd</span> engine</span><br><span class="line">touch .gclient</span><br><span class="line"></span><br><span class="line"><span class="comment"># edit .gclient</span></span><br><span class="line">gclient sync</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://chromium.googlesource.com/chromium/tools/depot_tools.git</span><br><span class="line"><span class="built_in">export</span> PATH=/path/to/depot_tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">mkdir</span> engine</span><br><span class="line"><span class="built_in">cd</span> engine</span><br><span class="line"><span class="built_in">touch</span> .gclient</span><br><span class="line"></span><br><span class="line"><span class="comment"># edit .gclient</span></span><br><span class="line">gclient <span class="built_in">sync</span></span><br></pre></td></tr></table></figure>
+
 <p><code>.gitclient</code> 配置如下：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">solutions = [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"managed"</span>: False,</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"src/flutter"</span>,</span><br><span class="line">    <span class="attr">"url"</span>: <span class="string">"https://github.com/&lt;your_name&gt;/engine.git"</span>,</span><br><span class="line">    <span class="attr">"custom_deps"</span>: &#123;&#125;,</span><br><span class="line">    <span class="attr">"deps_file"</span>: <span class="string">"DEPS"</span>,</span><br><span class="line">    <span class="attr">"safesync_url"</span>: <span class="string">""</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">solutions = <span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;managed&quot;</span><span class="punctuation">:</span> False<span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;src/flutter&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://github.com/&lt;your_name&gt;/engine.git&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;custom_deps&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;deps_file&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DEPS&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;safesync_url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
 <ul>
 <li><font color="red">切换源码</font>。编译前的一个重要操作是将源码切换到 <strong>本地 Flutter SDK</strong> 的 engine version  (一个 commit id) 对应的提交点，避免可能出现的报错</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看本地 Flutter SDK 引擎版本, 这个文件中是包含对应的 commit id </span></span><br><span class="line">vim src/flutter/bin/internal/engine.version</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调整代码</span></span><br><span class="line"><span class="built_in">cd</span> engine/src/flutter</span><br><span class="line">git reset --hard &lt;commit id&gt;</span><br><span class="line">gclient sync -D --with_branch_heads --with_tags</span><br><span class="line"></span><br><span class="line"><span class="comment"># 准备构建文件</span></span><br><span class="line"><span class="built_in">cd</span> engine/src</span><br><span class="line"></span><br><span class="line"><span class="comment"># flutter 1.12 使用以下命令生成 host_debug_unopt 编译配置</span></span><br><span class="line"><span class="comment"># ./flutter/tools/gn --runtime-mode debug</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># flutter 1.17 使用以下命令生成 host_debug_unopt 编译配置</span></span><br><span class="line">./flutter/tools/gn --unoptimized</span><br><span class="line"></span><br><span class="line"><span class="comment"># android arm (armeabi-v7a) 编译配置</span></span><br><span class="line">./flutter/tools/gn --android --unoptimized</span><br><span class="line"></span><br><span class="line"><span class="comment"># android arm64 (armeabi-v8a) 编译配置</span></span><br><span class="line">./flutter/tools/gn --android --unoptimized --runtime-mode=debug --android-cpu=arm64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译</span></span><br><span class="line">ninja -C out/host_debug_unopt -j 16</span><br><span class="line">ninja -C out/android_debug_unopt -j 16</span><br><span class="line">ninja -C out/android_debug_unopt_arm64 -j 16</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看本地 Flutter SDK 引擎版本, 这个文件中是包含对应的 commit id </span></span><br><span class="line">vim src/flutter/bin/internal/engine.version</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调整代码</span></span><br><span class="line"><span class="built_in">cd</span> engine/src/flutter</span><br><span class="line">git reset --hard &lt;commit <span class="built_in">id</span>&gt;</span><br><span class="line">gclient <span class="built_in">sync</span> -D --with_branch_heads --with_tags</span><br><span class="line"></span><br><span class="line"><span class="comment"># 准备构建文件</span></span><br><span class="line"><span class="built_in">cd</span> engine/src</span><br><span class="line"></span><br><span class="line"><span class="comment"># flutter 1.12 使用以下命令生成 host_debug_unopt 编译配置</span></span><br><span class="line"><span class="comment"># ./flutter/tools/gn --runtime-mode debug</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># flutter 1.17 使用以下命令生成 host_debug_unopt 编译配置</span></span><br><span class="line">./flutter/tools/gn --unoptimized</span><br><span class="line"></span><br><span class="line"><span class="comment"># android arm (armeabi-v7a) 编译配置</span></span><br><span class="line">./flutter/tools/gn --android --unoptimized</span><br><span class="line"></span><br><span class="line"><span class="comment"># android arm64 (armeabi-v8a) 编译配置</span></span><br><span class="line">./flutter/tools/gn --android --unoptimized --runtime-mode=debug --android-cpu=arm64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译</span></span><br><span class="line">ninja -C out/host_debug_unopt -j 16</span><br><span class="line">ninja -C out/android_debug_unopt -j 16</span><br><span class="line">ninja -C out/android_debug_unopt_arm64 -j 16</span><br></pre></td></tr></table></figure>
+
 <p>尤其注意这里的 <code>ninja -C out/host_debug_unopt</code> 命令。官方文档提到它是必要的：</p>
 <blockquote>
 <p>Note that if you use particular android or ios engine build, you will need to have corresponding host build available next to it: if you use android_debug_unopt, you should have built host_debug_unopt, android_profile -&gt; host_profile, etc.</p>
@@ -276,23 +321,29 @@
 </ul>
 <h3 id="Python-版本问题"><a href="#Python-版本问题" class="headerlink" title="Python 版本问题"></a>Python 版本问题</h3><p>这里简单记录一下我<strong>编译 Flutter 引擎时遇到的 Python 版本问题及解决方法</strong>。如果你没有遇到 Python 版本问题，可以直接忽略这一节。</p>
 <p>我的 MacBook 系统内置了 Python 2.7，安装的第三方软件 Anaconda 自带的 Python 3.7。命令行下 <code>python</code> 默认的是 Anaconda 的 Python 3.7，不做任何处理时调用 <code>flutter/tools/gn</code> 会报 Python 语法错误。</p>
-<p>推荐使用 <a href="https://pypi.org/project/virtualenv/" target="_blank" rel="noopener">virtualenv</a> 来为 Flutter 引擎源码工程创建虚拟的 Python 2.7 环境，激活该环境后再来编译 Flutter 源码，可以有效避免各种 Python 版本折腾。操作如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到 Flutter 引擎源码目录</span></span><br><span class="line"><span class="built_in">cd</span> path/to/engine/<span class="built_in">source</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建名为 myenv 的 Python 2.7 环境</span></span><br><span class="line">virtualenv -p /usr/bin/python myenv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 激活 myenv 环境</span></span><br><span class="line"><span class="built_in">source</span> myenv/bin/activate</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译 Flutter 引擎</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭 myenv 环境</span></span><br><span class="line">deactivate</span><br></pre></td></tr></table></figure>
+<p>推荐使用 <a target="_blank" rel="noopener" href="https://pypi.org/project/virtualenv/">virtualenv</a> 来为 Flutter 引擎源码工程创建虚拟的 Python 2.7 环境，激活该环境后再来编译 Flutter 源码，可以有效避免各种 Python 版本折腾。操作如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到 Flutter 引擎源码目录</span></span><br><span class="line"><span class="built_in">cd</span> path/to/engine/source</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建名为 myenv 的 Python 2.7 环境</span></span><br><span class="line">virtualenv -p /usr/bin/python myenv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 激活 myenv 环境</span></span><br><span class="line"><span class="built_in">source</span> myenv/bin/activate</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译 Flutter 引擎</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭 myenv 环境</span></span><br><span class="line">deactivate</span><br></pre></td></tr></table></figure>
+
 <h3 id="缺省头文件"><a href="#缺省头文件" class="headerlink" title="缺省头文件"></a>缺省头文件</h3><p>在云主机(Centos 7)上编译 Flutter 引擎源码时，glfw 库报错如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">../../third_party/glfw/src/x11_platform.h:39:10: fatal error: &apos;X11/Xcursor/Xcursor.h&apos; file not found</span><br><span class="line">#include &lt;X11/Xcursor/Xcursor.h&gt;</span><br><span class="line">         ^~~~~~~~~~~~~~~~~~~~~~~</span><br></pre></td></tr></table></figure>
-<p><a href="https://www.glfw.org/docs/latest/compile.html#compile_deps_x11" target="_blank" rel="noopener">glfw</a> 提到解决办法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">../../third_party/glfw/src/x11_platform.h:39:10: fatal error: &#x27;X11/Xcursor/Xcursor.h&#x27; file not found</span><br><span class="line">#include &lt;X11/Xcursor/Xcursor.h&gt;</span><br><span class="line">         ^~~~~~~~~~~~~~~~~~~~~~~</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://www.glfw.org/docs/latest/compile.html#compile_deps_x11">glfw</a> 提到解决办法如下：</p>
 <blockquote>
-<p> For example, on Ubuntu and other distributions based on Debian GNU/Linux, you need to install the xorg-dev package, which pulls in all X.org header packages.</p>
+<p> For example, on Ubuntu and other distributions based on Debian GNU&#x2F;Linux, you need to install the xorg-dev package, which pulls in all X.org header packages.</p>
 </blockquote>
 <p>安装相关的库即可，方式如下(你可能要根据实际情况调整)：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install libX11-devel</span><br><span class="line">yum install libXcursor-devel</span><br><span class="line">yum install libXrandr-devel</span><br><span class="line">yum install libXxf86vm-devel</span><br></pre></td></tr></table></figure>
+
 <h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><h2 id="操作步骤-1"><a href="#操作步骤-1" class="headerlink" title="操作步骤"></a>操作步骤</h2><p>命令行中使用自定义引擎：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个 Flutter 工程</span></span><br><span class="line">flutter create --org com.yourdomain your_app_name</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用本地引擎运行 Flutter App</span></span><br><span class="line">flutter run</span><br><span class="line">  --<span class="built_in">local</span>-engine-src-path &lt;engine path&gt;/src</span><br><span class="line">  --<span class="built_in">local</span>-engine=android_debug_unopt_arm64</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个 Flutter 工程</span></span><br><span class="line">flutter create --org com.yourdomain your_app_name</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用本地引擎运行 Flutter App</span></span><br><span class="line">flutter run</span><br><span class="line">  --local-engine-src-path &lt;engine path&gt;/src</span><br><span class="line">  --local-engine=android_debug_unopt_arm64</span><br></pre></td></tr></table></figure>
+
 <p>IDE 中使用自定义引擎：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个 Flutter 工程</span></span><br><span class="line">flutter create --org com.yourdomain your_app_name</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 Android Studio 中打开 以上工程</span></span><br><span class="line"><span class="comment"># 注意这里是 Android 工程视角，即打开目录为  your_app_name/android</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 gradle.properties 文件中添加 localEngineOut 属性</span></span><br></pre></td></tr></table></figure>
+
 <p>在 gradle.properties 文件中添加 localEngineOut 属性，配置如下：</p>
 <p><img src="/images/15919469811663.jpg" alt="配置 localEngineOut"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localEngineOut=&lt;engine_dir&gt;/out/android_debug_unopt_arm64</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localEngineOut=&lt;engine_dir&gt;/out/android_debug_unopt_arm64</span><br></pre></td></tr></table></figure>
+
 <p>注意：</p>
 <ul>
 <li>应当指定的本地引擎应当跟 Android 系统架构匹配，比如 armeabi-v8a 机器上使用 <code>android_debug_unopt_arm64</code></li>
@@ -304,7 +355,7 @@
 <li>架构不匹配。以我手头的测试机华为 Nova 2 为例，它要求使用 arm64 类型的引擎，而我编译时没有注意到这一点，选择的是 arm 类型，最后发现引擎架构不匹配</li>
 <li>缺少 <code>host</code> 产物。错误提示如下图</li>
 </ul>
-<p><img src="/images/15917910631520.jpg" alt></p>
+<p><img src="/images/15917910631520.jpg"></p>
 <p>我自己遇到另外一个比较奇特的错误，通常应该不会遇到，但这里也记录下供参考。</p>
 <p>事情经过是这样的：我的 MacBook 硬盘只有 256G，目前空间已经偏紧张，考虑编译 Flutter 引擎占 CPU 影响本地机器性能外加占用太多硬盘空间，所以我突发奇想。</p>
 <ul>
@@ -312,7 +363,8 @@
 <li>然后将 Linux 云主机的硬盘挂在 MacBook 当本地文件使用</li>
 <li>最后使用远程机器上的 Flutter 引擎运行 App：</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 挂载远程机器目录</span></span><br><span class="line">sshfs root@dev-host:/data/github/ ~/RemoteMount</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用远程机器上的 Flutter 引擎</span></span><br><span class="line">flutter run --<span class="built_in">local</span>-engine-src-path ~/RemoteMount/src --<span class="built_in">local</span>-engine=android_debug_unopt_arm6</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 挂载远程机器目录</span></span><br><span class="line">sshfs root@dev-host:/data/github/ ~/RemoteMount</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用远程机器上的 Flutter 引擎</span></span><br><span class="line">flutter run --local-engine-src-path ~/RemoteMount/src --local-engine=android_debug_unopt_arm6</span><br></pre></td></tr></table></figure>
+
 <p>最后出错，错误信息如下：</p>
 <p><img src="/images/15917915426079.jpg" alt="无法执行 dart 命令"></p>
 <p>无法执行 dart 命令！Mac 系统当然无法执行 Linux 平台的二进制文件。</p>
@@ -328,8 +380,8 @@
 <p><img src="/images/15919475359354.jpg" alt="允许调试第三方库"></p>
 <h2 id="调试-Java-代码"><a href="#调试-Java-代码" class="headerlink" title="调试 Java 代码"></a>调试 Java 代码</h2><p>再来看第三种场景，调试 Flutter 引擎中的 Java 代码。主要是参考以下资料(建议动手操作一下)：</p>
 <ul>
-<li><a href="https://github.com/flutter/flutter/wiki/Debugging-the-engine#debugging-android-builds-with-android-studio" target="_blank" rel="noopener">Debugging Android builds with Android Studio
-</a> </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/wiki/Debugging-the-engine#debugging-android-builds-with-android-studio">Debugging Android builds with Android Studio
+</a></li>
 </ul>
 <p>步骤如下：</p>
 <ul>
@@ -342,21 +394,22 @@
 <p><img src="/images/15917938999628.jpg" alt="导入引擎工程"></p>
 <p><img src="/images/15917940191380.jpg" alt="引擎工程结构"></p>
 <p>第二步，Android Studio 中打开<em>Flutter App 工程</em> 并启动 Flutter App</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 创建 Flutter App</span><br><span class="line">flutter create --org com.yourdomain your_app_name</span><br><span class="line"></span><br><span class="line"># 在 Android Studio 中打开 Flutter App 工程</span><br><span class="line"># 注意工程路径是 your_app_name/android</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 创建 Flutter App</span><br><span class="line">flutter create --org com.yourdomain your_app_name</span><br><span class="line"></span><br><span class="line"># 在 Android Studio 中打开 Flutter App 工程</span><br><span class="line"># 注意工程路径是 your_app_name/android</span><br></pre></td></tr></table></figure>
+
 <p><img src="/images/15919478792182.jpg" alt="Android Studio 中启动 Flutter App"></p>
 <p>第三步，在 <em>Flutter 引擎工程</em> 将 Debugger 连接到已启动 Flutter App</p>
 <p><img src="/images/15917949940372.jpg" alt="AttachDebugger"></p>
 <p><img src="/images/15917950421254.jpg" alt="选择应用进程"></p>
 <p><img src="/images/15917952600049.jpg" alt="进入调试状态"></p>
 <p>有时候，我们想在更早的地方设置断点调试，比如在 libflutter.so 被加载前加断点调试，如何实现？</p>
-<p>技巧在于第二步启动 Flutter App 时选择一个 <em>合适的时机</em>(通常是在断点之前) 调用 <a href="https://developer.android.com/reference/android/os/Debug.html#waitForDebugger(" target="_blank" rel="noopener">Debug.waitForDebugger</a>) 方法让应用启动后进入等待 Debugger 的状态。</p>
+<p>技巧在于第二步启动 Flutter App 时选择一个 <em>合适的时机</em>(通常是在断点之前) 调用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/os/Debug.html#waitForDebugger()">Debug.waitForDebugger</a> 方法让应用启动后进入等待 Debugger 的状态。</p>
 <p>示例：在 <code>Application.onCreate()</code> 中调用 <code>Debug.waitForDebugger()</code>，应用一直处于等待状态，直到有 Debugger 连接上来才继续执行。</p>
 <p><img src="/images/15917945368597.jpg" alt="让应用等待Debugger"></p>
 <p><img src="/images/15917947943674.jpg" alt="应用等待Debugger中"></p>
 <h2 id="调试-C-代码"><a href="#调试-C-代码" class="headerlink" title="调试 C++ 代码"></a>调试 C++ 代码</h2><p>最后来看怎样调试 Flutter 引擎 C++ 代码。主要参考资料是：</p>
 <ul>
-<li><a href="https://fucknmb.com/2019/12/06/Flutter-Engine-C-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E5%88%9D%E6%8E%A2/" target="_blank" rel="noopener">Flutter Engine C++ 源码调试初探 | 区长</a></li>
-<li><a href="https://xinbaos.github.io/Flutter%20Engine%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95/" target="_blank" rel="noopener">Flutter Engine源码调试 | xinbao的书屋</a></li>
+<li><a target="_blank" rel="noopener" href="https://fucknmb.com/2019/12/06/Flutter-Engine-C-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E5%88%9D%E6%8E%A2/">Flutter Engine C++ 源码调试初探 | 区长</a></li>
+<li><a target="_blank" rel="noopener" href="https://xinbaos.github.io/Flutter%20Engine%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95/">Flutter Engine源码调试 | xinbao的书屋</a></li>
 </ul>
 <p>简单来说，是使用 lldb 来调试 Flutter 引擎 C++ 代码。可以使用不同的方式来完成 lldb 调试，但实际操作起都比较麻烦。</p>
 <p>个人理解主要麻烦之处在于，一是如何将 <code>lldb_server</code> 推送到开发设备并运行起来，二是如何从开发机正确地启动 <code>lldb_client</code>。</p>
@@ -370,8 +423,7 @@
 <th>备注</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>第一步</td>
 <td>编译 Flutter 引擎</td>
 <td>生成自定义引擎用于调试</td>
@@ -385,13 +437,13 @@
 </tr>
 <tr>
 <td>第三步</td>
-<td>安装 VS Code 插件 <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools" target="_blank" rel="noopener">C/C++ for Visual Studio Code</a> 和 <a href="https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb" target="_blank" rel="noopener">CodeLLDB</a></td>
+<td>安装 VS Code 插件 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools">C&#x2F;C++ for Visual Studio Code</a> 和 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb">CodeLLDB</a></td>
 <td>在 VS Code 中集成 lldb 调试功能</td>
 <td></td>
 </tr>
 <tr>
 <td>第四步</td>
-<td>安装 <a href="https://mirrors.tencent.com/AndroidSDK/" target="_blank" rel="noopener">lldb</a> 和 <a href="https://github.com/lizhangqu/flutter_lldb" target="_blank" rel="noopener">flutter_lldb</a></td>
+<td>安装 <a target="_blank" rel="noopener" href="https://mirrors.tencent.com/AndroidSDK/">lldb</a> 和 <a target="_blank" rel="noopener" href="https://github.com/lizhangqu/flutter_lldb">flutter_lldb</a></td>
 <td>1、lldb 用于调试 C++ 代码，2、flutter_lldb 用于简化 lldb 的使用</td>
 <td></td>
 </tr>
@@ -417,42 +469,43 @@
 <td>第八步</td>
 <td><em>VS Code Flutter 引擎工程</em> 中设置断点，F5 启动调试</td>
 <td></td>
+<td></td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>为了便于理解和动手操作操作，这里给出一些截图。</p>
 <p>第一步，编译 Flutter 引擎。注意确认已生成 <code>out/host_debug_unopt</code></p>
 <p><img src="/images/15917899522184.jpg" alt="编译后的Flutter产物"></p>
 <p>第二步，导入 Flutter 引擎源码到 VS Code</p>
 <ul>
-<li>先将 <a href="[JSON Compilation Database Format Specification](https://clang.llvm.org/docs/JSONCompilationDatabase.html">engine/src/out/compile_commands.json</a>) 拷贝到 <code>engine/src/flutter/</code></li>
+<li>先将 [engine&#x2F;src&#x2F;out&#x2F;compile_commands.json](<a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/JSONCompilationDatabase.html">JSON Compilation Database Format Specification</a>) 拷贝到 <code>engine/src/flutter/</code></li>
 <li>VS Code 中打开 <code>engine/src/flutter/</code></li>
 </ul>
 <p>第三步，安装 VS Code 插件，集成 lldb 调试功能</p>
 <ul>
-<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools" target="_blank" rel="noopener">C/C++ for Visual Studio Code</a></li>
-<li><a href="https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb" target="_blank" rel="noopener">CodeLLDB</a></li>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools">C&#x2F;C++ for Visual Studio Code</a></li>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb">CodeLLDB</a></li>
 </ul>
-<p><img src="/images/15920201317113.jpg" alt></p>
-<p>第四步，安装 <a href="https://mirrors.tencent.com/AndroidSDK/" target="_blank" rel="noopener">lldb</a> 和 <a href="https://github.com/lizhangqu/flutter_lldb" target="_blank" rel="noopener">flutter_lldb</a>。</p>
+<p><img src="/images/15920201317113.jpg"></p>
+<p>第四步，安装 <a target="_blank" rel="noopener" href="https://mirrors.tencent.com/AndroidSDK/">lldb</a> 和 <a target="_blank" rel="noopener" href="https://github.com/lizhangqu/flutter_lldb">flutter_lldb</a>。</p>
 <p>注意：</p>
 <ul>
 <li>lldb 安装在 Android SDK 中。如 Android SDK 已有 lldb，则可略过这一步</li>
-<li>有一个坑，目前 Android Studio 内置 lldb，但却并不安装在 Android SDK 中，所以外部工具无法方便地调用 AS 内置 lldb，而 Android SDK Manager 软件列表中目前不再提供 lldb 安装，所以只能手工下载和安装 <a href="https://mirrors.tencent.com/AndroidSDK/" target="_blank" rel="noopener">lldb</a> </li>
+<li>有一个坑，目前 Android Studio 内置 lldb，但却并不安装在 Android SDK 中，所以外部工具无法方便地调用 AS 内置 lldb，而 Android SDK Manager 软件列表中目前不再提供 lldb 安装，所以只能手工下载和安装 <a target="_blank" rel="noopener" href="https://mirrors.tencent.com/AndroidSDK/">lldb</a></li>
 </ul>
-<p><img src="/images/15919488081458.jpg" alt></p>
+<p><img src="/images/15919488081458.jpg"></p>
 <p>第五步，运行 Flutter App</p>
 <p>第六步，执行 <code>flutter_lldb</code> 命令</p>
-<p><img src="/images/15919495376462.jpg" alt></p>
+<p><img src="/images/15919495376462.jpg"></p>
 <p><code>flutter_lldb</code> 输出的配置参数类似如下这样：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Use IntelliSense to learn about possible attributes.</span></span><br><span class="line">    <span class="comment">// Hover to view descriptions of existing attributes.</span></span><br><span class="line">    <span class="comment">// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387</span></span><br><span class="line">    <span class="attr">"version"</span>: <span class="string">"0.2.0"</span>,</span><br><span class="line">    <span class="attr">"configurations"</span>: [</span><br><span class="line"></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"name"</span>: <span class="string">"remote_lldb"</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"lldb"</span>,</span><br><span class="line">            <span class="attr">"request"</span>: <span class="string">"attach"</span>,</span><br><span class="line">            <span class="attr">"pid"</span>: <span class="string">"28006"</span>,</span><br><span class="line">            <span class="attr">"initCommands"</span>: [</span><br><span class="line">                <span class="string">"platform select remote-android"</span>,</span><br><span class="line">                <span class="string">"platform connect unix-abstract-connect:///data/data/com.yourdomain.your_app_name/debug.socket"</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">"postRunCommands"</span>: [</span><br><span class="line">                <span class="string">"add-dsym /Users/abc/wd/engine/src/out/android_debug_unopt_arm64/libflutter.so"</span>,</span><br><span class="line">                <span class="string">"settings set target.source-map /Users/abc/wd/engine/src /Users/chenming/wd/engine/src"</span></span><br><span class="line">            ],</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="comment">// Use IntelliSense to learn about possible attributes.</span></span><br><span class="line">    <span class="comment">// Hover to view descriptions of existing attributes.</span></span><br><span class="line">    <span class="comment">// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387</span></span><br><span class="line">    <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0.2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;configurations&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line"></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;remote_lldb&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;lldb&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;request&quot;</span><span class="punctuation">:</span> <span class="string">&quot;attach&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;pid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;28006&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;initCommands&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;platform select remote-android&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;platform connect unix-abstract-connect:///data/data/com.yourdomain.your_app_name/debug.socket&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;postRunCommands&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;add-dsym /Users/abc/wd/engine/src/out/android_debug_unopt_arm64/libflutter.so&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;settings set target.source-map /Users/abc/wd/engine/src /Users/chenming/wd/engine/src&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
 <p>注意：</p>
 <ul>
 <li><code>flutter_lldb</code> 脚本基于 Python 2.7，使用前请确认当前 Python 环境</li>
 <li><code>flutter_lldb</code> 脚本与调试设备通信，使用前请确认<font color="red">已连接调试设备且已启动应用</font></li>
 </ul>
 <p>第七步，在 VS Code 中配置 lldb 命令调试参数。直接将上一步中 <code>flutter_lldb</code> 输出的配置参数拷贝到 <code>launch.json</code> 中即可</p>
-<p><img src="/images/15919505100224.jpg" alt></p>
+<p><img src="/images/15919505100224.jpg"></p>
 <p>第八步，<em>VS Flutter 引擎工程</em> 中设置断点，F5 启动调试</p>
 <p>一切正常的话，Debugger 将成功连接应用进程，进入调试状态，如下图：</p>
 <p><img src="/images/15919523220636.jpg" alt="进t入调试状态"></p>
@@ -467,9 +520,11 @@
 <li>将 Flutte Engine 工程的 <code>products.xcodeproj</code> 拖进需要调试的 Flutter Demo 工程目录</li>
 <li><code>Genrated.xcconfig</code> 中添加如下配置</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">FLUTTER_ROOT=$&#123;FlutterSDK 路径&#125;</span><br><span class="line">FLUTTER_APPLICATION_PATH=$&#123;Demo工程路径&#125;</span><br><span class="line">FLUTTER_TARGET=$&#123;Demo工程路径&#125;/lib/main.dart</span><br><span class="line">FLUTTER_BUILD_DIR=build</span><br><span class="line">SYMROOT=$&#123;SOURCE_ROOT&#125;/../build/ios</span><br><span class="line">FLUTTER_FRAMEWORK_DIR=$&#123;Flutter_Engine代码路径&#125;/src/out/ios_debug_sim_unopt</span><br><span class="line">FLUTTER_BUILD_NAME=1.0.0</span><br><span class="line">FLUTTER_BUILD_NUMBER=1</span><br><span class="line">FLUTTER_ENGINE=$&#123;Flutter_Engine代码路径&#125;</span><br><span class="line">LOCAL_ENGINE=$&#123;输出的路径（ios_debug_sim_unopt）&#125;</span><br><span class="line">ARCHS=$&#123;支持的架构(arm64)&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">FLUTTER_ROOT=$&#123;FlutterSDK 路径&#125;</span><br><span class="line">FLUTTER_APPLICATION_PATH=$&#123;Demo工程路径&#125;</span><br><span class="line">FLUTTER_TARGET=$&#123;Demo工程路径&#125;/lib/main.dart</span><br><span class="line">FLUTTER_BUILD_DIR=build</span><br><span class="line">SYMROOT=$&#123;SOURCE_ROOT&#125;/../build/ios</span><br><span class="line">FLUTTER_FRAMEWORK_DIR=$&#123;Flutter_Engine代码路径&#125;/src/out/ios_debug_sim_unopt</span><br><span class="line">FLUTTER_BUILD_NAME=1.0.0</span><br><span class="line">FLUTTER_BUILD_NUMBER=1</span><br><span class="line">FLUTTER_ENGINE=$&#123;Flutter_Engine代码路径&#125;</span><br><span class="line">LOCAL_ENGINE=$&#123;输出的路径（ios_debug_sim_unopt）&#125;</span><br><span class="line">ARCHS=$&#123;支持的架构(arm64)&#125; </span><br></pre></td></tr></table></figure>
+
 <p>之后即可单步调试。</p>
 <!-- 详细步骤见 https://docs.qq.com/doc/DR21rc21wZ0dKUFhu -->
+
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
 <li>简单介绍如何编译 Flutter 引擎，以及常见问题</li>
 <li>介绍如何从命令行和 IDE 运行自定义 Flutter 引擎，以及常见问题</li>
@@ -477,12 +532,12 @@
 <li>详细介绍如何调试 Flutter 引擎中的 Java 代码和 C++ 代码</li>
 </ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://github.com/flutter/flutter/wiki/Compiling-the-engine" target="_blank" rel="noopener">编译 Flutter 引擎</a></li>
-<li><a href="https://www.jianshu.com/p/ff84455fb451" target="_blank" rel="noopener">Flutter Engine与SDK的定制化与编译 - 简书</a></li>
-<li><a href="https://github.com/flutter/flutter/wiki/Debugging-the-engine#debugging-android-builds-with-android-studio" target="_blank" rel="noopener">Debugging the engine · flutter/flutter Wiki</a></li>
-<li><a href="https://fucknmb.com/2019/12/06/Flutter-Engine-C-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E5%88%9D%E6%8E%A2/" target="_blank" rel="noopener">Flutter Engine C++ 源码调试初探 | 区长</a></li>
-<li><a href="https://xinbaos.github.io/Flutter%20Engine%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95/" target="_blank" rel="noopener">Flutter Engine源码调试 | xinbao的书屋</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/38626359" target="_blank" rel="noopener">调试Flutter Native Engine初探 - 知乎</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/wiki/Compiling-the-engine">编译 Flutter 引擎</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ff84455fb451">Flutter Engine与SDK的定制化与编译 - 简书</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/wiki/Debugging-the-engine#debugging-android-builds-with-android-studio">Debugging the engine · flutter&#x2F;flutter Wiki</a></li>
+<li><a target="_blank" rel="noopener" href="https://fucknmb.com/2019/12/06/Flutter-Engine-C-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E5%88%9D%E6%8E%A2/">Flutter Engine C++ 源码调试初探 | 区长</a></li>
+<li><a target="_blank" rel="noopener" href="https://xinbaos.github.io/Flutter%20Engine%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95/">Flutter Engine源码调试 | xinbao的书屋</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/38626359">调试Flutter Native Engine初探 - 知乎</a></li>
 </ul>
 
     </div>
@@ -491,130 +546,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/flutter/" rel="tag"># Flutter</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/06/04/dart-file/" rel="prev" title="Dart File">
-      <i class="fa fa-chevron-left"></i> Dart File
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/06/23/dart-basic/" rel="next" title="Dart 入门笔记">
-      Dart 入门笔记 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/06/04/dart-file/" rel="prev" title="Dart File">
+                  <i class="fa fa-chevron-left"></i> Dart File
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/06/23/dart-basic/" rel="next" title="Dart 入门笔记">
+                  Dart 入门笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#编译"><span class="nav-number">1.</span> <span class="nav-text">编译</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#操作步骤"><span class="nav-number">1.1.</span> <span class="nav-text">操作步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见编译问题"><span class="nav-number">1.2.</span> <span class="nav-text">常见编译问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-版本问题"><span class="nav-number">1.2.1.</span> <span class="nav-text">Python 版本问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺省头文件"><span class="nav-number">1.2.2.</span> <span class="nav-text">缺省头文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运行"><span class="nav-number">2.</span> <span class="nav-text">运行</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#操作步骤-1"><span class="nav-number">2.1.</span> <span class="nav-text">操作步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见运行错误"><span class="nav-number">2.2.</span> <span class="nav-text">常见运行错误</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调试"><span class="nav-number">3.</span> <span class="nav-text">调试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调试-Java-代码"><span class="nav-number">3.1.</span> <span class="nav-text">调试 Java 代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调试-C-代码"><span class="nav-number">3.2.</span> <span class="nav-text">调试 C++ 代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -622,29 +592,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -653,22 +615,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2020/06/10/compile-flutter-engine/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

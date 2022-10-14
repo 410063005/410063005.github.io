@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,64 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="翻译自 Why I moved from Java to Dart">
-<meta name="keywords" content="Flutter">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="翻译自 Why I moved from Java to Dart">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(译)为什么我从 Java 迁移到 Dart">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/10/28/why-i-moved-from-java-to-dart/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="翻译自 Why I moved from Java to Dart">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.043Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-28T12:03:09.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.043Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Flutter">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="(译)为什么我从 Java 迁移到 Dart">
-<meta name="twitter:description" content="翻译自 Why I moved from Java to Dart">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/10/28/why-i-moved-from-java-to-dart/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>(译)为什么我从 Java 迁移到 Dart | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/10/28/why-i-moved-from-java-to-dart/","path":"2019/10/28/why-i-moved-from-java-to-dart/","title":"(译)为什么我从 Java 迁移到 Dart"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>(译)为什么我从 Java 迁移到 Dart | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +85,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +97,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,61 +120,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dart-SDK"><span class="nav-number">1.</span> <span class="nav-text">Dart SDK</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E5%9B%9E%E8%B0%83"><span class="nav-number">2.</span> <span class="nav-text">异步回调</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%BB%E6%8E%89%E6%A0%B7%E6%9C%AC%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">去掉样本代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%AD%E8%A8%80%E8%BF%9B%E6%AD%A5"><span class="nav-number">4.</span> <span class="nav-text">语言进步</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%A2%E5%90%91-Web"><span class="nav-number">5.</span> <span class="nav-text">面向 Web</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-Search-for-Immutability"><span class="nav-number">6.</span> <span class="nav-text">The Search for Immutability</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/10/28/why-i-moved-from-java-to-dart/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="(译)为什么我从 Java 迁移到 Dart | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           (译)为什么我从 Java 迁移到 Dart
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-10-28 20:03:09" itemprop="dateCreated datePublished" datetime="2019-10-28T20:03:09+08:00">2019-10-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-10-28 20:03:09" itemprop="dateCreated datePublished" datetime="2019-10-28T20:03:09+08:00">2019-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/10/28/why-i-moved-from-java-to-dart/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/10/28/why-i-moved-from-java-to-dart/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -222,28 +264,31 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>翻译自 <a target="_blank" rel="noopener" href="https://hackernoon.com/why-i-moved-from-java-to-dart-8f3802b1d652">Why I moved from Java to Dart</a></p>
+<span id="more"></span>
 
-      
-        <p>翻译自 <a href="https://hackernoon.com/why-i-moved-from-java-to-dart-8f3802b1d652" target="_blank" rel="noopener">Why I moved from Java to Dart</a></p>
-<a id="more"></a>
-<p>听说有些人是 <a href="https://hackernoon.com/why-i-moved-from-javascript-to-dart-9ff55a108ff4#.ezyej7cdr" target="_blank" rel="noopener">从 Javascript 转到 Dart</a>，而我的经历有些不同：我是从 Java 转到 Dart。并且，我将<a href="http://adwords.google.com/" target="_blank" rel="noopener">adwords.google.com</a> 部分功能用<br>Dart 改写。</p>
-<p>AdWords 是 <a href="https://en.wikipedia.org/wiki/AdWords" target="_blank" rel="noopener">Google 的现金流的核心</a> ，现在正在<a href="http://news.dartlang.org/2016/03/the-new-adwords-ui-uses-dart-we-asked.html" target="_blank" rel="noopener">用 Dart 重写</a>。但 AdWords 中由我负责的一部分，即在 YouTube 中出售可跳过广告，早在 2014 年就是运行在 Dart 上的。</p>
+<p>听说有些人是 <a target="_blank" rel="noopener" href="https://hackernoon.com/why-i-moved-from-javascript-to-dart-9ff55a108ff4#.ezyej7cdr">从 Javascript 转到 Dart</a>，而我的经历有些不同：我是从 Java 转到 Dart。并且，我将<a target="_blank" rel="noopener" href="http://adwords.google.com/">adwords.google.com</a> 部分功能用<br>Dart 改写。</p>
+<p>AdWords 是 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/AdWords">Google 的现金流的核心</a> ，现在正在<a target="_blank" rel="noopener" href="http://news.dartlang.org/2016/03/the-new-adwords-ui-uses-dart-we-asked.html">用 Dart 重写</a>。但 AdWords 中由我负责的一部分，即在 YouTube 中出售可跳过广告，早在 2014 年就是运行在 Dart 上的。</p>
 <p>最有意思的是我们并没有被要求使用 Dart，也没有主动要求使用 Dart。我们看到了 Dart 提供的能力，然后决定尝试一下。</p>
-<p>重要的是，我们并不是完全重写。我们最初使用 <a href="http://www.gwtproject.org/" target="_blank" rel="noopener">Java/GWT</a>，可以在浏览器中将其跟 Dart 集成，以便渐近式地迁移到 Dart。随着我们起来越熟悉 Dart，我们爱上了这门语言。最终我们几乎重写了所有的浏览器代码，从 <a href="http://www.gwtproject.org/" target="_blank" rel="noopener">Java/GWT</a> 迁移到了 Dart。</p>
+<p>重要的是，我们并不是完全重写。我们最初使用 <a target="_blank" rel="noopener" href="http://www.gwtproject.org/">Java&#x2F;GWT</a>，可以在浏览器中将其跟 Dart 集成，以便渐近式地迁移到 Dart。随着我们起来越熟悉 Dart，我们爱上了这门语言。最终我们几乎重写了所有的浏览器代码，从 <a target="_blank" rel="noopener" href="http://www.gwtproject.org/">Java&#x2F;GWT</a> 迁移到了 Dart。</p>
 <p>以下是我觉得 Dart 优于 Java 的几个原因。</p>
-<h1 id="Dart-SDK"><a href="#Dart-SDK" class="headerlink" title="Dart SDK"></a>Dart SDK</h1><p>你写过很多 Java 代码后最大的抱怨之一可能是 SDK 库。JDK 中一些关键决定发生在若干年前，无法做出改变。你只需要看看 Java 的 <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html" target="_blank" rel="noopener">Iterable</a> 和 Dart 的 <a href="https://api.dartlang.org/stable/1.21.0/dart-core/Iterable-class.html" target="_blank" rel="noopener">Iterable</a> 有多大不同。</p>
-<p>最 Java 的最好方法是引入第三方库。Google 内部使用 <a href="https://github.com/google/guava" target="_blank" rel="noopener">Guava</a>。这个库非常棒，它提供 <a href="https://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/FluentIterable.html" target="_blank" rel="noopener">FutureIterable</a>。但这个类并不在 JDK 中，所以它仍然不过是二等公民。</p>
+<h1 id="Dart-SDK"><a href="#Dart-SDK" class="headerlink" title="Dart SDK"></a>Dart SDK</h1><p>你写过很多 Java 代码后最大的抱怨之一可能是 SDK 库。JDK 中一些关键决定发生在若干年前，无法做出改变。你只需要看看 Java 的 <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html">Iterable</a> 和 Dart 的 <a target="_blank" rel="noopener" href="https://api.dartlang.org/stable/1.21.0/dart-core/Iterable-class.html">Iterable</a> 有多大不同。</p>
+<p>最 Java 的最好方法是引入第三方库。Google 内部使用 <a target="_blank" rel="noopener" href="https://github.com/google/guava">Guava</a>。这个库非常棒，它提供 <a target="_blank" rel="noopener" href="https://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/FluentIterable.html">FutureIterable</a>。但这个类并不在 JDK 中，所以它仍然不过是二等公民。</p>
 <p>而 Dart 则有机会重头开始。以下这段 Dart 代码在 Java 中需要借助 <code>FutureIterable</code> 才能实现。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(</span><br><span class="line">    [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].where((x) =&gt; x.isOdd).map((x) =&gt; x + <span class="number">10</span>));</span><br><span class="line">--&gt;</span><br><span class="line">(<span class="number">11</span>, <span class="number">13</span>)</span><br></pre></td></tr></table></figure>
-<h1 id="异步回调"><a href="#异步回调" class="headerlink" title="异步回调"></a>异步回调</h1><p>你写了大量 Java/GWT 代码后很可能对 “callback” 有种不自觉的反应。The merest mention brings you out in a cold sweat.</p>
+
+<h1 id="异步回调"><a href="#异步回调" class="headerlink" title="异步回调"></a>异步回调</h1><p>你写了大量 Java&#x2F;GWT 代码后很可能对 “callback” 有种不自觉的反应。The merest mention brings you out in a cold sweat.</p>
 <p>我个人写过和维护过非常恐怖的嵌套回调代码，用于处理 RPC 链中的各种条件。</p>
 <p>这是一个相对易懂的示例。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getFoo</span><span class="params">(AsyncCallback&lt;List&lt;String&gt;&gt; callback)</span> </span>&#123;</span><br><span class="line">  getThenFilter(<span class="string">"foo"</span>, callback);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">getThenFilter</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">final</span> String parameter,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">final</span> AsyncCallback&lt;String&gt; callback)</span> </span>&#123;</span><br><span class="line">  makeRequest(<span class="keyword">new</span> AsyncCallback&lt;List&lt;String&gt;&gt;() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle</span><span class="params">(List&lt;String&gt; values)</span> </span>&#123;</span><br><span class="line">      List&lt;String&gt; filtered = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">      <span class="keyword">for</span> (String value : values) &#123;</span><br><span class="line">        <span class="keyword">if</span> (value.startsWith(parameter)) &#123;</span><br><span class="line">          filtered.add(value);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      callback.handle(filtered);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Dart 提供 <a href="https://api.dartlang.org/stable/1.21.0/dart-async/Future-class.html" target="_blank" rel="noopener">Future</a> 类，并且 SDK 的设计也是围绕这个类展开的，让异步回调变得简单。This is when it immediately became clear Dart was talking to me, personally. 它提供的东西让我的工作变得更轻松：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;&gt; getFoo() &#123;</span><br><span class="line">  <span class="keyword">return</span> _getThenFilter(<span class="string">'foo'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;&gt; _getThenFilter(<span class="built_in">String</span> parameter) &#123;</span><br><span class="line">  <span class="keyword">return</span> makeRequest().then((result) =&gt;</span><br><span class="line">      result.where((string) =&gt; string.startsWith(parameter))</span><br><span class="line">          .toList());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getFoo</span><span class="params">(AsyncCallback&lt;List&lt;String&gt;&gt; callback)</span> &#123;</span><br><span class="line">  getThenFilter(<span class="string">&quot;foo&quot;</span>, callback);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">getThenFilter</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="keyword">final</span> String parameter,</span></span><br><span class="line"><span class="params">    <span class="keyword">final</span> AsyncCallback&lt;String&gt; callback)</span> &#123;</span><br><span class="line">  makeRequest(<span class="keyword">new</span> <span class="title class_">AsyncCallback</span>&lt;List&lt;String&gt;&gt;() &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">(List&lt;String&gt; values)</span> &#123;</span><br><span class="line">      List&lt;String&gt; filtered = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">      <span class="keyword">for</span> (String value : values) &#123;</span><br><span class="line">        <span class="keyword">if</span> (value.startsWith(parameter)) &#123;</span><br><span class="line">          filtered.add(value);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      callback.handle(filtered);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Dart 提供 <a target="_blank" rel="noopener" href="https://api.dartlang.org/stable/1.21.0/dart-async/Future-class.html">Future</a> 类，并且 SDK 的设计也是围绕这个类展开的，让异步回调变得简单。This is when it immediately became clear Dart was talking to me, personally. 它提供的东西让我的工作变得更轻松：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;&gt; getFoo() &#123;</span><br><span class="line">  <span class="keyword">return</span> _getThenFilter(<span class="string">&#x27;foo&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;&gt; _getThenFilter(<span class="built_in">String</span> parameter) &#123;</span><br><span class="line">  <span class="keyword">return</span> makeRequest().then((result) =&gt;</span><br><span class="line">      result.where((string) =&gt; string.startsWith(parameter))</span><br><span class="line">          .toList());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>还不止于此。<code>await/async</code> 关键字让 Dart 中使用 Future 变得更简单。对于可能阻塞的异步代码块，你只要写上 <code>await</code> 关键字即可，剩下的 Dart 帮你处理好。</p>
 <p>使用 <code>await/async</code> 关键字后的代码变得更干净：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;&gt; getFoo() &#123;</span><br><span class="line">  <span class="keyword">return</span> _getThenFilter(<span class="string">'foo'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;&gt; _getThenFilter(<span class="built_in">String</span> parameter) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> unfiltered = <span class="keyword">await</span> makeRequest();</span><br><span class="line">  <span class="keyword">return</span> unfiltered.where(</span><br><span class="line">      (string) =&gt; string.startsWith(parameter)).toList();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;&gt; getFoo() &#123;</span><br><span class="line">  <span class="keyword">return</span> _getThenFilter(<span class="string">&#x27;foo&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;&gt; _getThenFilter(<span class="built_in">String</span> parameter) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> unfiltered = <span class="keyword">await</span> makeRequest();</span><br><span class="line">  <span class="keyword">return</span> unfiltered.where(</span><br><span class="line">      (string) =&gt; string.startsWith(parameter)).toList();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="去掉样本代码"><a href="#去掉样本代码" class="headerlink" title="去掉样本代码"></a>去掉样本代码</h1><p>从 Java 迁移到 Dart 后有如此多的特性让工作更简单：</p>
 <ul>
 <li>缺省的 <code>public</code> 访问修饰符，<code>_</code> 前缀表示 <code>private</code></li>
@@ -254,12 +299,12 @@
 <li>强类型下的类型推断。局部变量只用写 <code>var</code></li>
 <li>命名构造函数，自动给字段赋值</li>
 <li>字符串操作。多种字符串字面量</li>
-<li>dartfmt。<a href="http://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/" target="_blank" rel="noopener"> worries about formatting</a> dartfmt 让你不必再担心代码格式问题</li>
+<li>dartfmt。<a target="_blank" rel="noopener" href="http://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/"> worries about formatting</a> dartfmt 让你不必再担心代码格式问题</li>
 </ul>
-<h1 id="语言进步"><a href="#语言进步" class="headerlink" title="语言进步"></a>语言进步</h1><p>Dart 语言的进步并不只停留在添加 <code>await/async</code> 关键字。Dart 最近还新加了<a href="http://news.dartlang.org/2016/12/dart-121-generic-method-syntax.html" target="_blank" rel="noopener">泛型方法语法</a>以及非空类型尝试。Dart 的类型系统正在修改成强类型。</p>
+<h1 id="语言进步"><a href="#语言进步" class="headerlink" title="语言进步"></a>语言进步</h1><p>Dart 语言的进步并不只停留在添加 <code>await/async</code> 关键字。Dart 最近还新加了<a target="_blank" rel="noopener" href="http://news.dartlang.org/2016/12/dart-121-generic-method-syntax.html">泛型方法语法</a>以及非空类型尝试。Dart 的类型系统正在修改成强类型。</p>
 <p>Dart 语言以实用主义方式演进，所有的新特性必须在实际代码中有用。</p>
-<h1 id="面向-Web"><a href="#面向-Web" class="headerlink" title="面向 Web"></a>面向 Web</h1><p>Dart 提供面向 web 的 UI 框架。实际上我们使用过 <a href="https://pub.dartlang.org/packages/web_ui" target="_blank" rel="noopener">Web UI</a>，AngularDart 以及 <a href="https://webdev.dartlang.org/angular" target="_blank" rel="noopener">AngularDart2</a>。它们的相同点是：轻量、类似 HTML 模板。这被证明是构建 UI 的好方式。</p>
-<h1 id="The-Search-for-Immutability"><a href="#The-Search-for-Immutability" class="headerlink" title="The Search for Immutability"></a>The Search for Immutability</h1><p>我个人认为 Dart 最大的问题是对不可变集合以及不可变值的支持。所以我自己花时间写了两个开源库 <a href="https://github.com/google/built_collection.dart" target="_blank" rel="noopener">built_collection</a> 和 <a href="https://github.com/google/built_value.dart" target="_blank" rel="noopener">built_value</a>。</p>
+<h1 id="面向-Web"><a href="#面向-Web" class="headerlink" title="面向 Web"></a>面向 Web</h1><p>Dart 提供面向 web 的 UI 框架。实际上我们使用过 <a target="_blank" rel="noopener" href="https://pub.dartlang.org/packages/web_ui">Web UI</a>，AngularDart 以及 <a target="_blank" rel="noopener" href="https://webdev.dartlang.org/angular">AngularDart2</a>。它们的相同点是：轻量、类似 HTML 模板。这被证明是构建 UI 的好方式。</p>
+<h1 id="The-Search-for-Immutability"><a href="#The-Search-for-Immutability" class="headerlink" title="The Search for Immutability"></a>The Search for Immutability</h1><p>我个人认为 Dart 最大的问题是对不可变集合以及不可变值的支持。所以我自己花时间写了两个开源库 <a target="_blank" rel="noopener" href="https://github.com/google/built_collection.dart">built_collection</a> 和 <a target="_blank" rel="noopener" href="https://github.com/google/built_value.dart">built_value</a>。</p>
 <p>Dart 可以用来构建大型的关键 web 应用，就像我们在 AdWords 中那样。也可以使用 Flutter 来为 Android 和 iOS 来构建移动应用。</p>
 
     </div>
@@ -268,130 +313,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/flutter/" rel="tag"># Flutter</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/10/28/improving-build-speed-in-android-studio/" rel="prev" title="(译)改进 Android Studio 中的构建速度">
-      <i class="fa fa-chevron-left"></i> (译)改进 Android Studio 中的构建速度
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/11/01/flutter-customappbar-safearea/" rel="next" title="Flutter UI 问题分析小结">
-      Flutter UI 问题分析小结 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/10/28/improving-build-speed-in-android-studio/" rel="prev" title="(译)改进 Android Studio 中的构建速度">
+                  <i class="fa fa-chevron-left"></i> (译)改进 Android Studio 中的构建速度
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/11/01/flutter-customappbar-safearea/" rel="next" title="Flutter UI 问题分析小结">
+                  Flutter UI 问题分析小结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dart-SDK"><span class="nav-number">1.</span> <span class="nav-text">Dart SDK</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#异步回调"><span class="nav-number">2.</span> <span class="nav-text">异步回调</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#去掉样本代码"><span class="nav-number">3.</span> <span class="nav-text">去掉样本代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#语言进步"><span class="nav-number">4.</span> <span class="nav-text">语言进步</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#面向-Web"><span class="nav-number">5.</span> <span class="nav-text">面向 Web</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-Search-for-Immutability"><span class="nav-number">6.</span> <span class="nav-text">The Search for Immutability</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -399,29 +359,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -430,22 +382,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/10/28/why-i-moved-from-java-to-dart/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

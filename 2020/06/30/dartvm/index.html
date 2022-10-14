@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,21 +14,19 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="翻译自 Dart VM，非常详细地介绍了 Dart 代码运行机制。">
-<meta name="keywords" content="Dart">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="翻译自 Dart VM，非常详细地介绍了 Dart 代码运行机制。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Introduction to Dart VM">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/06/30/dartvm/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="翻译自 Dart VM，非常详细地介绍了 Dart 代码运行机制。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://mrale.ph/dartvm/images/isolates.png">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15934867158439.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15934867009562.jpg">
@@ -45,78 +44,52 @@
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15935067498616.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15935079364904.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15935100043901.jpg">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.049Z">
+<meta property="article:published_time" content="2020-06-30T01:20:30.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.049Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Dart">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Introduction to Dart VM">
-<meta name="twitter:description" content="翻译自 Dart VM，非常详细地介绍了 Dart 代码运行机制。">
 <meta name="twitter:image" content="https://mrale.ph/dartvm/images/isolates.png">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/06/30/dartvm/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Introduction to Dart VM | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2020/06/30/dartvm/","path":"2020/06/30/dartvm/","title":"Introduction to Dart VM"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Introduction to Dart VM | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -130,19 +103,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -153,23 +115,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -177,61 +138,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dart-VM-%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C%E4%BB%A3%E7%A0%81%E7%9A%84%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">Dart VM 是如何运行代码的？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JIT-%E6%A8%A1%E5%BC%8F%E6%BA%90%E7%A0%81%E8%BF%90%E8%A1%8C"><span class="nav-number">1.1.</span> <span class="nav-text">JIT 模式源码运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E-snapshot-%E8%BF%90%E8%A1%8C"><span class="nav-number">1.2.</span> <span class="nav-text">从 snapshot 运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E-AppJIT-snapshot-%E8%BF%90%E8%A1%8C"><span class="nav-number">1.3.</span> <span class="nav-text">从 AppJIT snapshot 运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E-AppAOT-snapshot-%E8%BF%90%E8%A1%8C"><span class="nav-number">1.4.</span> <span class="nav-text">从 AppAOT snapshot 运行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Runtime-System"><span class="nav-number">2.</span> <span class="nav-text">Runtime System</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Object-Model"><span class="nav-number">3.</span> <span class="nav-text">Object Model</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/06/30/dartvm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Introduction to Dart VM | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Introduction to Dart VM
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-30 09:20:30" itemprop="dateCreated datePublished" datetime="2020-06-30T09:20:30+08:00">2020-06-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2020-06-30 09:20:30" itemprop="dateCreated datePublished" datetime="2020-06-30T09:20:30+08:00">2020-06-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2020/06/30/dartvm/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/06/30/dartvm/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -240,9 +282,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-        <p>翻译自 <a href="https://mrale.ph/dartvm/" target="_blank" rel="noopener">Dart VM</a>，非常详细地介绍了 Dart 代码运行机制。<br><a id="more"></a><br>Dart VM 是一个用于原生地执行 Dart 代码的组件集合。它主要包含如下部分：</p>
+        <p>翻译自 <a target="_blank" rel="noopener" href="https://mrale.ph/dartvm/">Dart VM</a>，非常详细地介绍了 Dart 代码运行机制。</p>
+<span id="more"></span>
+<p>Dart VM 是一个用于原生地执行 Dart 代码的组件集合。它主要包含如下部分：</p>
 <ul>
 <li>运行时系统<ul>
 <li>对象模型</li>
@@ -273,7 +315,7 @@
 </ul>
 <p>这些方式之间的主要不同在于 VM 将 Dart 源码转换成可执行代码的时机和方式。执行代码的运行时环境是相同的。</p>
 <p>VM 中的 Dart 代码运行在 <em>isolate</em>，对 isolate 的最好描述是这样的：一个隔离的 Dart 世界，有其自己的内存(<em>heap</em>)，通常有自己的线程(<em>mutator thread</em>)。可以有多个 isolate 并发执行 Dart 代码，但 isolate 不能直接共享任何状态，只能通过 <em>port</em> 发送消息来通信(不要将这里的 port 跟 network port 混淆)。</p>
-<p><img src="https://mrale.ph/dartvm/images/isolates.png" alt></p>
+<p><img src="https://mrale.ph/dartvm/images/isolates.png"></p>
 <p>OS 线程跟 isolate 之间的关系比较模糊，具体依赖于 VM 是如何 embed 到应用中的。只能保证如下几个规则：</p>
 <ul>
 <li>OS 线程同一时刻只能进入一个 isolate。如果线程想进入另一个 isolate，它必须离开当前 isolate</li>
@@ -286,68 +328,72 @@
 <li>多个 GC sweeper 线程</li>
 <li>多个并发 GC maker 线程</li>
 </ul>
-<p>VM 内部使用线程池(<a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/thread_pool.h#L14" target="_blank" rel="noopener">ThreadPool</a>)管理 OS 线程，代码围绕 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/thread_pool.h#L17" target="_blank" rel="noopener">ThreadPool::Task</a> 而非 OS 线程来组织。比如，GC VM 向全局 VM 线程池提交 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/heap/sweeper.cc#L100" target="_blank" rel="noopener">SweeperTask</a> 后并不是生成一个专门的线程来执行后台清理工作，线程池可能会选择一个空闲的线程，或者在没有线程可用时生成一个新线程。类似的，用于 isolate 消息处理的 event loop 的缺省实现也并不是真的生成专门的 event loop 线程，而是在新消息到达时向线程池提交 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/message_handler.cc#L19" target="_blank" rel="noopener">MessageHandlerTask</a>。</p>
+<p>VM 内部使用线程池(<a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/thread_pool.h#L14">ThreadPool</a>)管理 OS 线程，代码围绕 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/thread_pool.h#L17">ThreadPool::Task</a> 而非 OS 线程来组织。比如，GC VM 向全局 VM 线程池提交 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/heap/sweeper.cc#L100">SweeperTask</a> 后并不是生成一个专门的线程来执行后台清理工作，线程池可能会选择一个空闲的线程，或者在没有线程可用时生成一个新线程。类似的，用于 isolate 消息处理的 event loop 的缺省实现也并不是真的生成专门的 event loop 线程，而是在新消息到达时向线程池提交 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/message_handler.cc#L19">MessageHandlerTask</a>。</p>
 <p>源码清单：</p>
 <ul>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/isolate.h#L151" target="_blank" rel="noopener">Isolate</a> 类代表 isolate</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/heap/heap.h#L28" target="_blank" rel="noopener">Heap</a> 类代表 isolate 的 heap</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/thread.h#L204" target="_blank" rel="noopener">Thread</a> 类描述与 isolate 关联的线程的状态。注意这里的名字 Thread 容易让人混淆，因为实际上所有作为 mutator 关联到同一个 isolate 的所有的操作系统线程会重用同一个 Thread 实例。</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/dart_api_impl.cc#L1586" target="_blank" rel="noopener">Dart_RunLoop</a> 和 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/message_handler.h#L17" target="_blank" rel="noopener">MessageHandler</a> 是 isolate 消息处理的缺省实现</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/isolate.h#L151">Isolate</a> 类代表 isolate</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/heap/heap.h#L28">Heap</a> 类代表 isolate 的 heap</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/thread.h#L204">Thread</a> 类描述与 isolate 关联的线程的状态。注意这里的名字 Thread 容易让人混淆，因为实际上所有作为 mutator 关联到同一个 isolate 的所有的操作系统线程会重用同一个 Thread 实例。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/dart_api_impl.cc#L1586">Dart_RunLoop</a> 和 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/message_handler.h#L17">MessageHandler</a> 是 isolate 消息处理的缺省实现</li>
 </ul>
 <h2 id="JIT-模式源码运行"><a href="#JIT-模式源码运行" class="headerlink" title="JIT 模式源码运行"></a>JIT 模式源码运行</h2><p>这一节是关于在命令行下执行 Dart 时的过程。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// hello.dart</span><br><span class="line">main() =&gt; <span class="built_in">print</span>(<span class="string">'Hello, World!'</span>);</span><br><span class="line">$ dart hello.dart</span><br><span class="line">Hello, World!</span><br></pre></td></tr></table></figure>
-<p>Dart 2 开始 VM 不再支持直接从原始代码执行 Dart，而是执行指定的 <em>Kernel binaries</em> (也称之为 <em>dill files</em>)，其中包含系列化后的 <a href="https://github.com/dart-lang/sdk/blob/master/pkg/kernel/README.md" target="_blank" rel="noopener">Kernel ASTs</a>。Dart 源码转换成 Kernel AST 的任务由 <a href="https://github.com/dart-lang/sdk/tree/master/pkg/front_end" target="_blank" rel="noopener">common front-end (CFE)</a> 完成，CFE 由 Dart 写成，在不同的 Dart 工具共享(比如 VM，dart2js，Dart Dev Compiler)。</p>
-<p><img src="/images/15934867158439.jpg" alt></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// hello.dart</span><br><span class="line">main() =&gt; <span class="built_in">print</span>(<span class="string">&#x27;Hello, World!&#x27;</span>);</span><br><span class="line">$ dart hello.dart</span><br><span class="line">Hello, World!</span><br></pre></td></tr></table></figure>
+
+<p>Dart 2 开始 VM 不再支持直接从原始代码执行 Dart，而是执行指定的 <em>Kernel binaries</em> (也称之为 <em>dill files</em>)，其中包含系列化后的 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/master/pkg/kernel/README.md">Kernel ASTs</a>。Dart 源码转换成 Kernel AST 的任务由 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/tree/master/pkg/front_end">common front-end (CFE)</a> 完成，CFE 由 Dart 写成，在不同的 Dart 工具共享(比如 VM，dart2js，Dart Dev Compiler)。</p>
+<p><img src="/images/15934867158439.jpg"></p>
 <p>为了保留直接执行 Dart 代码的便捷性，标准的 <code>dart</code> 执行命令带有一个叫 <em>kernel service</em> 的 isolate，它负责将 Dart 源码编译成 Kernel binary。之后 VM 后运行生成的 Kernel binary。</p>
-<p><img src="/images/15934867009562.jpg" alt></p>
+<p><img src="/images/15934867009562.jpg"></p>
 <p>不过这并非 CFE 和 VM 运行 Dart 代码唯一的组合方式。比如，Flutter 完全将 <em>compilation to Kernel</em> 和      <em>execution from Kernel</em> 两个过程分离到不同的设备上：编译发生在开发机(<em>host</em>)，而执行发生在移动设备(<em>device</em>)，它接收通过 <code>flutter</code> tool 发送来的 Kernel binary。</p>
-<p><img src="/images/15934866911219.jpg" alt><br><img src="https://mrale.ph/dartvm/images/flutter-cfe.png" alt></p>
+<p><img src="/images/15934866911219.jpg"><br><img src="https://mrale.ph/dartvm/images/flutter-cfe.png"></p>
 <p>注意 <code>flutter</code> tool 自己并不解析 Dart，它启动另一个进程 <code>frontend_server</code>。<code>frontend_server</code> 是对 CFE 的包装，并且进行某些 Flutter 特定的 Kernel-to-Kernel 转换。<code>frontend_server</code> 将 Dart 代码转换成 Kernel binary 文件，<code>flutter</code> tool 将这些文件发送到设备。当开发者想使用 <em>hot reload</em> 特性时，就需要 <code>frontend_server</code> 是常驻进程了：<code>frontend_server</code> 可以根据前一次编译来重用 CFE 状态，只编译发生实际变动的代码。</p>
 <p>Kernel binary 加载到 VM 后会被解析成代码不同程序实体的对象。不过解析是延迟进行的：最初只加载库和类的基本信息。每个来自 Kernel binary 的实体都有一个指向 Kernel binary 的指针，以便之后需要时能加载更多信息。</p>
 <blockquote>
 <p>使用 <code>Raw...</code> 前缀来指代 VM 内部分配的特定对象。这是 VM 的命名习惯：VM 内部对象布局由一个位于 <code>raw_object.h</code> 头文件中以 Raw 开头的 C++ 类来定义。比如 <code>RawClass</code> 是一个描述 Dart 类的 VM 对象，而 <code>RawField</code> 是一个描述 Dart 类中 Dart 字段的对象。在后台讨论运行时系统和对象模型那节中我们还会回到这个话题。</p>
 </blockquote>
-<p><img src="/images/15934878531318.jpg" alt></p>
+<p><img src="/images/15934878531318.jpg"></p>
 <p>类的信息只在之后运行时需要时才完全反序列化(比如，查找类成员，分配对象等等)。这一阶段，类成员读取自 Kernel binary。不过，此时只有成员签名，完整的函数方法此时并没有完全反序列化。</p>
-<p><img src="/images/15934880714981.jpg" alt></p>
+<p><img src="/images/15934880714981.jpg"></p>
 <p>这时运行时已经从 Kernel binary 加载了足够信息，可以成功解析和调用方法。比如，它可以从一个库中解析和调用 <code>main</code> 函数。</p>
 <p>源码清单：</p>
 <ul>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/kernel/lib/ast.dart" target="_blank" rel="noopener">package:kernel/ast.dart</a> 定义了描述 Kernel AST 的类</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/front_end" target="_blank" rel="noopener">package:front_end</a> 用于解析 Dart 源码并从源码构建 AST</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/kernel_loader.cc#L211" target="_blank" rel="noopener">kernel::KernelLoader::LoadEntireProgram</a> 是将 Kernel AST 反序列化成对应 VM 对象的入口</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/bin/kernel_service.dart" target="_blank" rel="noopener">pkg/vm/bin/kernel_service.dart</a> 实现了 Kernel Service isolate</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/kernel_isolate.cc" target="_blank" rel="noopener">runtime/vm/kernel_isolate.cc</a> 将 Dart 实现跟 VM 的其他部分粘合起来</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm" target="_blank" rel="noopener">package:vm</a> 包含基于 Kernel 的 VM 的大部分功能，比如不同的 Kernel-to-Kernel 转换，由于一些历史原因一些 VM 特定的转换仍然放在 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/kernel" target="_blank" rel="noopener">package:kernel</a> 中</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/kernel/lib/transformations/continuation.dart" target="_blank" rel="noopener">package:kernel/transformations/continuation.dart</a> 是一个复杂转换的好例子，它对 <code>async</code>、<code>async*</code> 以及 <code>sync*</code> 函数进行脱糖处理 </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/kernel/lib/ast.dart">package:kernel&#x2F;ast.dart</a> 定义了描述 Kernel AST 的类</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/front_end">package:front_end</a> 用于解析 Dart 源码并从源码构建 AST</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/kernel_loader.cc#L211">kernel::KernelLoader::LoadEntireProgram</a> 是将 Kernel AST 反序列化成对应 VM 对象的入口</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/bin/kernel_service.dart">pkg&#x2F;vm&#x2F;bin&#x2F;kernel_service.dart</a> 实现了 Kernel Service isolate</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/kernel_isolate.cc">runtime&#x2F;vm&#x2F;kernel_isolate.cc</a> 将 Dart 实现跟 VM 的其他部分粘合起来</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm">package:vm</a> 包含基于 Kernel 的 VM 的大部分功能，比如不同的 Kernel-to-Kernel 转换，由于一些历史原因一些 VM 特定的转换仍然放在 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/kernel">package:kernel</a> 中</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/kernel/lib/transformations/continuation.dart">package:kernel&#x2F;transformations&#x2F;continuation.dart</a> 是一个复杂转换的好例子，它对 <code>async</code>、<code>async*</code> 以及 <code>sync*</code> 函数进行脱糖处理</li>
 </ul>
-<p>动手尝试！如果你对 Kernel binary 格式以及 VM 用法感兴趣，可以使用 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/bin/gen_kernel.dart" target="_blank" rel="noopener">pkg/vm/bin/gen_kernel.dart</a> 来从 Dart 源码生成一个 Kernel binary 文件。生成的 binary 文件可以使用 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/bin/dump_kernel.dart" target="_blank" rel="noopener">pkg/vm/bin/dump_kernel.dart</a> 进行 dump 操作。</p>
+<p>动手尝试！如果你对 Kernel binary 格式以及 VM 用法感兴趣，可以使用 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/bin/gen_kernel.dart">pkg&#x2F;vm&#x2F;bin&#x2F;gen_kernel.dart</a> 来从 Dart 源码生成一个 Kernel binary 文件。生成的 binary 文件可以使用 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/bin/dump_kernel.dart">pkg&#x2F;vm&#x2F;bin&#x2F;dump_kernel.dart</a> 进行 dump 操作。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Take hello.dart and compile it to hello.dill Kernel binary using CFE.</span></span><br><span class="line">$ dart pkg/vm/bin/gen_kernel.dart                        \</span><br><span class="line">       --platform out/ReleaseX64/vm_platform_strong.dill \</span><br><span class="line">       -o hello.dill                                     \</span><br><span class="line">       hello.dart</span><br><span class="line"></span><br><span class="line"><span class="comment"># Dump textual representation of Kernel AST.</span></span><br><span class="line">$ dart pkg/vm/bin/dump_kernel.dart hello.dill hello.kernel.txt</span><br></pre></td></tr></table></figure>
-<p>当你尝试使用 <code>gen_kernel.dart</code> 时你你发现它需要一个名为 <em>platform</em> 的东西，这个参数用于指定一个包含所有核心库(例如 <code>dart:core</code>，<code>dart:async</code>)的 AST 的文件。如果你本地编译过 Dart SDK，可以使用 out 目录下的 platform 文件，比如 <code>out/ReleaseX64/vm_platform_strong.dill</code>。(译者注：如果你本地编译过 Flutter 引擎，也可以使用 <code>engine/src/out/host_debug_unopt/vm_platform_strong.dill</code>)。另外，你也可以使用 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/front_end/tool/_fasta/compile_platform.dart" target="_blank" rel="noopener">pkg/front_end/tool/_fasta/compile_platform.dart</a> 生成 platform。</p>
+
+<p>当你尝试使用 <code>gen_kernel.dart</code> 时你你发现它需要一个名为 <em>platform</em> 的东西，这个参数用于指定一个包含所有核心库(例如 <code>dart:core</code>，<code>dart:async</code>)的 AST 的文件。如果你本地编译过 Dart SDK，可以使用 out 目录下的 platform 文件，比如 <code>out/ReleaseX64/vm_platform_strong.dill</code>。(译者注：如果你本地编译过 Flutter 引擎，也可以使用 <code>engine/src/out/host_debug_unopt/vm_platform_strong.dill</code>)。另外，你也可以使用 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/front_end/tool/_fasta/compile_platform.dart">pkg&#x2F;front_end&#x2F;tool&#x2F;_fasta&#x2F;compile_platform.dart</a> 生成 platform。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Produce outline and platform files using the given libraries list.</span></span><br><span class="line">$ dart pkg/front_end/tool/_fasta/compile_platform.dart \</span><br><span class="line">       dart:core                                       \</span><br><span class="line">       sdk/lib/libraries.json                          \</span><br><span class="line">       vm_outline.dill vm_platform.dill vm_outline.dill</span><br></pre></td></tr></table></figure>
+
 <p>译者注：我在本地操作了一把，成功！</p>
 <hr>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 dill</span></span><br><span class="line">$ dart /Users/cm/wd/engine/src/third_party/dart/pkg/vm/bin/gen_kernel.dart \</span><br><span class="line">--platform /Users/cm/wd/engine/src/out/host_debug_unopt/vm_platform_strong.dill \</span><br><span class="line">-o hello.dill \</span><br><span class="line">   hello.dart</span><br><span class="line"><span class="comment"># dump dill</span></span><br><span class="line">$ dart /Users/cm/wd/engine/src/third_party/dart/pkg/vm/bin/dump_kernel.dart \</span><br><span class="line">hello.dill hello.kernel.txt</span><br></pre></td></tr></table></figure>
-<p><img src="/images/15934899027428.jpg" alt></p>
-<p><img src="/images/15934899450735.jpg" alt></p>
+
+<p><img src="/images/15934899027428.jpg"></p>
+<p><img src="/images/15934899450735.jpg"></p>
 <p>所有函数体初始时只有占位符而不是实际的可执行代码：占位符指向 <code>LazyCompileStub</code>，它只是请求运行时系统为当前函数生成可执行代码并且对新生成的代码进行尾调用(tail-calls this newly generated code)。</p>
-<p><img src="/images/15934979827846.jpg" alt></p>
+<p><img src="/images/15934979827846.jpg"></p>
 <p>函数第一次编译时以上过程由 <em>unoptimizing compiler</em> 完成。</p>
-<p><img src="/images/15934980438450.jpg" alt></p>
+<p><img src="/images/15934980438450.jpg"></p>
 <p><em>Unoptimizing compiler</em> 按以下两个步骤生成机器码：</p>
 <ol>
-<li>遍历函数体的序列化后的 AST，为函数体生成 <em>control flow graph</em> (CFG)。CFG 由 <em>intermediate language</em> (IL) 指令块组成。这个阶段使用的 IL 指令类似基于栈的 VM 中的指令：从栈中取出操作数，执行操作后将结果放回同一个栈 (注意：实际上并不是所有的函数都有实际的 Dart/Kernel AST 函数体，比如 C++ 中定义的 native 方法或 artificial tear-off functions generated by Dart VM，这些场景中 IL 是从从头构造的而不是从 Kernel AST 生成的)</li>
+<li>遍历函数体的序列化后的 AST，为函数体生成 <em>control flow graph</em> (CFG)。CFG 由 <em>intermediate language</em> (IL) 指令块组成。这个阶段使用的 IL 指令类似基于栈的 VM 中的指令：从栈中取出操作数，执行操作后将结果放回同一个栈 (注意：实际上并不是所有的函数都有实际的 Dart&#x2F;Kernel AST 函数体，比如 C++ 中定义的 native 方法或 artificial tear-off functions generated by Dart VM，这些场景中 IL 是从从头构造的而不是从 Kernel AST 生成的)</li>
 <li>生成的 CFG 直接编译成机器码：每个 IL 指令扩展成多个机器语言指令</li>
 </ol>
 <p>这个阶段中没有进行优化，unoptimizing compiler 的主要目标是快速生成可执行代码。</p>
-<p>This also means that unoptimizing compiler does not attempt to statically resolve any calls that were not resolved in Kernel binary, so calls (MethodInvocation or PropertyGet AST nodes) are compiled as if they were completely dynamic. VM 目前不使用任何形式的基于的 <em>virtual table</em> 或 <em>interface table</em> 的分发方法，而是使用 <a href="https://en.wikipedia.org/wiki/Inline_caching" target="_blank" rel="noopener">inline caching</a> 实现动态调用。</p>
+<p>This also means that unoptimizing compiler does not attempt to statically resolve any calls that were not resolved in Kernel binary, so calls (MethodInvocation or PropertyGet AST nodes) are compiled as if they were completely dynamic. VM 目前不使用任何形式的基于的 <em>virtual table</em> 或 <em>interface table</em> 的分发方法，而是使用 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Inline_caching">inline caching</a> 实现动态调用。</p>
 <p>inline caching 背后的主要思想是在 call site specific cache 中保存方法解析的结果(The core idea behind inline caching is to cache results of method resolution in a call site specific cache.)。注意：原始的 inline caching 实现实际上是用来对函数的 native 代码打补丁。VM 使用的 inline caching 有如下组成：</p>
 <ul>
 <li>call site specific cache (RawICData 对象)，将接收方的类映射成方法，如果接收方的类匹配上就调用这个方法。这个 cache 还保存一些辅助信息，比如调用计数，用于记录指定类在这个 call site 中出现的次数</li>
 <li>shared lookup stub，实现方法调用的快捷路径。该 stub 在指定 cache 中检查是否包含能跟接收方的类匹配的 entry，如果有，则 stub 将增调用频率计数。否则，stub 将请求运行时系统进行方法解析。解析方法后会更新 cache，之后的方法调用不必再经过运行时系统。</li>
 </ul>
 <p>下图展示了跟 <code>animal.toFace()</code> call site 关联的 inline cache 的结构和方法，这个方法在一个 <code>Dog</code> 实例上执行两次，在另一个 <code>Cat</code> 实例上执行一次。</p>
-<p><img src="/images/15934995543159.jpg" alt></p>
+<p><img src="/images/15934995543159.jpg"></p>
 <p>Unoptimizing compiler 本身足够执行任意 Dart 代码。但它生成的代码非常慢，这也是为什么 VM 还实现了 <em>adaptive optimizing</em> 编译流水线。adaptive optimizing 背后的思想是对一个运行中的程序的执行分析结果来驱动优化决策：</p>
 <p>unoptimized code (未经优化的代码) 运行时会收集以下信息：</p>
 <ul>
@@ -358,23 +404,25 @@
 <p>优化编译以跟未优化编译相同的方式开始：遍历序列化后的 Kernel AST 来为待优化的函数构建未优化的 IL。不过，现在跟直接将 unoptimized IL 转成机器码不同的是，optimizing compiler 将 unoptimized IL 转换成 static single assignment (SSA) 格式的 optimized IL。SSA 格式的 IL 接下来会基于收集到的类型反馈来进行一系列常规的以及 Dart 特有的优化：比如  e.g. inlining, range analysis, type propagation, representation selection, store-to-load and load-to-load forwarding, global value numbering, allocation sinking, etc. 最后，使用 linear scan register allocator 将 optimized IL 转换成机器码。</p>
 <p>优化编译完成后 background compiler 要求 mutator thread 进入一个安全点，并且将优化后的代码关联到待优化的函数。下次函数执行时，它将使用优化后的代码。</p>
 <p>注意：有些函数包含长时间执行的循环，所以在函数运行期间从 unoptimized code 切换到 optimized code 也是有意义的。这个过程称为 <em>on stack replacement</em> (OSR)，它的名字来自于这样一个事实：栈帧从函数的某个版本被透明地替换成同一函数的另一个版本。</p>
-<p><img src="/images/15935012109939.jpg" alt></p>
+<p><img src="/images/15935012109939.jpg"></p>
 <p>源码清单：</p>
 <ul>
-<li>编译器源码见 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler" target="_blank" rel="noopener">runtime/vm/compiler</a> 目录</li>
-<li>编译流水线入口见 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/jit/compiler.cc#L701" target="_blank" rel="noopener">CompileParsedFunctionHelper::Compile</a></li>
-<li>IL 由 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/backend/il.h" target="_blank" rel="noopener">runtime/vm/compiler/backend/il.h</a> 定义</li>
-<li>Kernel-to-IL 的转换从 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/frontend/kernel_binary_flowgraph.cc#L1929" target="_blank" rel="noopener">kernel::StreamingFlowGraphBuilder::BuildGraph</a> 开始</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/stub_code_x64.cc#L1795" target="_blank" rel="noopener">StubCode::GenerateNArgsCheckInlineCacheStub</a> 为 inline-cache stub 生成机器码，<a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/runtime_entry.cc#L1073" target="_blank" rel="noopener">InlineCacheMissHandler</a> 处理 IC 缺失</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/compiler_pass.cc" target="_blank" rel="noopener">runtime/vm/compiler/compiler_pass.cc</a> 定义 optimizing compiler pass 和 order</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/jit/jit_call_specializer.h#L12" target="_blank" rel="noopener">JitCallSpecializer</a> 完成大部分 type-feedback based specialization</li>
+<li>编译器源码见 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler">runtime&#x2F;vm&#x2F;compiler</a> 目录</li>
+<li>编译流水线入口见 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/jit/compiler.cc#L701">CompileParsedFunctionHelper::Compile</a></li>
+<li>IL 由 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/backend/il.h">runtime&#x2F;vm&#x2F;compiler&#x2F;backend&#x2F;il.h</a> 定义</li>
+<li>Kernel-to-IL 的转换从 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/frontend/kernel_binary_flowgraph.cc#L1929">kernel::StreamingFlowGraphBuilder::BuildGraph</a> 开始</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/stub_code_x64.cc#L1795">StubCode::GenerateNArgsCheckInlineCacheStub</a> 为 inline-cache stub 生成机器码，<a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/runtime_entry.cc#L1073">InlineCacheMissHandler</a> 处理 IC 缺失</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/compiler_pass.cc">runtime&#x2F;vm&#x2F;compiler&#x2F;compiler_pass.cc</a> 定义 optimizing compiler pass 和 order</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/jit/jit_call_specializer.h#L12">JitCallSpecializer</a> 完成大部分 type-feedback based specialization</li>
 </ul>
 <p>动手尝试！VM 提供一些选项用于控制 JIT，并能 dump 由 JIT 编译的函数的 IL 和机器码.</p>
-<p>Flag    Description<br>–print-flow-graph[-optimized]    Print IL for all (or only optimized) compilations<br>–disassemble[-optimized]    Disassemble all (or only optimized) compiled functions<br>–print-flow-graph-filter=xyz,abc,…    Restrict output triggered by previous flags only to the functions which contain one of the comma separated substrings in their names<br>–compiler-passes=…    Fine control over compiler passes: force IL to be printed before/after a certain pass. Disable passes by name. Pass help for more information<br>–no-background-compilation    Disable background compilation, and compile all hot functions on the main thread. Useful for experimentation, otherwise short running programs might finish before background compiler compiles hot function</p>
+<p>Flag	Description<br>–print-flow-graph[-optimized]	Print IL for all (or only optimized) compilations<br>–disassemble[-optimized]	Disassemble all (or only optimized) compiled functions<br>–print-flow-graph-filter&#x3D;xyz,abc,…	Restrict output triggered by previous flags only to the functions which contain one of the comma separated substrings in their names<br>–compiler-passes&#x3D;…	Fine control over compiler passes: force IL to be printed before&#x2F;after a certain pass. Disable passes by name. Pass help for more information<br>–no-background-compilation	Disable background compilation, and compile all hot functions on the main thread. Useful for experimentation, otherwise short running programs might finish before background compiler compiles hot function</p>
 <p>例如，</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Run test.dart and dump optimized IL and machine code for</span><br><span class="line"># function(s) that contain(s) &quot;myFunction&quot; in its name.</span><br><span class="line"># Disable background compilation for determinism.</span><br><span class="line">$ dart --print-flow-graph-optimized         \</span><br><span class="line">       --disassemble-optimized              \</span><br><span class="line">       --print-flow-graph-filter=myFunction \</span><br><span class="line">       --no-background-compilation          \</span><br><span class="line">       test.dart</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Run test.dart and dump optimized IL and machine code for</span><br><span class="line"># function(s) that contain(s) &quot;myFunction&quot; in its name.</span><br><span class="line"># Disable background compilation for determinism.</span><br><span class="line">$ dart --print-flow-graph-optimized         \</span><br><span class="line">       --disassemble-optimized              \</span><br><span class="line">       --print-flow-graph-filter=myFunction \</span><br><span class="line">       --no-background-compilation          \</span><br><span class="line">       test.dart</span><br></pre></td></tr></table></figure>
+
 <p>另外需要强调的是 optimizing compiler 是基于对应用执行结果分析而得出的假设来生成优化后的代码的。比如，观察到动态调用只将 <code>C</code> 类作为接收者，会将这个动态调用转换成直接调用，并验证接收者的类型为 <code>C</code>。但是，后续的调用可能打破这种假设：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> printAnimal(obj) &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Animal &#123;'</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'  <span class="subst">$&#123;obj.toString()&#125;</span>'</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'&#125;'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Call printAnimal(...) a lot of times with an intance of Cat.</span></span><br><span class="line"><span class="comment">// As a result printAnimal(...) will be optimized under the</span></span><br><span class="line"><span class="comment">// assumption that obj is always a Cat.</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">50000</span>; i++)</span><br><span class="line">  printAnimal(Cat());</span><br><span class="line"></span><br><span class="line"><span class="comment">// Now call printAnimal(...) with a Dog - optimized version</span></span><br><span class="line"><span class="comment">// can not handle such an object, because it was</span></span><br><span class="line"><span class="comment">// compiled under assumption that obj is always a Cat.</span></span><br><span class="line"><span class="comment">// This leads to deoptimization.</span></span><br><span class="line">printAnimal(Dog());</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> printAnimal(obj) &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;Animal &#123;&#x27;</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;  <span class="subst">$&#123;obj.toString()&#125;</span>&#x27;</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;&#125;&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Call printAnimal(...) a lot of times with an intance of Cat.</span></span><br><span class="line"><span class="comment">// As a result printAnimal(...) will be optimized under the</span></span><br><span class="line"><span class="comment">// assumption that obj is always a Cat.</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">50000</span>; i++)</span><br><span class="line">  printAnimal(Cat());</span><br><span class="line"></span><br><span class="line"><span class="comment">// Now call printAnimal(...) with a Dog - optimized version</span></span><br><span class="line"><span class="comment">// can not handle such an object, because it was</span></span><br><span class="line"><span class="comment">// compiled under assumption that obj is always a Cat.</span></span><br><span class="line"><span class="comment">// This leads to deoptimization.</span></span><br><span class="line">printAnimal(Dog());</span><br></pre></td></tr></table></figure>
+
 <p>任何时候如果 optimized code 做了某种假设，但这些假设并不来自静态不可变信息，则应该防范假设被打破，并且能在打破假设的场景中恢复。</p>
 <p>这种恢复过程称为 <em>deoptimization</em> (反优化)：无论何时当 optimized code 不能处理某种 case 时，简单地切换成 unoptimized code 对应的匹配点并继续执行。unoptimized code 没有做任何假设，所以能处理任何可能的输入。</p>
 <blockquote>
@@ -388,28 +436,31 @@
 </ul>
 <p>代码清单：</p>
 <ul>
-<li>Deoptimizer 机制见 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/deopt_instructions.cc" target="_blank" rel="noopener">runtime/vm/deopt_instructions.cc</a>。它实际上是一个用于 <em>deoptimization instructions</em> 的迷你解释器，用于描述从 optimized code 状态重建必要的 unoptimized code 状态</li>
-<li><p>Deoptimization 指令由 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/backend/flow_graph_compiler_x64.cc#L68" target="_blank" rel="noopener">CompilerDeoptInfo::CreateDeoptInfo</a> 为 optimized code 中每个潜在的 deoptimization location 生成 deoptimization 指令</p>
+<li><p>Deoptimizer 机制见 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/deopt_instructions.cc">runtime&#x2F;vm&#x2F;deopt_instructions.cc</a>。它实际上是一个用于 <em>deoptimization instructions</em> 的迷你解释器，用于描述从 optimized code 状态重建必要的 unoptimized code 状态</p>
+</li>
+<li><p>Deoptimization 指令由 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/backend/flow_graph_compiler_x64.cc#L68">CompilerDeoptInfo::CreateDeoptInfo</a> 为 optimized code 中每个潜在的 deoptimization location 生成 deoptimization 指令</p>
 </li>
 <li><p><code>--trace-deoptimization</code> 用于 VM 输出每个 deoptimization 的原因和位置</p>
 </li>
-<li><code>--trace-deoptimization-verbose</code> 用于 VM 为每个 deoptimization instruction 输出一行日志</li>
+<li><p><code>--trace-deoptimization-verbose </code> 用于 VM 为每个 deoptimization instruction 输出一行日志</p>
+</li>
 </ul>
 <h2 id="从-snapshot-运行"><a href="#从-snapshot-运行" class="headerlink" title="从 snapshot 运行"></a>从 snapshot 运行</h2><p>VM 具备对 isolate 堆(更准确地说是堆中的对象图)序列化成二进制 <em>snapshot</em> 的能力。snapshot 可用于启动 VM isolate 时重建相同状态。</p>
-<p><img src="/images/15935061109366.jpg" alt></p>
+<p><img src="/images/15935061109366.jpg"></p>
 <p>snapshot 使用低级格式，便于快速启动。它实际上是待创建对象的列表，以及如何联系这些对象的指令。snapshot 背后的初始思想是：相比解析 Dart 源码来逐步创建 VM 内部数据结构，VM 可以快速从 snapshot 得到所有必要的数据结构来启动 isolate。</p>
 <p>最初，snapshot 中并不包含机器码。后来随着 AOT compiler 的开发，snapshot 中也可包含机器码。开发 AOT compiler 以及 snapshots-with-code 的目的是允许 VM 用于 JITing 不可用(平台本身限制)的那些平台。</p>
 <p>snapshots-with-code 跟普通 snapshot 几乎相同，一个小的区别在于：前者包含一个 code section，这个区域跟其他区域不同，并不需要反序列化。code section 允许映射到内存时直接作为 heap 的一部分。</p>
-<p><img src="/images/15935067498616.jpg" alt></p>
+<p><img src="/images/15935067498616.jpg"></p>
 <p>代码清单：</p>
 <ul>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/clustered_snapshot.cc" target="_blank" rel="noopener">runtime/vm/clustered_snapshot.cc</a> 处理 snapshot 的序列化与反序列化。有一系列 Dart_CreateXyzSnapshot[AsAssembly] 方法用于将 heap 导出成 snapshot，例如 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/dart_api_impl.cc#L6238" target="_blank" rel="noopener">Dart_CreateAppJITSnapshotAsBlobs</a> 和 <a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/dart_api_impl.cc#L5986" target="_blank" rel="noopener">Dart_CreateAppAOTSnapshotAsAssembly</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/clustered_snapshot.cc">runtime&#x2F;vm&#x2F;clustered_snapshot.cc</a> 处理 snapshot 的序列化与反序列化。有一系列 Dart_CreateXyzSnapshot[AsAssembly] 方法用于将 heap 导出成 snapshot，例如 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/dart_api_impl.cc#L6238">Dart_CreateAppJITSnapshotAsBlobs</a> 和 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/dart_api_impl.cc#L5986">Dart_CreateAppAOTSnapshotAsAssembly</a></li>
 </ul>
 <h2 id="从-AppJIT-snapshot-运行"><a href="#从-AppJIT-snapshot-运行" class="headerlink" title="从 AppJIT snapshot 运行"></a>从 AppJIT snapshot 运行</h2><p>引入 AppJIT snapshot 是为解决大型 Dart 应用的启动时间，例如 <code>dartanalyzer</code> 或 <code>dart2js</code>。这些工具用于小工程时完成实际工作的时间跟 VM 花在 JIT 上的时间一样多(译者注：言下之意是，VM 花了太多时间对大型 Dart 应用进行 JIT 处理，而这些应用用于处理小工程时实际工作本身并不会耗时太多？)</p>
 <p>AppJIT snapshot 可用于处理这种问题：一个应用可以在 VM 使用一些模拟的训练数据运行，之后将生成的代码和 VM 内部数据结构序列化成 AppJIT snapshot。不同于以源码和 Kernel binary 形式来分发应用，而是分发 AppJIT snapshot。当在实际数据上执行时的 execution profile 无法匹配到训练阶段时观察到的 execution profile，从这种 snapshot 启动的 VM 仍然可以 JIT—</p>
-<p><img src="/images/15935079364904.jpg" alt></p>
+<p><img src="/images/15935079364904.jpg"></p>
 <p>动手尝试！给 <code>dart</code> 命令传 <code>--snapshot-kind=app-jit --snapshot=path-to-snapshot</code> 参数会生成 AppJIT snapshot。如下的例子为 <code>dart2js</code> 生成和使用 AppJIT snapshot。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Run from source in JIT mode.</span></span><br><span class="line">$ dart pkg/compiler/lib/src/dart2js.dart -o hello.js hello.dart</span><br><span class="line">Compiled 7,359,592 characters Dart to 10,620 characters JavaScript <span class="keyword">in</span> 2.07 seconds</span><br><span class="line">Dart file (hello.dart) compiled to JavaScript: hello.js</span><br><span class="line"></span><br><span class="line"><span class="comment"># Training run to generate app-jit snapshot</span></span><br><span class="line">$ dart --snapshot-kind=app-jit --snapshot=dart2js.snapshot \</span><br><span class="line">       pkg/compiler/lib/src/dart2js.dart -o hello.js hello.dart</span><br><span class="line">Compiled 7,359,592 characters Dart to 10,620 characters JavaScript <span class="keyword">in</span> 2.05 seconds</span><br><span class="line">Dart file (hello.dart) compiled to JavaScript: hello.js</span><br><span class="line"></span><br><span class="line"><span class="comment"># Run from app-jit snapshot.</span></span><br><span class="line">$ dart dart2js.snapshot -o hello.js hello.dart</span><br><span class="line">Compiled 7,359,592 characters Dart to 10,620 characters JavaScript <span class="keyword">in</span> 0.73 seconds</span><br><span class="line">Dart file (hello.dart) compiled to JavaScript: hello.js</span><br></pre></td></tr></table></figure>
+
 <h2 id="从-AppAOT-snapshot-运行"><a href="#从-AppAOT-snapshot-运行" class="headerlink" title="从 AppAOT snapshot 运行"></a>从 AppAOT snapshot 运行</h2><p>AOT snapshot 初始是为无法开启 JIT 编译的平台引入的，但它们也可用于快速启动以及性能强一致性(可接受潜在性能损失)的场景。</p>
 <blockquote>
 <p>关于 JIT 和 AOT 性能特性之间的比较常常有很多混淆。JIT 能访问到准确的本地类型信息，以及应用运行期间的 execution profile，但它付出的代价是较慢的预热过程。AOT 可以推断和验证全局属性(代价是较长的编译时间)，但没有应用如何实际执行的信息。换句话说，AOT 编译的代码实际没有预热过程，启动后几乎就能达到性能峰值。当前 Dart VM JIT 有最好的性能峰值，而 Dart VM AOT 有最短的启动时间。</p>
@@ -422,15 +473,16 @@
 <p>为了满足这些需求，AOT 编译时会进行全局静态分析(<em>type flow analysis</em>，TFA)以确定从一些已知的入口出发，应用的哪些部分是可达的；会分配哪些类的实例；以及程序的 type flow 是怎样的。所有这些分析都是保守的：即它们更看重正确性。这与 JIT 更看重高性能是截然不同的。JIT 总是可以在必要时”反优化”到 unoptimized code 来实现正确的行为。</p>
 <p>所有潜在可达的函数被编译成 native code，不做任何推测优化(All potentially reachable functions are then compiled to native code without any speculative optimizations)。当然，仍然会使用 type flow 信息对代码进行处理(比如，取消虚调用 devirtualize calls)。</p>
 <p>所以函数编译完成后生成 snapshot。生成的 snapshot 可以在 <em>precompiled runtime</em>，这是一个特别的 Dart VM，没有 JIT 组件及动态加载代码的能力。</p>
-<p><img src="/images/15935100043901.jpg" alt></p>
+<p><img src="/images/15935100043901.jpg"></p>
 <p>源码清单：</p>
 <ul>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/lib/transformations/type_flow/transformer.dart" target="_blank" rel="noopener">package:vm/transformations/type_flow/transformer.dart</a> 是 type flow 分析及基于 TFA 转换的入口</li>
-<li><a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/aot/precompiler.cc#L190" target="_blank" rel="noopener">Precompiler::DoCompileAll</a> 是   VM 中 AOT 编译循环(the AOT compilation loop in the VM)的入口</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/lib/transformations/type_flow/transformer.dart">package:vm&#x2F;transformations&#x2F;type_flow&#x2F;transformer.dart</a> 是 type flow 分析及基于 TFA 转换的入口</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/runtime/vm/compiler/aot/precompiler.cc#L190">Precompiler::DoCompileAll</a> 是   VM 中 AOT 编译循环(the AOT compilation loop in the VM)的入口</li>
 </ul>
-<p>动手尝试！目前 Dart SDK 并不包含 AOT 编译流水线，那些依赖这个特性的项目(比如 Flutter)必须自行从 SDK 构建这个功能。<a href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/tool/precompiler2" target="_blank" rel="noopener">pkg/vm/tool/precompiler2</a> 脚本是个不错的参考，它演示了流水线是如何组织的，哪些二进制产物必须被构建。</p>
+<p>动手尝试！目前 Dart SDK 并不包含 AOT 编译流水线，那些依赖这个特性的项目(比如 Flutter)必须自行从 SDK 构建这个功能。<a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/blob/cb6127570889bed147cbe6292cb2c0ba35271d58/pkg/vm/tool/precompiler2">pkg&#x2F;vm&#x2F;tool&#x2F;precompiler2</a> 脚本是个不错的参考，它演示了流水线是如何组织的，哪些二进制产物必须被构建。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Need to build normal dart executable and runtime for running AOT code.</span></span><br><span class="line">$ tool/build.py -m release -a x64 runtime dart_precompiled_runtime</span><br><span class="line"></span><br><span class="line"><span class="comment"># Now compile an application using AOT compiler</span></span><br><span class="line">$ pkg/vm/tool/precompiler2 hello.dart hello.aot</span><br><span class="line"></span><br><span class="line"><span class="comment"># Execute AOT snapshot using runtime for AOT code</span></span><br><span class="line">$ out/ReleaseX64/dart_precompiled_runtime hello.aot</span><br><span class="line">Hello, World!</span><br></pre></td></tr></table></figure>
-<p>注意：如果想检查生成的 AOT 代码，类似 <code>--print-flow-graph-optimized</code> 或 <code>--disassemble-optimized</code> 这些参数也可以传给 <code>precompiler2</code> 脚本。</p>
+
+<p>注意：如果想检查生成的 AOT 代码，类似 <code>--print-flow-graph-optimized </code> 或 <code>--disassemble-optimized</code> 这些参数也可以传给 <code>precompiler2</code> 脚本。</p>
 <h1 id="Runtime-System"><a href="#Runtime-System" class="headerlink" title="Runtime System"></a>Runtime System</h1><p>敬请期待 (译者注：原文还在完善中)</p>
 <h1 id="Object-Model"><a href="#Object-Model" class="headerlink" title="Object Model"></a>Object Model</h1><p>敬请期待 (译者注：原文还在完善中)</p>
 
@@ -440,130 +492,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/dart/" rel="tag"># Dart</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/06/29/flutter-memory/" rel="prev" title="(译) 使用 DevTools 分析 Flutter 内存">
-      <i class="fa fa-chevron-left"></i> (译) 使用 DevTools 分析 Flutter 内存
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/01/vue-toast-not-show/" rel="next" title="Vant Toast 无法显示的问题">
-      Vant Toast 无法显示的问题 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/06/29/flutter-memory/" rel="prev" title="(译) 使用 DevTools 分析 Flutter 内存">
+                  <i class="fa fa-chevron-left"></i> (译) 使用 DevTools 分析 Flutter 内存
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/01/vue-toast-not-show/" rel="next" title="Vant Toast 无法显示的问题">
+                  Vant Toast 无法显示的问题 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dart-VM-是如何运行代码的？"><span class="nav-number">1.</span> <span class="nav-text">Dart VM 是如何运行代码的？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JIT-模式源码运行"><span class="nav-number">1.1.</span> <span class="nav-text">JIT 模式源码运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从-snapshot-运行"><span class="nav-number">1.2.</span> <span class="nav-text">从 snapshot 运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从-AppJIT-snapshot-运行"><span class="nav-number">1.3.</span> <span class="nav-text">从 AppJIT snapshot 运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从-AppAOT-snapshot-运行"><span class="nav-number">1.4.</span> <span class="nav-text">从 AppAOT snapshot 运行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Runtime-System"><span class="nav-number">2.</span> <span class="nav-text">Runtime System</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Object-Model"><span class="nav-number">3.</span> <span class="nav-text">Object Model</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -571,29 +538,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -602,22 +561,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2020/06/30/dartvm/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

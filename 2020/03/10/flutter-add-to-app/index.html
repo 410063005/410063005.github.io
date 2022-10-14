@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,21 +14,19 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="简单分析下 Flutter 如何集成到现有 Android 应用中。">
-<meta name="keywords" content="Flutter">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="简单分析下 Flutter 如何集成到现有 Android 应用中。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flutter 应用集成浅析">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/03/10/flutter-add-to-app/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="简单分析下 Flutter 如何集成到现有 Android 应用中。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15843459718378.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15843474921970.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15837916714301.jpg">
@@ -37,78 +36,52 @@
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15839996052765.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15840141266883.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15840143123117.jpg">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.047Z">
+<meta property="article:published_time" content="2020-03-09T20:07:50.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.047Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Flutter">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Flutter 应用集成浅析">
-<meta name="twitter:description" content="简单分析下 Flutter 如何集成到现有 Android 应用中。">
 <meta name="twitter:image" content="http://www.sunmoonblog.com/images/15843459718378.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/03/10/flutter-add-to-app/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Flutter 应用集成浅析 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2020/03/10/flutter-add-to-app/","path":"2020/03/10/flutter-add-to-app/","title":"Flutter 应用集成浅析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Flutter 应用集成浅析 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -122,19 +95,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -145,23 +107,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -169,61 +130,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%A7%E7%89%A9%E9%9B%86%E6%88%90"><span class="nav-number">2.</span> <span class="nav-text">产物集成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E9%9B%86%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">源码集成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#build-gradle"><span class="nav-number">4.</span> <span class="nav-text">build.gradle</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#flutter-gradle"><span class="nav-number">5.</span> <span class="nav-text">flutter.gradle</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-Flutter-Task"><span class="nav-number">5.1.</span> <span class="nav-text">添加 Flutter Task</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#addFlutterDeps"><span class="nav-number">5.1.1.</span> <span class="nav-text">addFlutterDeps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#configurePlugins"><span class="nav-number">5.1.2.</span> <span class="nav-text">configurePlugins</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-Flutter-Dependency"><span class="nav-number">5.2.</span> <span class="nav-text">添加 Flutter Dependency</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5"><span class="nav-number">6.</span> <span class="nav-text">实践</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%A4%B1%E8%B4%A5-Cause-assert-appProject-x3D-null"><span class="nav-number">6.1.</span> <span class="nav-text">编译失败 Cause: assert appProject !&#x3D; null</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%BE%E4%B8%8D%E5%88%B0-libflutter-so-%E6%88%96-libapp-so"><span class="nav-number">6.2.</span> <span class="nav-text">找不到  libflutter.so 或 libapp.so</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/03/10/flutter-add-to-app/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Flutter 应用集成浅析 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Flutter 应用集成浅析
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-03-10 04:07:50" itemprop="dateCreated datePublished" datetime="2020-03-10T04:07:50+08:00">2020-03-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2020-03-10 04:07:50" itemprop="dateCreated datePublished" datetime="2020-03-10T04:07:50+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2020/03/10/flutter-add-to-app/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/03/10/flutter-add-to-app/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -232,10 +274,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>简单分析下 Flutter 如何集成到现有 Android 应用中。</p>
-<a id="more"></a>
+<span id="more"></span>
+
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>截止目前 Flutter (1.12.13+hotfix.5)，集成到 Android 应用已经非常简单了。</p>
 <blockquote>
 <p>Flutter can be embedded into your existing Android application piecemeal, as a source code Gradle subproject or as AARs.</p>
@@ -244,31 +285,37 @@
 <ul>
 <li>Android Studio 3.6 + Flutter IntelliJ plugin (version 42及以上) 可以方便快速地自动集成 Flutter 模块</li>
 <li>Flutter 的 Android 引擎使用 Java 8 特性，所以要记得开启 1.8 兼容，否则会提示 “default interface methods” 问题</li>
-<li><a href="https://flutter.dev/docs/development/add-to-app/android/project-setup#option-b---depend-on-the-modules-source-code" target="_blank" rel="noopener">源码集成</a> 时注意 Android 工程和 Flutter 工程在同级目录下</li>
+<li><a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/add-to-app/android/project-setup#option-b---depend-on-the-modules-source-code">源码集成</a> 时注意 Android 工程和 Flutter 工程在同级目录下</li>
 <li>注意编译模式及CPU架构，不匹配的话会出现找不到 <code>libflutter.so</code> 的问题</li>
 <li>Flutter 的 AOT(ahead of time) 编译产物只支持 <code>armeabi-v7a</code> 和 <code>arm64-v8a</code>，x86 下可进行 debug (Just-In-Time, JIT 模式)，但不能安装 release 包</li>
 </ul>
-<h1 id="产物集成"><a href="#产物集成" class="headerlink" title="产物集成"></a>产物集成</h1><p>产物集成相比源码集成更简单。主要步骤如下，具体过程可参考<a href="https://flutter.dev/docs/development/add-to-app/android/project-setup#create-a-flutter-module" target="_blank" rel="noopener">官方文档</a>。</p>
+<h1 id="产物集成"><a href="#产物集成" class="headerlink" title="产物集成"></a>产物集成</h1><p>产物集成相比源码集成更简单。主要步骤如下，具体过程可参考<a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/add-to-app/android/project-setup#create-a-flutter-module">官方文档</a>。</p>
 <p>第一步，生成 AAR。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd flutter_project</span><br><span class="line">flutter build aar</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd flutter_project</span><br><span class="line">flutter build aar</span><br></pre></td></tr></table></figure>
+
 <p>缺省编译所有模式下的产物，包括 debug, profile 和 release。不想编译 profile 模式产物的话，加上 <code>--no-profile</code> 即可。</p>
 <p>另外注意编译 AAR 有限制，仅能为 plugin 或 module 工程编译 AAR 产物，否则提示如下错误。</p>
 <p><img src="/images/15843459718378.jpg" alt="-w541"></p>
 <p>第二步，添加产物仓库及依赖。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">  // AAR 产物本地仓库</span><br><span class="line">  maven &#123;</span><br><span class="line">      url &apos;/Users/user/wd/xyz/build/host/outputs/repo&apos;</span><br><span class="line">  &#125;</span><br><span class="line">  // Flutter 框架官方仓库</span><br><span class="line">  maven &#123;</span><br><span class="line">      url &apos;http://download.flutter.io&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  debugImplementation &apos;com.tencent.xyz:flutter_debug:1.0</span><br><span class="line">  profileImplementation &apos;com.tencent.xyz:flutter_profile:1.0</span><br><span class="line">  releaseImplementation &apos;com.tencent.xyz:flutter_release:1.0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">  // AAR 产物本地仓库</span><br><span class="line">  maven &#123;</span><br><span class="line">      url &#x27;/Users/user/wd/xyz/build/host/outputs/repo&#x27;</span><br><span class="line">  &#125;</span><br><span class="line">  // Flutter 框架官方仓库</span><br><span class="line">  maven &#123;</span><br><span class="line">      url &#x27;http://download.flutter.io&#x27;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  debugImplementation &#x27;com.tencent.xyz:flutter_debug:1.0</span><br><span class="line">  profileImplementation &#x27;com.tencent.xyz:flutter_profile:1.0</span><br><span class="line">  releaseImplementation &#x27;com.tencent.xyz:flutter_release:1.0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><img src="/images/15843474921970.jpg" alt="-w700"></p>
 <h1 id="源码集成"><a href="#源码集成" class="headerlink" title="源码集成"></a>源码集成</h1><p>第一步，创建 Flutter 项目。在 host app 的同级目录下创建 <code>my_flutter</code> 项目：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd some/path/</span><br><span class="line">$ flutter create -t module --org com.example my_flutter</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd some/path/</span><br><span class="line">$ flutter create -t module --org com.example my_flutter</span><br></pre></td></tr></table></figure>
+
 <p>第二步，引入 Flutter 项目并作为模块。在 host app 的 <code>settings.gradle</code> 文件中添加如下配置：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">setBinding(<span class="keyword">new</span> Binding([<span class="string">gradle:</span> <span class="keyword">this</span>]))                                 <span class="comment">// new</span></span><br><span class="line">evaluate(<span class="keyword">new</span> File(                                                      <span class="comment">// new</span></span><br><span class="line">  settingsDir.parentFile,                                               <span class="comment">// new</span></span><br><span class="line">  <span class="string">'my_flutter/.android/include_flutter.groovy'</span>                          <span class="comment">// new</span></span><br><span class="line">)) </span><br><span class="line">include <span class="string">':my_flutter'</span></span><br><span class="line">project(<span class="string">':my_flutter'</span>).projectDir = <span class="keyword">new</span> File(<span class="string">'../my_flutter'</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">setBinding(<span class="keyword">new</span> Binding([<span class="attr">gradle:</span> <span class="variable language_">this</span>]))                                 <span class="comment">// new</span></span><br><span class="line">evaluate(<span class="keyword">new</span> File(                                                      <span class="comment">// new</span></span><br><span class="line">  settingsDir.parentFile,                                               <span class="comment">// new</span></span><br><span class="line">  <span class="string">&#x27;my_flutter/.android/include_flutter.groovy&#x27;</span>                          <span class="comment">// new</span></span><br><span class="line">)) </span><br><span class="line">include <span class="string">&#x27;:my_flutter&#x27;</span></span><br><span class="line">project(<span class="string">&#x27;:my_flutter&#x27;</span>).projectDir = <span class="keyword">new</span> File(<span class="string">&#x27;../my_flutter&#x27;</span>) </span><br></pre></td></tr></table></figure>
+
 <p>这段配置的作用不妨视作黑魔法，其作用如下：</p>
 <ul>
 <li>将 <code>my_flutter</code> <strong>Flutter Project</strong> 作为名为 <code>:flutter</code> 的 <strong>Android Library Module</strong>，引入到当前 <strong>Android Project</strong></li>
 <li>查找并保存 <code>my_flutter</code> 依赖的 Flutter 插件</li>
 </ul>
 <p>第三步，添加对 <code>:flutter</code> module 的依赖。在 host app 的 <code>build.gradle</code> 中加上以下配置：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  implementation project(<span class="string">':flutter'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  implementation project(<span class="string">&#x27;:flutter&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>以上是手工操作步骤。在 Android 3.6 中可以自动操作，同样也会产生跟上面相同的配置。</p>
 <p>Android Studio 3.6 中打开 host app，并新建一个 Flutter Module：</p>
 <p><img src="/images/15837916714301.jpg" alt="-w633"></p>
@@ -276,18 +323,21 @@
 <p><img src="/images/15837922861555.jpg" alt="-w1185"></p>
 <p>可见，无论手工操作还是自动操作，源码集成的关键在于这几个脚本：</p>
 <ul>
-<li><del>my_flutter/.android/include_flutter.groovy</del> - 黑魔法，用于在 Android 工程引入 Flutter 工程，我们略过</li>
+<li><del>my_flutter&#x2F;.android&#x2F;include_flutter.groovy</del> - 黑魔法，用于在 Android 工程引入 Flutter 工程，我们略过</li>
 <li><code>my_flutter/.android/Flutter/build.gradle</code> - 这个脚本决定 Flutter 工程如何构建，它引入 Flutter SDK 中的 <code>flutter.gradle</code> 脚本</li>
 <li><code>&lt;Flutter SDK&gt;/packages/flutter_tools/gradle/flutter.gradle</code> - 集成 Flutter 工程的核心</li>
 </ul>
 <p>接下来我将分析 <code>build.gradle</code> 和 <code>flutter.gradle</code> 两个脚本是如何将 Flutter 集成到 Android 应用的。</p>
 <h1 id="build-gradle"><a href="#build-gradle" class="headerlink" title="build.gradle"></a>build.gradle</h1><p>先来分析 <code>my_flutter/.android/Flutter/build.gradle</code>。</p>
 <p>第一步，加载并解析 <code>.android</code> 目录下的 <code>local.properties</code> 文件。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 加载 .android 目录下的 local.properties 文件</span></span><br><span class="line"><span class="keyword">def</span> localProperties = <span class="keyword">new</span> Properties()</span><br><span class="line"><span class="keyword">def</span> localPropertiesFile = <span class="keyword">new</span> File(buildscript.sourceFile.parentFile.parentFile, <span class="string">'local.properties'</span>)</span><br><span class="line"><span class="keyword">if</span> (localPropertiesFile.exists()) &#123;</span><br><span class="line">    localPropertiesFile.withReader(<span class="string">'UTF-8'</span>) &#123; reader -&gt;</span><br><span class="line">        localProperties.load(reader)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析 flutter.sdk(必选)</span></span><br><span class="line"><span class="keyword">def</span> flutterRoot = localProperties.getProperty(<span class="string">'flutter.sdk'</span>)</span><br><span class="line"><span class="keyword">if</span> (flutterRoot == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> GradleException(<span class="string">"Flutter SDK not found. Define location with flutter.sdk in the local.properties file."</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析 flutter.versionCode(可选)</span></span><br><span class="line"><span class="keyword">def</span> flutterVersionCode = localProperties.getProperty(<span class="string">'flutter.versionCode'</span>)</span><br><span class="line"><span class="keyword">if</span> (flutterVersionCode == <span class="literal">null</span>) &#123;</span><br><span class="line">    flutterVersionCode = <span class="string">'1'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析 flutter.versionName(可选)</span></span><br><span class="line"><span class="keyword">def</span> flutterVersionName = localProperties.getProperty(<span class="string">'flutter.versionName'</span>)</span><br><span class="line"><span class="keyword">if</span> (flutterVersionName == <span class="literal">null</span>) &#123;</span><br><span class="line">    flutterVersionName = <span class="string">'1.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 加载 .android 目录下的 local.properties 文件</span></span><br><span class="line"><span class="keyword">def</span> localProperties = <span class="keyword">new</span> Properties()</span><br><span class="line"><span class="keyword">def</span> localPropertiesFile = <span class="keyword">new</span> File(buildscript.sourceFile.parentFile.parentFile, <span class="string">&#x27;local.properties&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> (localPropertiesFile.exists()) &#123;</span><br><span class="line">    localPropertiesFile.withReader(<span class="string">&#x27;UTF-8&#x27;</span>) &#123; reader -&gt;</span><br><span class="line">        localProperties.load(reader)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析 flutter.sdk(必选)</span></span><br><span class="line"><span class="keyword">def</span> flutterRoot = localProperties.getProperty(<span class="string">&#x27;flutter.sdk&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> (flutterRoot == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> GradleException(<span class="string">&quot;Flutter SDK not found. Define location with flutter.sdk in the local.properties file.&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析 flutter.versionCode(可选)</span></span><br><span class="line"><span class="keyword">def</span> flutterVersionCode = localProperties.getProperty(<span class="string">&#x27;flutter.versionCode&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> (flutterVersionCode == <span class="literal">null</span>) &#123;</span><br><span class="line">    flutterVersionCode = <span class="string">&#x27;1&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析 flutter.versionName(可选)</span></span><br><span class="line"><span class="keyword">def</span> flutterVersionName = localProperties.getProperty(<span class="string">&#x27;flutter.versionName&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> (flutterVersionName == <span class="literal">null</span>) &#123;</span><br><span class="line">    flutterVersionName = <span class="string">&#x27;1.0&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>第二步，引入 <code>flutter.gradle</code> 脚本并通过 <code>flutter</code> 插件指定 <strong>Flutter Project</strong> 源码位置。<code>flutter</code> 插件来自 <code>flutter.gradle</code> 脚本中的 <code>FlutterPlugin</code>。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">from:</span> <span class="string">"$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定的 Flutter 源码路径</span></span><br><span class="line">flutter &#123;</span><br><span class="line">    source <span class="string">'../..'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<h1 id="flutter-gradle"><a href="#flutter-gradle" class="headerlink" title="flutter.gradle"></a><a href="https://github.com/flutter/flutter/blob/master/packages/flutter_tools/gradle/flutter.gradle" target="_blank" rel="noopener">flutter.gradle</a></h1><p>再来看 <code>&lt;Flutter SDK&gt;/packages/flutter_tools/gradle/flutter.gradle</code>。<code>flutter</code> 插件的具体实现在 <code>apply()</code> 方法。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 应用 FlutterPlugin</span></span><br><span class="line">apply <span class="string">plugin:</span> FlutterPlugin</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义名为 flutter 的 FlutterPlugin 插件</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlutterPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line">    <span class="keyword">private</span> Project project</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> apply(Project project) &#123;</span><br><span class="line">        <span class="keyword">this</span>.project = project</span><br><span class="line">        <span class="comment">// 创建名为 flutter 的 FlutterExtension</span></span><br><span class="line">        project.extensions.create(<span class="string">"flutter"</span>, FlutterExtension) </span><br><span class="line">        <span class="comment">// 添加 Flutter Task</span></span><br><span class="line">        project.afterEvaluate <span class="keyword">this</span>.&amp;addFlutterTasks</span><br><span class="line">        <span class="comment">// 配置 APK。修改 project.android (android插件)的配置</span></span><br><span class="line">        ...</span><br><span class="line">        <span class="comment">// 获取 Flutter 相关信息</span></span><br><span class="line">        <span class="comment">// 添加 Flutter Dependency</span></span><br><span class="line">        project.android.buildTypes.each <span class="keyword">this</span>.&amp;addFlutterDependencies</span><br><span class="line">        project.android.buildTypes.whenObjectAdded <span class="keyword">this</span>.&amp;addFlutterDependencies</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">from:</span> <span class="string">&quot;$flutterRoot/packages/flutter_tools/gradle/flutter.gradle&quot;</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定的 Flutter 源码路径</span></span><br><span class="line">flutter &#123;</span><br><span class="line">    source <span class="string">&#x27;../..&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h1 id="flutter-gradle"><a href="#flutter-gradle" class="headerlink" title="flutter.gradle"></a><a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/blob/master/packages/flutter_tools/gradle/flutter.gradle">flutter.gradle</a></h1><p>再来看 <code>&lt;Flutter SDK&gt;/packages/flutter_tools/gradle/flutter.gradle</code>。<code>flutter</code> 插件的具体实现在 <code>apply()</code> 方法。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 应用 FlutterPlugin</span></span><br><span class="line">apply <span class="attr">plugin:</span> FlutterPlugin</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义名为 flutter 的 FlutterPlugin 插件</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FlutterPlugin</span> <span class="keyword">implements</span> <span class="title class_">Plugin</span>&lt;Project&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> Project project</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="type">void</span> apply(Project project) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.project = project</span><br><span class="line">        <span class="comment">// 创建名为 flutter 的 FlutterExtension</span></span><br><span class="line">        project.extensions.create(<span class="string">&quot;flutter&quot;</span>, FlutterExtension) </span><br><span class="line">        <span class="comment">// 添加 Flutter Task</span></span><br><span class="line">        project.afterEvaluate <span class="variable language_">this</span>.&amp;addFlutterTasks</span><br><span class="line">        <span class="comment">// 配置 APK。修改 project.android (android插件)的配置</span></span><br><span class="line">        ...</span><br><span class="line">        <span class="comment">// 获取 Flutter 相关信息</span></span><br><span class="line">        <span class="comment">// 添加 Flutter Dependency</span></span><br><span class="line">        project.android.buildTypes.each <span class="variable language_">this</span>.&amp;addFlutterDependencies</span><br><span class="line">        project.android.buildTypes.whenObjectAdded <span class="variable language_">this</span>.&amp;addFlutterDependencies</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><code>apply()</code> 主要流程概括如下：</p>
 <ul>
 <li>创建 FlutterExtension。这个插件很简单，只包括<ul>
@@ -337,44 +387,51 @@
 </ul>
 <hr>
 <h2 id="添加-Flutter-Task"><a href="#添加-Flutter-Task" class="headerlink" title="添加 Flutter Task"></a>添加 Flutter Task</h2><p><code>addFlutterTasks()</code> 是最复杂的方法。精简后的代码如下：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> addFlutterTasks(Project project) &#123;</span><br><span class="line">    <span class="comment">// 1. 参数检查</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 2. 从 `gradle.properties` 获取各种参数</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 3. 定义 addFlutterDeps 匿名方法</span></span><br><span class="line">    <span class="keyword">def</span> addFlutterDeps = &#123; variant -&gt; </span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 4. 为所有 applicationVariants 或 libraryVariants 添加 Flutter 依赖</span></span><br><span class="line">    <span class="keyword">if</span> (project.android.hasProperty(<span class="string">"applicationVariants"</span>)) &#123;</span><br><span class="line">        project.android.applicationVariants.all addFlutterDeps</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        project.android.libraryVariants.all addFlutterDeps</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 5. 配置插件依赖</span></span><br><span class="line">    configurePlugins()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">void</span> addFlutterTasks(Project project) &#123;</span><br><span class="line">    <span class="comment">// 1. 参数检查</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 2. 从 `gradle.properties` 获取各种参数</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 3. 定义 addFlutterDeps 匿名方法</span></span><br><span class="line">    <span class="keyword">def</span> addFlutterDeps = &#123; variant -&gt; </span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 4. 为所有 applicationVariants 或 libraryVariants 添加 Flutter 依赖</span></span><br><span class="line">    <span class="keyword">if</span> (project.android.hasProperty(<span class="string">&quot;applicationVariants&quot;</span>)) &#123;</span><br><span class="line">        project.android.applicationVariants.all addFlutterDeps</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        project.android.libraryVariants.all addFlutterDeps</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 5. 配置插件依赖</span></span><br><span class="line">    configurePlugins()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>第3步和第4步处理库和资源</li>
 <li>第5步处理插件</li>
 </ul>
 <h3 id="addFlutterDeps"><a href="#addFlutterDeps" class="headerlink" title="addFlutterDeps"></a>addFlutterDeps</h3><p>首先看第3步 <code>addFlutterDeps</code> 的创建。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 创建 compileTask。FlutterTask 实际是对 flutter build 命令的包装</span></span><br><span class="line">FlutterTask compileTask = project.tasks.create(<span class="string">name:</span> taskName, <span class="string">type:</span> FlutterTask) &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 创建 packFlutterAppAotTask。将第1步中的编译结果打包成 libs.jar 文件</span></span><br><span class="line">Task packFlutterAppAotTask = project.tasks.create(<span class="string">name:</span> <span class="string">"packLibs$&#123;FLUTTER_BUILD_PREFIX&#125;$&#123;variant.name.capitalize()&#125;"</span>, <span class="string">type:</span> Jar) &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 将第2步生成的 libs.jar 文件添加为依赖 </span></span><br><span class="line">addApiDependencies(project, variant.name, project.files &#123;</span><br><span class="line">    packFlutterAppAotTask</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. 创建 copyFlutterAssetsTask。</span></span><br><span class="line">Task copyFlutterAssetsTask = project.tasks.create(</span><br><span class="line"><span class="symbol">    name:</span> <span class="string">"copyFlutterAssets$&#123;variant.name.capitalize()&#125;"</span>,</span><br><span class="line"><span class="symbol">    type:</span> Copy,</span><br><span class="line">) &#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Flutter 项目可能作为插件编译或子项目编译(分别对应AAR产物集成和源码集成)</span></span><br><span class="line"><span class="comment">//  a) 当作为插件编译时，编译产物为 AAR</span></span><br><span class="line"><span class="comment">//  b) 当作为子项目编译时，编译产物为 APK</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 作为插件编译和作为子项目编译时对 assets 的处理是不一样的</span></span><br><span class="line"><span class="comment">// 第5步和第6步分别对这两种情况进行处理</span></span><br><span class="line"><span class="keyword">boolean</span> isUsedAsSubproject = ...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 5. 处理作为插件编译时的 assets 拷贝</span></span><br><span class="line"><span class="keyword">if</span> (!isUsedAsSubproject) &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 6. 处理作为子项目编译时的 assets 拷贝</span></span><br><span class="line"><span class="comment">// Flutter module included as a subproject in add to app.</span></span><br><span class="line">Project appProject = project.rootProject.findProject(<span class="string">':app'</span>)</span><br><span class="line">appProject.afterEvaluate &#123; ... &#125;</span><br></pre></td></tr></table></figure>
-<p><code>FlutterTask</code> 继承自 <code>BaseFlutterTask</code>。<code>BaseFlutterTask</code> 实际是对 <code>flutter build</code> 命令的包装，具体包装过程可以参数 <a href="https://github.com/flutter/flutter/blob/master/packages/flutter_tools/gradle/flutter.gradle#L819" target="_blank" rel="noopener">BaseFlutterTask.buildBundle()</a>。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 创建 compileTask。FlutterTask 实际是对 flutter build 命令的包装</span></span><br><span class="line">FlutterTask compileTask = project.tasks.create(<span class="attr">name:</span> taskName, <span class="attr">type:</span> FlutterTask) &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 创建 packFlutterAppAotTask。将第1步中的编译结果打包成 libs.jar 文件</span></span><br><span class="line">Task packFlutterAppAotTask = project.tasks.create(<span class="attr">name:</span> <span class="string">&quot;packLibs$&#123;FLUTTER_BUILD_PREFIX&#125;$&#123;variant.name.capitalize()&#125;&quot;</span>, <span class="attr">type:</span> Jar) &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 将第2步生成的 libs.jar 文件添加为依赖 </span></span><br><span class="line">addApiDependencies(project, variant.name, project.files &#123;</span><br><span class="line">    packFlutterAppAotTask</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. 创建 copyFlutterAssetsTask。</span></span><br><span class="line">Task copyFlutterAssetsTask = project.tasks.create(</span><br><span class="line">    <span class="symbol">name:</span> <span class="string">&quot;copyFlutterAssets$&#123;variant.name.capitalize()&#125;&quot;</span>,</span><br><span class="line">    <span class="symbol">type:</span> Copy,</span><br><span class="line">) &#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Flutter 项目可能作为插件编译或子项目编译(分别对应AAR产物集成和源码集成)</span></span><br><span class="line"><span class="comment">//  a) 当作为插件编译时，编译产物为 AAR</span></span><br><span class="line"><span class="comment">//  b) 当作为子项目编译时，编译产物为 APK</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 作为插件编译和作为子项目编译时对 assets 的处理是不一样的</span></span><br><span class="line"><span class="comment">// 第5步和第6步分别对这两种情况进行处理</span></span><br><span class="line"><span class="type">boolean</span> isUsedAsSubproject = ...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 5. 处理作为插件编译时的 assets 拷贝</span></span><br><span class="line"><span class="keyword">if</span> (!isUsedAsSubproject) &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 6. 处理作为子项目编译时的 assets 拷贝</span></span><br><span class="line"><span class="comment">// Flutter module included as a subproject in add to app.</span></span><br><span class="line">Project appProject = project.rootProject.findProject(<span class="string">&#x27;:app&#x27;</span>)</span><br><span class="line">appProject.afterEvaluate &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>FlutterTask</code> 继承自 <code>BaseFlutterTask</code>。<code>BaseFlutterTask</code> 实际是对 <code>flutter build</code> 命令的包装，具体包装过程可以参数 <a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/blob/master/packages/flutter_tools/gradle/flutter.gradle#L819">BaseFlutterTask.buildBundle()</a>。</p>
 <h3 id="configurePlugins"><a href="#configurePlugins" class="headerlink" title="configurePlugins"></a>configurePlugins</h3><p>再来看 <code>configurePlugins()</code> 如何配置插件依赖。仍然分两种情况处理：源码集成和产物集成。代码如下：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Configures the Flutter plugin dependencies.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The plugins are added to pubspec.yaml. Then, upon running `flutter pub get`,</span></span><br><span class="line"><span class="comment"> * the tool generates a `.flutter-plugins` file, which contains a 1:1 map to each plugin location.</span></span><br><span class="line"><span class="comment"> * Finally, the project's `settings.gradle` loads each plugin's android directory as a subproject.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> configurePlugins() &#123;</span><br><span class="line">    <span class="comment">// 第1种情况，源码集成</span></span><br><span class="line">    <span class="comment">// 配置源码集成时的插件</span></span><br><span class="line">    <span class="keyword">if</span> (!buildPluginAsAar()) &#123;</span><br><span class="line">        <span class="comment">// 1. 将 plugin 工程添加为 Android 工程的依赖</span></span><br><span class="line">        getPluginList().each <span class="keyword">this</span>.&amp;configurePluginProject</span><br><span class="line">        <span class="comment">// 2. 将 plugin 工程的依赖添加为 Android 工程的依赖</span></span><br><span class="line">        getPluginDependencies().each <span class="keyword">this</span>.&amp;configurePluginDependencies</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第2种情况，产物集成</span></span><br><span class="line">    <span class="comment">// 配置产物集成时的插件</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 1. 将 plugin 工程的编译输出目录添加为 Android 工程的 maven 库</span></span><br><span class="line">    project.repositories &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            url <span class="string">"$&#123;getPluginBuildDir()&#125;/outputs/repo"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 2. 将 plugin AAR 产物添加为 Android 工程的依赖</span></span><br><span class="line">    getPluginList().each &#123; pluginName, pluginPath -&gt;</span><br><span class="line">        configurePluginAar(pluginName, pluginPath, project)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Configures the Flutter plugin dependencies.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The plugins are added to pubspec.yaml. Then, upon running `flutter pub get`,</span></span><br><span class="line"><span class="comment"> * the tool generates a `.flutter-plugins` file, which contains a 1:1 map to each plugin location.</span></span><br><span class="line"><span class="comment"> * Finally, the project&#x27;s `settings.gradle` loads each plugin&#x27;s android directory as a subproject.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="type">void</span> configurePlugins() &#123;</span><br><span class="line">    <span class="comment">// 第1种情况，源码集成</span></span><br><span class="line">    <span class="comment">// 配置源码集成时的插件</span></span><br><span class="line">    <span class="keyword">if</span> (!buildPluginAsAar()) &#123;</span><br><span class="line">        <span class="comment">// 1. 将 plugin 工程添加为 Android 工程的依赖</span></span><br><span class="line">        getPluginList().each <span class="variable language_">this</span>.&amp;configurePluginProject</span><br><span class="line">        <span class="comment">// 2. 将 plugin 工程的依赖添加为 Android 工程的依赖</span></span><br><span class="line">        getPluginDependencies().each <span class="variable language_">this</span>.&amp;configurePluginDependencies</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第2种情况，产物集成</span></span><br><span class="line">    <span class="comment">// 配置产物集成时的插件</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 1. 将 plugin 工程的编译输出目录添加为 Android 工程的 maven 库</span></span><br><span class="line">    project.repositories &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            url <span class="string">&quot;$&#123;getPluginBuildDir()&#125;/outputs/repo&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 2. 将 plugin AAR 产物添加为 Android 工程的依赖</span></span><br><span class="line">    getPluginList().each &#123; pluginName, pluginPath -&gt;</span><br><span class="line">        configurePluginAar(pluginName, pluginPath, project)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>另外，注释中提到了几个很重要的信息：</p>
 <blockquote>
 <p>插件在 pubspec.yaml 中添加。当运行 <code>flutter pub get</code> 命令时，工具会生成 <code>.flutter-plugins</code> 和 <code>.flutter-plugins-dependencies</code> 文件。<code>.flutter-plugins</code> 包含每个插件的位置，<code>.flutter-plugins-dependencies</code> 包含每个插件的依赖项</p>
 <p>Android 项目的 <code>settings.gradle</code> 文件会加载每个插件为子工程</p>
 </blockquote>
 <p>以我们的项目为例。<code>.flutter-plugins</code> 文件内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># This is a generated file; do not edit or check into version control.</span><br><span class="line">flutter_integration=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_integration-0.0.1/</span><br><span class="line">flutter_mmkv_cache=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_mmkv_cache-0.0.2/</span><br><span class="line">path_provider=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.3.0/</span><br><span class="line">sensors=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/sensors-0.4.1+8/</span><br><span class="line">sqflite=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.7+1/</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># This is a generated file; do not edit or check into version control.</span><br><span class="line">flutter_integration=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_integration-0.0.1/</span><br><span class="line">flutter_mmkv_cache=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_mmkv_cache-0.0.2/</span><br><span class="line">path_provider=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.3.0/</span><br><span class="line">sensors=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/sensors-0.4.1+8/</span><br><span class="line">sqflite=/Users/abc/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.7+1/</span><br></pre></td></tr></table></figure>
+
 <p>该项目在 Android Studio 中看到的工程结构如下：</p>
 <p><img src="/images/15839842720995.jpg" alt="-w249"></p>
-<h2 id="添加-Flutter-Dependency"><a href="#添加-Flutter-Dependency" class="headerlink" title="添加 Flutter Dependency"></a>添加 Flutter Dependency</h2><p><font color="red"><code>apply()</code> 的另一个要点是添加 Flutter 依赖，由 <code>addFlutterDependencies()</code> 实现</font>。相比添加 Flutter Task，添加 Flutter 依赖则简单得多。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlutterPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">apply</span><span class="params">(Project project)</span> </span>&#123;</span><br><span class="line">        ...   </span><br><span class="line">        project.android.buildTypes.each <span class="keyword">this</span>.&amp;addFlutterDependencies</span><br><span class="line">        project.android.buildTypes.whenObjectAdded <span class="keyword">this</span>.&amp;addFlutterDependencies</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * addFlutterDependencies() 方法为 Flutter 工程添加 embedding 和 libflutter.so 依赖 </span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * Adds the dependencies required by the Flutter project.</span></span><br><span class="line"><span class="comment">     * This includes:</span></span><br><span class="line"><span class="comment">     *    1. The embedding</span></span><br><span class="line"><span class="comment">     *    2. libflutter.so</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addFlutterDependencies</span><span class="params">(buildType)</span> </span>&#123;</span><br><span class="line">        String flutterBuildMode = buildModeFor(buildType)</span><br><span class="line">        <span class="keyword">if</span> (!supportsBuildMode(flutterBuildMode)) &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 1. 添加 Flutter 引擎仓库，默认使用 MAVEN_REPO </span></span><br><span class="line">        <span class="comment">// MAVEN_REPO 仓库地址 http://download.flutter.io</span></span><br><span class="line">        String repository = useLocalEngine()</span><br><span class="line">            ? project.property(<span class="string">'local-engine-repo'</span>)</span><br><span class="line">            : MAVEN_REPO</span><br><span class="line"></span><br><span class="line">        project.rootProject.allprojects &#123;</span><br><span class="line">            repositories &#123;</span><br><span class="line">                maven &#123;</span><br><span class="line">                    url repository</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 2. 添加 embedding 依赖</span></span><br><span class="line">        <span class="comment">// Add the embedding dependency.</span></span><br><span class="line">        addApiDependencies(project, buildType.name,</span><br><span class="line">                <span class="string">"io.flutter:flutter_embedding_$flutterBuildMode:$engineVersion"</span>)</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">        platforms.each &#123; platform -&gt;</span><br><span class="line">            String arch = PLATFORM_ARCH_MAP[platform].replace(<span class="string">"-"</span>, <span class="string">"_"</span>)</span><br><span class="line">            <span class="comment">// 3. 添加 libflutter.so 依赖</span></span><br><span class="line">            <span class="comment">// Add the `libflutter.so` dependency.</span></span><br><span class="line">            addApiDependencies(project, buildType.name,</span><br><span class="line">                    <span class="string">"io.flutter:$&#123;arch&#125;_$flutterBuildMode:$engineVersion"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="添加-Flutter-Dependency"><a href="#添加-Flutter-Dependency" class="headerlink" title="添加 Flutter Dependency"></a>添加 Flutter Dependency</h2><p><font color='red'><code>apply()</code> 的另一个要点是添加 Flutter 依赖，由 <code>addFlutterDependencies()</code> 实现</font>。相比添加 Flutter Task，添加 Flutter 依赖则简单得多。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FlutterPlugin</span> <span class="keyword">implements</span> <span class="title class_">Plugin</span>&lt;Project&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">apply</span><span class="params">(Project project)</span> &#123;</span><br><span class="line">        ...   </span><br><span class="line">        project.android.buildTypes.each <span class="built_in">this</span>.&amp;addFlutterDependencies</span><br><span class="line">        project.android.buildTypes.whenObjectAdded <span class="built_in">this</span>.&amp;addFlutterDependencies</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * addFlutterDependencies() 方法为 Flutter 工程添加 embedding 和 libflutter.so 依赖 </span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * Adds the dependencies required by the Flutter project.</span></span><br><span class="line"><span class="comment">     * This includes:</span></span><br><span class="line"><span class="comment">     *    1. The embedding</span></span><br><span class="line"><span class="comment">     *    2. libflutter.so</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">addFlutterDependencies</span><span class="params">(buildType)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">flutterBuildMode</span> <span class="operator">=</span> buildModeFor(buildType)</span><br><span class="line">        <span class="keyword">if</span> (!supportsBuildMode(flutterBuildMode)) &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 1. 添加 Flutter 引擎仓库，默认使用 MAVEN_REPO </span></span><br><span class="line">        <span class="comment">// MAVEN_REPO 仓库地址 http://download.flutter.io</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">repository</span> <span class="operator">=</span> useLocalEngine()</span><br><span class="line">            ? project.property(<span class="string">&#x27;local-engine-repo&#x27;</span>)</span><br><span class="line">            : MAVEN_REPO</span><br><span class="line"></span><br><span class="line">        project.rootProject.allprojects &#123;</span><br><span class="line">            repositories &#123;</span><br><span class="line">                maven &#123;</span><br><span class="line">                    url repository</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 2. 添加 embedding 依赖</span></span><br><span class="line">        <span class="comment">// Add the embedding dependency.</span></span><br><span class="line">        addApiDependencies(project, buildType.name,</span><br><span class="line">                <span class="string">&quot;io.flutter:flutter_embedding_$flutterBuildMode:$engineVersion&quot;</span>)</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">        platforms.each &#123; platform -&gt;</span><br><span class="line">            <span class="type">String</span> <span class="variable">arch</span> <span class="operator">=</span> PLATFORM_ARCH_MAP[platform].replace(<span class="string">&quot;-&quot;</span>, <span class="string">&quot;_&quot;</span>)</span><br><span class="line">            <span class="comment">// 3. 添加 libflutter.so 依赖</span></span><br><span class="line">            <span class="comment">// Add the `libflutter.so` dependency.</span></span><br><span class="line">            addApiDependencies(project, buildType.name,</span><br><span class="line">                    <span class="string">&quot;io.flutter:$&#123;arch&#125;_$flutterBuildMode:$engineVersion&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><p>通过看 <code>buid.gradle</code> 和 <code>flutter.gradle</code> 源码，我们对 Flutter 如何集成到 Android 项目中有一定的了解了。现在结合两个实例来加深理解，这里以一个编译失败问题和 so 加载失败问题为例。</p>
-<h2 id="编译失败-Cause-assert-appProject-null"><a href="#编译失败-Cause-assert-appProject-null" class="headerlink" title="编译失败 Cause: assert appProject != null"></a>编译失败 Cause: assert appProject != null</h2><p>Flutter 1.12.13+hotfix.5 有一个编译失败的 <a href="https://github.com/flutter/flutter/issues/42214" target="_blank" rel="noopener">Issue #42214</a>，错误日志如下：</p>
+<h2 id="编译失败-Cause-assert-appProject-x3D-null"><a href="#编译失败-Cause-assert-appProject-x3D-null" class="headerlink" title="编译失败 Cause: assert appProject !&#x3D; null"></a>编译失败 Cause: assert appProject !&#x3D; null</h2><p>Flutter 1.12.13+hotfix.5 有一个编译失败的 <a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/issues/42214">Issue #42214</a>，错误日志如下：</p>
 <p><img src="/images/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_d5221a9a-5eea-4c5d-9c8b-8f99449e06c6.png" alt="企业微信截图_d5221a9a-5eea-4c5d-9c8b-8f99449e06"></p>
-<p>问题来源：这个问题实际上来自 <code>flutter.gradle</code> 脚本中的一处 bug， 见<a href="https://github.com/flutter/flutter/pull/41333/files" target="_blank" rel="noopener">Pull #41333</a><br>问题分析：<code>addFlutterTasks()</code> 方法中第4步存在硬编码问题，<a href="https://github.com/flutter/flutter/blob/master/packages/flutter_tools/gradle/flutter.gradle#L724" target="_blank" rel="noopener">默认所有的 app module 名为 <code>app</code></a>。实际项目中 app module 名很可能不是 <code>app</code>，所以断言失败，导致集成 Flutter 后编译出错</p>
+<p>问题来源：这个问题实际上来自 <code>flutter.gradle</code> 脚本中的一处 bug， 见<a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/pull/41333/files">Pull #41333</a><br>问题分析：<code>addFlutterTasks()</code> 方法中第4步存在硬编码问题，<a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/blob/master/packages/flutter_tools/gradle/flutter.gradle#L724">默认所有的 app module 名为 <code>app</code></a>。实际项目中 app module 名很可能不是 <code>app</code>，所以断言失败，导致集成 Flutter 后编译出错</p>
 <p>解决办法：要么将 app module 改名为 <code>app</code>，要么给本地的 <code>flutter.gradle</code> 打上如下补丁。注意要将 <code>IGame</code> 替换成实际项目名。</p>
 <p><img src="/images/15839996052765.jpg" alt="-w824"></p>
 <h2 id="找不到-libflutter-so-或-libapp-so"><a href="#找不到-libflutter-so-或-libapp-so" class="headerlink" title="找不到  libflutter.so 或 libapp.so"></a>找不到  <code>libflutter.so</code> 或 <code>libapp.so</code></h2><p>一些年代比较久远的 Android 项目中，so 往往放在 <code>lib/armeabi</code> 目录。</p>
 <p><img src="/images/15840141266883.jpg" alt="-w322"></p>
 <p>而 Flutter 的 AOT 产物只支持 <code>x86_64</code>、 <code>armeabi-v7a</code> 和 <code>arm64-v8a</code> 三种架构。另外，<strong>Flutter 的构建流程默认将会将 so 文件打包到对应的目录中</strong>，</p>
-<p><img src="/images/15840143123117.jpg" alt="-w323"><br>所以会出现找不到 <code>libflutter.so</code> 的问题。一种简单而粗暴的解决方案见 <a href="https://tech.meituan.com/2018/08/09/waimai-flutter-practice.html" target="_blank" rel="noopener">Flutter原理与实践 - 美团技术团队</a>。</p>
+<p><img src="/images/15840143123117.jpg" alt="-w323"><br>所以会出现找不到 <code>libflutter.so</code> 的问题。一种简单而粗暴的解决方案见 <a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/08/09/waimai-flutter-practice.html">Flutter原理与实践 - 美团技术团队</a>。</p>
 <p>Flutter 构建流程中 <code>packFlutterAppAotTask</code> 会将生成的 <code>app.so</code> 移动并重命名为 <code>lib/&lt;abi&gt;/libapp.so</code>。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Task packFlutterAppAotTask = project.tasks.create(</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"packLibs$&#123;FLUTTER_BUILD_PREFIX&#125;$&#123;variant.name.capitalize()&#125;"</span>, <span class="string">type:</span> Jar) &#123;</span><br><span class="line">    destinationDir libJar.parentFile</span><br><span class="line">    archiveName libJar.name</span><br><span class="line">    dependsOn compileTask</span><br><span class="line">    targetPlatforms.each &#123; targetPlatform -&gt;</span><br><span class="line">        String abi = PLATFORM_ARCH_MAP[targetPlatform]</span><br><span class="line">        from(<span class="string">"$&#123;compileTask.intermediateDir&#125;/$&#123;abi&#125;"</span>) &#123;</span><br><span class="line">            include <span class="string">"*.so"</span></span><br><span class="line">            <span class="comment">// Move `app.so` to `lib/&lt;abi&gt;/libapp.so`</span></span><br><span class="line">            rename &#123; String filename -&gt;</span><br><span class="line">                <span class="keyword">return</span> <span class="string">"lib/$&#123;abi&#125;/lib$&#123;filename&#125;"</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Task packFlutterAppAotTask = project.tasks.create(</span><br><span class="line">  <span class="symbol">name:</span> <span class="string">&quot;packLibs$&#123;FLUTTER_BUILD_PREFIX&#125;$&#123;variant.name.capitalize()&#125;&quot;</span>, <span class="attr">type:</span> Jar) &#123;</span><br><span class="line">    destinationDir libJar.parentFile</span><br><span class="line">    archiveName libJar.name</span><br><span class="line">    dependsOn compileTask</span><br><span class="line">    targetPlatforms.each &#123; targetPlatform -&gt;</span><br><span class="line">        String abi = PLATFORM_ARCH_MAP[targetPlatform]</span><br><span class="line">        from(<span class="string">&quot;$&#123;compileTask.intermediateDir&#125;/$&#123;abi&#125;&quot;</span>) &#123;</span><br><span class="line">            include <span class="string">&quot;*.so&quot;</span></span><br><span class="line">            <span class="comment">// Move `app.so` to `lib/&lt;abi&gt;/libapp.so`</span></span><br><span class="line">            rename &#123; String filename -&gt;</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;lib/$&#123;abi&#125;/lib$&#123;filename&#125;&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>修改一：注意这里的 <code>&lt;abi&gt;</code> 只支持上述提到的三种架构，并不包括 <code>armeabi</code>。我们可以修改 <code>packFlutterAppAotTask</code>，修改后将 <code>app.so</code> 移动并重命名为 <code>lib/armeabi/libapp.so</code> 的目的。</p>
-<p>修改二：修改原始的 embedding jar 包(<code>libflutter.so</code> 从原始的 <code>lib/armeabi-v7a</code> 移到 <code>lib/armeabi</code> 目录)，并在 <code>gradle.properties</code> 中提供 <code>local-engine-repo</code>，将其指向修改后的 embedding jar 包。具体见 <a href="https://github.com/flutter/flutter/blob/master/packages/flutter_tools/gradle/flutter.gradle#L198" target="_blank" rel="noopener">addFlutterDependencies()</a></p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Adds the dependencies required by the Flutter project.</span></span><br><span class="line"><span class="comment"> * This includes:</span></span><br><span class="line"><span class="comment"> *    1. The embedding</span></span><br><span class="line"><span class="comment"> *    2. libflutter.so</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">void</span> addFlutterDependencies(buildType) &#123;</span><br><span class="line">    String flutterBuildMode = buildModeFor(buildType)</span><br><span class="line">    <span class="keyword">if</span> (!supportsBuildMode(flutterBuildMode)) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    String repository = useLocalEngine()</span><br><span class="line">        ? project.property('local-engine-repo')</span><br><span class="line">        : MAVEN_REPO</span><br><span class="line"></span><br><span class="line">    project.rootProject.allprojects &#123;</span><br><span class="line">        repositories &#123;</span><br><span class="line">            maven &#123;</span><br><span class="line">                url repository</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://flutter.dev/docs/development/add-to-app/android/project-setup" target="_blank" rel="noopener">Integrate a Flutter module into your Android project - Flutter</a></p>
-<p><a href="https://tech.youzan.com/you-zan-flutter-hun-bian-fang-an/" target="_blank" rel="noopener">有赞 Flutter 混编方案</a></p>
+<p>修改二：修改原始的 embedding jar 包(<code>libflutter.so</code> 从原始的 <code>lib/armeabi-v7a</code> 移到 <code>lib/armeabi</code> 目录)，并在 <code>gradle.properties</code> 中提供 <code>local-engine-repo</code>，将其指向修改后的 embedding jar 包。具体见 <a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/blob/master/packages/flutter_tools/gradle/flutter.gradle#L198">addFlutterDependencies()</a></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Adds the dependencies required by the Flutter project.</span></span><br><span class="line"><span class="comment"> * This includes:</span></span><br><span class="line"><span class="comment"> *    1. The embedding</span></span><br><span class="line"><span class="comment"> *    2. libflutter.so</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">void</span> addFlutterDependencies(buildType) &#123;</span><br><span class="line">    String flutterBuildMode = buildModeFor(buildType)</span><br><span class="line">    <span class="keyword">if</span> (!supportsBuildMode(flutterBuildMode)) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    String repository = useLocalEngine()</span><br><span class="line">        ? project.property(<span class="string">&#x27;local-engine-repo&#x27;</span>)</span><br><span class="line">        : MAVEN_REPO</span><br><span class="line"></span><br><span class="line">    project.rootProject.allprojects &#123;</span><br><span class="line">        repositories &#123;</span><br><span class="line">            maven &#123;</span><br><span class="line">                url repository</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/add-to-app/android/project-setup">Integrate a Flutter module into your Android project - Flutter</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.youzan.com/you-zan-flutter-hun-bian-fang-an/">有赞 Flutter 混编方案</a></p>
 
     </div>
 
@@ -382,130 +439,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/flutter/" rel="tag"># Flutter</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/03/09/flutter-dialog/" rel="prev" title="Flutter Dialog 详解">
-      <i class="fa fa-chevron-left"></i> Flutter Dialog 详解
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/06/04/future-builder-stream-builder/" rel="next" title="FutureBuilder 与 StreamBuilder">
-      FutureBuilder 与 StreamBuilder <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/09/flutter-dialog/" rel="prev" title="Flutter Dialog 详解">
+                  <i class="fa fa-chevron-left"></i> Flutter Dialog 详解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/06/04/future-builder-stream-builder/" rel="next" title="FutureBuilder 与 StreamBuilder">
+                  FutureBuilder 与 StreamBuilder <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#产物集成"><span class="nav-number">2.</span> <span class="nav-text">产物集成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码集成"><span class="nav-number">3.</span> <span class="nav-text">源码集成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#build-gradle"><span class="nav-number">4.</span> <span class="nav-text">build.gradle</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#flutter-gradle"><span class="nav-number">5.</span> <span class="nav-text">flutter.gradle</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#添加-Flutter-Task"><span class="nav-number">5.1.</span> <span class="nav-text">添加 Flutter Task</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#addFlutterDeps"><span class="nav-number">5.1.1.</span> <span class="nav-text">addFlutterDeps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#configurePlugins"><span class="nav-number">5.1.2.</span> <span class="nav-text">configurePlugins</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加-Flutter-Dependency"><span class="nav-number">5.2.</span> <span class="nav-text">添加 Flutter Dependency</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实践"><span class="nav-number">6.</span> <span class="nav-text">实践</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编译失败-Cause-assert-appProject-null"><span class="nav-number">6.1.</span> <span class="nav-text">编译失败 Cause: assert appProject != null</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#找不到-libflutter-so-或-libapp-so"><span class="nav-number">6.2.</span> <span class="nav-text">找不到  libflutter.so 或 libapp.so</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -513,29 +485,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -544,22 +508,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2020/03/10/flutter-add-to-app/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

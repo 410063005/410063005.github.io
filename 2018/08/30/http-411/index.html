@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,64 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="开发过程碰到http 411错误，记录并分析其原因。">
-<meta name="keywords" content="android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="开发过程碰到http 411错误，记录并分析其原因。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记一个诡异响应码HTTP 411">
 <meta property="og:url" content="http://www.sunmoonblog.com/2018/08/30/http-411/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="开发过程碰到http 411错误，记录并分析其原因。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.902Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-30T07:38:04.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.902Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="记一个诡异响应码HTTP 411">
-<meta name="twitter:description" content="开发过程碰到http 411错误，记录并分析其原因。">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2018/08/30/http-411/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>记一个诡异响应码HTTP 411 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2018/08/30/http-411/","path":"2018/08/30/http-411/","title":"记一个诡异响应码HTTP 411"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>记一个诡异响应码HTTP 411 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +85,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +97,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,61 +120,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">问题记录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HttpURLConnection"><span class="nav-number">2.</span> <span class="nav-text">HttpURLConnection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS"><span class="nav-number">2.1.</span> <span class="nav-text">HTTPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">资源处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E5%86%85%E5%AE%B9"><span class="nav-number">2.3.</span> <span class="nav-text">发送内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD"><span class="nav-number">2.4.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E7%BD%91%E7%BB%9C%E7%99%BB%E5%BD%95"><span class="nav-number">2.5.</span> <span class="nav-text">处理网络登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E8%AE%A4%E8%AF%81"><span class="nav-number">2.6.</span> <span class="nav-text">HTTP认证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Session-cookie"><span class="nav-number">2.7.</span> <span class="nav-text">Session cookie</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP-Methods"><span class="nav-number">2.8.</span> <span class="nav-text">HTTP Methods</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%90%86"><span class="nav-number">2.9.</span> <span class="nav-text">代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPv6"><span class="nav-number">2.10.</span> <span class="nav-text">IPv6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">2.11.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E7%9A%84%E7%B1%BB"><span class="nav-number">2.12.</span> <span class="nav-text">相关的类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/08/30/http-411/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="记一个诡异响应码HTTP 411 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           记一个诡异响应码HTTP 411
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-08-30 15:38:04" itemprop="dateCreated datePublished" datetime="2018-08-30T15:38:04+08:00">2018-08-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2018-08-30 15:38:04" itemprop="dateCreated datePublished" datetime="2018-08-30T15:38:04+08:00">2018-08-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2018/08/30/http-411/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2018/08/30/http-411/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -222,16 +264,17 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>开发过程碰到http 411错误，记录并分析其原因。</p>
+<span id="more"></span>
 
-      
-        <p>开发过程碰到http 411错误，记录并分析其原因。<br><a id="more"></a></p>
 <h1 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h1><p>首先看看411是什么。<a href="411">MDN</a>给出的解释如下：</p>
 <blockquote>
 <p>服务器拒绝在没有定义 Content-Length 头的情况下接受请求。在添加了表明请求消息体长度的有效 Content-Length 头之后，客户端可以再次提交该请求。</p>
 </blockquote>
 <p>使用不带body的POST有点类似使用一个不带参数的方法，比如说<code>int post(void)</code>。虽然可行，但不是好的做法，而且要注意POST请求不带body时一定要带<code>Content-Length: 0</code>，不然某些代理会拒绝这个POST请求。</p>
 <p>有如下一段代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    URL url = <span class="keyword">new</span> URL(<span class="string">"http://url"</span>);</span><br><span class="line">    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();</span><br><span class="line">    httpURLConnection.setRequestMethod(<span class="string">"POST"</span>);</span><br><span class="line">    httpURLConnection.setDoOutput(<span class="keyword">true</span>);</span><br><span class="line">    httpURLConnection.setRequestProperty(<span class="string">"Charset"</span>, <span class="string">"UTF-8"</span>);</span><br><span class="line">    httpURLConnection.setRequestProperty(<span class="string">"Content-Type"</span>, <span class="string">"multipart/form-data;boundary=******"</span>);</span><br><span class="line">    httpURLConnection.setRequestProperty(<span class="string">"Connection"</span>, <span class="string">"close"</span>);</span><br><span class="line"></span><br><span class="line">    httpURLConnection.setRequestProperty(<span class="string">"Cookie"</span>, <span class="string">"A=1; U=2; UT=1; "</span>);</span><br><span class="line"></span><br><span class="line">    System.out.println(httpURLConnection.getResponseCode());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (Map.Entry&lt;String, List&lt;String&gt;&gt; it : httpURLConnection.getHeaderFields().entrySet()) &#123;</span><br><span class="line">        System.out.println(it.getKey() + <span class="string">" "</span> + it.getValue().get(<span class="number">0</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) &#123;</span><br><span class="line">        InputStream is = httpURLConnection.getInputStream();</span><br><span class="line">        System.out.println(Okio.buffer(Okio.source(is)).readUtf8());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(Okio.buffer(Okio.source(httpURLConnection.getErrorStream())).readString(Charset.forName(<span class="string">"gb2312"</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="type">URL</span> <span class="variable">url</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;http://url&quot;</span>);</span><br><span class="line">    <span class="type">HttpURLConnection</span> <span class="variable">httpURLConnection</span> <span class="operator">=</span> (HttpURLConnection) url.openConnection();</span><br><span class="line">    httpURLConnection.setRequestMethod(<span class="string">&quot;POST&quot;</span>);</span><br><span class="line">    httpURLConnection.setDoOutput(<span class="literal">true</span>);</span><br><span class="line">    httpURLConnection.setRequestProperty(<span class="string">&quot;Charset&quot;</span>, <span class="string">&quot;UTF-8&quot;</span>);</span><br><span class="line">    httpURLConnection.setRequestProperty(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;multipart/form-data;boundary=******&quot;</span>);</span><br><span class="line">    httpURLConnection.setRequestProperty(<span class="string">&quot;Connection&quot;</span>, <span class="string">&quot;close&quot;</span>);</span><br><span class="line"></span><br><span class="line">    httpURLConnection.setRequestProperty(<span class="string">&quot;Cookie&quot;</span>, <span class="string">&quot;A=1; U=2; UT=1; &quot;</span>);</span><br><span class="line"></span><br><span class="line">    System.out.println(httpURLConnection.getResponseCode());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (Map.Entry&lt;String, List&lt;String&gt;&gt; it : httpURLConnection.getHeaderFields().entrySet()) &#123;</span><br><span class="line">        System.out.println(it.getKey() + <span class="string">&quot; &quot;</span> + it.getValue().get(<span class="number">0</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) &#123;</span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> httpURLConnection.getInputStream();</span><br><span class="line">        System.out.println(Okio.buffer(Okio.source(is)).readUtf8());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(Okio.buffer(Okio.source(httpURLConnection.getErrorStream())).readString(Charset.forName(<span class="string">&quot;gb2312&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>它的运行结果非常诡异：</p>
 <ul>
 <li>在Genemotion上运行时会返回411，提示<code>Length Required</code></li>
@@ -247,17 +290,20 @@
 </ul>
 <p>这两个方法都是用于开启streaming模式，以提高性能，所以应该跟411 Length Required应该没有直接的关系。不太明白为什么调用<code>setChunkedStreamingMode()</code>之后就会有问题。</p>
 <p>可以在发生411错误时打印出响应。响应中的错误信息表示的确很可能是缺少<code>Content-Length</code>请求头。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Content-Length 1580</span><br><span class="line">Content-Type text/html</span><br><span class="line">Date Thu, 30 Aug 2018 06:49:37 GMT</span><br><span class="line">Server squid/2.7.STABLE9</span><br><span class="line">X-Android-Received-Millis 1534715103348</span><br><span class="line">X-Android-Response-Source NETWORK 411</span><br><span class="line">X-Android-Selected-Protocol http/1.1</span><br><span class="line">X-Android-Sent-Millis 1534715103343</span><br><span class="line">X-Cache MISS from SK-SQUIDDEV-114</span><br><span class="line">X-Cache-Lookup NONE from SK-SQUIDDEV-114:8080</span><br><span class="line">X-Squid-Error ERR_INVALID_REQ 0</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">&lt;HTML&gt;&lt;HEAD&gt;</span><br><span class="line">&lt;META HTTP-EQUIV=&quot;Content-Type&quot; CONTENT=&quot;text/html; charset=gb2312&quot;&gt; </span><br><span class="line">&lt;TITLE&gt;错误：您所请求的网址（URL）无法获取&lt;/TITLE&gt;</span><br><span class="line">&lt;STYLE type=&quot;text/css&quot;&gt;&lt;!--BODY&#123;background-color:#ffffff;font-family:verdana,sans-serif&#125;PRE&#123;font-family:sans-serif&#125;--&gt;&lt;/STYLE&gt;</span><br><span class="line">&lt;/HEAD&gt;&lt;BODY&gt;</span><br><span class="line">&lt;H1&gt;错误&lt;/H1&gt;</span><br><span class="line">&lt;H2&gt;您所请求的网址（URL）无法获取&lt;/H2&gt;</span><br><span class="line">&lt;HR noshade size=&quot;1px&quot;&gt;</span><br><span class="line">&lt;P&gt;</span><br><span class="line">当尝试进行以下请求时：</span><br><span class="line">&lt;PRE&gt;</span><br><span class="line">POST /xxx.php HTTP/1.1</span><br><span class="line">Charset: UTF-8</span><br><span class="line">Content-Type: multipart/form-data;boundary=******</span><br><span class="line">Connection: close</span><br><span class="line">Cookie: A=1; U=2; UT=1;</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.0; Google Nexus 5X - 7.0.0 - API 24 - 1080x1920 Build/NRD90M)</span><br><span class="line">Host: url</span><br><span class="line">Accept-Encoding: gzip</span><br><span class="line">&lt;/PRE&gt;</span><br><span class="line">&lt;P&gt;</span><br><span class="line">发生了下列的错误：</span><br><span class="line">&lt;UL&gt;</span><br><span class="line">&lt;LI&gt;</span><br><span class="line">&lt;STRONG&gt;</span><br><span class="line">Invalid Request</span><br><span class="line">&lt;BR&gt;</span><br><span class="line">无效的请求</span><br><span class="line">&lt;/STRONG&gt;</span><br><span class="line">&lt;/UL&gt;</span><br><span class="line">&lt;P&gt;</span><br><span class="line">Some aspect of the HTTP Request is invalid.  Possible problems:</span><br><span class="line">&lt;BR&gt;</span><br><span class="line">HTTP 请求的某些方面是无效的。可能是下列问题：</span><br><span class="line">&lt;UL&gt;</span><br><span class="line">&lt;LI&gt;Missing or unknown request method</span><br><span class="line">&lt;BR&gt;缺少请求方式或未知的请求方式</span><br><span class="line">&lt;LI&gt;Missing URL</span><br><span class="line">&lt;BR&gt;缺少网址</span><br><span class="line">&lt;LI&gt;Missing HTTP Identifier (HTTP/1.0)</span><br><span class="line">&lt;BR&gt;缺少 HTTP 标识（HTTP/1.0）</span><br><span class="line">&lt;LI&gt;Request is too large</span><br><span class="line">&lt;BR&gt;请求命令过长</span><br><span class="line">&lt;LI&gt;Content-Length missing for POST or PUT requests</span><br><span class="line">&lt;BR&gt;POST 或 PUT 请求缺少内容长度</span><br><span class="line">&lt;LI&gt;Illegal character in hostname; underscores are not allowed</span><br><span class="line">&lt;BR&gt;主机名称中包含不合法的字符；下划线是不允许的。</span><br><span class="line">&lt;/UL&gt;</span><br><span class="line">&lt;/P&gt;</span><br><span class="line">&lt;P&gt;本缓存服务器管理员：&lt;A HREF=&quot;mailto:SK-SQUIDDEV-114&quot;&gt;SK-SQUIDDEV-114&lt;/A&gt;. </span><br><span class="line">&lt;/BODY&gt;&lt;/HTML&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Content-Length 1580</span><br><span class="line">Content-Type text/html</span><br><span class="line">Date Thu, 30 Aug 2018 06:49:37 GMT</span><br><span class="line">Server squid/2.7.STABLE9</span><br><span class="line">X-Android-Received-Millis 1534715103348</span><br><span class="line">X-Android-Response-Source NETWORK 411</span><br><span class="line">X-Android-Selected-Protocol http/1.1</span><br><span class="line">X-Android-Sent-Millis 1534715103343</span><br><span class="line">X-Cache MISS from SK-SQUIDDEV-114</span><br><span class="line">X-Cache-Lookup NONE from SK-SQUIDDEV-114:8080</span><br><span class="line">X-Squid-Error ERR_INVALID_REQ 0</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">&lt;HTML&gt;&lt;HEAD&gt;</span><br><span class="line">&lt;META HTTP-EQUIV=&quot;Content-Type&quot; CONTENT=&quot;text/html; charset=gb2312&quot;&gt; </span><br><span class="line">&lt;TITLE&gt;错误：您所请求的网址（URL）无法获取&lt;/TITLE&gt;</span><br><span class="line">&lt;STYLE type=&quot;text/css&quot;&gt;&lt;!--BODY&#123;background-color:#ffffff;font-family:verdana,sans-serif&#125;PRE&#123;font-family:sans-serif&#125;--&gt;&lt;/STYLE&gt;</span><br><span class="line">&lt;/HEAD&gt;&lt;BODY&gt;</span><br><span class="line">&lt;H1&gt;错误&lt;/H1&gt;</span><br><span class="line">&lt;H2&gt;您所请求的网址（URL）无法获取&lt;/H2&gt;</span><br><span class="line">&lt;HR noshade size=&quot;1px&quot;&gt;</span><br><span class="line">&lt;P&gt;</span><br><span class="line">当尝试进行以下请求时：</span><br><span class="line">&lt;PRE&gt;</span><br><span class="line">POST /xxx.php HTTP/1.1</span><br><span class="line">Charset: UTF-8</span><br><span class="line">Content-Type: multipart/form-data;boundary=******</span><br><span class="line">Connection: close</span><br><span class="line">Cookie: A=1; U=2; UT=1;</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.0; Google Nexus 5X - 7.0.0 - API 24 - 1080x1920 Build/NRD90M)</span><br><span class="line">Host: url</span><br><span class="line">Accept-Encoding: gzip</span><br><span class="line">&lt;/PRE&gt;</span><br><span class="line">&lt;P&gt;</span><br><span class="line">发生了下列的错误：</span><br><span class="line">&lt;UL&gt;</span><br><span class="line">&lt;LI&gt;</span><br><span class="line">&lt;STRONG&gt;</span><br><span class="line">Invalid Request</span><br><span class="line">&lt;BR&gt;</span><br><span class="line">无效的请求</span><br><span class="line">&lt;/STRONG&gt;</span><br><span class="line">&lt;/UL&gt;</span><br><span class="line">&lt;P&gt;</span><br><span class="line">Some aspect of the HTTP Request is invalid.  Possible problems:</span><br><span class="line">&lt;BR&gt;</span><br><span class="line">HTTP 请求的某些方面是无效的。可能是下列问题：</span><br><span class="line">&lt;UL&gt;</span><br><span class="line">&lt;LI&gt;Missing or unknown request method</span><br><span class="line">&lt;BR&gt;缺少请求方式或未知的请求方式</span><br><span class="line">&lt;LI&gt;Missing URL</span><br><span class="line">&lt;BR&gt;缺少网址</span><br><span class="line">&lt;LI&gt;Missing HTTP Identifier (HTTP/1.0)</span><br><span class="line">&lt;BR&gt;缺少 HTTP 标识（HTTP/1.0）</span><br><span class="line">&lt;LI&gt;Request is too large</span><br><span class="line">&lt;BR&gt;请求命令过长</span><br><span class="line">&lt;LI&gt;Content-Length missing for POST or PUT requests</span><br><span class="line">&lt;BR&gt;POST 或 PUT 请求缺少内容长度</span><br><span class="line">&lt;LI&gt;Illegal character in hostname; underscores are not allowed</span><br><span class="line">&lt;BR&gt;主机名称中包含不合法的字符；下划线是不允许的。</span><br><span class="line">&lt;/UL&gt;</span><br><span class="line">&lt;/P&gt;</span><br><span class="line">&lt;P&gt;本缓存服务器管理员：&lt;A HREF=&quot;mailto:SK-SQUIDDEV-114&quot;&gt;SK-SQUIDDEV-114&lt;/A&gt;. </span><br><span class="line">&lt;/BODY&gt;&lt;/HTML&gt;</span><br></pre></td></tr></table></figure>
+
 <p>如何打印出请求呢？我的做法很简单，使用Node + Express搭一个web服务，用同一份代码访问这个服务，观察请求头。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">const</span> cookieParser = <span class="built_in">require</span>(<span class="string">'cookie-parser'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = express();</span><br><span class="line">app.use(cookieParser());</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/'</span>, (req, res) =&gt; &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'content-length: '</span>, req.headers[<span class="string">'content-length'</span>]);</span><br><span class="line">        res.send(<span class="string">'Hello World!'</span>);</span><br><span class="line">&#125;);</span><br><span class="line">app.post(<span class="string">'/'</span>, (req, res) =&gt; &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'content-length: '</span>, req.headers[<span class="string">'content-length'</span>]);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'user-agent: '</span>, req.headers[<span class="string">'user-agent'</span>]);</span><br><span class="line">        res.send(<span class="string">'Hello World!'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">7654</span>, <span class="string">'127.0.0.1'</span>, () =&gt; <span class="built_in">console</span>.log(<span class="string">'Example app listening on port 7654!'</span>));</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> cookieParser = <span class="built_in">require</span>(<span class="string">&#x27;cookie-parser&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cookieParser</span>());</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;content-length: &#x27;</span>, req.<span class="property">headers</span>[<span class="string">&#x27;content-length&#x27;</span>]);</span><br><span class="line">        res.<span class="title function_">send</span>(<span class="string">&#x27;Hello World!&#x27;</span>);</span><br><span class="line">&#125;);</span><br><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;content-length: &#x27;</span>, req.<span class="property">headers</span>[<span class="string">&#x27;content-length&#x27;</span>]);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;user-agent: &#x27;</span>, req.<span class="property">headers</span>[<span class="string">&#x27;user-agent&#x27;</span>]);</span><br><span class="line">        res.<span class="title function_">send</span>(<span class="string">&#x27;Hello World!&#x27;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">7654</span>, <span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Example app listening on port 7654!&#x27;</span>));</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>当调用了<code>setChunkedStreamingMode()</code>方法后(无论参数是否-1)，web服务无法收到请求，错误响应跟上述错误类似</li>
 <li>当没有调用<code>setChunkedStreamingMode()</code>方法，web服务正常收到请求，显示<code>content-length:  0</code></li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// Genemotion</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Dalvik/2.1.0 (Linux; U; Android 7.0; Google Nexus 5X - 7.0.0 - API 24 - 1080x1920 Build/NRD90M)</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Dalvik/2.1.0 (Linux; U; Android 7.0; Google Nexus 5X - 7.0.0 - API 24 - 1080x1920 Build/NRD90M)</span><br><span class="line">// Postman</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36</span><br><span class="line">// Java</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Java/1.8.0_73</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Java/1.8.0_73</span><br></pre></td></tr></table></figure>
-<p>推测411大概是这样发生的：Genemotion虚拟上的HttpURLConnection实现有bug，导致调用<code>setChunkedStreamingMode()</code>方法后没有body的POST请求中缺少<code>Content-Length</code>请求头，所以这个请求被代理(squid/2.7.STABLE9)拦下来了，拦截原因正是<code>411  Length Required</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// Genemotion</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Dalvik/2.1.0 (Linux; U; Android 7.0; Google Nexus 5X - 7.0.0 - API 24 - 1080x1920 Build/NRD90M)</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Dalvik/2.1.0 (Linux; U; Android 7.0; Google Nexus 5X - 7.0.0 - API 24 - 1080x1920 Build/NRD90M)</span><br><span class="line">// Postman</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36</span><br><span class="line">// Java</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Java/1.8.0_73</span><br><span class="line">content-length:  0</span><br><span class="line">user-agent:  Java/1.8.0_73</span><br></pre></td></tr></table></figure>
+
+<p>推测411大概是这样发生的：Genemotion虚拟上的HttpURLConnection实现有bug，导致调用<code>setChunkedStreamingMode()</code>方法后没有body的POST请求中缺少<code>Content-Length</code>请求头，所以这个请求被代理(squid&#x2F;2.7.STABLE9)拦下来了，拦截原因正是<code>411  Length Required</code>。</p>
 <h1 id="HttpURLConnection"><a href="#HttpURLConnection" class="headerlink" title="HttpURLConnection"></a>HttpURLConnection</h1><p>为加深对HttpURLConnection的了解，这里将Android SDK中HttpURLConnection的注释文档翻译了一遍。</p>
-<p>HttpURLConnection是用于支持HTTP特性的URLConnection，具体参考<a href="http://www.w3.org/pub/WWW/Protocols/" target="_blank" rel="noopener">HTTP</a>。</p>
+<p>HttpURLConnection是用于支持HTTP特性的URLConnection，具体参考<a target="_blank" rel="noopener" href="http://www.w3.org/pub/WWW/Protocols/">HTTP</a>。</p>
 <p>它的使用方式如下：</p>
 <ul>
 <li>调用<code>URL.openConnection()</code>来获取一个新的<code>HttpURLConnection</code>对象，并将其强制转型为HttpURLConnection</li>
@@ -266,37 +312,44 @@
 <li>读取响应。响应头通常包括请求体content type, content length, modified date, session cookies之类的元数据。响应体可以从<code>getInputStream()</code>返回的输入流中读取。如果没有响应体，<code>getInputStream()</code>返回一个空的流</li>
 <li>断开连接。一旦读取响应体完毕，需要调用<code>disconnect()</code>来关闭HttpURLConnection。断开连接可以释放相关资源</li>
 </ul>
-<p>以访问<a href="http://www.android.com/" target="_blank" rel="noopener">http://www.android.com/</a>网站为例：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">URL url = <span class="keyword">new</span> URL(<span class="string">"http://www.android.com/"</span>);</span><br><span class="line">HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	InputStream in = <span class="keyword">new</span> BufferedInputStream(urlConnection.getInputStream());</span><br><span class="line">	readStream(in);</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	urlConnection.disconnect();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以访问<a target="_blank" rel="noopener" href="http://www.android.com/">http://www.android.com/</a>网站为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">URL</span> <span class="variable">url</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;http://www.android.com/&quot;</span>);</span><br><span class="line"><span class="type">HttpURLConnection</span> <span class="variable">urlConnection</span> <span class="operator">=</span> (HttpURLConnection) url.openConnection();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedInputStream</span>(urlConnection.getInputStream());</span><br><span class="line">	readStream(in);</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	urlConnection.disconnect();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h2><p>在以”https”开头的URL上调用<code>URL.openConnection()</code>时会返回HttpsURLConnection，可以覆盖缺省的<code>HostnameVerifier</code>和<code>SSLSocketFactory</code>。从<code>SSLContext</code>创建的<code>SSLSocketFactory</code>可以提供自定义的<code>X509TrustManager</code>用于验证证书链，而自定义的<code>X509KeyManager</code>可以提供客户端证书。</p>
 <h2 id="资源处理"><a href="#资源处理" class="headerlink" title="资源处理"></a>资源处理</h2><p>HttpURLConnection允许5次HTTP重定向。它会从原始服务器重定向到另一个，但不支持从HTTPS重定向到HTTP或从HTTP重定向到HTTP。</p>
 <p>如果HTTP响应中有错误发生，<code>getInputStream()</code>方法会抛出IOException。使用<code>getErrorStream()</code>读取错误响应。而响应头可以使用正常的<code>getHeaderFields()</code>获取。</p>
 <h2 id="发送内容"><a href="#发送内容" class="headerlink" title="发送内容"></a>发送内容</h2><p>向web服务器上传数据时，需要调用<code>setDoOutput(true)</code>进行配置。</p>
 <p>为了达到最好的性能，在事先知道请求体长度时应当调用<code>setFixedLengthStreamingMode()</code>，而事先无法知道请求体长度时调用<code>setChunkedStreamingMode()</code>。否则HttpURLConnection会被发送数据前在内存中为整个请求体分配缓冲区，浪费内存甚至可能引起OOM，并且导致数据发送延迟。</p>
 <p>看个上传数据的例子：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  urlConnection.setDoOutput(<span class="keyword">true</span>);</span><br><span class="line">  urlConnection.setChunkedStreamingMode(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  OutputStream out = <span class="keyword">new</span> BufferedOutputStream(urlConnection.getOutputStream());</span><br><span class="line">  writeStream(out);</span><br><span class="line"></span><br><span class="line">  InputStream in = <span class="keyword">new</span> BufferedInputStream(urlConnection.getInputStream());</span><br><span class="line">  readStream(in);</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">  urlConnection.disconnect();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">HttpURLConnection</span> <span class="variable">urlConnection</span> <span class="operator">=</span> (HttpURLConnection) url.openConnection();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  urlConnection.setDoOutput(<span class="literal">true</span>);</span><br><span class="line">  urlConnection.setChunkedStreamingMode(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="type">OutputStream</span> <span class="variable">out</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedOutputStream</span>(urlConnection.getOutputStream());</span><br><span class="line">  writeStream(out);</span><br><span class="line"></span><br><span class="line">  <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedInputStream</span>(urlConnection.getInputStream());</span><br><span class="line">  readStream(in);</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">  urlConnection.disconnect();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>HttpURLConnection返回的输入流和输出流都没有缓冲。多数调用者应当使用<code>BufferedInputStream</code>或<code>BufferedOutputStream</code>包装httpURLConnection返回的流。只做块读写的调用方可以忽略缓冲。</p>
 <p>向服务器大量上传或下载数据时，使用流方式可以避免一次占用过多内存。除非你需要将body一次性放进内存，否则应该以流的方式进行处理(也就是说不要将整个body保存为byte数据或String)</p>
 <p>为减少延迟，HttpURLConnection可能会为多次请求复用同一个底层的Socket。复用的结果是HTTP连接保持的时间比实际需要的时间要长一些。调用<code>disconnect()</code>会将Socket放回连接池。</p>
 <p>缺省情况下HttpURLConnection要求服务器端使用gzip压缩，它能自动为<code>getInputStream()</code>调用方解压数据。这种情况下Content-Encoding和Content-Length两个响应头会被清除。在请求头中添加”Accept-Encoding: identity”来关闭gzip压缩。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">urlConnection.setRequestProperty(<span class="string">"Accept-Encoding"</span>, <span class="string">"identity"</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">urlConnection.setRequestProperty(<span class="string">&quot;Accept-Encoding&quot;</span>, <span class="string">&quot;identity&quot;</span>);</span><br></pre></td></tr></table></figure>
+
 <p>指定明确的”Accept-Encoding”请求头会关闭自动解压，不会修改原始的响应头。调用方必须自己根据响应头中的Content-Type头进行必要的解压。</p>
 <p><code>getContentLength()</code>返回传输的字节数，不能作为已压缩的输入流<code>getInputStream()</code>中可读取的字节数。相反的，应该一直读取输入流直到数据耗尽，即<code>InputStream.read()</code>返回-1。</p>
 <h2 id="处理网络登录"><a href="#处理网络登录" class="headerlink" title="处理网络登录"></a>处理网络登录</h2><p>一些WiFi网络会阻止用户访问，直到用户点击某个登录页面。通常是通过HTTP重定向来展示登录页。可以使用<code>getURL()</code>来测试连接是否被重定向。当然，这种测试只有在收到响应头后才有效，你可以调用<code>getInputStream()</code>或<code>getHeaderFields()</code>来触发响应。下面的例子在检查响应是否有被重定向：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  InputStream in = <span class="keyword">new</span> BufferedInputStream(urlConnection.getInputStream());</span><br><span class="line">  <span class="keyword">if</span> (!url.getHost().equals(urlConnection.getURL().getHost())) &#123;</span><br><span class="line">    <span class="comment">// we were redirected! Kick the user out to the browser to sign on?</span></span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">  urlConnection.disconnect();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="HTTP认证"><a href="#HTTP认证" class="headerlink" title="HTTP认证"></a>HTTP认证</h2><p>HttpURLConnection支持<a href="http://www.ietf.org/rfc/rfc2617" target="_blank" rel="noopener">HTTP basic authentication</a>。使用<code>Authenticator</code>来设置JVM全局的 authentication handler:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Authenticator.setDefault(<span class="keyword">new</span> Authenticator() &#123;</span><br><span class="line">  <span class="function"><span class="keyword">protected</span> PasswordAuthentication <span class="title">getPasswordAuthentication</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> PasswordAuthentication(username, password.toCharArray());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">HttpURLConnection</span> <span class="variable">urlConnection</span> <span class="operator">=</span> (HttpURLConnection) url.openConnection();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedInputStream</span>(urlConnection.getInputStream());</span><br><span class="line">  <span class="keyword">if</span> (!url.getHost().equals(urlConnection.getURL().getHost())) &#123;</span><br><span class="line">    <span class="comment">// we were redirected! Kick the user out to the browser to sign on?</span></span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">  urlConnection.disconnect();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="HTTP认证"><a href="#HTTP认证" class="headerlink" title="HTTP认证"></a>HTTP认证</h2><p>HttpURLConnection支持<a target="_blank" rel="noopener" href="http://www.ietf.org/rfc/rfc2617">HTTP basic authentication</a>。使用<code>Authenticator</code>来设置JVM全局的 authentication handler:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Authenticator.setDefault(<span class="keyword">new</span> <span class="title class_">Authenticator</span>() &#123;</span><br><span class="line">  <span class="keyword">protected</span> PasswordAuthentication <span class="title function_">getPasswordAuthentication</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">PasswordAuthentication</span>(username, password.toCharArray());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
 <p>除非同时使用了HTTPS，不建议将其作为用户认证机制。特别要说明的是，用户名、密码、请求以及响应都是在网络上明文传输的。</p>
 <h2 id="Session-cookie"><a href="#Session-cookie" class="headerlink" title="Session cookie"></a>Session cookie</h2><p>为了在客户端和服务器端建立和维护一个长期的会话，HttpURLConnection自带一个可扩展的cookie manager。使用CookieHandler和CookieManager来管理JVM全局的cookie：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CookieManager cookieManager = new CookieManager();</span><br><span class="line">CookieHandler.setDefault(cookieManager);</span><br></pre></td></tr></table></figure>
-<p>缺省情况下CookieManager只接受来自原始服务器的cookie <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec1.html" target="_blank" rel="noopener">rfc2616</a>。另外两种策略是<code>CookiePolicy.ACCEPT_ALL</code>和<code>CookiePolicy.ACCEPT_NONE</code>。实现<code>CookiePolicy</code>来自定义cookie策略。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CookieManager cookieManager = new CookieManager();</span><br><span class="line">CookieHandler.setDefault(cookieManager);</span><br></pre></td></tr></table></figure>
+
+<p>缺省情况下CookieManager只接受来自原始服务器的cookie <a target="_blank" rel="noopener" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec1.html">rfc2616</a>。另外两种策略是<code>CookiePolicy.ACCEPT_ALL</code>和<code>CookiePolicy.ACCEPT_NONE</code>。实现<code>CookiePolicy</code>来自定义cookie策略。</p>
 <p>缺省情况下CookieManager只将cookie保存在内存中。当退出JVM时会清空cookie。通过实现CookieStore来自定义如何存储cookie。</p>
 <p>除了可以接收HTTP响应的cookie，还可以通过程序设置cookie。HTTP请求头中的cookie必须指定domain和path。</p>
-<p>缺省情况下HttpCookie实例能用于支持<a href="http://www.ietf.org/rfc/rfc2965.txt" target="_blank" rel="noopener">RFC 2965</a>的服务器。而很多web服务器只支持老的规范，<a href="http://www.ietf.org/rfc/rfc2109.txt" target="_blank" rel="noopener">RFC 2109</a>。为了兼容大多数web服务器，需要将cookie版本设置为0。</p>
-<p>举例来说，想访问法语版本的<a href="http://www.twitter.com" target="_blank" rel="noopener">twitter</a>，代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HttpCookie cookie = <span class="keyword">new</span> HttpCookie(<span class="string">"lang"</span>, <span class="string">"fr"</span>);</span><br><span class="line">cookie.setDomain(<span class="string">"twitter.com"</span>);</span><br><span class="line">cookie.setPath(<span class="string">"/"</span>);</span><br><span class="line">cookie.setVersion(<span class="number">0</span>);</span><br><span class="line">cookieManager.getCookieStore().add(<span class="keyword">new</span> URI(<span class="string">"http://twitter.com/"</span>), cookie);</span><br></pre></td></tr></table></figure>
+<p>缺省情况下HttpCookie实例能用于支持<a target="_blank" rel="noopener" href="http://www.ietf.org/rfc/rfc2965.txt">RFC 2965</a>的服务器。而很多web服务器只支持老的规范，<a target="_blank" rel="noopener" href="http://www.ietf.org/rfc/rfc2109.txt">RFC 2109</a>。为了兼容大多数web服务器，需要将cookie版本设置为0。</p>
+<p>举例来说，想访问法语版本的<a target="_blank" rel="noopener" href="http://www.twitter.com/">twitter</a>，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">HttpCookie</span> <span class="variable">cookie</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpCookie</span>(<span class="string">&quot;lang&quot;</span>, <span class="string">&quot;fr&quot;</span>);</span><br><span class="line">cookie.setDomain(<span class="string">&quot;twitter.com&quot;</span>);</span><br><span class="line">cookie.setPath(<span class="string">&quot;/&quot;</span>);</span><br><span class="line">cookie.setVersion(<span class="number">0</span>);</span><br><span class="line">cookieManager.getCookieStore().add(<span class="keyword">new</span> <span class="title class_">URI</span>(<span class="string">&quot;http://twitter.com/&quot;</span>), cookie);</span><br></pre></td></tr></table></figure>
+
 <h2 id="HTTP-Methods"><a href="#HTTP-Methods" class="headerlink" title="HTTP Methods"></a>HTTP Methods</h2><p>缺省时HttpURLConnection使用<code>GET</code>方法。如果调用<code>setDoOutput(true)</code>方法，它将使用<code>POST</code>方法。还支持其他几种method，包括：<code>OPTIONS</code>, <code>HEAD</code>, <code>PUT</code>, <code>DELETE</code>和<code>TRACE</code>，可以通过<code>setRequestMethod()</code>方法来进行设置。</p>
-<h2 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h2><p>缺省时HttpURLConnection直接连接<a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec1.html" target="_blank" rel="noopener">原始服务器</a>。也可以通过<code>HTTP</code>代理或<code>SOCKS</code>代理连接原始服务器。使用代理的方式是这样：调用<code>URL.openConnection(Proxy)</code>方法创建连接。</p>
+<h2 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h2><p>缺省时HttpURLConnection直接连接<a target="_blank" rel="noopener" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec1.html">原始服务器</a>。也可以通过<code>HTTP</code>代理或<code>SOCKS</code>代理连接原始服务器。使用代理的方式是这样：调用<code>URL.openConnection(Proxy)</code>方法创建连接。</p>
 <h2 id="IPv6"><a href="#IPv6" class="headerlink" title="IPv6"></a>IPv6</h2><p>HttpURLConnection支持IPv6。对于既有IPv4地址又有IPv6地址的服务器，它会尝试所有地址直到连接成功。</p>
 <h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>对于Android平台来说：Android 4.0开始添加了响应绊缓存。如何为app开启缓存可以参考<code>android.net.http.HttpResponseCache</code>。</p>
 <h2 id="相关的类"><a href="#相关的类" class="headerlink" title="相关的类"></a>相关的类</h2><ul>
@@ -305,9 +358,9 @@
 <li>CookieHandler</li>
 <li>CookieStore</li>
 </ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status" target="_blank" rel="noopener">411</a></p>
-<p><a href="https://yanbin.blog/why-http-get-cannot-sent-data-with-reuqest-body/" target="_blank" rel="noopener">谁说 HTTP GET 就不能通过 Body 来发送数据呢？</a></p>
-<p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST" target="_blank" rel="noopener">POST - HTTP | MDN</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status">411</a></p>
+<p><a target="_blank" rel="noopener" href="https://yanbin.blog/why-http-get-cannot-sent-data-with-reuqest-body/">谁说 HTTP GET 就不能通过 Body 来发送数据呢？</a></p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST">POST - HTTP | MDN</a></p>
 
     </div>
 
@@ -315,127 +368,42 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/08/28/http-missing-content-type/" rel="prev" title="记一次网页中文乱码问题">
-      <i class="fa fa-chevron-left"></i> 记一次网页中文乱码问题
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/09/10/fragment-permission/" rel="next" title="Fragment权限问题的一个小坑">
-      Fragment权限问题的一个小坑 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/08/28/http-missing-content-type/" rel="prev" title="记一次网页中文乱码问题">
+                  <i class="fa fa-chevron-left"></i> 记一次网页中文乱码问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/09/10/fragment-permission/" rel="next" title="Fragment权限问题的一个小坑">
+                  Fragment权限问题的一个小坑 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题记录"><span class="nav-number">1.</span> <span class="nav-text">问题记录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HttpURLConnection"><span class="nav-number">2.</span> <span class="nav-text">HttpURLConnection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS"><span class="nav-number">2.1.</span> <span class="nav-text">HTTPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资源处理"><span class="nav-number">2.2.</span> <span class="nav-text">资源处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发送内容"><span class="nav-number">2.3.</span> <span class="nav-text">发送内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能"><span class="nav-number">2.4.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理网络登录"><span class="nav-number">2.5.</span> <span class="nav-text">处理网络登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP认证"><span class="nav-number">2.6.</span> <span class="nav-text">HTTP认证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Session-cookie"><span class="nav-number">2.7.</span> <span class="nav-text">Session cookie</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP-Methods"><span class="nav-number">2.8.</span> <span class="nav-text">HTTP Methods</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代理"><span class="nav-number">2.9.</span> <span class="nav-text">代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPv6"><span class="nav-number">2.10.</span> <span class="nav-text">IPv6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存"><span class="nav-number">2.11.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关的类"><span class="nav-number">2.12.</span> <span class="nav-text">相关的类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -443,29 +411,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -474,22 +434,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2018/08/30/http-411/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

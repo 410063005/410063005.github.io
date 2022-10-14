@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,96 +14,68 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="近期在实现 hook Bitmap 的功能，而 hook 的第一步是拿到被 hook 方法的地址。获取方法地址的常规方法是使用 dlopen() 和 dlsym()，但 Android 平台上对这两个方法的使用有限制，如何突破这个限制呢？">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="近期在实现 hook Bitmap 的功能，而 hook 的第一步是拿到被 hook 方法的地址。获取方法地址的常规方法是使用 dlopen() 和 dlsym()，但 Android 平台上对这两个方法的使用有限制，如何突破这个限制呢？">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android dlopen 方法的使用限制及解决方案">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/06/04/fake-dlopen/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="近期在实现 hook Bitmap 的功能，而 hook 的第一步是拿到被 hook 方法的地址。获取方法地址的常规方法是使用 dlopen() 和 dlsym()，但 Android 平台上对这两个方法的使用有限制，如何突破这个限制呢？">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/fake_dlopen_flow.png">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/maps.png">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/fake_dlopen_flow.png">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.037Z">
+<meta property="article:published_time" content="2019-06-04T08:46:39.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.037Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android dlopen 方法的使用限制及解决方案">
-<meta name="twitter:description" content="近期在实现 hook Bitmap 的功能，而 hook 的第一步是拿到被 hook 方法的地址。获取方法地址的常规方法是使用 dlopen() 和 dlsym()，但 Android 平台上对这两个方法的使用有限制，如何突破这个限制呢？">
 <meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/fake_dlopen_flow.png">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/06/04/fake-dlopen/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Android dlopen 方法的使用限制及解决方案 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/06/04/fake-dlopen/","path":"2019/06/04/fake-dlopen/","title":"Android dlopen 方法的使用限制及解决方案"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Android dlopen 方法的使用限制及解决方案 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -116,19 +89,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -139,23 +101,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -163,61 +124,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Android-%E5%AF%B9-dlsym-%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">Android 对 dlsym 的限制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">原理分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/06/04/fake-dlopen/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Android dlopen 方法的使用限制及解决方案 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Android dlopen 方法的使用限制及解决方案
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-06-04 16:46:39" itemprop="dateCreated datePublished" datetime="2019-06-04T16:46:39+08:00">2019-06-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-06-04 16:46:39" itemprop="dateCreated datePublished" datetime="2019-06-04T16:46:39+08:00">2019-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/06/04/fake-dlopen/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/06/04/fake-dlopen/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -226,54 +268,60 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>近期在实现 hook Bitmap 的功能，而 hook 的第一步是拿到被 hook 方法的地址。获取方法地址的常规方法是使用 <code>dlopen()</code> 和 <code>dlsym()</code>，但 Android 平台上对这两个方法的使用有限制，如何突破这个限制呢？</p>
-<a id="more"></a>
+<span id="more"></span>
+
 <h1 id="Android-对-dlsym-的限制"><a href="#Android-对-dlsym-的限制" class="headerlink" title="Android 对 dlsym 的限制"></a>Android 对 dlsym 的限制</h1><p>Android 7.0及以上版本对 <code>dlopen()</code> 和 <code>dlsym()</code> 函数的使用有限制。<code>System.load()</code> 和 <code>System.loadLibrary()</code> 是基于这两个函数实现的，所以也存在同样限制。</p>
 <p>在华为 Nova 2 (Android 8.0) 上试验一下，代码如下：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoadSoActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_load_so)</span><br><span class="line"></span><br><span class="line">        buttonLoadSo.setOnClickListener &#123;</span><br><span class="line">            System.load(<span class="string">"/system/lib/libart.so"</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        buttonLoadSo2.setOnClickListener &#123;</span><br><span class="line">            System.loadLibrary(<span class="string">"art"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>完整代码和更多测试见 <a href="https://github.com/410063005/cmdemo/blob/master/app/src/main/java/com/sunmoonblog/cmdemo/dlsym/LoadSoActivity.kt" target="_blank" rel="noopener">LoadSoActivity</a>。 </p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LoadSoActivity</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_load_so)</span><br><span class="line"></span><br><span class="line">        buttonLoadSo.setOnClickListener &#123;</span><br><span class="line">            System.load(<span class="string">&quot;/system/lib/libart.so&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        buttonLoadSo2.setOnClickListener &#123;</span><br><span class="line">            System.loadLibrary(<span class="string">&quot;art&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+
+<p>完整代码和更多测试见 <a target="_blank" rel="noopener" href="https://github.com/410063005/cmdemo/blob/master/app/src/main/java/com/sunmoonblog/cmdemo/dlsym/LoadSoActivity.kt">LoadSoActivity</a>。 </p>
 <p>测试中发现无论是调用 <code>System.load()</code> 还是 <code>System.loadLibrary()</code> 加载 <code>libart.so</code> (系统的so库，非公开 API) 均会导致以下异常：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">E/AndroidRuntime: FATAL EXCEPTION: main</span><br><span class="line">    Process: com.sunmoonblog.cmdemo, PID: 8432</span><br><span class="line">    java.lang.UnsatisfiedLinkError: dlopen failed: library &quot;/system/lib/libart.so&quot; needed or </span><br><span class="line">      dlopened by &quot;/system/lib64/libnativeloader.so&quot; is not accessible for the namespace &quot;classloader-namespace&quot;</span><br><span class="line">        at java.lang.Runtime.load0(Runtime.java:928)</span><br><span class="line">        at java.lang.System.load(System.java:1624)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">E/AndroidRuntime: FATAL EXCEPTION: main</span><br><span class="line">    Process: com.sunmoonblog.cmdemo, PID: 8432</span><br><span class="line">    java.lang.UnsatisfiedLinkError: dlopen failed: library &quot;/system/lib/libart.so&quot; needed or </span><br><span class="line">      dlopened by &quot;/system/lib64/libnativeloader.so&quot; is not accessible for the namespace &quot;classloader-namespace&quot;</span><br><span class="line">        at java.lang.Runtime.load0(Runtime.java:928)</span><br><span class="line">        at java.lang.System.load(System.java:1624)</span><br></pre></td></tr></table></figure>
+
+
 <p>异常信息很明确：<strong>第三方应该不应当尝试使用非公开的方法</strong>。当然，官方对此早有说明。</p>
 <ul>
-<li><a href="https://developer.android.com/about/versions/nougat/android-7.0-changes#ndk" target="_blank" rel="noopener">Android-7.0-changes</a> 提到：</li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/about/versions/nougat/android-7.0-changes#ndk">Android-7.0-changes</a> 提到：</li>
 </ul>
 <blockquote>
 <p>Starting in Android 7.0, the system prevents apps from dynamically linking against non-NDK libraries, which may cause your app to crash.</p>
 </blockquote>
 <ul>
-<li><a href="https://android-developers.googleblog.com/2016/06/improving-stability-with-private-cc.html" target="_blank" rel="noopener">Improving Stability with Private C/C++ Symbol Restrictions in Android N</a> 也提到这个限制：</li>
+<li><a target="_blank" rel="noopener" href="https://android-developers.googleblog.com/2016/06/improving-stability-with-private-cc.html">Improving Stability with Private C&#x2F;C++ Symbol Restrictions in Android N</a> 也提到这个限制：</li>
 </ul>
 <blockquote>
-<p>Android N <strong>will restrict which libraries your C/C++ code can link against at runtime</strong>. </p>
+<p>Android N <strong>will restrict which libraries your C&#x2F;C++ code can link against at runtime</strong>. </p>
 </blockquote>
-<p>官方的作出上述限制的理由是只允许应用访问公开的 API(无论是 Java 层还是 Native 层)，不允许访问非公开的方法，以提升应用的稳定性。出发点是好的，但对于一些合理的使用场景，比如开发包/测试包中调用非公开方法，造成相当的不便。</p>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>如何突破官方的限制呢？<a href="https://github.com/avs333/Nougat_dlfunctions" target="_blank" rel="noopener">Nougat_dlfunctions</a> 提供了一个不错的解决方案，可以完美避开官方限制。</p>
+<p>官方的作出上述限制的理由是只允许应用访问公开的 API(无论是 Java 层还是 Native 层)，不允许访问非公开的方法，以提升应用的稳定性。出发点是好的，但对于一些合理的使用场景，比如开发包&#x2F;测试包中调用非公开方法，造成相当的不便。</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>如何突破官方的限制呢？<a target="_blank" rel="noopener" href="https://github.com/avs333/Nougat_dlfunctions">Nougat_dlfunctions</a> 提供了一个不错的解决方案，可以完美避开官方限制。</p>
 <p>Nougat_dlfunctions 是这样介绍自己的：</p>
 <blockquote>
 <p>A hack for loading system libraries in Android Nougat where dlopen() has been disabled by some wise guys.</p>
 </blockquote>
 <p>它的两个主要 API 如下。形式上跟 <code>dlopen()</code> 和 <code>dlsysm()</code> 完全一致，所以用起来非常简单。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">fake_dlopen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *libpath, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">fake_dlsym</span><span class="params">(<span class="keyword">void</span> *handle, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">fake_dlopen</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *libpath, <span class="type">int</span> flags)</span>;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">fake_dlsym</span><span class="params">(<span class="type">void</span> *handle, <span class="type">const</span> <span class="type">char</span> *name)</span>;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li><code>fake_dlopen()</code> - 跟 <code>dlopen()</code> 一样，用于 load and link a dynamic library or bundle</li>
 <li><code>fake_dlsym()</code> - 跟 <code>dlsym()</code> 一样，用于 get address of a symbol</li>
 </ul>
-<p><a href="https://gist.github.com/410063005/c3582c7e9b8d26e3f4f825576a4bae5d" target="_blank" rel="noopener">这里</a> 演示了 <code>dlsym()</code> 的用法，主要代码如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*CACULATE_FUNC)</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span>* handle = dlopen(<span class="string">"libop.so"</span>, RTLD_NOW);</span><br><span class="line">    <span class="keyword">void</span>* sym_add = dlsym(handle, <span class="string">"add"</span>);</span><br><span class="line">    </span><br><span class="line">    CACULATE_FUNC add_func = sym_add;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d + %d = %d\n"</span>, <span class="number">1</span>, <span class="number">11</span>, add_func(<span class="number">11</span>, <span class="number">1</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/410063005/c3582c7e9b8d26e3f4f825576a4bae5d">这里</a> 演示了 <code>dlsym()</code> 的用法，主要代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="title function_">int</span> <span class="params">(*CACULATE_FUNC)</span><span class="params">(<span class="type">int</span>, <span class="type">int</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">void</span>* handle = dlopen(<span class="string">&quot;libop.so&quot;</span>, RTLD_NOW);</span><br><span class="line">    <span class="type">void</span>* sym_add = dlsym(handle, <span class="string">&quot;add&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    CACULATE_FUNC add_func = sym_add;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d + %d = %d\n&quot;</span>, <span class="number">1</span>, <span class="number">11</span>, add_func(<span class="number">11</span>, <span class="number">1</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>很容易使用 Nougat_dlfunctions 提供的 <code>fake_dlsym()</code> 函数替代 <code>dlsym()</code>：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span>* handle = fake_dlopen(<span class="string">"libop.so"</span>, RTLD_NOW);</span><br><span class="line">    <span class="keyword">void</span>* sym_add = fake_dlsym(handle, <span class="string">"add"</span>);</span><br><span class="line">    </span><br><span class="line">    CACULATE_FUNC add_func = sym_add;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d + %d = %d\n"</span>, <span class="number">1</span>, <span class="number">11</span>, add_func(<span class="number">11</span>, <span class="number">1</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h1><p>Nougat_dlfunctions 库的原理本身并不复杂，但由于涉及到 <a href="http://ftp.openwatcom.org/devel/docs/elf-64-gen.pdf" target="_blank" rel="noopener">ELF 文件格式</a>，其中的技术细节理解起来还是要花些时间。</p>
-<p>要保证 <code>fake_dlopen()</code> 和 <code>fake_dlsym()</code> 函数可正常运行有一个前提：<strong>so 文件本身已经被加载到当前进程</strong>。所以更准确地说, Nougat_dlfunctions 库并不能主动加载系统库/非公开的库，而是从已加载的系统库/非公开库中找到感兴趣的方法地址。但即使这样，对很多应用场景已经够用了。比如，以 hook Bitmap 为例，可以利用这个库绕开 Android 系统限制拿到目标方法的地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">void</span>* handle = fake_dlopen(<span class="string">&quot;libop.so&quot;</span>, RTLD_NOW);</span><br><span class="line">    <span class="type">void</span>* sym_add = fake_dlsym(handle, <span class="string">&quot;add&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    CACULATE_FUNC add_func = sym_add;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d + %d = %d\n&quot;</span>, <span class="number">1</span>, <span class="number">11</span>, add_func(<span class="number">11</span>, <span class="number">1</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h1><p>Nougat_dlfunctions 库的原理本身并不复杂，但由于涉及到 <a target="_blank" rel="noopener" href="http://ftp.openwatcom.org/devel/docs/elf-64-gen.pdf">ELF 文件格式</a>，其中的技术细节理解起来还是要花些时间。</p>
+<p>要保证 <code>fake_dlopen()</code> 和 <code>fake_dlsym()</code> 函数可正常运行有一个前提：<strong>so 文件本身已经被加载到当前进程</strong>。所以更准确地说, Nougat_dlfunctions 库并不能主动加载系统库&#x2F;非公开的库，而是从已加载的系统库&#x2F;非公开库中找到感兴趣的方法地址。但即使这样，对很多应用场景已经够用了。比如，以 hook Bitmap 为例，可以利用这个库绕开 Android 系统限制拿到目标方法的地址。</p>
 <p>再来看具体流程。</p>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/fake_dlopen_flow.png" alt></p>
-<p>首先，<code>fake_dlopen()</code> 读取 <code>/proc/self/maps</code> 文件。这个文件记录了当前进程的内存布局。<a href="https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps" target="_blank" rel="noopener">Understanding-linux-proc-id-maps</a> 对此有简要的描述。</p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/fake_dlopen_flow.png"></p>
+<p>首先，<code>fake_dlopen()</code> 读取 <code>/proc/self/maps</code> 文件。这个文件记录了当前进程的内存布局。<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps">Understanding-linux-proc-id-maps</a> 对此有简要的描述。</p>
 <blockquote>
-<p>Each row in /proc/$PID/maps describes a region of contiguous virtual memory in a process or thread. Each row has the following fields:</p>
+<p>Each row in &#x2F;proc&#x2F;$PID&#x2F;maps describes a region of contiguous virtual memory in a process or thread. Each row has the following fields:</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">address           perms offset  dev   inode   pathname</span><br><span class="line">08048000-08056000 r-xp 00000000 03:0c 64593   /usr/sbin/gpm</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">address           perms offset  dev   inode   pathname</span><br><span class="line">08048000-08056000 r-xp 00000000 03:0c 64593   /usr/sbin/gpm</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>address - 进程地址空间的起始地址</li>
 <li>permissions - 访问权限</li>
@@ -281,32 +329,38 @@
 </ul>
 <p>知道进程的内存布局后，不难从其中获取到指定路径的 so 文件的基址。基址保存在 <code>load_addr</code>。</p>
 <p>然后，Nougat_dlfunctions 调用 <code>mmap()</code> 对该 so 文件进行内存映射，映射结果为 <code>elf</code> 并对其进行解析。<code>elf</code> 数据结构类型是 <code>Elf_Ehdr</code>。<code>Elf_Ehdr</code> 定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="meta-keyword">define</span> ELF_NIDENT	16</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint8_t</span>		e_ident[ELF_NIDENT];</span><br><span class="line">	Elf32_Half	e_type;</span><br><span class="line">	Elf32_Half	e_machine;</span><br><span class="line">	Elf32_Word	e_version;</span><br><span class="line">	Elf32_Addr	e_entry;</span><br><span class="line">	Elf32_Off	e_phoff;</span><br><span class="line">	Elf32_Off	e_shoff;      <span class="comment">/* Section header offset */</span></span><br><span class="line">	Elf32_Word	e_flags;</span><br><span class="line">	Elf32_Half	e_ehsize;</span><br><span class="line">	Elf32_Half	e_phentsize;</span><br><span class="line">	Elf32_Half	e_phnum;</span><br><span class="line">	Elf32_Half	e_shentsize; <span class="comment">/* Size of section header entry */</span>  </span><br><span class="line">	Elf32_Half	e_shnum;     <span class="comment">/* Number of section header entries */</span> </span><br><span class="line">	Elf32_Half	e_shstrndx;</span><br><span class="line">&#125; Elf32_Ehdr;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">define</span> ELF_NIDENT	16</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="type">uint8_t</span>		e_ident[ELF_NIDENT];</span><br><span class="line">	Elf32_Half	e_type;</span><br><span class="line">	Elf32_Half	e_machine;</span><br><span class="line">	Elf32_Word	e_version;</span><br><span class="line">	Elf32_Addr	e_entry;</span><br><span class="line">	Elf32_Off	e_phoff;</span><br><span class="line">	Elf32_Off	e_shoff;      <span class="comment">/* Section header offset */</span></span><br><span class="line">	Elf32_Word	e_flags;</span><br><span class="line">	Elf32_Half	e_ehsize;</span><br><span class="line">	Elf32_Half	e_phentsize;</span><br><span class="line">	Elf32_Half	e_phnum;</span><br><span class="line">	Elf32_Half	e_shentsize; <span class="comment">/* Size of section header entry */</span>  </span><br><span class="line">	Elf32_Half	e_shnum;     <span class="comment">/* Number of section header entries */</span> </span><br><span class="line">	Elf32_Half	e_shstrndx;</span><br><span class="line">&#125; Elf32_Ehdr;</span><br></pre></td></tr></table></figure>
+
 <p>简单来说，一个 ELF 文件由一个 Header 及 多个 Section 组成。每个 Section 也有自己的 Section Header，其类型为 <code>Elf32_Shdr</code>。<code>Elf32_Shdr</code> 定义如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	Elf32_Word	sh_name;</span><br><span class="line">	Elf32_Word	sh_type;</span><br><span class="line">	Elf32_Word	sh_flags;</span><br><span class="line">	Elf32_Addr	sh_addr;</span><br><span class="line">	Elf32_Off	sh_offset;   <span class="comment">/* Offset in file */</span></span><br><span class="line">	Elf32_Word	sh_size;     <span class="comment">/* Size of section */</span> </span><br><span class="line">	Elf32_Word	sh_link;</span><br><span class="line">	Elf32_Word	sh_info;</span><br><span class="line">	Elf32_Word	sh_addralign;</span><br><span class="line">	Elf32_Word	sh_entsize;</span><br><span class="line">&#125; Elf32_Shdr;</span><br></pre></td></tr></table></figure>
-<p>Section 有不同类型。更多细节可以参考<a href="http://ftp.openwatcom.org/devel/docs/elf-64-gen.pdf" target="_blank" rel="noopener">ELF-64 Object File Format</a>。这里重点关注这几种类型的 Section：</p>
+
+<p>Section 有不同类型。更多细节可以参考<a target="_blank" rel="noopener" href="http://ftp.openwatcom.org/devel/docs/elf-64-gen.pdf">ELF-64 Object File Format</a>。这里重点关注这几种类型的 Section：</p>
 <ul>
 <li>类型 <code>SHT_DYNSYM</code>, 名字是 <code>.dynsym</code>  - 这个 section 包含 dynamic linking tables</li>
 <li>类型 <code>SHT_STRTAB</code>, 名字是 <code>.dynstr</code>  - 这个 section 包含 string table</li>
 <li>类型 <code>SHT_PROGBITS</code> - 这个 section 包含 information defined by the program</li>
 </ul>
 <p><code>.dynsym</code> 是符号表，表中的元素类型是 <code>Elf32_Sym</code>。 <code>Elf32_Sym</code> 定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	Elf32_Word		st_name;</span><br><span class="line">	Elf32_Addr		st_value;</span><br><span class="line">	Elf32_Word		st_size;</span><br><span class="line">	<span class="keyword">uint8_t</span>			st_info;</span><br><span class="line">	<span class="keyword">uint8_t</span>			st_other;</span><br><span class="line">	Elf32_Half		st_shndx;</span><br><span class="line">&#125; Elf32_Sym;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	Elf32_Word		st_name;</span><br><span class="line">	Elf32_Addr		st_value;</span><br><span class="line">	Elf32_Word		st_size;</span><br><span class="line">	<span class="type">uint8_t</span>			st_info;</span><br><span class="line">	<span class="type">uint8_t</span>			st_other;</span><br><span class="line">	Elf32_Half		st_shndx;</span><br><span class="line">&#125; Elf32_Sym;</span><br></pre></td></tr></table></figure>
 <p>Nougat_dlfunctions 处理 <code>elf</code> 的方式相当简单粗暴：找到关键信息后直接拷贝一份并保存下来。关键信息包括 <code>.dynsym</code>，<code>.dynstr</code> 等等。具体可以对照着代码看：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">fake_dlopen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *libpath, <span class="keyword">int</span> flags)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FILE *maps;</span><br><span class="line">    <span class="keyword">char</span> buff[<span class="number">256</span>];	</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ctx</span> *<span class="title">ctx</span> = 0;</span></span><br><span class="line">    <span class="keyword">off_t</span> load_addr, size;</span><br><span class="line">    <span class="keyword">int</span> k, fd = <span class="number">-1</span>, found = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">void</span> *shoff;</span><br><span class="line">    Elf_Ehdr *elf = MAP_FAILED;</span><br><span class="line">	...</span><br><span class="line">	ctx = (struct ctx *) <span class="built_in">calloc</span>(<span class="number">1</span>, <span class="keyword">sizeof</span>(struct ctx));    	    	</span><br><span class="line">	<span class="keyword">if</span>(!ctx) fatal(<span class="string">"no memory for %s"</span>, libpath);</span><br><span class="line"></span><br><span class="line">	ctx-&gt;load_addr = (<span class="keyword">void</span> *) load_addr;</span><br><span class="line">	shoff = ((<span class="keyword">void</span> *) elf) + elf-&gt;e_shoff;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span>(k = <span class="number">0</span>; k &lt; elf-&gt;e_shnum; k++, shoff += elf-&gt;e_shentsize)  &#123;</span><br><span class="line"></span><br><span class="line">	    Elf_Shdr *sh = (Elf_Shdr *) shoff;</span><br><span class="line">	    log_dbg(<span class="string">"%s: k=%d shdr=%p type=%x"</span>, __func__, k, sh, sh-&gt;sh_type);</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">switch</span>(sh-&gt;sh_type) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> SHT_DYNSYM:	</span><br><span class="line">		    <span class="keyword">if</span>(ctx-&gt;dynsym) fatal(<span class="string">"%s: duplicate DYNSYM sections"</span>, libpath); <span class="comment">/* .dynsym */</span></span><br><span class="line">		    ctx-&gt;dynsym = <span class="built_in">malloc</span>(sh-&gt;sh_size);</span><br><span class="line">		    <span class="keyword">if</span>(!ctx-&gt;dynsym) fatal(<span class="string">"%s: no memory for .dynsym"</span>, libpath);</span><br><span class="line">		    <span class="built_in">memcpy</span>(ctx-&gt;dynsym, ((<span class="keyword">void</span> *) elf) + sh-&gt;sh_offset, sh-&gt;sh_size);</span><br><span class="line">		    ctx-&gt;nsyms = (sh-&gt;sh_size/<span class="keyword">sizeof</span>(Elf_Sym)) ;</span><br><span class="line">		    <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> SHT_STRTAB:	</span><br><span class="line">		    <span class="keyword">if</span>(ctx-&gt;dynstr) <span class="keyword">break</span>;	<span class="comment">/* .dynstr is guaranteed to be the first STRTAB */</span></span><br><span class="line">		    ctx-&gt;dynstr = <span class="built_in">malloc</span>(sh-&gt;sh_size);</span><br><span class="line">		    <span class="keyword">if</span>(!ctx-&gt;dynstr) fatal(<span class="string">"%s: no memory for .dynstr"</span>, libpath);</span><br><span class="line">		    <span class="built_in">memcpy</span>(ctx-&gt;dynstr, ((<span class="keyword">void</span> *) elf) + sh-&gt;sh_offset, sh-&gt;sh_size);</span><br><span class="line">		    <span class="keyword">break</span>;	</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> SHT_PROGBITS:</span><br><span class="line">		    <span class="keyword">if</span>(!ctx-&gt;dynstr || !ctx-&gt;dynsym) <span class="keyword">break</span>;</span><br><span class="line">		    <span class="comment">/* won't even bother checking against the section name */</span></span><br><span class="line">		    ctx-&gt;bias = (<span class="keyword">off_t</span>) sh-&gt;sh_addr - (<span class="keyword">off_t</span>) sh-&gt;sh_offset; </span><br><span class="line">		    k = elf-&gt;e_shnum;  <span class="comment">/* exit for */</span></span><br><span class="line">		    <span class="keyword">break</span>;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">fake_dlopen</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *libpath, <span class="type">int</span> flags)</span> </span><br><span class="line">&#123;</span><br><span class="line">    FILE *maps;</span><br><span class="line">    <span class="type">char</span> buff[<span class="number">256</span>];	</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ctx</span> *<span class="title">ctx</span> =</span> <span class="number">0</span>;</span><br><span class="line">    <span class="type">off_t</span> load_addr, size;</span><br><span class="line">    <span class="type">int</span> k, fd = <span class="number">-1</span>, found = <span class="number">0</span>;</span><br><span class="line">    <span class="type">void</span> *shoff;</span><br><span class="line">    Elf_Ehdr *elf = MAP_FAILED;</span><br><span class="line">	...</span><br><span class="line">	ctx = (<span class="keyword">struct</span> ctx *) <span class="built_in">calloc</span>(<span class="number">1</span>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> ctx));    	    	</span><br><span class="line">	<span class="keyword">if</span>(!ctx) fatal(<span class="string">&quot;no memory for %s&quot;</span>, libpath);</span><br><span class="line"></span><br><span class="line">	ctx-&gt;load_addr = (<span class="type">void</span> *) load_addr;</span><br><span class="line">	shoff = ((<span class="type">void</span> *) elf) + elf-&gt;e_shoff;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span>(k = <span class="number">0</span>; k &lt; elf-&gt;e_shnum; k++, shoff += elf-&gt;e_shentsize)  &#123;</span><br><span class="line"></span><br><span class="line">	    Elf_Shdr *sh = (Elf_Shdr *) shoff;</span><br><span class="line">	    log_dbg(<span class="string">&quot;%s: k=%d shdr=%p type=%x&quot;</span>, __func__, k, sh, sh-&gt;sh_type);</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">switch</span>(sh-&gt;sh_type) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> SHT_DYNSYM:	</span><br><span class="line">		    <span class="keyword">if</span>(ctx-&gt;dynsym) fatal(<span class="string">&quot;%s: duplicate DYNSYM sections&quot;</span>, libpath); <span class="comment">/* .dynsym */</span></span><br><span class="line">		    ctx-&gt;dynsym = <span class="built_in">malloc</span>(sh-&gt;sh_size);</span><br><span class="line">		    <span class="keyword">if</span>(!ctx-&gt;dynsym) fatal(<span class="string">&quot;%s: no memory for .dynsym&quot;</span>, libpath);</span><br><span class="line">		    <span class="built_in">memcpy</span>(ctx-&gt;dynsym, ((<span class="type">void</span> *) elf) + sh-&gt;sh_offset, sh-&gt;sh_size);</span><br><span class="line">		    ctx-&gt;nsyms = (sh-&gt;sh_size/<span class="keyword">sizeof</span>(Elf_Sym)) ;</span><br><span class="line">		    <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> SHT_STRTAB:	</span><br><span class="line">		    <span class="keyword">if</span>(ctx-&gt;dynstr) <span class="keyword">break</span>;	<span class="comment">/* .dynstr is guaranteed to be the first STRTAB */</span></span><br><span class="line">		    ctx-&gt;dynstr = <span class="built_in">malloc</span>(sh-&gt;sh_size);</span><br><span class="line">		    <span class="keyword">if</span>(!ctx-&gt;dynstr) fatal(<span class="string">&quot;%s: no memory for .dynstr&quot;</span>, libpath);</span><br><span class="line">		    <span class="built_in">memcpy</span>(ctx-&gt;dynstr, ((<span class="type">void</span> *) elf) + sh-&gt;sh_offset, sh-&gt;sh_size);</span><br><span class="line">		    <span class="keyword">break</span>;	</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> SHT_PROGBITS:</span><br><span class="line">		    <span class="keyword">if</span>(!ctx-&gt;dynstr || !ctx-&gt;dynsym) <span class="keyword">break</span>;</span><br><span class="line">		    <span class="comment">/* won&#x27;t even bother checking against the section name */</span></span><br><span class="line">		    ctx-&gt;bias = (<span class="type">off_t</span>) sh-&gt;sh_addr - (<span class="type">off_t</span>) sh-&gt;sh_offset; </span><br><span class="line">		    k = elf-&gt;e_shnum;  <span class="comment">/* exit for */</span></span><br><span class="line">		    <span class="keyword">break</span>;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><code>ctx</code> 的结构如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ctx</span> &#123;</span></span><br><span class="line">    <span class="keyword">void</span> *load_addr;</span><br><span class="line">    <span class="keyword">void</span> *dynstr; <span class="comment">// 保存了 string table </span></span><br><span class="line">    <span class="keyword">void</span> *dynsym; <span class="comment">// 保存了 dynamic linking table</span></span><br><span class="line">    <span class="keyword">int</span> nsyms;    <span class="comment">// 保存了 dynamic linking table 的条目大小</span></span><br><span class="line">    <span class="keyword">off_t</span> bias;   <span class="comment">// ? 不清楚</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ctx</span> &#123;</span></span><br><span class="line">    <span class="type">void</span> *load_addr;</span><br><span class="line">    <span class="type">void</span> *dynstr; <span class="comment">// 保存了 string table </span></span><br><span class="line">    <span class="type">void</span> *dynsym; <span class="comment">// 保存了 dynamic linking table</span></span><br><span class="line">    <span class="type">int</span> nsyms;    <span class="comment">// 保存了 dynamic linking table 的条目大小</span></span><br><span class="line">    <span class="type">off_t</span> bias;   <span class="comment">// ? 不清楚</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
 <p>最后，根据指定的方法名在 <code>ctx-&gt;dynsym</code> (即之前保存的 dynamic linking table) 进行查找。代码如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">fake_dlsym</span><span class="params">(<span class="keyword">void</span> *handle, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> k;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ctx</span> *<span class="title">ctx</span> = (<span class="title">struct</span> <span class="title">ctx</span> *) <span class="title">handle</span>;</span></span><br><span class="line">    Elf_Sym *sym = (Elf_Sym *) ctx-&gt;dynsym;</span><br><span class="line">    <span class="keyword">char</span> *strings = (<span class="keyword">char</span> *) ctx-&gt;dynstr;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(k = <span class="number">0</span>; k &lt; ctx-&gt;nsyms; k++, sym++)</span><br><span class="line">	<span class="keyword">if</span>(<span class="built_in">strcmp</span>(strings + sym-&gt;st_name, name) == <span class="number">0</span>) &#123;</span><br><span class="line">	    <span class="comment">/*  NB: sym-&gt;st_value is an offset into the section for relocatables,</span></span><br><span class="line"><span class="comment">		but a VMA for shared libs or exe files, so we have to subtract the bias */</span></span><br><span class="line">	    <span class="keyword">void</span> *ret = ctx-&gt;load_addr + sym-&gt;st_value - ctx-&gt;bias;</span><br><span class="line">	    log_info(<span class="string">"%s found at %p"</span>, name, ret);</span><br><span class="line">	    <span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">fake_dlsym</span><span class="params">(<span class="type">void</span> *handle, <span class="type">const</span> <span class="type">char</span> *name)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> k;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ctx</span> *<span class="title">ctx</span> =</span> (<span class="keyword">struct</span> ctx *) handle;</span><br><span class="line">    Elf_Sym *sym = (Elf_Sym *) ctx-&gt;dynsym;</span><br><span class="line">    <span class="type">char</span> *strings = (<span class="type">char</span> *) ctx-&gt;dynstr;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(k = <span class="number">0</span>; k &lt; ctx-&gt;nsyms; k++, sym++)</span><br><span class="line">	<span class="keyword">if</span>(<span class="built_in">strcmp</span>(strings + sym-&gt;st_name, name) == <span class="number">0</span>) &#123;</span><br><span class="line">	    <span class="comment">/*  NB: sym-&gt;st_value is an offset into the section for relocatables,</span></span><br><span class="line"><span class="comment">		but a VMA for shared libs or exe files, so we have to subtract the bias */</span></span><br><span class="line">	    <span class="type">void</span> *ret = ctx-&gt;load_addr + sym-&gt;st_value - ctx-&gt;bias;</span><br><span class="line">	    log_info(<span class="string">&quot;%s found at %p&quot;</span>, name, ret);</span><br><span class="line">	    <span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>如果方法名跟 dynamic linking table 中的某一项匹配上了，对应的方法地址可以这样计算出来：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctx-&gt;load_addr + sym-&gt;st_value - ctx-&gt;bias</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctx-&gt;load_addr + sym-&gt;st_value - ctx-&gt;bias</span><br></pre></td></tr></table></figure>
+
 <p>看一个实际案例：hook Bitmap。假设我们感兴趣的方法名为 <code>createBitmap</code>，</p>
 <ul>
 <li>这个方法在 <code>system/lib/libandroid_runtime.so</code> 中</li>
 <li>应用启动后 Android 系统会为当前进程加载 <code>libandroid_runtime.so</code></li>
 <li><code>proc/self/maps</code> 中记录了当前进程的内存布局，其中包括 <code>libandroid_runtime.so</code></li>
 </ul>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/maps.png" alt></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/maps.png"></p>
 <p>获取 <code>createBitmap()</code> 方法地址流程：</p>
 <ul>
 <li><code>fake_dlopen()</code><ul>
@@ -321,14 +375,14 @@
 </ul>
 </li>
 </ul>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/fake_dlopen_flow.png" alt></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/fake_dlopen_flow.png"></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://wiki.osdev.org/ELF_Tutorial" target="_blank" rel="noopener">ELF Tutorial - OSDev Wiki</a></li>
-<li><a href="https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps" target="_blank" rel="noopener">Understanding Linux /proc/id/maps - Stack Overflow</a> </li>
-<li><a href="http://ftp.openwatcom.org/devel/docs/elf-64-gen.pdf" target="_blank" rel="noopener">ELF-64 Object File Format</a></li>
-<li><a href="https://pqpo.me/2017/05/31/system-loadlibrary/" target="_blank" rel="noopener">深入理解 System.loadLibrary - Pqpo’s Notes</a></li>
-<li><a href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&amp;mid=2652049403&amp;idx=1&amp;sn=a7f56665ec2760cb71bca29c2983cecf&amp;chksm=808cafbeb7fb26a8bcf64bb2fd58c89b1e8741dff0f33eab069ef2a0f41840fb6fa68dde274e&amp;mpshare=1&amp;scene=1&amp;srcid=06053yN9hK2ulAqSAwSFX9TS#rd" target="_blank" rel="noopener">Android Q 对非 SDK 接口限制的更新 </a></li>
-<li><a href="https://www.cnblogs.com/jiqingwu/p/elf_explore_3.html" target="_blank" rel="noopener">ELF格式探析之三：sections - JollyWing - 博客园</a></li>
+<li><a target="_blank" rel="noopener" href="https://wiki.osdev.org/ELF_Tutorial">ELF Tutorial - OSDev Wiki</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps">Understanding Linux &#x2F;proc&#x2F;id&#x2F;maps - Stack Overflow</a> </li>
+<li><a target="_blank" rel="noopener" href="http://ftp.openwatcom.org/devel/docs/elf-64-gen.pdf">ELF-64 Object File Format</a></li>
+<li><a target="_blank" rel="noopener" href="https://pqpo.me/2017/05/31/system-loadlibrary/">深入理解 System.loadLibrary - Pqpo’s Notes</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&mid=2652049403&idx=1&sn=a7f56665ec2760cb71bca29c2983cecf&chksm=808cafbeb7fb26a8bcf64bb2fd58c89b1e8741dff0f33eab069ef2a0f41840fb6fa68dde274e&mpshare=1&scene=1&srcid=06053yN9hK2ulAqSAwSFX9TS#rd">Android Q 对非 SDK 接口限制的更新 </a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jiqingwu/p/elf_explore_3.html">ELF格式探析之三：sections - JollyWing - 博客园</a></li>
 </ul>
 
     </div>
@@ -337,130 +391,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/05/31/bitmap-decode-perf/" rel="prev" title="Bitmap 解码性能测试">
-      <i class="fa fa-chevron-left"></i> Bitmap 解码性能测试
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/06/06/fits-system-windows/" rel="next" title="重温 fitsSystemWindows">
-      重温 fitsSystemWindows <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/05/31/bitmap-decode-perf/" rel="prev" title="Bitmap 解码性能测试">
+                  <i class="fa fa-chevron-left"></i> Bitmap 解码性能测试
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/06/06/fits-system-windows/" rel="next" title="重温 fitsSystemWindows">
+                  重温 fitsSystemWindows <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Android-对-dlsym-的限制"><span class="nav-number">1.</span> <span class="nav-text">Android 对 dlsym 的限制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原理分析"><span class="nav-number">3.</span> <span class="nav-text">原理分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -468,29 +437,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -499,22 +460,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/06/04/fake-dlopen/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

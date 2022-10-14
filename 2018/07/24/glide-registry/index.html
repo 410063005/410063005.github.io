@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,97 +14,69 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="Glide的Registry和GlideModule机制非常强大。我们可以给Glide添加自定义的GlideModule，更灵活更精细地控制应用中的图片加载流程。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Glide的Registry和GlideModule机制非常强大。我们可以给Glide添加自定义的GlideModule，更灵活更精细地控制应用中的图片加载流程。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Glide的Registry和GlideModule">
 <meta property="og:url" content="http://www.sunmoonblog.com/2018/07/24/glide-registry/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="Glide的Registry和GlideModule机制非常强大。我们可以给Glide添加自定义的GlideModule，更灵活更精细地控制应用中的图片加载流程。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/24/glide-registry/glide-okhttp-loader.png">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/24/glide-registry/glide-registry2.png">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/24/glide-registry/registry-detail.png">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/07/24/glide-registry/generated-app-glidemodule.png">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.887Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/glide-okhttp-loader.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/glide-registry2.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/registry-detail.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/generated-app-glidemodule.png">
+<meta property="article:published_time" content="2018-07-24T10:01:27.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.887Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Glide的Registry和GlideModule">
-<meta name="twitter:description" content="Glide的Registry和GlideModule机制非常强大。我们可以给Glide添加自定义的GlideModule，更灵活更精细地控制应用中的图片加载流程。">
-<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/07/24/glide-registry/glide-okhttp-loader.png">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/glide-okhttp-loader.png">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2018/07/24/glide-registry/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Glide的Registry和GlideModule | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2018/07/24/glide-registry/","path":"2018/07/24/glide-registry/","title":"Glide的Registry和GlideModule"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Glide的Registry和GlideModule | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -117,19 +90,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -140,23 +102,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -164,207 +125,18 @@
   </div>
 
 </div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/07/24/glide-registry/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sunmoon的博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Glide的Registry和GlideModule
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-07-24 18:01:27" itemprop="dateCreated datePublished" datetime="2018-07-24T18:01:27+08:00">2018-07-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>Glide的Registry和GlideModule机制非常强大。我们可以给Glide添加自定义的GlideModule，更灵活更精细地控制应用中的图片加载流程。<br><a id="more"></a></p>
-<h1 id="使用OkHttp加载图片"><a href="#使用OkHttp加载图片" class="headerlink" title="使用OkHttp加载图片"></a>使用OkHttp加载图片</h1><p>理解Registry和GlideModule机制前先来看看用法。</p>
-<ul>
-<li>实现ModelLoader</li>
-<li>实现ModelLoaderFactory</li>
-<li>实现DataFetcher</li>
-</ul>
-<p>三者的关系如下图所示。</p>
-<p><img src="glide-okhttp-loader.png" alt></p>
-<p>再来看具体代码。</p>
-<ul>
-<li>完整代码见<a href="https://github.com/410063005/FragmentLifeCircle/blob/master/demo-glide/src/main/java/com/example/demo_glide/okhttploader/OkHttpGlideUrlLoaderActivity.java" target="_blank" rel="noopener">OkHttpGlideUrlLoaderActivity</a></li>
-<li>更多用法请参考<a href="http://bumptech.github.io/glide/doc/configuration.html#applications" target="_blank" rel="noopener">Glide v4 : Configuration</a></li>
-<li>官方示例<ul>
-<li><a href="https://github.com/bumptech/glide/tree/master/samples/flickr" target="_blank" rel="noopener">flickr</a></li>
-<li><a href="https://github.com/bumptech/glide/tree/master/integration/okhttp3" target="_blank" rel="noopener">okhttp3</a></li>
-<li><a href="https://github.com/bumptech/glide/tree/master/integration/volley" target="_blank" rel="noopener">volley</a></li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OkHttpGlideUrlLoader</span> <span class="keyword">implements</span> <span class="title">ModelLoader</span>&lt;<span class="title">GlideUrl</span>, <span class="title">InputStream</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> OkHttpClient client;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">OkHttpGlideUrlLoader</span><span class="params">(OkHttpClient client)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.client = client;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LoadData&lt;InputStream&gt; <span class="title">buildLoadData</span><span class="params">(GlideUrl glideUrl, <span class="keyword">int</span> width, <span class="keyword">int</span> height, Options options)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> LoadData&lt;&gt;(glideUrl, <span class="keyword">new</span> OkHttpStreamFetcher(client, glideUrl));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Factory</span> <span class="keyword">implements</span> <span class="title">ModelLoaderFactory</span>&lt;<span class="title">GlideUrl</span>, <span class="title">InputStream</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> OkHttpClient client;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Factory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            client = <span class="keyword">new</span> OkHttpClient();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> ModelLoader&lt;GlideUrl, InputStream&gt; <span class="title">build</span><span class="params">(MultiModelLoaderFactory multiFactory)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> OkHttpGlideUrlLoader(client);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OkHttpStreamFetcher</span> <span class="keyword">implements</span> <span class="title">DataFetcher</span>&lt;<span class="title">InputStream</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"OkHttpStreamFetcher"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> OkHttpClient client;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> GlideUrl url;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> InputStream inputStream;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Call call;</span><br><span class="line">    <span class="meta">@Synthetic</span></span><br><span class="line">    <span class="keyword">private</span></span><br><span class="line">    ResponseBody responseBody;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">OkHttpStreamFetcher</span><span class="params">(OkHttpClient client, GlideUrl url)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.client = client;</span><br><span class="line">        <span class="keyword">this</span>.url = url;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">loadData</span><span class="params">(Priority priority, <span class="keyword">final</span> DataCallback&lt;? <span class="keyword">super</span> InputStream&gt; callback)</span> </span>&#123;</span><br><span class="line">        Request.Builder requestBuilder = <span class="keyword">new</span> Request.Builder().url(url.toStringUrl());</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;String, String&gt; headerEntry : url.getHeaders().entrySet()) &#123;</span><br><span class="line">            String key = headerEntry.getKey();</span><br><span class="line">            requestBuilder.addHeader(key, headerEntry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">final</span> Request request = requestBuilder.build();</span><br><span class="line"></span><br><span class="line">        call = client.newCall(request);</span><br><span class="line">        call.enqueue(<span class="keyword">new</span> Callback() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(Request request, IOException e)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (Log.isLoggable(TAG, Log.DEBUG)) &#123;</span><br><span class="line">                    Log.d(TAG, <span class="string">"onFailure: OkHttp failed to obtain result"</span>, e);</span><br><span class="line">                &#125;</span><br><span class="line">                callback.onLoadFailed(e);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResponse</span><span class="params">(Response response)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                responseBody = response.body();</span><br><span class="line">                <span class="keyword">if</span> (response.isSuccessful()) &#123;</span><br><span class="line">                    <span class="keyword">long</span> contentLength = responseBody.contentLength();</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.DEBUG)) &#123;</span><br><span class="line">                        Log.d(TAG, <span class="string">"onResponse: contentLength="</span> + contentLength);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    inputStream = ContentLengthInputStream.obtain(responseBody.byteStream(), contentLength);</span><br><span class="line">                    callback.onDataReady(inputStream);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    callback.onLoadFailed(<span class="keyword">new</span> HttpException(response.message(), response.code()));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最后将<code>OkHttpGlideUrlLoader</code>注册到Glide当中。这样理解<code>registry.replace()</code>这段代码：使用OkHttpGlideUrlLoader从GlideUrl类型的Model中加载InputStream类型的数据。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GlideModule</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OkHttpGlideModule</span> <span class="keyword">extends</span> <span class="title">AppGlideModule</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerComponents</span><span class="params">(Context context, Glide glide, Registry registry)</span> </span>&#123;</span><br><span class="line">        registry.replace(GlideUrl<span class="class">.<span class="keyword">class</span>, <span class="title">InputStream</span>.<span class="title">class</span>, <span class="title">new</span> <span class="title">OkHttpGlideUrlLoader</span>.<span class="title">Factory</span>())</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isManifestParsingEnabled</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//return super.isManifestParsingEnabled();</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意<code>OkHttpStreamFetcher.loadData()</code>中会打印出contentLength。如果一切正常，点击button加载图片时logcat中可以看到如下日志：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">07-15 14:22:59.312 20636-2114/com.example.demo_glide D/OkHttpStreamFetcher: onResponse: contentLength=52341</span><br></pre></td></tr></table></figure>
-<p>如果你想监听Glide从是否从网络下载了过大的图片，<code>contentLength</code>可以作为监控指标。</p>
-<h1 id="Registry"><a href="#Registry" class="headerlink" title="Registry"></a>Registry</h1><p>Glide中<code>Registry</code>用于管理组件的注册工作。不过Glide中的组件相当多，比如各种ModelLoader、Encoder、ResourceDedecoder、Transcoder等等。Registry一人实在应付不来，于是它当大管家，实际管理组件的工作交给下面的人去做。例如，对ModelLoader的管理工作，实际上由ModelLoaderRegistry完成。</p>
-<p><img src="glide-registry2.png" alt></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;Model, Data&gt; <span class="function">Registry <span class="title">append</span><span class="params">(Class&lt;Model&gt; modelClass, Class&lt;Data&gt; dataClass,</span></span></span><br><span class="line"><span class="function"><span class="params">    ModelLoaderFactory&lt;Model, Data&gt; factory)</span> </span>&#123;</span><br><span class="line">  modelLoaderRegistry.append(modelClass, dataClass, factory);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> &lt;Model, Data&gt; <span class="function">Registry <span class="title">replace</span><span class="params">(Class&lt;Model&gt; modelClass, Class&lt;Data&gt; dataClass,</span></span></span><br><span class="line"><span class="function"><span class="params">    ModelLoaderFactory&lt;Model, Data&gt; factory)</span> </span>&#123;</span><br><span class="line">  modelLoaderRegistry.replace(modelClass, dataClass, factory);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> &lt;Model&gt; List&lt;ModelLoader&lt;Model, ?&gt;&gt; getModelLoaders(Model model) &#123;</span><br><span class="line">  List&lt;ModelLoader&lt;Model, ?&gt;&gt; result = modelLoaderRegistry.getModelLoaders(model);</span><br><span class="line">  <span class="keyword">if</span> (result.isEmpty()) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> NoModelLoaderAvailableException(model);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>同一类组件不一定唯一存在。比如可以同时有多个ModelLoader，你可以调用<code>append()</code>添加ModelLoader，调用<code>replace()</code>替换成新的ModelLoader。<code>getModelLoaders()</code>返回处理可以加载某种指定类型Model的ModelLoader。</p>
-<p>Glide内置的组件相当之多。创建Glide实例时对这些组件进行注册管理。代码如下(有省略)：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> Glide(</span><br><span class="line">     Context context,</span><br><span class="line">     Engine engine, ...) &#123;</span><br><span class="line">   registry.register(ByteBuffer<span class="class">.<span class="keyword">class</span>, <span class="title">new</span> <span class="title">ByteBufferEncoder</span>())</span></span><br><span class="line"><span class="class">       .<span class="title">register</span>(<span class="title">InputStream</span>.<span class="title">class</span>, <span class="title">new</span> <span class="title">StreamEncoder</span>(<span class="title">arrayPool</span>))</span></span><br><span class="line"><span class="class">       /* <span class="title">Bitmaps</span> */</span></span><br><span class="line"><span class="class">       .<span class="title">append</span>(<span class="title">ByteBuffer</span>.<span class="title">class</span>, <span class="title">Bitmap</span>.<span class="title">class</span>,</span></span><br><span class="line"><span class="class">           <span class="title">new</span> <span class="title">ByteBufferBitmapDecoder</span>(<span class="title">downsampler</span>))</span></span><br><span class="line"><span class="class">       .<span class="title">append</span>(<span class="title">InputStream</span>.<span class="title">class</span>, <span class="title">Bitmap</span>.<span class="title">class</span>,</span></span><br><span class="line"><span class="class">           <span class="title">new</span> <span class="title">StreamBitmapDecoder</span>(<span class="title">downsampler</span>, <span class="title">arrayPool</span>))</span></span><br><span class="line"><span class="class">       .<span class="title">append</span>(<span class="title">ParcelFileDescriptor</span>.<span class="title">class</span>, <span class="title">Bitmap</span>.<span class="title">class</span>, <span class="title">new</span> <span class="title">VideoBitmapDecoder</span>(<span class="title">bitmapPool</span>))</span></span><br><span class="line"><span class="class">       .<span class="title">register</span>(<span class="title">Bitmap</span>.<span class="title">class</span>, <span class="title">new</span> <span class="title">BitmapEncoder</span>())</span></span><br><span class="line"><span class="class">...</span></span><br><span class="line"><span class="class">   <span class="title">glideContext</span> </span>= <span class="keyword">new</span> GlideContext(context, registry, ...)</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p><img src="registry-detail.png" alt></p>
-<p>ModelLoaderFactory类型太多，故图中省略。</p>
-<h1 id="加载自定义Module"><a href="#加载自定义Module" class="headerlink" title="加载自定义Module"></a>加载自定义Module</h1><p>上文中我们知道内置组件和自定义组件均由Registry管理。那么自定义组件如何被加载和管理呢？</p>
-<h2 id="GlideModule注解"><a href="#GlideModule注解" class="headerlink" title="GlideModule注解"></a>GlideModule注解</h2><p>首先需要了解的是GlideModule注解。GlideModule注解的定义非常简单。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.SOURCE)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> GlideModule &#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Returns the name of the class that will be used as a replacement for</span></span><br><span class="line"><span class="comment">   * &#123;<span class="doctag">@link</span> com.bumptech.glide.Glide&#125; in Applications that depend on Glide's generated code.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function">String <span class="title">glideName</span><span class="params">()</span> <span class="keyword">default</span> "GlideApp"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>从代码我们知道以下几点：</p>
-<ul>
-<li>这个注解用于类、接口或者enum类型。这个注解会被javac编译器忽略</li>
-<li>缺省会生成GlideApp类，建议使用GlideApp作为Glide库的调用入口</li>
-<li>Glide的注解处理器会在编译期将带有GlideModule注解的LibraryGlideModule和AppGlideModule子类作为组件注册到Glide</li>
-</ul>
-<p>注意，除了要给LibraryGlideModule和AppGlideModule子类添加@GlideModule注解外，<code>build.gradle</code>中还要添加相应的依赖</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'kotlin-kapt'</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 项目中有Kotlin代码的话, 使用kapt而不是annotationProcessor</span></span><br><span class="line">	<span class="comment">// 如果使用kapt出错，记得要使用'kotlin-kapt'插件  apply plugin: 'kotlin-kapt'</span></span><br><span class="line">    kapt <span class="string">'com.github.bumptech.glide:compiler:4.0.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Glide注解生成器生成的类包括</p>
-<ul>
-<li>GlideApp - Glide库调用入口</li>
-<li>GeneratedRequestManagerFactory - 不用关注</li>
-<li>GeneratedAppGlideModuleImpl - GeneratedAppGlideModule的子类，方法调用会代理到我们自定义的OkHttpGlideModule</li>
-</ul>
-<p><img src="generated-app-glidemodule.png" alt></p>
-<p>Glide注解处理器的好处包括：</p>
-<ul>
-<li>GlideApp作为Glide库入口，GlideApp只提供核心的方法。终于告别敲完”Glide.”后一堆方法提示让你不知所措的日子</li>
-<li>不必在AndroidManifest.xml添加<code>&lt;meta-data /&gt;</code>。感觉<code>&lt;meta-data&gt;</code>很容易出错</li>
-</ul>
-<p>Glide注解处理器只能生成一个组件，而在AndroidManifest.xml中可以添加多个。不过多数情况下，这不是问题。</p>
-<h2 id="加载流程"><a href="#加载流程" class="headerlink" title="加载流程"></a>加载流程</h2><p>分析Glide代码不难理解加载自定义组件的整个过程。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">initializeGlide</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">   Context applicationContext = context.getApplicationContext();</span><br><span class="line">   <span class="comment">// 找到生成的GeneratedAppGlideModuleImpl类实例</span></span><br><span class="line">   GeneratedAppGlideModule annotationGeneratedModule = getAnnotationGeneratedGlideModules();</span><br><span class="line">   List&lt;GlideModule&gt; manifestModules = Collections.emptyList();</span><br><span class="line">   <span class="comment">// 找不到GeneratedAppGlideModuleImpl对象或对象允许解析manifest时，尝试从manifest中寻找Glide组件</span></span><br><span class="line">   <span class="keyword">if</span> (annotationGeneratedModule == <span class="keyword">null</span> || annotationGeneratedModule.isManifestParsingEnabled()) &#123;</span><br><span class="line">     manifestModules = <span class="keyword">new</span> ManifestParser(applicationContext).parse();</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">// excluded module classes机制 </span></span><br><span class="line">   <span class="keyword">if</span> (annotationGeneratedModule != <span class="keyword">null</span></span><br><span class="line">       &amp;&amp; !annotationGeneratedModule.getExcludedModuleClasses().isEmpty()) &#123;</span><br><span class="line">     Set&lt;Class&lt;?&gt;&gt; excludedModuleClasses =</span><br><span class="line">         annotationGeneratedModule.getExcludedModuleClasses();</span><br><span class="line">     <span class="keyword">for</span> (Iterator&lt;GlideModule&gt; iterator = manifestModules.iterator(); iterator.hasNext();) &#123;</span><br><span class="line">       GlideModule current = iterator.next();</span><br><span class="line">       <span class="keyword">if</span> (!excludedModuleClasses.contains(current.getClass())) &#123;</span><br><span class="line">         <span class="keyword">continue</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       iterator.remove();</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   ...</span><br><span class="line">   GlideBuilder builder = <span class="keyword">new</span> GlideBuilder()...;</span><br><span class="line">...</span><br><span class="line">   <span class="keyword">if</span> (annotationGeneratedModule != <span class="keyword">null</span>) &#123;</span><br><span class="line">     annotationGeneratedModule.applyOptions(applicationContext, builder);</span><br><span class="line">   &#125;</span><br><span class="line">   Glide glide = builder.build(applicationContext);</span><br><span class="line">...</span><br><span class="line">   <span class="keyword">if</span> (annotationGeneratedModule != <span class="keyword">null</span>) &#123;</span><br><span class="line">     <span class="comment">// 这里的registerComponents()是不是很熟悉？</span></span><br><span class="line">  <span class="comment">// 对, annotationGeneratedModule就是OkHttpGlideModule</span></span><br><span class="line">     <span class="comment">// 所以实际调用的是OkHttpGlideModule.registerComponents()方法</span></span><br><span class="line">     annotationGeneratedModule.registerComponents(applicationContext, glide, glide.registry);</span><br><span class="line">   &#125;</span><br><span class="line">   Glide.glide = glide;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> GeneratedAppGlideModule <span class="title">getAnnotationGeneratedGlideModules</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   GeneratedAppGlideModule result = <span class="keyword">null</span>;</span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">     Class&lt;GeneratedAppGlideModule&gt; clazz =</span><br><span class="line">         (Class&lt;GeneratedAppGlideModule&gt;)</span><br><span class="line">             Class.forName(<span class="string">"com.bumptech.glide.GeneratedAppGlideModuleImpl"</span>);</span><br><span class="line">     result = clazz.newInstance();</span><br><span class="line">   &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">	...</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>上面的<code>annotationGeneratedModule.registerComponents()</code>方法会调用到我们自定义的OkHttpGlideModule。回顾一下其代码，加深理解。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GlideModule</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OkHttpGlideModule</span> <span class="keyword">extends</span> <span class="title">AppGlideModule</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerComponents</span><span class="params">(Context context, Glide glide, Registry registry)</span> </span>&#123;</span><br><span class="line">        registry.replace(GlideUrl<span class="class">.<span class="keyword">class</span>, <span class="title">InputStream</span>.<span class="title">class</span>, <span class="title">new</span> <span class="title">OkHttpGlideUrlLoader</span>.<span class="title">Factory</span>())</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isManifestParsingEnabled</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//return super.isManifestParsingEnabled();</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://bumptech.github.io/glide/doc/configuration.html#applications" target="_blank" rel="noopener">Glide v4 : Configuration</a></p>
-
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/android/" rel="tag"># Android</a>
-          </div>
-
         
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/07/23/glide-lifecycle/" rel="prev" title="Glide生命周期绑定">
-      <i class="fa fa-chevron-left"></i> Glide生命周期绑定
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/07/26/handler-sync-barrier/" rel="next" title="Handler问题记录">
-      Handler问题记录 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
   
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
 
   <aside class="sidebar">
-    <div class="sidebar-inner">
 
-      <ul class="sidebar-nav motion-element">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
         </li>
@@ -373,29 +145,29 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用OkHttp加载图片"><span class="nav-number">1.</span> <span class="nav-text">使用OkHttp加载图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Registry"><span class="nav-number">2.</span> <span class="nav-text">Registry</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#加载自定义Module"><span class="nav-number">3.</span> <span class="nav-text">加载自定义Module</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GlideModule注解"><span class="nav-number">3.1.</span> <span class="nav-text">GlideModule注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加载流程"><span class="nav-number">3.2.</span> <span class="nav-text">加载流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8OkHttp%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87"><span class="nav-number">1.</span> <span class="nav-text">使用OkHttp加载图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Registry"><span class="nav-number">2.</span> <span class="nav-text">Registry</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E8%87%AA%E5%AE%9A%E4%B9%89Module"><span class="nav-number">3.</span> <span class="nav-text">加载自定义Module</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GlideModule%E6%B3%A8%E8%A7%A3"><span class="nav-number">3.1.</span> <span class="nav-text">GlideModule注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">加载流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
   <p class="site-author-name" itemprop="name">Sunmoon</p>
   <div class="site-description" itemprop="description">移动开发 Android 生活</div>
 </div>
-<div class="site-state-wrap motion-element">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
+        <a href="/archives/">
           <span class="site-state-item-count">158</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -403,26 +175,217 @@
 
 
 
+        </div>
       </div>
-
     </div>
   </aside>
-  <div id="sidebar-dimmer"></div>
+  <div class="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
+    </header>
 
-    <footer class="footer">
-      <div class="footer-inner">
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/07/24/glide-registry/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Glide的Registry和GlideModule | Sunmoon的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Glide的Registry和GlideModule
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-07-24 18:01:27" itemprop="dateCreated datePublished" datetime="2018-07-24T18:01:27+08:00">2018-07-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2018/07/24/glide-registry/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2018/07/24/glide-registry/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Glide的Registry和GlideModule机制非常强大。我们可以给Glide添加自定义的GlideModule，更灵活更精细地控制应用中的图片加载流程。</p>
+<span id="more"></span>
+
+<h1 id="使用OkHttp加载图片"><a href="#使用OkHttp加载图片" class="headerlink" title="使用OkHttp加载图片"></a>使用OkHttp加载图片</h1><p>理解Registry和GlideModule机制前先来看看用法。</p>
+<ul>
+<li>实现ModelLoader</li>
+<li>实现ModelLoaderFactory</li>
+<li>实现DataFetcher</li>
+</ul>
+<p>三者的关系如下图所示。</p>
+<p><img src="/glide-okhttp-loader.png"></p>
+<p>再来看具体代码。</p>
+<ul>
+<li>完整代码见<a target="_blank" rel="noopener" href="https://github.com/410063005/FragmentLifeCircle/blob/master/demo-glide/src/main/java/com/example/demo_glide/okhttploader/OkHttpGlideUrlLoaderActivity.java">OkHttpGlideUrlLoaderActivity</a></li>
+<li>更多用法请参考<a target="_blank" rel="noopener" href="http://bumptech.github.io/glide/doc/configuration.html#applications">Glide v4 : Configuration</a></li>
+<li>官方示例</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/tree/master/samples/flickr">flickr</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/tree/master/integration/okhttp3">okhttp3</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/tree/master/integration/volley">volley</a></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OkHttpGlideUrlLoader</span> <span class="keyword">implements</span> <span class="title class_">ModelLoader</span>&lt;GlideUrl, InputStream&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> OkHttpClient client;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">OkHttpGlideUrlLoader</span><span class="params">(OkHttpClient client)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.client = client;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> LoadData&lt;InputStream&gt; <span class="title function_">buildLoadData</span><span class="params">(GlideUrl glideUrl, <span class="type">int</span> width, <span class="type">int</span> height, Options options)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">LoadData</span>&lt;&gt;(glideUrl, <span class="keyword">new</span> <span class="title class_">OkHttpStreamFetcher</span>(client, glideUrl));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Factory</span> <span class="keyword">implements</span> <span class="title class_">ModelLoaderFactory</span>&lt;GlideUrl, InputStream&gt; &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> OkHttpClient client;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">Factory</span><span class="params">()</span> &#123;</span><br><span class="line">            client = <span class="keyword">new</span> <span class="title class_">OkHttpClient</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> ModelLoader&lt;GlideUrl, InputStream&gt; <span class="title function_">build</span><span class="params">(MultiModelLoaderFactory multiFactory)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">OkHttpGlideUrlLoader</span>(client);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OkHttpStreamFetcher</span> <span class="keyword">implements</span> <span class="title class_">DataFetcher</span>&lt;InputStream&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TAG</span> <span class="operator">=</span> <span class="string">&quot;OkHttpStreamFetcher&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> OkHttpClient client;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> GlideUrl url;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> InputStream inputStream;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Call call;</span><br><span class="line">    <span class="meta">@Synthetic</span></span><br><span class="line">    <span class="keyword">private</span></span><br><span class="line">    ResponseBody responseBody;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">OkHttpStreamFetcher</span><span class="params">(OkHttpClient client, GlideUrl url)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.client = client;</span><br><span class="line">        <span class="built_in">this</span>.url = url;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">loadData</span><span class="params">(Priority priority, <span class="keyword">final</span> DataCallback&lt;? <span class="built_in">super</span> InputStream&gt; callback)</span> &#123;</span><br><span class="line">        Request.<span class="type">Builder</span> <span class="variable">requestBuilder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Request</span>.Builder().url(url.toStringUrl());</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;String, String&gt; headerEntry : url.getHeaders().entrySet()) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> headerEntry.getKey();</span><br><span class="line">            requestBuilder.addHeader(key, headerEntry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">Request</span> <span class="variable">request</span> <span class="operator">=</span> requestBuilder.build();</span><br><span class="line"></span><br><span class="line">        call = client.newCall(request);</span><br><span class="line">        call.enqueue(<span class="keyword">new</span> <span class="title class_">Callback</span>() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onFailure</span><span class="params">(Request request, IOException e)</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (Log.isLoggable(TAG, Log.DEBUG)) &#123;</span><br><span class="line">                    Log.d(TAG, <span class="string">&quot;onFailure: OkHttp failed to obtain result&quot;</span>, e);</span><br><span class="line">                &#125;</span><br><span class="line">                callback.onLoadFailed(e);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onResponse</span><span class="params">(Response response)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">                responseBody = response.body();</span><br><span class="line">                <span class="keyword">if</span> (response.isSuccessful()) &#123;</span><br><span class="line">                    <span class="type">long</span> <span class="variable">contentLength</span> <span class="operator">=</span> responseBody.contentLength();</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.DEBUG)) &#123;</span><br><span class="line">                        Log.d(TAG, <span class="string">&quot;onResponse: contentLength=&quot;</span> + contentLength);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    inputStream = ContentLengthInputStream.obtain(responseBody.byteStream(), contentLength);</span><br><span class="line">                    callback.onDataReady(inputStream);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    callback.onLoadFailed(<span class="keyword">new</span> <span class="title class_">HttpException</span>(response.message(), response.code()));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后将<code>OkHttpGlideUrlLoader</code>注册到Glide当中。这样理解<code>registry.replace()</code>这段代码：使用OkHttpGlideUrlLoader从GlideUrl类型的Model中加载InputStream类型的数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GlideModule</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OkHttpGlideModule</span> <span class="keyword">extends</span> <span class="title class_">AppGlideModule</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerComponents</span><span class="params">(Context context, Glide glide, Registry registry)</span> &#123;</span><br><span class="line">        registry.replace(GlideUrl.class, InputStream.class, <span class="keyword">new</span> <span class="title class_">OkHttpGlideUrlLoader</span>.Factory());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isManifestParsingEnabled</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//return super.isManifestParsingEnabled();</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意<code>OkHttpStreamFetcher.loadData()</code>中会打印出contentLength。如果一切正常，点击button加载图片时logcat中可以看到如下日志：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">07-15 14:22:59.312 20636-2114/com.example.demo_glide D/OkHttpStreamFetcher: onResponse: contentLength=52341</span><br></pre></td></tr></table></figure>
+
+<p>如果你想监听Glide从是否从网络下载了过大的图片，<code>contentLength</code>可以作为监控指标。</p>
+<h1 id="Registry"><a href="#Registry" class="headerlink" title="Registry"></a>Registry</h1><p>Glide中<code>Registry</code>用于管理组件的注册工作。不过Glide中的组件相当多，比如各种ModelLoader、Encoder、ResourceDedecoder、Transcoder等等。Registry一人实在应付不来，于是它当大管家，实际管理组件的工作交给下面的人去做。例如，对ModelLoader的管理工作，实际上由ModelLoaderRegistry完成。</p>
+<p><img src="/glide-registry2.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;Model, Data&gt; Registry <span class="title function_">append</span><span class="params">(Class&lt;Model&gt; modelClass, Class&lt;Data&gt; dataClass,</span></span><br><span class="line"><span class="params">    ModelLoaderFactory&lt;Model, Data&gt; factory)</span> &#123;</span><br><span class="line">  modelLoaderRegistry.append(modelClass, dataClass, factory);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> &lt;Model, Data&gt; Registry <span class="title function_">replace</span><span class="params">(Class&lt;Model&gt; modelClass, Class&lt;Data&gt; dataClass,</span></span><br><span class="line"><span class="params">    ModelLoaderFactory&lt;Model, Data&gt; factory)</span> &#123;</span><br><span class="line">  modelLoaderRegistry.replace(modelClass, dataClass, factory);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> &lt;Model&gt; List&lt;ModelLoader&lt;Model, ?&gt;&gt; getModelLoaders(Model model) &#123;</span><br><span class="line">  List&lt;ModelLoader&lt;Model, ?&gt;&gt; result = modelLoaderRegistry.getModelLoaders(model);</span><br><span class="line">  <span class="keyword">if</span> (result.isEmpty()) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoModelLoaderAvailableException</span>(model);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同一类组件不一定唯一存在。比如可以同时有多个ModelLoader，你可以调用<code>append()</code>添加ModelLoader，调用<code>replace()</code>替换成新的ModelLoader。<code>getModelLoaders()</code>返回处理可以加载某种指定类型Model的ModelLoader。</p>
+<p>Glide内置的组件相当之多。创建Glide实例时对这些组件进行注册管理。代码如下(有省略)：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> Glide(</span><br><span class="line">     Context context,</span><br><span class="line">     Engine engine, ...) &#123;</span><br><span class="line">   registry.register(ByteBuffer.class, <span class="keyword">new</span> <span class="title class_">ByteBufferEncoder</span>())</span><br><span class="line">       .register(InputStream.class, <span class="keyword">new</span> <span class="title class_">StreamEncoder</span>(arrayPool))</span><br><span class="line">       <span class="comment">/* Bitmaps */</span></span><br><span class="line">       .append(ByteBuffer.class, Bitmap.class,</span><br><span class="line">           <span class="keyword">new</span> <span class="title class_">ByteBufferBitmapDecoder</span>(downsampler))</span><br><span class="line">       .append(InputStream.class, Bitmap.class,</span><br><span class="line">           <span class="keyword">new</span> <span class="title class_">StreamBitmapDecoder</span>(downsampler, arrayPool))</span><br><span class="line">       .append(ParcelFileDescriptor.class, Bitmap.class, <span class="keyword">new</span> <span class="title class_">VideoBitmapDecoder</span>(bitmapPool))</span><br><span class="line">       .register(Bitmap.class, <span class="keyword">new</span> <span class="title class_">BitmapEncoder</span>())</span><br><span class="line">...</span><br><span class="line">   glideContext = <span class="keyword">new</span> <span class="title class_">GlideContext</span>(context, registry, ...)</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/registry-detail.png"></p>
+<p>ModelLoaderFactory类型太多，故图中省略。</p>
+<h1 id="加载自定义Module"><a href="#加载自定义Module" class="headerlink" title="加载自定义Module"></a>加载自定义Module</h1><p>上文中我们知道内置组件和自定义组件均由Registry管理。那么自定义组件如何被加载和管理呢？</p>
+<h2 id="GlideModule注解"><a href="#GlideModule注解" class="headerlink" title="GlideModule注解"></a>GlideModule注解</h2><p>首先需要了解的是GlideModule注解。GlideModule注解的定义非常简单。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.SOURCE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> GlideModule &#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Returns the name of the class that will be used as a replacement for</span></span><br><span class="line"><span class="comment">   * &#123;<span class="doctag">@link</span> com.bumptech.glide.Glide&#125; in Applications that depend on Glide&#x27;s generated code.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  String <span class="title function_">glideName</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;GlideApp&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从代码我们知道以下几点：</p>
+<ul>
+<li>这个注解用于类、接口或者enum类型。这个注解会被javac编译器忽略</li>
+<li>缺省会生成GlideApp类，建议使用GlideApp作为Glide库的调用入口</li>
+<li>Glide的注解处理器会在编译期将带有GlideModule注解的LibraryGlideModule和AppGlideModule子类作为组件注册到Glide</li>
+</ul>
+<p>注意，除了要给LibraryGlideModule和AppGlideModule子类添加@GlideModule注解外，<code>build.gradle</code>中还要添加相应的依赖</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;kotlin-kapt&#x27;</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// annotationProcessor &#x27;com.github.bumptech.glide:compiler:4.0.0&#x27;</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 项目中有Kotlin代码的话, 使用kapt而不是annotationProcessor</span></span><br><span class="line">	<span class="comment">// 如果使用kapt出错，记得要使用&#x27;kotlin-kapt&#x27;插件  apply plugin: &#x27;kotlin-kapt&#x27;</span></span><br><span class="line">    kapt <span class="string">&#x27;com.github.bumptech.glide:compiler:4.0.0&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Glide注解生成器生成的类包括</p>
+<ul>
+<li>GlideApp - Glide库调用入口</li>
+<li>GeneratedRequestManagerFactory - 不用关注</li>
+<li>GeneratedAppGlideModuleImpl - GeneratedAppGlideModule的子类，方法调用会代理到我们自定义的OkHttpGlideModule</li>
+</ul>
+<p><img src="/generated-app-glidemodule.png"></p>
+<p>Glide注解处理器的好处包括：</p>
+<ul>
+<li>GlideApp作为Glide库入口，GlideApp只提供核心的方法。终于告别敲完”Glide.”后一堆方法提示让你不知所措的日子</li>
+<li>不必在AndroidManifest.xml添加<code>&lt;meta-data /&gt;</code>。感觉<code>&lt;meta-data&gt;</code>很容易出错</li>
+</ul>
+<p>Glide注解处理器只能生成一个组件，而在AndroidManifest.xml中可以添加多个。不过多数情况下，这不是问题。</p>
+<h2 id="加载流程"><a href="#加载流程" class="headerlink" title="加载流程"></a>加载流程</h2><p>分析Glide代码不难理解加载自定义组件的整个过程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">initializeGlide</span><span class="params">(Context context)</span> &#123;</span><br><span class="line">   <span class="type">Context</span> <span class="variable">applicationContext</span> <span class="operator">=</span> context.getApplicationContext();</span><br><span class="line">   <span class="comment">// 找到生成的GeneratedAppGlideModuleImpl类实例</span></span><br><span class="line">   <span class="type">GeneratedAppGlideModule</span> <span class="variable">annotationGeneratedModule</span> <span class="operator">=</span> getAnnotationGeneratedGlideModules();</span><br><span class="line">   List&lt;GlideModule&gt; manifestModules = Collections.emptyList();</span><br><span class="line">   <span class="comment">// 找不到GeneratedAppGlideModuleImpl对象或对象允许解析manifest时，尝试从manifest中寻找Glide组件</span></span><br><span class="line">   <span class="keyword">if</span> (annotationGeneratedModule == <span class="literal">null</span> || annotationGeneratedModule.isManifestParsingEnabled()) &#123;</span><br><span class="line">     manifestModules = <span class="keyword">new</span> <span class="title class_">ManifestParser</span>(applicationContext).parse();</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">// excluded module classes机制 </span></span><br><span class="line">   <span class="keyword">if</span> (annotationGeneratedModule != <span class="literal">null</span></span><br><span class="line">       &amp;&amp; !annotationGeneratedModule.getExcludedModuleClasses().isEmpty()) &#123;</span><br><span class="line">     Set&lt;Class&lt;?&gt;&gt; excludedModuleClasses =</span><br><span class="line">         annotationGeneratedModule.getExcludedModuleClasses();</span><br><span class="line">     <span class="keyword">for</span> (Iterator&lt;GlideModule&gt; iterator = manifestModules.iterator(); iterator.hasNext();) &#123;</span><br><span class="line">       <span class="type">GlideModule</span> <span class="variable">current</span> <span class="operator">=</span> iterator.next();</span><br><span class="line">       <span class="keyword">if</span> (!excludedModuleClasses.contains(current.getClass())) &#123;</span><br><span class="line">         <span class="keyword">continue</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       iterator.remove();</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   ...</span><br><span class="line">   <span class="type">GlideBuilder</span> <span class="variable">builder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GlideBuilder</span>()...;</span><br><span class="line">...</span><br><span class="line">   <span class="keyword">if</span> (annotationGeneratedModule != <span class="literal">null</span>) &#123;</span><br><span class="line">     annotationGeneratedModule.applyOptions(applicationContext, builder);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="type">Glide</span> <span class="variable">glide</span> <span class="operator">=</span> builder.build(applicationContext);</span><br><span class="line">...</span><br><span class="line">   <span class="keyword">if</span> (annotationGeneratedModule != <span class="literal">null</span>) &#123;</span><br><span class="line">     <span class="comment">// 这里的registerComponents()是不是很熟悉？</span></span><br><span class="line">  <span class="comment">// 对, annotationGeneratedModule就是OkHttpGlideModule</span></span><br><span class="line">     <span class="comment">// 所以实际调用的是OkHttpGlideModule.registerComponents()方法</span></span><br><span class="line">     annotationGeneratedModule.registerComponents(applicationContext, glide, glide.registry);</span><br><span class="line">   &#125;</span><br><span class="line">   Glide.glide = glide;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">static</span> GeneratedAppGlideModule <span class="title function_">getAnnotationGeneratedGlideModules</span><span class="params">()</span> &#123;</span><br><span class="line">   <span class="type">GeneratedAppGlideModule</span> <span class="variable">result</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">     Class&lt;GeneratedAppGlideModule&gt; clazz =</span><br><span class="line">         (Class&lt;GeneratedAppGlideModule&gt;)</span><br><span class="line">             Class.forName(<span class="string">&quot;com.bumptech.glide.GeneratedAppGlideModuleImpl&quot;</span>);</span><br><span class="line">     result = clazz.newInstance();</span><br><span class="line">   &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">	...</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的<code>annotationGeneratedModule.registerComponents()</code>方法会调用到我们自定义的OkHttpGlideModule。回顾一下其代码，加深理解。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GlideModule</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OkHttpGlideModule</span> <span class="keyword">extends</span> <span class="title class_">AppGlideModule</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerComponents</span><span class="params">(Context context, Glide glide, Registry registry)</span> &#123;</span><br><span class="line">        registry.replace(GlideUrl.class, InputStream.class, <span class="keyword">new</span> <span class="title class_">OkHttpGlideUrlLoader</span>.Factory());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isManifestParsingEnabled</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//return super.isManifestParsingEnabled();</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="http://bumptech.github.io/glide/doc/configuration.html#applications">Glide v4 : Configuration</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
         
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/07/23/glide-lifecycle/" rel="prev" title="Glide生命周期绑定">
+                  <i class="fa fa-chevron-left"></i> Glide生命周期绑定
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/07/26/handler-sync-barrier/" rel="next" title="Handler问题记录">
+                  Handler问题记录 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -430,29 +393,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -461,22 +416,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2018/07/24/glide-registry/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

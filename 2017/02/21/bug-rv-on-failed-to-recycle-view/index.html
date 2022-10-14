@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,64 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="项目中遇到一个RecyclerView相关的诡异问题，跟到最后发现问题根本原因是View复用失败。RecyclerView.onFailedToRecycleView()方法用于处理View复用失败的情况，我们通常不会关注到这个方法。本文介绍了其用法。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="项目中遇到一个RecyclerView相关的诡异问题，跟到最后发现问题根本原因是View复用失败。RecyclerView.onFailedToRecycleView()方法用于处理View复用失败的情况，我们通常不会关注到这个方法。本文介绍了其用法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Bug系列之onFailedToRecycleView引发的诡异问题">
 <meta property="og:url" content="http://www.sunmoonblog.com/2017/02/21/bug-rv-on-failed-to-recycle-view/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="项目中遇到一个RecyclerView相关的诡异问题，跟到最后发现问题根本原因是View复用失败。RecyclerView.onFailedToRecycleView()方法用于处理View复用失败的情况，我们通常不会关注到这个方法。本文介绍了其用法。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-09-26T14:23:39.203Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-02-21T12:15:11.000Z">
+<meta property="article:modified_time" content="2022-09-26T14:23:39.203Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Bug系列之onFailedToRecycleView引发的诡异问题">
-<meta name="twitter:description" content="项目中遇到一个RecyclerView相关的诡异问题，跟到最后发现问题根本原因是View复用失败。RecyclerView.onFailedToRecycleView()方法用于处理View复用失败的情况，我们通常不会关注到这个方法。本文介绍了其用法。">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2017/02/21/bug-rv-on-failed-to-recycle-view/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Bug系列之onFailedToRecycleView引发的诡异问题 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2017/02/21/bug-rv-on-failed-to-recycle-view/","path":"2017/02/21/bug-rv-on-failed-to-recycle-view/","title":"Bug系列之onFailedToRecycleView引发的诡异问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Bug系列之onFailedToRecycleView引发的诡异问题 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +85,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +97,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,61 +120,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#10002%E4%BB%8E%E5%93%AA%E9%87%8C%E6%9D%A5"><span class="nav-number">2.1.</span> <span class="nav-text">10002从哪里来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88onCreateViewHolder%E8%B0%83%E7%94%A8%E4%B8%A4%E6%AC%A1"><span class="nav-number">2.2.</span> <span class="nav-text">为什么onCreateViewHolder调用两次</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#onFailedToRecycleView"><span class="nav-number">2.3.</span> <span class="nav-text">onFailedToRecycleView</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2017/02/21/bug-rv-on-failed-to-recycle-view/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Bug系列之onFailedToRecycleView引发的诡异问题 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Bug系列之onFailedToRecycleView引发的诡异问题
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2017-02-21 20:15:11" itemprop="dateCreated datePublished" datetime="2017-02-21T20:15:11+08:00">2017-02-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-26 22:23:39" itemprop="dateModified" datetime="2022-09-26T22:23:39+08:00">2022-09-26</time>
-              </span>
+      <time title="创建时间：2017-02-21 20:15:11" itemprop="dateCreated datePublished" datetime="2017-02-21T20:15:11+08:00">2017-02-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-09-26 22:23:39" itemprop="dateModified" datetime="2022-09-26T22:23:39+08:00">2022-09-26</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2017/02/21/bug-rv-on-failed-to-recycle-view/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2017/02/21/bug-rv-on-failed-to-recycle-view/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -222,20 +264,21 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>项目中遇到一个<code>RecyclerView</code>相关的诡异问题，跟到最后发现问题根本原因是<code>View</code>复用失败。<code>RecyclerView.onFailedToRecycleView()</code>方法用于处理<code>View</code>复用失败的情况，我们通常不会关注到这个方法。本文介绍了其用法。</p>
-<a id="more"></a>
+<span id="more"></span>
+
 <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>页面结构如下：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">XRecyclerView</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">RefreshHeader</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">ContentHeader</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">View</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">View</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">弹幕</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ContentHeader</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">RecyclerViewItem</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">RecyclerViewItem</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">XRecyclerView</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <ol>
-<li>最外层的<a href="https://github.com/jianghejie/XRecyclerView" target="_blank" rel="noopener">XRecyclerView</a>继承自RecyclerView</li>
+<li>最外层的<a target="_blank" rel="noopener" href="https://github.com/jianghejie/XRecyclerView">XRecyclerView</a>继承自RecyclerView</li>
 <li><code>RefreshHeader</code>由<code>XRecyclerView</code>自动添加，以支持下拉刷新</li>
 <li><code>ContentHeader</code>中的<code>弹幕</code>控件使用RecyclerView实现。数据条数多于4条时循环播放弹幕，少于3条时播放完成后逐渐隐藏</li>
 </ol>
 <p>问题现象：当滚动列表到底部再回到顶部时，<code>&lt;ContentHeader&gt;</code>错乱，变成了一个空的<code>RecyclerViewItem</code>。但也不一定要滚动到底部，只要弹幕移出可见区域，问题就可能发生。</p>
 <p>注意，上面的结构中使用了嵌套RecyclerView。这也许是个坑。</p>
-<video src="demo.mp4" type="video/mp4" controls="controls" width="30%" height="30%"><br></video>
+<video src='demo.mp4' type='video/mp4' controls='controls'  width='30%' height='30%'>
+</video>
 
 <p>一开始百思不得奇解，凭经验认为应该是RecyclerView中View复用的问题。但怪就怪在为什么ContentHeader会变成RecyclerViewItem。</p>
 <p>另外我还注意到：</p>
@@ -244,16 +287,18 @@
 <li>RecyclerViewItem数量为0时，问题不复现</li>
 </ol>
 <h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>打印日志看一下。(好吧，其实在准确的位置打印日志并展开分析之前我各种折腾浪费了不少时间)</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getItemViewType</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(ViewGroup parent, <span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"onCreateViewHolder viewType="</span> + viewType);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getItemViewType</span><span class="params">(<span class="type">int</span> position)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> ViewHolder <span class="title function_">onCreateViewHolder</span><span class="params">(ViewGroup parent, <span class="type">int</span> viewType)</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;onCreateViewHolder viewType=&quot;</span> + viewType);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>发现两个不符合预期的地方：</p>
 <ol>
 <li>日志输出为<code>onCreateViewHolder viewType=10002</code>，而10002并不是我们自己在<code>getItemViewType(int position)</code>中定义的。10002从哪里来？</li>
 <li><code>onCreateViewHolder viewType=10002</code>会输出两次。为什么<code>onCreateViewHolder</code>调用两次？</li>
 </ol>
 <h2 id="10002从哪里来"><a href="#10002从哪里来" class="headerlink" title="10002从哪里来"></a>10002从哪里来</h2><p>这要从XRecyclerView特性说起来。XRecyclerView继承自RecyclerView，支持header和footer，有点类似于ListView。</p>
-<p>Google官方明确地从RecyclerView中移除了对header和footer的支持。不知到底是为了保持API简单(移除长尾特性)，还是说明支持header和footer是不好的设计，因为特殊item完全也能实现header和footer，当然实现起来不如直接支持header和footer来得方便。<a href="https://www.youtube.com/watch?v=LqBlYJTfLP4" target="_blank" rel="noopener">RecyclerView ins and outs - Google I/O 2016</a></p>
+<p>Google官方明确地从RecyclerView中移除了对header和footer的支持。不知到底是为了保持API简单(移除长尾特性)，还是说明支持header和footer是不好的设计，因为特殊item完全也能实现header和footer，当然实现起来不如直接支持header和footer来得方便。<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=LqBlYJTfLP4">RecyclerView ins and outs - Google I&#x2F;O 2016</a></p>
 <p>这里只就header展开分析，footer情况类似。直接上代码。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addHeaderView</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (pullRefreshEnabled &amp;&amp; !(mHeaderViews.get(<span class="number">0</span>) <span class="keyword">instanceof</span> ArrowRefreshHeader)) &#123;</span><br><span class="line">        ArrowRefreshHeader refreshHeader = <span class="keyword">new</span> ArrowRefreshHeader(mContext);</span><br><span class="line">        mHeaderViews.add(<span class="number">0</span>, refreshHeader);</span><br><span class="line">        mRefreshHeader = refreshHeader;</span><br><span class="line">        mRefreshHeader.setProgressStyle(mRefreshProgressStyle);</span><br><span class="line">    &#125;</span><br><span class="line">    mHeaderViews.add(view);</span><br><span class="line">    sHeaderTypes.add(HEADER_INIT_INDEX + mHeaderViews.size());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAdapter</span><span class="params">(Adapter adapter)</span> </span>&#123;</span><br><span class="line">    mAdapter = adapter;</span><br><span class="line">    mWrapAdapter = <span class="keyword">new</span> WrapAdapter(mHeaderViews, mFootViews, adapter);</span><br><span class="line">    <span class="keyword">super</span>.setAdapter(mWrapAdapter);</span><br><span class="line">    mAdapter.registerAdapterDataObserver(mDataObserver);</span><br><span class="line">    mDataObserver.onChanged();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">WrapAdapter</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">Adapter</span>&lt;<span class="title">ViewHolder</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> RecyclerView.<span class="function">ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(ViewGroup parent, <span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (viewType == TYPE_REFRESH_HEADER) &#123;</span><br><span class="line">            mCurrentPosition++;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> SimpleViewHolder(mHeaderViews.get(<span class="number">0</span>));</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isContentHeader(mCurrentPosition)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (viewType == sHeaderTypes.get(mCurrentPosition - <span class="number">1</span>)) &#123;</span><br><span class="line">                mCurrentPosition++;</span><br><span class="line">                View view = mHeaderViews.get(headerPosition++);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> SimpleViewHolder(view);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (viewType == TYPE_FOOTER) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> SimpleViewHolder(mFootViews.get(<span class="number">0</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> adapter.onCreateViewHolder(parent, viewType);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addHeaderView</span><span class="params">(View view)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (pullRefreshEnabled &amp;&amp; !(mHeaderViews.get(<span class="number">0</span>) <span class="keyword">instanceof</span> ArrowRefreshHeader)) &#123;</span><br><span class="line">        <span class="type">ArrowRefreshHeader</span> <span class="variable">refreshHeader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrowRefreshHeader</span>(mContext);</span><br><span class="line">        mHeaderViews.add(<span class="number">0</span>, refreshHeader);</span><br><span class="line">        mRefreshHeader = refreshHeader;</span><br><span class="line">        mRefreshHeader.setProgressStyle(mRefreshProgressStyle);</span><br><span class="line">    &#125;</span><br><span class="line">    mHeaderViews.add(view);</span><br><span class="line">    sHeaderTypes.add(HEADER_INIT_INDEX + mHeaderViews.size());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAdapter</span><span class="params">(Adapter adapter)</span> &#123;</span><br><span class="line">    mAdapter = adapter;</span><br><span class="line">    mWrapAdapter = <span class="keyword">new</span> <span class="title class_">WrapAdapter</span>(mHeaderViews, mFootViews, adapter);</span><br><span class="line">    <span class="built_in">super</span>.setAdapter(mWrapAdapter);</span><br><span class="line">    mAdapter.registerAdapterDataObserver(mDataObserver);</span><br><span class="line">    mDataObserver.onChanged();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">class</span> <span class="title class_">WrapAdapter</span> <span class="keyword">extends</span> <span class="title class_">RecyclerView</span>.Adapter&lt;ViewHolder&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> RecyclerView.ViewHolder <span class="title function_">onCreateViewHolder</span><span class="params">(ViewGroup parent, <span class="type">int</span> viewType)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (viewType == TYPE_REFRESH_HEADER) &#123;</span><br><span class="line">            mCurrentPosition++;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">SimpleViewHolder</span>(mHeaderViews.get(<span class="number">0</span>));</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isContentHeader(mCurrentPosition)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (viewType == sHeaderTypes.get(mCurrentPosition - <span class="number">1</span>)) &#123;</span><br><span class="line">                mCurrentPosition++;</span><br><span class="line">                <span class="type">View</span> <span class="variable">view</span> <span class="operator">=</span> mHeaderViews.get(headerPosition++);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">SimpleViewHolder</span>(view);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (viewType == TYPE_FOOTER) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">SimpleViewHolder</span>(mFootViews.get(<span class="number">0</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> adapter.onCreateViewHolder(parent, viewType);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li><code>XRecyclerView.addHeaderView()</code>方法用于添加头部，XRecyclerView会持有作为header的View</li>
 <li><code>XRecyclerView.setAdapter()</code>是关键所在，它会将原始的Adapter包装成WrapAdapter</li>
@@ -269,7 +314,7 @@
 </blockquote>
 <p>翻译一下</p>
 <blockquote>
-<p>如果当前Adapter创建的ViewHolder由于其临时状态不能被回收复用，则RecyclerView会调用onFailedToRecycleView方法。Adapter可以在这个回调方法中清理影响/导致ViewHolder临时状态的动画并返回<code>true</code>。返回<code>true</code>可以让View被回收复用。但要注意，这个有问题的View此时已经从RecyclerView中移除。<br>某些情况下，一些View虽然有临时状态但仍然可被回收复用。大多数时候，这些临时状态会在当前View绑定到新的位置 时由<code>onBindViewHolder(RecyclerView.ViewHolder, int)</code>给清理掉。所以RecyclerView把决定权留给Adapter，并使用<code>onFailedToRecycleView()</code>方法的返回值作为View是否被回收的依据。<br>注意，所有由RecyclerView.ItemAnimator创建的动画，都不会导致<code>onFailedToRecycleView()</code>调用，因为RecyclerView会一直保留带这种动画的View直到动画完成。<code>onFailedToRecycleView()</code>回调对于处理那些创建复杂动画的View非常有效。这里的复杂动画指的是那些无法用RecyclerView.ItemAnimator实现的动画<br>注意，你不能简单地调用<code>holder.itemView.setHasTransientState(false);</code>来避免这个问题，除非你之前调用过<code>holder.itemView.setHasTransientState(true);</code>。每个<code>View.setHasTransientState(true)</code>调用必须跟<code>View.setHasTransientState(false)</code>调用配对，否则View的状态不一致。你通常应当结束或取消引起View临时状态的动画，而不是手动调用<code>View.setHasTransientState(false)</code>来应对这种情况</p>
+<p>如果当前Adapter创建的ViewHolder由于其临时状态不能被回收复用，则RecyclerView会调用onFailedToRecycleView方法。Adapter可以在这个回调方法中清理影响&#x2F;导致ViewHolder临时状态的动画并返回<code>true</code>。返回<code>true</code>可以让View被回收复用。但要注意，这个有问题的View此时已经从RecyclerView中移除。<br>某些情况下，一些View虽然有临时状态但仍然可被回收复用。大多数时候，这些临时状态会在当前View绑定到新的位置 时由<code>onBindViewHolder(RecyclerView.ViewHolder, int)</code>给清理掉。所以RecyclerView把决定权留给Adapter，并使用<code>onFailedToRecycleView()</code>方法的返回值作为View是否被回收的依据。<br>注意，所有由RecyclerView.ItemAnimator创建的动画，都不会导致<code>onFailedToRecycleView()</code>调用，因为RecyclerView会一直保留带这种动画的View直到动画完成。<code>onFailedToRecycleView()</code>回调对于处理那些创建复杂动画的View非常有效。这里的复杂动画指的是那些无法用RecyclerView.ItemAnimator实现的动画<br>注意，你不能简单地调用<code>holder.itemView.setHasTransientState(false);</code>来避免这个问题，除非你之前调用过<code>holder.itemView.setHasTransientState(true);</code>。每个<code>View.setHasTransientState(true)</code>调用必须跟<code>View.setHasTransientState(false)</code>调用配对，否则View的状态不一致。你通常应当结束或取消引起View临时状态的动画，而不是手动调用<code>View.setHasTransientState(false)</code>来应对这种情况</p>
 </blockquote>
 <p>文档说得很明白，<code>onFailedToRecycleView(ViewHolder holder)</code>是View不能被RecyclerView回收复用时的回调方法。我们可以在这个方法清理View的临时状态。</p>
 <ol>
@@ -278,10 +323,13 @@
 </ol>
 <p>在<code>WrapAdapter.onFailedToRecycleView()</code>中打印日志，发现该方法果然被调用了，证明ContentHeader回收失败，所以下次使用ContentHeader会重新创建而不是直接绑定数据。这解释了为什么<code>onCreateViewHolder()</code>调用两次。</p>
 <p>弹幕条数多于4条时会循环播放，少于3条时播放完成后逐渐隐藏。前者是使用RecyclerView.ItemAnimator实现的，而后者是自定义动画。根据文档，正是这里的自定义动画导致ContentHeader不能被回收。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onFailedToRecycleView</span><span class="params">(ViewHolder holder)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"create 10002: onFailedToRecycleView"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.onFailedToRecycleView(holder);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> RecyclerView.<span class="function">ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(ViewGroup parent, <span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (viewType == <span class="number">10002</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">"create 10002"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">02-21 11:36:13.462 15618-15618/com.tencent.PmdCampus I/System.out: create 10002</span><br><span class="line">02-21 11:36:20.022 15618-15618/com.tencent.PmdCampus I/System.out: create 10002</span><br><span class="line">02-21 11:36:23.802 15618-15618/com.tencent.PmdCampus I/System.out: create 10002: onFailedToRecycleView</span><br><span class="line">02-21 11:36:23.812 15618-15618/com.tencent.PmdCampus I/System.out: create 10002</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onFailedToRecycleView</span><span class="params">(ViewHolder holder)</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;create 10002: onFailedToRecycleView&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">super</span>.onFailedToRecycleView(holder);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> RecyclerView.ViewHolder <span class="title function_">onCreateViewHolder</span><span class="params">(ViewGroup parent, <span class="type">int</span> viewType)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (viewType == <span class="number">10002</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;create 10002&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">02-21 11:36:13.462 15618-15618/com.tencent.PmdCampus I/System.out: create 10002</span><br><span class="line">02-21 11:36:20.022 15618-15618/com.tencent.PmdCampus I/System.out: create 10002</span><br><span class="line">02-21 11:36:23.802 15618-15618/com.tencent.PmdCampus I/System.out: create 10002: onFailedToRecycleView</span><br><span class="line">02-21 11:36:23.812 15618-15618/com.tencent.PmdCampus I/System.out: create 10002</span><br></pre></td></tr></table></figure>
+
 <h1 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h1><p>找到原因之后，问题其实就解决了一半。解决方法是重写<code>WrapAdapter.onFailedToRecycleView()</code>方法，代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onFailedToRecycleView</span><span class="params">(ViewHolder holder)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (holder <span class="keyword">instanceof</span> WrapAdapter.SimpleViewHolder) &#123;</span><br><span class="line">        WrapAdapter.SimpleViewHolder h = (SimpleViewHolder) holder;</span><br><span class="line">        BBViewImpl v = (BBViewImpl) h.itemView.findViewById(R.id.bb);</span><br><span class="line">        <span class="keyword">if</span> (v != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 清理动画</span></span><br><span class="line">            v.stop();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.onFailedToRecycleView(holder);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onFailedToRecycleView</span><span class="params">(ViewHolder holder)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (holder <span class="keyword">instanceof</span> WrapAdapter.SimpleViewHolder) &#123;</span><br><span class="line">        WrapAdapter.<span class="type">SimpleViewHolder</span> <span class="variable">h</span> <span class="operator">=</span> (SimpleViewHolder) holder;</span><br><span class="line">        <span class="type">BBViewImpl</span> <span class="variable">v</span> <span class="operator">=</span> (BBViewImpl) h.itemView.findViewById(R.id.bb);</span><br><span class="line">        <span class="keyword">if</span> (v != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 清理动画</span></span><br><span class="line">            v.stop();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">super</span>.onFailedToRecycleView(holder);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>界面错乱问题解决！</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>第一，注意RecyclerView中View的动画可能导致出现临时状态。对于有临时状态的View，RecyclerView默认是不回收的</p>
 <p>第二，我们在使用RecyclerView时通常只关注<code>onCreateViewHolder()</code>和<code>onBindViewHolder()</code>，但必要时也应关注<code>onFailedToRecycleView()</code>方法。某些诡异的UI问题很可能源于View无法回收，此时不妨在这个回调方法中加些错误日志来快速诊断一下</p>
@@ -295,130 +343,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/02/09/hello-2017/" rel="prev" title="你好，2017">
-      <i class="fa fa-chevron-left"></i> 你好，2017
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/02/24/rv-on-item-touch-listener/" rel="next" title="RecyclerView.OnItemTouchListener的用法">
-      RecyclerView.OnItemTouchListener的用法 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/02/09/hello-2017/" rel="prev" title="你好，2017">
+                  <i class="fa fa-chevron-left"></i> 你好，2017
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/02/24/rv-on-item-touch-listener/" rel="next" title="RecyclerView.OnItemTouchListener的用法">
+                  RecyclerView.OnItemTouchListener的用法 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题分析"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#10002从哪里来"><span class="nav-number">2.1.</span> <span class="nav-text">10002从哪里来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么onCreateViewHolder调用两次"><span class="nav-number">2.2.</span> <span class="nav-text">为什么onCreateViewHolder调用两次</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#onFailedToRecycleView"><span class="nav-number">2.3.</span> <span class="nav-text">onFailedToRecycleView</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决方法"><span class="nav-number">3.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -426,29 +389,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -457,22 +412,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2017/02/21/bug-rv-on-failed-to-recycle-view/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

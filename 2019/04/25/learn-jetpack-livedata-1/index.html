@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,98 +14,71 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="一篇关于 LiveData 的文章，简单明了。翻译一下当作学习。">
-<meta name="keywords" content="Android,翻译">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一篇关于 LiveData 的文章，简单明了。翻译一下当作学习。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(译)Android Jetpack 学习笔记之 LiveData">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/04/25/learn-jetpack-livedata-1/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="一篇关于 LiveData 的文章，简单明了。翻译一下当作学习。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.14_12.38.37.gif">
 <meta property="og:image" content="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.21_12.20.17.gif">
 <meta property="og:image" content="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.22_15.36.40.gif">
 <meta property="og:image" content="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.24_01.24.14.gif">
-<meta property="og:image" content="http://www.sunmoonblog.com/2019/04/25/learn-jetpack-livedata-1/livedata.png">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.015Z">
+<meta property="og:image" content="http://www.sunmoonblog.com/livedata.png">
+<meta property="article:published_time" content="2019-04-25T02:39:06.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.015Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="翻译">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="(译)Android Jetpack 学习笔记之 LiveData">
-<meta name="twitter:description" content="一篇关于 LiveData 的文章，简单明了。翻译一下当作学习。">
 <meta name="twitter:image" content="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.14_12.38.37.gif">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/04/25/learn-jetpack-livedata-1/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>(译)Android Jetpack 学习笔记之 LiveData | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/04/25/learn-jetpack-livedata-1/","path":"2019/04/25/learn-jetpack-livedata-1/","title":"(译)Android Jetpack 学习笔记之 LiveData"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>(译)Android Jetpack 学习笔记之 LiveData | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -118,19 +92,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -141,23 +104,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -165,61 +127,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#LiveData"><span class="nav-number">1.</span> <span class="nav-text">LiveData</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LiveData-%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="nav-number">2.</span> <span class="nav-text">LiveData 的优势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-LiveData-%E5%BA%93"><span class="nav-number">3.</span> <span class="nav-text">添加 LiveData 库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-LiveData"><span class="nav-number">4.</span> <span class="nav-text">创建 LiveData</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2%E7%9B%91%E5%90%AC-LiveData"><span class="nav-number">5.</span> <span class="nav-text">停止监听 LiveData</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformations-%E4%BB%8B%E7%BB%8D"><span class="nav-number">6.</span> <span class="nav-text">Transformations 介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformations-map-%E7%A4%BA%E4%BE%8B"><span class="nav-number">7.</span> <span class="nav-text">Transformations.map 示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformations-switchMap-%E7%A4%BA%E4%BE%8B"><span class="nav-number">8.</span> <span class="nav-text">Transformations.switchMap 示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E9%AA%8C%E8%AF%81"><span class="nav-number">9.</span> <span class="nav-text">问题验证</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%B8%80"><span class="nav-number">9.1.</span> <span class="nav-text">问题一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%BA%8C"><span class="nav-number">9.2.</span> <span class="nav-text">问题二</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/04/25/learn-jetpack-livedata-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="(译)Android Jetpack 学习笔记之 LiveData | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           (译)Android Jetpack 学习笔记之 LiveData
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-04-25 10:39:06" itemprop="dateCreated datePublished" datetime="2019-04-25T10:39:06+08:00">2019-04-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-04-25 10:39:06" itemprop="dateCreated datePublished" datetime="2019-04-25T10:39:06+08:00">2019-04-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/04/25/learn-jetpack-livedata-1/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/04/25/learn-jetpack-livedata-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -228,89 +271,99 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>一篇关于 LiveData 的文章，简单明了。翻译一下当作学习。</p>
-<a id="more"></a>
-<p>文章翻译自 <a href="https://codinginfinite.com/android-livedata-example" target="_blank" rel="noopener">Android LiveData With Example</a> 和 <a href="https://codinginfinite.com/android-livedata-transformation-example/" target="_blank" rel="noopener">Android LiveData Transformation With Example</a>。两篇都不是很长，所以翻译的内容放在一起。</p>
-<p>相关源码见 <a href="https://github.com/CodingInfinite/LiveDataExample.git" target="_blank" rel="noopener">Github</a>。</p>
+<span id="more"></span>
+
+<p>文章翻译自 <a target="_blank" rel="noopener" href="https://codinginfinite.com/android-livedata-example">Android LiveData With Example</a> 和 <a target="_blank" rel="noopener" href="https://codinginfinite.com/android-livedata-transformation-example/">Android LiveData Transformation With Example</a>。两篇都不是很长，所以翻译的内容放在一起。</p>
+<p>相关源码见 <a target="_blank" rel="noopener" href="https://github.com/CodingInfinite/LiveDataExample.git">Github</a>。</p>
 <hr>
 <p>今天要介绍几个解决方案。我认为每个项目中反复尝试去解决一类问题，而这些方案适用于这类问题。</p>
 <p>比如，我响应在 <strong>Android Component</strong> 生命周期状态的变化(简单来说就是响应 <code>onResume()</code> 或 <code>onPause()</code> 之类的方法)。还有些时候你想配置变化后某些值的状态。我们经常面临这种问题，也尝试使用不同的架构来解决问题，比如 MVP，MVVM 或其他的。但对初级开发人员来说实现这些架构并不是个简单问题。</p>
-<p>好消息是使用 <a href="https://codinginfinite.com/category/jetpack/" target="_blank" rel="noopener">Android Architecture Component</a>，更准确地说是使用 <a href="https://developer.android.com/topic/libraries/architecture/livedata" target="_blank" rel="noopener">LiveData</a> 和 <a href="https://developer.android.com/topic/libraries/architecture/viewmodel" target="_blank" rel="noopener">ViewModel</a>，我们可以轻易地解决这些问题。</p>
-<h1 id="LiveData"><a href="#LiveData" class="headerlink" title="LiveData"></a>LiveData</h1><p>LiveData 是可观察数据的持有者。它可感知组件的生命周期(<a href="https://developer.android.com/reference/android/arch/lifecycle/Lifecycle" target="_blank" rel="noopener">lifecycle</a> aware)。可感知组件生命周期的意思是，LiveData 仅仅在生命周期期间可被观察，更准确地说是在 Activity 和 Fragment 的生命周期中。通过 Activity 和 Fragment 的引用，LiveData 知道 UI 是处于 onScreen 状态还是 offScreen 状态或者是被销毁状态。将 UI 对象传给 LiveData，无论何时数据发生变化，它都会通知 lifecycle owner，并且让 UI 重绘。</p>
+<p>好消息是使用 <a target="_blank" rel="noopener" href="https://codinginfinite.com/category/jetpack/">Android Architecture Component</a>，更准确地说是使用 <a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/livedata">LiveData</a> 和 <a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/viewmodel">ViewModel</a>，我们可以轻易地解决这些问题。</p>
+<h1 id="LiveData"><a href="#LiveData" class="headerlink" title="LiveData"></a>LiveData</h1><p>LiveData 是可观察数据的持有者。它可感知组件的生命周期(<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Lifecycle">lifecycle</a> aware)。可感知组件生命周期的意思是，LiveData 仅仅在生命周期期间可被观察，更准确地说是在 Activity 和 Fragment 的生命周期中。通过 Activity 和 Fragment 的引用，LiveData 知道 UI 是处于 onScreen 状态还是 offScreen 状态或者是被销毁状态。将 UI 对象传给 LiveData，无论何时数据发生变化，它都会通知 lifecycle owner，并且让 UI 重绘。</p>
 <h1 id="LiveData-的优势"><a href="#LiveData-的优势" class="headerlink" title="LiveData 的优势"></a>LiveData 的优势</h1><ul>
-<li><strong>没有内存泄漏</strong>：<a href="https://developer.android.com/reference/android/arch/lifecycle/Observer" target="_blank" rel="noopener">Observers</a> 跟 <a href="https://developer.android.com/reference/android/arch/lifecycle/Lifecycle" target="_blank" rel="noopener">Lifecycle</a> 绑定，当关联的对象销毁后 LiveData 也会被清理</li>
+<li><strong>没有内存泄漏</strong>：<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Observer">Observers</a> 跟 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Lifecycle">Lifecycle</a> 绑定，当关联的对象销毁后 LiveData 也会被清理</li>
 <li><strong>不会让处于停止状态的 Activity 崩溃</strong>：即 Activity 在 back stack 中时，不会收到 LiveData 事件流</li>
 <li><strong>数据永远保持最新</strong>：一旦处于活跃状态时总能收到最新数据</li>
-<li><strong>不必手动处理组件生命周期</strong>：<a href="https://developer.android.com/reference/android/arch/lifecycle/Observer" target="_blank" rel="noopener">Observers</a> 只需要专注于观察相关的数据，而不必操作是否要停止观察或开始观察。LiveData 底层会处理这些细节</li>
+<li><strong>不必手动处理组件生命周期</strong>：<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Observer">Observers</a> 只需要专注于观察相关的数据，而不必操作是否要停止观察或开始观察。LiveData 底层会处理这些细节</li>
 <li><strong>保证 UI 跟数据同步</strong>：生命周期状态变化时 LiveData 会通知观察者。比起每次在数据变化后去更新 UI，观察者可以在有变更后主动更新 UI</li>
 <li><strong>正确处理 configuration 变化</strong>：当观察者由于 configuration 变化而重建时，比如屏幕旋转，它马上可以收到最新的可用数据</li>
 <li><strong>共享资源</strong>：可以继承 LiveData，并使用单例模式来包装 system service，以例在 app 内共享</li>
 </ul>
-<h1 id="添加-LiveData-库"><a href="#添加-LiveData-库" class="headerlink" title="添加 LiveData 库"></a>添加 LiveData 库</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implementation &quot;android.arch.lifecycle:extensions:$current_version&quot;</span><br><span class="line">annotationProcessor &quot;android.arch.lifecycle:compiler:1.0.0&quot;</span><br></pre></td></tr></table></figure>
-<h1 id="创建-LiveData"><a href="#创建-LiveData" class="headerlink" title="创建 LiveData"></a>创建 LiveData</h1><p>通常在 ViewModel 中创建 LiveData。接下来将使用<a href="https://codinginfinite.com/architecture-component-viewmodel-example/" target="_blank" rel="noopener">前一篇文章</a>中的例子， <strong>Color Changer</strong> app。首先使用一个 ViewModel 来持有当前背景色。</p>
-<p><img src="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.14_12.38.37.gif" alt></p>
+<h1 id="添加-LiveData-库"><a href="#添加-LiveData-库" class="headerlink" title="添加 LiveData 库"></a>添加 LiveData 库</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implementation &quot;android.arch.lifecycle:extensions:$current_version&quot;</span><br><span class="line">annotationProcessor &quot;android.arch.lifecycle:compiler:1.0.0&quot;</span><br></pre></td></tr></table></figure>
+
+<h1 id="创建-LiveData"><a href="#创建-LiveData" class="headerlink" title="创建 LiveData"></a>创建 LiveData</h1><p>通常在 ViewModel 中创建 LiveData。接下来将使用<a target="_blank" rel="noopener" href="https://codinginfinite.com/architecture-component-viewmodel-example/">前一篇文章</a>中的例子， <strong>Color Changer</strong> app。首先使用一个 ViewModel 来持有当前背景色。</p>
+<p><img src="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.14_12.38.37.gif"></p>
 <p>代码如下：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ColorChangerViewModel</span> : <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> colorResource = MutableLiveData&lt;<span class="built_in">Int</span>&gt;()</span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        colorResource.value = <span class="number">0xfff</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ColorChangerViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> colorResource = MutableLiveData&lt;<span class="built_in">Int</span>&gt;()</span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        colorResource.value = <span class="number">0xfff</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>注意：是在 ViewModel 保存更新 UI 的 LiveData，而不是在 Activity 或 Fragment 中保存在 LiveData。ViewModel 和 LiveData 是 UI controller，它们负责持有数据而不是数据的状态。</p>
-<p>关于 <a href="https://developer.android.com/reference/android/arch/lifecycle/MutableLiveData" target="_blank" rel="noopener">MutableLiveData</a></p>
+<p>关于 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/MutableLiveData">MutableLiveData</a></p>
 <p>MutableLiveData 也是 LiveData。MutableLiveData 在内部是继承 LiveData 的，它向外暴露两个方法 <code>setValue()</code> 和 <code>getValue()</code>。调用 <code>setValue()</code>，可以设置新的值，设置后将用新值调用所有的活跃 observers。<code>getValue()</code> 可以获取到保存在 LiveData 实例中的最新值。</p>
 <p>为 LiveData 设置值的不同方法</p>
-<p>有两种不同的方法来为 LiveData 设置新值。第一方法是 <a href="https://developer.android.com/reference/android/arch/lifecycle/MutableLiveData.html#setValue(T" target="_blank" rel="noopener">setValue</a>)，另一种方法是 <a href="https://developer.android.com/reference/android/arch/lifecycle/MutableLiveData.html#postValue(T" target="_blank" rel="noopener">postValue</a>)。<code>setValue()</code> 用于从主线程中为 LiveData 设置值。如果要从后台线程中设置值，使用 <code>postValue()</code>。</p>
+<p>有两种不同的方法来为 LiveData 设置新值。第一方法是 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/MutableLiveData.html#setValue(T)">setValue</a>，另一种方法是 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/MutableLiveData.html#postValue(T)">postValue</a>。<code>setValue()</code> 用于从主线程中为 LiveData 设置值。如果要从后台线程中设置值，使用 <code>postValue()</code>。</p>
 <p>看看如何在 Activity 中使用 ViewModel：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        <span class="keyword">val</span> colorChangerViewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(ColorChangerViewModel::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        colorChangerViewModel.colorResource.observe(<span class="keyword">this</span>, <span class="keyword">object</span>: Observer&lt;<span class="built_in">Int</span>&gt; &#123;</span><br><span class="line">            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onChanged</span><span class="params">(t: <span class="type">Int</span>?)</span></span> &#123;</span><br><span class="line">                mainActivityRootView.setBackgroundColor(t!!)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">        changeColorButton.setOnClickListener &#123;</span><br><span class="line">            colorChangerViewModel.colorResource.value = generateRandomColor()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">generateRandomColor</span><span class="params">()</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">        <span class="keyword">val</span> rnd = Random()</span><br><span class="line">        <span class="keyword">return</span> Color.argb(<span class="number">255</span>, rnd.nextInt(<span class="number">256</span>), rnd.nextInt(<span class="number">256</span>), rnd.nextInt(<span class="number">256</span>))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>多数时候在 <code>onCreate()</code> 中创建 ViewModel 即可。调用 <code>LiveData.observe()</code> 方法来观察数据。该方法的第一个参数是当前 UI，第二个参数是一个 <a href="https://developer.android.com/reference/android/arch/lifecycle/Observer.html" target="_blank" rel="noopener">Observer</a>，其实也就是个回调。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MainActivity</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        <span class="keyword">val</span> colorChangerViewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(ColorChangerViewModel::<span class="keyword">class</span>.java)</span><br><span class="line">        colorChangerViewModel.colorResource.observe(<span class="keyword">this</span>, <span class="keyword">object</span>: Observer&lt;<span class="built_in">Int</span>&gt; &#123;</span><br><span class="line">            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onChanged</span><span class="params">(t: <span class="type">Int</span>?)</span></span> &#123;</span><br><span class="line">                mainActivityRootView.setBackgroundColor(t!!)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">        changeColorButton.setOnClickListener &#123;</span><br><span class="line">            colorChangerViewModel.colorResource.value = generateRandomColor()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">generateRandomColor</span><span class="params">()</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">        <span class="keyword">val</span> rnd = Random()</span><br><span class="line">        <span class="keyword">return</span> Color.argb(<span class="number">255</span>, rnd.nextInt(<span class="number">256</span>), rnd.nextInt(<span class="number">256</span>), rnd.nextInt(<span class="number">256</span>))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>多数时候在 <code>onCreate()</code> 中创建 ViewModel 即可。调用 <code>LiveData.observe()</code> 方法来观察数据。该方法的第一个参数是当前 UI，第二个参数是一个 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Observer.html">Observer</a>，其实也就是个回调。</p>
 <p>当 <code>setValue()</code> 被调用后，<code>onChanged()</code> 立即被调用并获取到保存在 colorResource 中的最新值。</p>
 <p>前面说过可以使用 <code>setValue()</code> 和 <code>postValue()</code> 来修改 LiveData 的值。在我们的例子中使用 <code>setValue()</code> 即可，因为是在主线程进行的。</p>
 <p>再来看另一个例子更实际的例子。这个例子是一个计时器。计时器显示当前时间并且每2秒更新一次。</p>
-<p><img src="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.21_12.20.17.gif" alt></p>
+<p><img src="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.21_12.20.17.gif"></p>
 <p>TimeChangerViewModel 的代码如下：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TimeChangerViewModel</span> : <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> timerValue = MutableLiveData&lt;<span class="built_in">Long</span>&gt;()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        timerValue.value = System.currentTimeMillis()</span><br><span class="line">        startTimer()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">startTimer</span><span class="params">()</span></span> &#123;</span><br><span class="line">        disposable = Observable.interval(<span class="number">2</span>, <span class="number">2</span>, TimeUnit.SECONDS)</span><br><span class="line">                .subscribe(&#123;</span><br><span class="line">                    timerValue.postValue(System.currentTimeMillis())</span><br><span class="line">                &#125;, Throwable::printStackTrace)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>TimeChangerViewModel 初始化后启动计时器，每2秒更新一次。这里使用 <a href="https://github.com/ReactiveX/RxJava/wiki/What&#39;s-different-in-2.0" target="_blank" rel="noopener">RxJava2</a> 来创建计时器。另外需要注意的是这里使用 <code>postValue()</code> 而不是 <code>setValue()</code>，因为 <a href="http://reactivex.io/documentation/operators/interval.html" target="_blank" rel="noopener">interval</a> 方法是在 <strong>后台线程</strong> 中订阅的。</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        <span class="keyword">val</span> timeChangerViewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(TimeChangerViewModel::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        <span class="keyword">val</span> calendar = Calendar.getInstance()</span><br><span class="line">        timeChangerViewModel.timerValue.observe(<span class="keyword">this</span>, Observer&lt;<span class="built_in">Long</span>&gt; &#123; t -&gt;</span><br><span class="line">            Log.e(<span class="string">"TimeValue"</span>, t.toString())</span><br><span class="line">            calendar?.timeInMillis = t!!</span><br><span class="line">            timTextView.text = calendar.time.toString()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个例子非常简单。将 <a href="https://developer.android.com/reference/android/arch/lifecycle/Observer" target="_blank" rel="noopener">Observer</a> 设置到 LiveData 之后，如果 <strong>TimeChangerViewModel</strong> 中的 timerValue 发生变化，马上就会使用新的值调用 <code>onChanged()</code>。如果我们的 Activity 处于后台，LiveData 会暂停发送新的值。我是通过 logcat 打印日志来验证这一点的。</p>
-<p>注意：当我们从 <a href="https://developer.android.com/reference/android/arch/lifecycle/Observer" target="_blank" rel="noopener">Observer</a> 接收新的值时，是运行在主线程中的。尽管是从后台线程发送新的值，但底层会帮我们进行线程切换以方便开发者使用。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TimeChangerViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> timerValue = MutableLiveData&lt;<span class="built_in">Long</span>&gt;()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        timerValue.value = System.currentTimeMillis()</span><br><span class="line">        startTimer()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">startTimer</span><span class="params">()</span></span> &#123;</span><br><span class="line">        disposable = Observable.interval(<span class="number">2</span>, <span class="number">2</span>, TimeUnit.SECONDS)</span><br><span class="line">                .subscribe(&#123;</span><br><span class="line">                    timerValue.postValue(System.currentTimeMillis())</span><br><span class="line">                &#125;, Throwable::printStackTrace)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>TimeChangerViewModel 初始化后启动计时器，每2秒更新一次。这里使用 <a target="_blank" rel="noopener" href="https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0">RxJava2</a> 来创建计时器。另外需要注意的是这里使用 <code>postValue()</code> 而不是 <code>setValue()</code>，因为 <a target="_blank" rel="noopener" href="http://reactivex.io/documentation/operators/interval.html">interval</a> 方法是在 <strong>后台线程</strong> 中订阅的。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MainActivity</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        <span class="keyword">val</span> timeChangerViewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(TimeChangerViewModel::<span class="keyword">class</span>.java)</span><br><span class="line">        <span class="keyword">val</span> calendar = Calendar.getInstance()</span><br><span class="line">        timeChangerViewModel.timerValue.observe(<span class="keyword">this</span>, Observer&lt;<span class="built_in">Long</span>&gt; &#123; t -&gt;</span><br><span class="line">            Log.e(<span class="string">&quot;TimeValue&quot;</span>, t.toString())</span><br><span class="line">            calendar?.timeInMillis = t!!</span><br><span class="line">            timTextView.text = calendar.time.toString()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个例子非常简单。将 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Observer">Observer</a> 设置到 LiveData 之后，如果 <strong>TimeChangerViewModel</strong> 中的 timerValue 发生变化，马上就会使用新的值调用 <code>onChanged()</code>。如果我们的 Activity 处于后台，LiveData 会暂停发送新的值。我是通过 logcat 打印日志来验证这一点的。</p>
+<p>注意：当我们从 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Observer">Observer</a> 接收新的值时，是运行在主线程中的。尽管是从后台线程发送新的值，但底层会帮我们进行线程切换以方便开发者使用。</p>
 <h1 id="停止监听-LiveData"><a href="#停止监听-LiveData" class="headerlink" title="停止监听 LiveData"></a>停止监听 LiveData</h1><p>有时不需要继续监听 LiveData。这时可以移除指定的观察者。</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">someViewModel.liveData.removeObservers(lifecycle : <span class="keyword">this</span>)</span><br></pre></td></tr></table></figure>
+
 <p>下一篇中我将讲讲这几个话题：</p>
 <ul>
-<li><a href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html#map(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20Y%3E" target="_blank" rel="noopener">map</a>)</li>
-<li><a href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html#switchMap(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20android.arch.lifecycle.LiveData%3CY%3E%3E" target="_blank" rel="noopener">swicthMap</a>)</li>
-<li><a href="https://developer.android.com/reference/android/arch/lifecycle/MediatorLiveData" target="_blank" rel="noopener">MediatorLiveData</a></li>
-<li><a href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html" target="_blank" rel="noopener">Transformation</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html#map(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20Y%3E)">map</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html#switchMap(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20android.arch.lifecycle.LiveData%3CY%3E%3E)">swicthMap</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/MediatorLiveData">MediatorLiveData</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html">Transformation</a></li>
 </ul>
 <hr>
-<p>这篇文章中将讲讲关于 <a href="https://developer.android.com/topic/libraries/architecture/livedata" target="_blank" rel="noopener">LiveData</a> 的 Transformations。有时在将 LiveData 中的值分发给 <a href="https://developer.android.com/reference/android/arch/lifecycle/Observer" target="_blank" rel="noopener">Observer</a> 前需要进行转换，有时在某些条件下你可能要返回一个不同的 LiveData。所以就有了 Transformations。</p>
+<p>这篇文章中将讲讲关于 <a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/livedata">LiveData</a> 的 Transformations。有时在将 LiveData 中的值分发给 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Observer">Observer</a> 前需要进行转换，有时在某些条件下你可能要返回一个不同的 LiveData。所以就有了 Transformations。</p>
 <h1 id="Transformations-介绍"><a href="#Transformations-介绍" class="headerlink" title="Transformations 介绍"></a>Transformations 介绍</h1><p>Transformation 基本上就是对 LiveData 对象中持有的值应用一个 function，并且将得到的结果传给下游。有两种不同的 Transformation：</p>
 <ul>
-<li><a href="https://developer.android.com/reference/android/arch/lifecycle/Transformations#map(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20Y%3E" target="_blank" rel="noopener">Transformations.map</a>)  - <strong>map</strong> 允许对 LiveData 持有的值应用一个 function 并将结果传给下游</li>
-<li><a href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html#switchMap(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20android.arch.lifecycle.LiveData%3CY%3E%3E" target="_blank" rel="noopener">Transformations.switchMap:</a>) - <strong>swicthMap</strong> 跟 map 其实很类似，不过它而返回 LiveData 本身而不是 LiveData 持有的值。同样，<strong>swicthMap</strong> 向下游传递 LiveData 而不是值。</li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Transformations#map(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20Y%3E)">Transformations.map</a>  - <strong>map</strong> 允许对 LiveData 持有的值应用一个 function 并将结果传给下游</li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html#switchMap(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20android.arch.lifecycle.LiveData%3CY%3E%3E)">Transformations.switchMap:</a> - <strong>swicthMap</strong> 跟 map 其实很类似，不过它而返回 LiveData 本身而不是 LiveData 持有的值。同样，<strong>swicthMap</strong> 向下游传递 LiveData 而不是值。</li>
 </ul>
 <h1 id="Transformations-map-示例"><a href="#Transformations-map-示例" class="headerlink" title="Transformations.map 示例"></a>Transformations.map 示例</h1><p>看这样一个场景：用户向数据库中添加一个新用户后展示一个 Snackbar。Snackbar 上显示用户名。</p>
-<p><img src="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.22_15.36.40.gif" alt></p>
+<p><img src="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.22_15.36.40.gif"></p>
 <p>直接看代码。这段代码中，ViewModel 持有含有 User 的 LiveData：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TransformationViewModel</span> : <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userLiveData = MutableLiveData&lt;User&gt;()</span><br><span class="line">    <span class="keyword">val</span> userAddedData: LiveData&lt;String&gt; = Transformations.map(userLiveData, ::someFunc)</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">someFunc</span><span class="params">(user: <span class="type">User</span>)</span></span> = <span class="string">"New user <span class="subst">$&#123;user.username&#125;</span> added to database!"</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">addNewUser</span><span class="params">(user: <span class="type">User</span>)</span></span> = apply &#123; userLiveData.value = user &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TransformationViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userLiveData = MutableLiveData&lt;User&gt;()</span><br><span class="line">    <span class="keyword">val</span> userAddedData: LiveData&lt;String&gt; = Transformations.map(userLiveData, ::someFunc)</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">someFunc</span><span class="params">(user: <span class="type">User</span>)</span></span> = <span class="string">&quot;New user <span class="subst">$&#123;user.username&#125;</span> added to database!&quot;</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">addNewUser</span><span class="params">(user: <span class="type">User</span>)</span></span> = apply &#123; userLiveData.value = user &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>有两点要注意：</p>
 <ul>
 <li>首先，并没有向外公开持有 User 的 LiveData。只有一个公开的 <code>addNewUser()</code> 方法用于添加用户。这样做可以保持不变性。(By doing this we’re keeping our Immutability principle)</li>
 <li>其次，为了添加 map transformation 操作，我们需要提供原始的 LiveData 以及一个用于转换的 function (你从这个 function 返回自定义的值)。在本例中是返回用户名</li>
 </ul>
 <p>再来看看如何在 Activity 中使用 ViewModel 和 LiveData：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        <span class="keyword">val</span> viewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(TransformationViewModel::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        viewModel.userAddedData.observe(<span class="keyword">this</span>, <span class="keyword">object</span> : Observer&lt;String&gt;&#123;</span><br><span class="line">            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onChanged</span><span class="params">(t: <span class="type">String</span>?)</span></span> &#123;</span><br><span class="line">                Snackbar.make(mainActivityRootView, t!!, Snackbar.LENGTH_SHORT).show()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">        addUserButton.setOnClickListener &#123;</span><br><span class="line">            viewModel.addNewUser(User(addNewEditText.text.toString()))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MainActivity</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        <span class="keyword">val</span> viewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(TransformationViewModel::<span class="keyword">class</span>.java)</span><br><span class="line">        viewModel.userAddedData.observe(<span class="keyword">this</span>, <span class="keyword">object</span> : Observer&lt;String&gt;&#123;</span><br><span class="line">            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onChanged</span><span class="params">(t: <span class="type">String</span>?)</span></span> &#123;</span><br><span class="line">                Snackbar.make(mainActivityRootView, t!!, Snackbar.LENGTH_SHORT).show()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">        addUserButton.setOnClickListener &#123;</span><br><span class="line">            viewModel.addNewUser(User(addNewEditText.text.toString()))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这个 Activity 非常简单。我们只观察 LiveData 实例。向数据库添加用户时，会自动调用 <code>onChanged()</code> 方法并得到用户名。</p>
-<h1 id="Transformations-switchMap-示例"><a href="#Transformations-switchMap-示例" class="headerlink" title="Transformations.switchMap 示例"></a>Transformations.switchMap 示例</h1><p>再看另一个场景：根据名字查询用户，并且在 <a href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView" target="_blank" rel="noopener">RecyclerView</a> 中展示查询结果。</p>
-<p><img src="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.24_01.24.14.gif" alt></p>
+<h1 id="Transformations-switchMap-示例"><a href="#Transformations-switchMap-示例" class="headerlink" title="Transformations.switchMap 示例"></a>Transformations.switchMap 示例</h1><p>再看另一个场景：根据名字查询用户，并且在 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView">RecyclerView</a> 中展示查询结果。</p>
+<p><img src="http://codinginfinite.com/wp-content/uploads/2018/07/videotogif_2018.07.24_01.24.14.gif"></p>
 <p>代码如下：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserRepo</span></span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">fun</span> <span class="title">searchUserWithName</span><span class="params">(name : <span class="type">String</span>)</span></span> : LiveData&lt;List&lt;User&gt;&gt;&#123;</span><br><span class="line">      ..... logic <span class="keyword">for</span> search user</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserViewModel</span> : <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> query = MutableLiveData&lt;String&gt;()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userRepo = UserRepo()</span><br><span class="line">    <span class="keyword">val</span> userNameResult: LiveData&lt;List&lt;User&gt;&gt; = Transformations.map(</span><br><span class="line">            query,</span><br><span class="line">            ::temp</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">temp</span><span class="params">(name: <span class="type">String</span>)</span></span> = userRepo.searchUserWithName(name)</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">searchUserByName</span><span class="params">(name: <span class="type">String</span>)</span></span> = apply &#123; query.value = name &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>代码中 ViewModel 从 <strong>UserRepo</strong> 类获取数据。所以当查询某个名字的时候，repo 会创建一个新的 LiveData 实例(持有 List<user>)。我们最终基于这个 LiveData 来展示查询结果。</user></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UserRepo</span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">fun</span> <span class="title">searchUserWithName</span><span class="params">(name : <span class="type">String</span>)</span></span> : LiveData&lt;List&lt;User&gt;&gt;&#123;</span><br><span class="line">      ..... logic <span class="keyword">for</span> search user</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> query = MutableLiveData&lt;String&gt;()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userRepo = UserRepo()</span><br><span class="line">    <span class="keyword">val</span> userNameResult: LiveData&lt;List&lt;User&gt;&gt; = Transformations.map(</span><br><span class="line">            query,</span><br><span class="line">            ::temp</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">temp</span><span class="params">(name: <span class="type">String</span>)</span></span> = userRepo.searchUserWithName(name)</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">searchUserByName</span><span class="params">(name: <span class="type">String</span>)</span></span> = apply &#123; query.value = name &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码中 ViewModel 从 <strong>UserRepo</strong> 类获取数据。所以当查询某个名字的时候，repo 会创建一个新的 LiveData 实例(持有 List<User>)。我们最终基于这个 LiveData 来展示查询结果。</p>
 <p>为了能讲清楚 <code>map()</code> 和 <code>swicthMap()</code> 的区别。以上代码我使用的是 <code>map()</code>，这会引起一个问题。</p>
-<p>先查询用户名的是 Alice。 repo 创建了持有 List<user> 的 LiveData，并且展示了结果。之后又查询用户名 Bob，repo 又创建了一个新 LiveData，并且 UI 会订阅这个新的 LiveData。所以这时 UI 订阅了两个 LiveData，因为我们并没有取消订阅前一个 LiveData。这意味着当 repo 变化时， repo 会向 UI 发送两次订阅结果。那么如何解决这个问题呢？</user></p>
-<p>解决方案是实现一个机制，当我们观察新的数据时能自动停止观察前一个数据。 使用 <code>swicthMap()</code> 代替 <code>map()</code> 即可达到这种效果。在底层，<a href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html#switchMap(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20android.arch.lifecycle.LiveData%3CY%3E%3E" target="_blank" rel="noopener">switchMap</a>) 使用 <a href="https://developer.android.com/reference/android/arch/lifecycle/MediatorLiveData" target="_blank" rel="noopener">MediatorLiveData</a>，当开始观察新的数据时它会自动取消前一个数据。简而言之，它提供一个自动取消前一个 Observer 的机制。</p>
+<p>先查询用户名的是 Alice。 repo 创建了持有 List<User> 的 LiveData，并且展示了结果。之后又查询用户名 Bob，repo 又创建了一个新 LiveData，并且 UI 会订阅这个新的 LiveData。所以这时 UI 订阅了两个 LiveData，因为我们并没有取消订阅前一个 LiveData。这意味着当 repo 变化时， repo 会向 UI 发送两次订阅结果。那么如何解决这个问题呢？</p>
+<p>解决方案是实现一个机制，当我们观察新的数据时能自动停止观察前一个数据。 使用 <code>swicthMap()</code> 代替 <code>map()</code> 即可达到这种效果。在底层，<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Transformations.html#switchMap(android.arch.lifecycle.LiveData%3CX%3E,%20android.arch.core.util.Function%3CX,%20android.arch.lifecycle.LiveData%3CY%3E%3E)">switchMap</a> 使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/MediatorLiveData">MediatorLiveData</a>，当开始观察新的数据时它会自动取消前一个数据。简而言之，它提供一个自动取消前一个 Observer 的机制。</p>
 <p>修改后的代码如下：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserRepo</span></span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">fun</span> <span class="title">searchUserWithName</span><span class="params">(name  : <span class="type">String</span>)</span></span> : LiveData&lt;List&lt;User&gt;&gt;&#123;</span><br><span class="line">         .... logic <span class="keyword">for</span> search user</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserViewModel</span> : <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> query = MutableLiveData&lt;String&gt;()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userRepo = UserRepo()</span><br><span class="line">    <span class="keyword">val</span> userNameResult: LiveData&lt;List&lt;User&gt;&gt; = Transformations.switchMap(</span><br><span class="line">            query,</span><br><span class="line">            ::temp</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">temp</span><span class="params">(name: <span class="type">String</span>)</span></span> = userRepo.searchUserWithName(name)</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">searchUserByName</span><span class="params">(name: <span class="type">String</span>)</span></span> = apply &#123; query.value = name &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UserRepo</span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">fun</span> <span class="title">searchUserWithName</span><span class="params">(name  : <span class="type">String</span>)</span></span> : LiveData&lt;List&lt;User&gt;&gt;&#123;</span><br><span class="line">         .... logic <span class="keyword">for</span> search user</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> query = MutableLiveData&lt;String&gt;()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userRepo = UserRepo()</span><br><span class="line">    <span class="keyword">val</span> userNameResult: LiveData&lt;List&lt;User&gt;&gt; = Transformations.switchMap(</span><br><span class="line">            query,</span><br><span class="line">            ::temp</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">temp</span><span class="params">(name: <span class="type">String</span>)</span></span> = userRepo.searchUserWithName(name)</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">searchUserByName</span><span class="params">(name: <span class="type">String</span>)</span></span> = apply &#123; query.value = name &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>在 MainActivity 中使用 ViewModel：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userList: MutableList&lt;User&gt; = ArrayList()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> userAdapter: UserAdapter</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        userRecyclerView.layoutManager = LinearLayoutManager(<span class="keyword">this</span>)</span><br><span class="line">        userRecyclerView.setHasFixedSize(<span class="literal">true</span>)</span><br><span class="line">        userAdapter = UserAdapter(<span class="keyword">this</span>, userList)</span><br><span class="line">        userRecyclerView.adapter = userAdapter</span><br><span class="line">        <span class="keyword">val</span> viewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(UserViewModel::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        addUserButton.setOnClickListener &#123; viewModel.searchUserByName(addNewEditText.text.toString()) &#125;</span><br><span class="line">        viewModel.userNameResult.observe(<span class="keyword">this</span>, Observer &#123;</span><br><span class="line">            <span class="keyword">if</span> (userList.isNotEmpty())</span><br><span class="line">                userList.clear()</span><br><span class="line">            userList.addAll(it!!)</span><br><span class="line">            userAdapter.notifyDataSetChanged()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MainActivity</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userList: MutableList&lt;User&gt; = ArrayList()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> userAdapter: UserAdapter</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        userRecyclerView.layoutManager = LinearLayoutManager(<span class="keyword">this</span>)</span><br><span class="line">        userRecyclerView.setHasFixedSize(<span class="literal">true</span>)</span><br><span class="line">        userAdapter = UserAdapter(<span class="keyword">this</span>, userList)</span><br><span class="line">        userRecyclerView.adapter = userAdapter</span><br><span class="line">        <span class="keyword">val</span> viewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(UserViewModel::<span class="keyword">class</span>.java)</span><br><span class="line">        addUserButton.setOnClickListener &#123; viewModel.searchUserByName(addNewEditText.text.toString()) &#125;</span><br><span class="line">        viewModel.userNameResult.observe(<span class="keyword">this</span>, Observer &#123;</span><br><span class="line">            <span class="keyword">if</span> (userList.isNotEmpty())</span><br><span class="line">                userList.clear()</span><br><span class="line">            userList.addAll(it!!)</span><br><span class="line">            userAdapter.notifyDataSetChanged()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这个 Activity 很简单。先是为 RecyclerView 设置属性，当用户点击按钮时根据输入的用户名调用 ViewModel 类的方法来查找用户。最后，只用简单地监听来自 ViewModel 的 LiveData 即可。</p>
 <hr>
 <h1 id="问题验证"><a href="#问题验证" class="headerlink" title="问题验证"></a>问题验证</h1><p>从上面两个文章中可以学习到 LiveData 的基本用法。不过对以下两个问题还是有些疑问：</p>
@@ -319,20 +372,22 @@
 <li>文中提到 <code>map()</code> 与 <code>swicthMap()</code> 差异讲得不是太清，似乎也不可信</li>
 </ul>
 <h2 id="问题一"><a href="#问题一" class="headerlink" title="问题一"></a>问题一</h2><p>第一个问题比较容易验证。我改写了一下代码，观察 Activity 在前台和后台 logcat 日志的区别。</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Main</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> timeChangerViewModel: TimeChangerViewModel</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.tmp)</span><br><span class="line"></span><br><span class="line">        timeChangerViewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(TimeChangerViewModel::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        timeChangerViewModel.timerValue.observe(<span class="keyword">this</span>, android.arch.lifecycle.Observer &#123;t -&gt;</span><br><span class="line">            Log.i(<span class="string">"TimeValue"</span>, <span class="string">"consume <span class="subst">$&#123;t.toString()&#125;</span>"</span>)</span><br><span class="line">            textView.text = t.toString()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TimeChangerViewModel</span> : <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> timerValue = MutableLiveData&lt;<span class="built_in">Long</span>&gt;()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> disposable = CompositeDisposable()</span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0L</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        timerValue.value = <span class="number">0</span></span><br><span class="line">        startTimer()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCleared</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCleared()</span><br><span class="line">        <span class="keyword">if</span> (!disposable.isDisposed) &#123;</span><br><span class="line">            disposable.dispose()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">startTimer</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> d = Observable.interval(<span class="number">2</span>, <span class="number">2</span>, TimeUnit.SECONDS)</span><br><span class="line">                .subscribe(&#123;</span><br><span class="line">                    count++</span><br><span class="line">                    timerValue.postValue(count)</span><br><span class="line">                    Log.i(<span class="string">"TimeValue"</span>, <span class="string">"produce <span class="variable">$count</span>"</span>)</span><br><span class="line">                &#125;, Throwable::printStackTrace)</span><br><span class="line">        disposable.add(d)</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Main</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> timeChangerViewModel: TimeChangerViewModel</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.tmp)</span><br><span class="line"></span><br><span class="line">        timeChangerViewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(TimeChangerViewModel::<span class="keyword">class</span>.java)</span><br><span class="line">        timeChangerViewModel.timerValue.observe(<span class="keyword">this</span>, android.arch.lifecycle.Observer &#123;t -&gt;</span><br><span class="line">            Log.i(<span class="string">&quot;TimeValue&quot;</span>, <span class="string">&quot;consume <span class="subst">$&#123;t.toString()&#125;</span>&quot;</span>)</span><br><span class="line">            textView.text = t.toString()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TimeChangerViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> timerValue = MutableLiveData&lt;<span class="built_in">Long</span>&gt;()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> disposable = CompositeDisposable()</span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0L</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        timerValue.value = <span class="number">0</span></span><br><span class="line">        startTimer()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCleared</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCleared()</span><br><span class="line">        <span class="keyword">if</span> (!disposable.isDisposed) &#123;</span><br><span class="line">            disposable.dispose()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">startTimer</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> d = Observable.interval(<span class="number">2</span>, <span class="number">2</span>, TimeUnit.SECONDS)</span><br><span class="line">                .subscribe(&#123;</span><br><span class="line">                    count++</span><br><span class="line">                    timerValue.postValue(count)</span><br><span class="line">                    Log.i(<span class="string">&quot;TimeValue&quot;</span>, <span class="string">&quot;produce <span class="variable">$count</span>&quot;</span>)</span><br><span class="line">                &#125;, Throwable::printStackTrace)</span><br><span class="line">        disposable.add(d)</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>跟原来代码的主要区别：</p>
 <ul>
 <li>为了容易观察，不是输出当前时间到日志，而是直接输出一个整数</li>
 <li>TimeChangerViewModel 负责生产整数，Main 负责消费整数，为了容易观察，生产者和消费者均输出日志</li>
 </ul>
 <p>这是输出的日志：</p>
-<p><img src="livedata.png" alt></p>
+<p><img src="/livedata.png"></p>
 <ul>
 <li>绿框阶段，Main Activity 处于前台，这时 TimeChangerViewModel 负责生产，Main 负责消费</li>
 <li>红框阶段，Main Activity 处于后台，这时 TimeChangerViewModel 继续生产，但 Main 不消费了。由于 LiveData 只能持有一个值，所以以前生产的整数都被覆盖了。</li>
 </ul>
 <p>如果我们想让 Main Activity 处于后台时也能继续消费 TimeChangerViewModel 生产的整数该怎么办呢？这时就要使用 <code>observeForever()</code> 方法来代替 <code>observe()</code>：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Main</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> timeChangerViewModel: TimeChangerViewModel</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.tmp)</span><br><span class="line"></span><br><span class="line">        timeChangerViewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(TimeChangerViewModel::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        timeChangerViewModel.timerValue.observeForever( android.arch.lifecycle.Observer &#123;t -&gt;</span><br><span class="line">            Log.i(<span class="string">"TimeValue"</span>, <span class="string">"consume <span class="subst">$&#123;t.toString()&#125;</span>"</span>)</span><br><span class="line">            textView.text = t.toString()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onDestroy</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy()</span><br><span class="line">        timeChangerViewModel.timerValue.removeObservers(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TimeChangerViewModel</span> : <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> timerValue = MutableLiveData&lt;<span class="built_in">Long</span>&gt;()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> disposable = CompositeDisposable()</span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0L</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        timerValue.value = <span class="number">0</span></span><br><span class="line">        startTimer()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCleared</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCleared()</span><br><span class="line">        <span class="keyword">if</span> (!disposable.isDisposed) &#123;</span><br><span class="line">            disposable.dispose()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">startTimer</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> d = Observable.interval(<span class="number">2</span>, <span class="number">2</span>, TimeUnit.SECONDS)</span><br><span class="line">                .subscribe(&#123;</span><br><span class="line">                    count++</span><br><span class="line">                    timerValue.postValue(count)</span><br><span class="line">                    Log.i(<span class="string">"TimeValue"</span>, <span class="string">"produce <span class="variable">$count</span>"</span>)</span><br><span class="line">                &#125;, Throwable::printStackTrace)</span><br><span class="line">        disposable.add(d)</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Main</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> timeChangerViewModel: TimeChangerViewModel</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.tmp)</span><br><span class="line"></span><br><span class="line">        timeChangerViewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(TimeChangerViewModel::<span class="keyword">class</span>.java)</span><br><span class="line">        timeChangerViewModel.timerValue.observeForever( android.arch.lifecycle.Observer &#123;t -&gt;</span><br><span class="line">            Log.i(<span class="string">&quot;TimeValue&quot;</span>, <span class="string">&quot;consume <span class="subst">$&#123;t.toString()&#125;</span>&quot;</span>)</span><br><span class="line">            textView.text = t.toString()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onDestroy</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy()</span><br><span class="line">        timeChangerViewModel.timerValue.removeObservers(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TimeChangerViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> timerValue = MutableLiveData&lt;<span class="built_in">Long</span>&gt;()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> disposable = CompositeDisposable()</span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0L</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        timerValue.value = <span class="number">0</span></span><br><span class="line">        startTimer()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCleared</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCleared()</span><br><span class="line">        <span class="keyword">if</span> (!disposable.isDisposed) &#123;</span><br><span class="line">            disposable.dispose()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">startTimer</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> d = Observable.interval(<span class="number">2</span>, <span class="number">2</span>, TimeUnit.SECONDS)</span><br><span class="line">                .subscribe(&#123;</span><br><span class="line">                    count++</span><br><span class="line">                    timerValue.postValue(count)</span><br><span class="line">                    Log.i(<span class="string">&quot;TimeValue&quot;</span>, <span class="string">&quot;produce <span class="variable">$count</span>&quot;</span>)</span><br><span class="line">                &#125;, Throwable::printStackTrace)</span><br><span class="line">        disposable.add(d)</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><code>observeForever()</code> 和 <code>observe()</code> 有两个明显不同：</p>
 <ul>
 <li>首先从名字可以大概猜测出来前者是 <strong>永远</strong> 观测，不会主动感知组件的生命周期</li>
@@ -340,12 +395,12 @@
 <li>最后，通过 <code>observeForever()</code> 注册的观察者，要记得手动移除！</li>
 </ul>
 <h2 id="问题二"><a href="#问题二" class="headerlink" title="问题二"></a>问题二</h2><ul>
-<li><a href="https://stackoverflow.com/questions/47575961/what-is-the-difference-between-map-and-switchmap-methods" target="_blank" rel="noopener">What is the difference between map() and switchMap() methods?</a><ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/47575961/what-is-the-difference-between-map-and-switchmap-methods">What is the difference between map() and switchMap() methods?</a><ul>
 <li>map() applies a function on the value stored in the LiveData object, and propagates the result downstream.</li>
 <li>swicthMap() applies a function to the value stored in the LiveData object and unwraps and dispatches the result downstream. <strong>The function passed to switchMap() must return a LiveData object</strong>.</li>
 </ul>
 </li>
-<li><a href="https://developer.android.com/reference/android/arch/lifecycle/Transformations" target="_blank" rel="noopener">Transformations 官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/Transformations">Transformations 官方文档</a></li>
 </ul>
 <p>可以不同的层面来理解二者的差异。</p>
 <ul>
@@ -359,131 +414,46 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
-              <a href="/tags/翻译/" rel="tag"># 翻译</a>
+              <a href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag"># 翻译</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/04/19/learn-jetpack-nav-1/" rel="prev" title="Android Jetpack 学习笔记之 Navigation">
-      <i class="fa fa-chevron-left"></i> Android Jetpack 学习笔记之 Navigation
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/04/29/constraint-layout-animation/" rel="next" title="ConstraintLayout 动画">
-      ConstraintLayout 动画 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/04/19/learn-jetpack-nav-1/" rel="prev" title="Android Jetpack 学习笔记之 Navigation">
+                  <i class="fa fa-chevron-left"></i> Android Jetpack 学习笔记之 Navigation
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/04/29/constraint-layout-animation/" rel="next" title="ConstraintLayout 动画">
+                  ConstraintLayout 动画 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
   </article>
-  
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#LiveData"><span class="nav-number">1.</span> <span class="nav-text">LiveData</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LiveData-的优势"><span class="nav-number">2.</span> <span class="nav-text">LiveData 的优势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加-LiveData-库"><span class="nav-number">3.</span> <span class="nav-text">添加 LiveData 库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建-LiveData"><span class="nav-number">4.</span> <span class="nav-text">创建 LiveData</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#停止监听-LiveData"><span class="nav-number">5.</span> <span class="nav-text">停止监听 LiveData</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformations-介绍"><span class="nav-number">6.</span> <span class="nav-text">Transformations 介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformations-map-示例"><span class="nav-number">7.</span> <span class="nav-text">Transformations.map 示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformations-switchMap-示例"><span class="nav-number">8.</span> <span class="nav-text">Transformations.switchMap 示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题验证"><span class="nav-number">9.</span> <span class="nav-text">问题验证</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题一"><span class="nav-number">9.1.</span> <span class="nav-text">问题一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题二"><span class="nav-number">9.2.</span> <span class="nav-text">问题二</span></a></li></ol></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -491,29 +461,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -522,22 +484,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/04/25/learn-jetpack-livedata-1/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

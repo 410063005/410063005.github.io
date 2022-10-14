@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,65 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="使用 RxJava 2 时稍不注意就会出现 UndeliverableException。在桌面环境中该异常还不算严重，但对于 Android 应用来说却是致命的。">
-<meta name="keywords" content="Android,RxJava">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="使用 RxJava 2 时稍不注意就会出现 UndeliverableException。在桌面环境中该异常还不算严重，但对于 Android 应用来说却是致命的。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RxJava 2 异常处理分析">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/04/30/rxjava-undeliverable-exception/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="使用 RxJava 2 时稍不注意就会出现 UndeliverableException。在桌面环境中该异常还不算严重，但对于 Android 应用来说却是致命的。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.031Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-04-30T11:17:28.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.031Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="RxJava">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="RxJava 2 异常处理分析">
-<meta name="twitter:description" content="使用 RxJava 2 时稍不注意就会出现 UndeliverableException。在桌面环境中该异常还不算严重，但对于 Android 应用来说却是致命的。">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/04/30/rxjava-undeliverable-exception/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>RxJava 2 异常处理分析 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/04/30/rxjava-undeliverable-exception/","path":"2019/04/30/rxjava-undeliverable-exception/","title":"RxJava 2 异常处理分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RxJava 2 异常处理分析 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +86,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +98,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,61 +121,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RxJava-2-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">RxJava 2 异常处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RxJava-error-handle"><span class="nav-number">3.</span> <span class="nav-text">RxJava error handle</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%A1%A3-%E8%AF%91"><span class="nav-number">3.1.</span> <span class="nav-text">文档(译)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RxJava2-Adapter"><span class="nav-number">3.2.</span> <span class="nav-text">RxJava2 Adapter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81"><span class="nav-number">3.3.</span> <span class="nav-text">源码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/04/30/rxjava-undeliverable-exception/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="RxJava 2 异常处理分析 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           RxJava 2 异常处理分析
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-04-30 19:17:28" itemprop="dateCreated datePublished" datetime="2019-04-30T19:17:28+08:00">2019-04-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-04-30 19:17:28" itemprop="dateCreated datePublished" datetime="2019-04-30T19:17:28+08:00">2019-04-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/04/30/rxjava-undeliverable-exception/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/04/30/rxjava-undeliverable-exception/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -222,9 +265,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>使用 RxJava 2 时稍不注意就会出现 <code>UndeliverableException</code>。在桌面环境中该异常还不算严重，但对于 Android 应用来说却是致命的。</p>
+<span id="more"></span>
 
-      
-        <p>使用 RxJava 2 时稍不注意就会出现 <code>UndeliverableException</code>。在桌面环境中该异常还不算严重，但对于 Android 应用来说却是致命的。<br><a id="more"></a></p>
 <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>这个版本上线后出现收到很多 <code>UndeliverableException</code> 上报，导致 crash 率明显上升。<code>UndeliverableException</code> 是使用 RxJava 2 过程中上报的。但之前也使用了 RxJava 2，并没有引起这么多 crash。分析后发现 crash 是这样引起的：</p>
 <ol>
 <li>这个版本对网络层了进行改造。准备逐步删除旧的网络层，统一使用新的网络层，所以业务代码调整成使用新的网络层请求后台</li>
@@ -235,25 +278,29 @@
 <li>后台接口访问失败将 <code>RxRequestServiceBridge</code> 的问题暴露出来，最终导致 app 崩溃</li>
 </ol>
 <p><code>RxRequestServiceBridge</code> 的代码类似这样：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RxRequestServiceBridge</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Message&gt; <span class="function">Observable&lt;T&gt; <span class="title">convert</span><span class="params">(<span class="keyword">final</span> Message req)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> convert(<span class="number">900</span>, req);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Message&gt; <span class="function">Observable&lt;T&gt; <span class="title">convert</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> cmd, <span class="keyword">final</span> Message req)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Observable.create(<span class="keyword">new</span> ObservableOnSubscribe&lt;T&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(<span class="keyword">final</span> ObservableEmitter&lt;T&gt; emitter)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                call(emitter, cmd, req);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> &lt;T extends Message&gt; <span class="function"><span class="keyword">void</span> <span class="title">call</span><span class="params">(<span class="keyword">final</span> ObservableEmitter&lt;T&gt; emitter, <span class="keyword">final</span> <span class="keyword">int</span> cmd, <span class="keyword">final</span> Message req)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> RequestService()</span><br><span class="line">                .reqNetWork(cmd, req)</span><br><span class="line">                .setCallBack(<span class="keyword">new</span> RequestService.OnCallBack&lt;T&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">(T message)</span> </span>&#123;</span><br><span class="line">                         emitter.onNext(message);</span><br><span class="line">                         emitter.onComplete();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailed</span><span class="params">(<span class="keyword">int</span> errorCode, String errorMsg, T message)</span> </span>&#123;</span><br><span class="line">                         emitter.onError(<span class="keyword">new</span> RetrofitException(errorCode, errorMsg));</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).request();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RxRequestServiceBridge</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Message</span>&gt; Observable&lt;T&gt; <span class="title function_">convert</span><span class="params">(<span class="keyword">final</span> Message req)</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> convert(<span class="number">900</span>, req);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Message</span>&gt; Observable&lt;T&gt; <span class="title function_">convert</span><span class="params">(<span class="keyword">final</span> <span class="type">int</span> cmd, <span class="keyword">final</span> Message req)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Observable.create(<span class="keyword">new</span> <span class="title class_">ObservableOnSubscribe</span>&lt;T&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(<span class="keyword">final</span> ObservableEmitter&lt;T&gt; emitter)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">                call(emitter, cmd, req);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Message</span>&gt; <span class="keyword">void</span> <span class="title function_">call</span><span class="params">(<span class="keyword">final</span> ObservableEmitter&lt;T&gt; emitter, <span class="keyword">final</span> <span class="type">int</span> cmd, <span class="keyword">final</span> Message req)</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">RequestService</span>()</span><br><span class="line">                .reqNetWork(cmd, req)</span><br><span class="line">                .setCallBack(<span class="keyword">new</span> <span class="title class_">RequestService</span>.OnCallBack&lt;T&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSuccess</span><span class="params">(T message)</span> &#123;</span><br><span class="line">                         emitter.onNext(message);</span><br><span class="line">                         emitter.onComplete();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onFailed</span><span class="params">(<span class="type">int</span> errorCode, String errorMsg, T message)</span> &#123;</span><br><span class="line">                         emitter.onError(<span class="keyword">new</span> <span class="title class_">RetrofitException</span>(errorCode, errorMsg));</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).request();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>crash 日志如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">com.app.RetrofitException: 连接失败，请重试！(#99)</span><br><span class="line">io.reactivex.exceptions.UndeliverableException:com.app.RetrofitException: cmd=[3], reqName=[], resultCode=[99], errorMessage=[连接失败，请重试！(#99)]</span><br><span class="line">io.reactivex.plugins.RxJavaPlugins.void onError(java.lang.Throwable)(Unknown Source:20)</span><br><span class="line">......</span><br><span class="line">com.app.RxRequestServiceBridge$2.void onFailed(int,java.lang.String,com.squareup.wire.Message)(Unknown Source:32)</span><br></pre></td></tr></table></figure>
-<h1 id="RxJava-2-异常处理"><a href="#RxJava-2-异常处理" class="headerlink" title="RxJava 2 异常处理"></a>RxJava 2 异常处理</h1><p>搜了下，才发现2017年就有人给 RxJava 2 提出类似的问题，见这个<a href="https://github.com/ReactiveX/RxJava/issues/5214" target="_blank" rel="noopener">issue #5214</a>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">com.app.RetrofitException: 连接失败，请重试！(#99)</span><br><span class="line">io.reactivex.exceptions.UndeliverableException:com.app.RetrofitException: cmd=[3], reqName=[], resultCode=[99], errorMessage=[连接失败，请重试！(#99)]</span><br><span class="line">io.reactivex.plugins.RxJavaPlugins.void onError(java.lang.Throwable)(Unknown Source:20)</span><br><span class="line">......</span><br><span class="line">com.app.RxRequestServiceBridge$2.void onFailed(int,java.lang.String,com.squareup.wire.Message)(Unknown Source:32)</span><br></pre></td></tr></table></figure>
+
+<h1 id="RxJava-2-异常处理"><a href="#RxJava-2-异常处理" class="headerlink" title="RxJava 2 异常处理"></a>RxJava 2 异常处理</h1><p>搜了下，才发现2017年就有人给 RxJava 2 提出类似的问题，见这个<a target="_blank" rel="noopener" href="https://github.com/ReactiveX/RxJava/issues/5214">issue #5214</a>。</p>
 <p>复现步骤很简单：</p>
 <ol>
 <li>订阅某个可能抛出异常的 Observable，<code>Disposable disposable = observable.subscribe()</code>。以访问后台接口这个过程为例，其中可能抛出 IOException</li>
 <li>Observable 耗时太久，在其结束前调用 <code>disposable.dispose()</code>。以 Android app 为例，某个界面网络加载太久，用户等不及所以退出了，<code>Activity.onDestory()</code> 中调用了 <code>disposable.dispose()</code></li>
 <li>Observable 发生 Exception。以网络请求为例，可能的场景是发生了读超时或连接超时</li>
 </ol>
-<p>写代码来看看复现结果 (注，这段代码参考自 <a href="https://github.com/ReactiveX/RxJava/issues/5214" target="_blank" rel="noopener">issue #5214</a>)。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">disposeBeforeExceptionOccurredWithoutErrorHandler</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    RxJavaPlugins.setErrorHandler(<span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 让当前线程不要过早退出</span></span><br><span class="line">    <span class="keyword">final</span> CountDownLatch keepRunning = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> CountDownLatch mainThreadLock = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">final</span> CountDownLatch workerThreadLock = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    Disposable disposable = Observable.fromCallable(</span><br><span class="line">            <span class="keyword">new</span> Callable&lt;Integer&gt;() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                    mainThreadLock.countDown();</span><br><span class="line">                    workerThreadLock.await();</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"后台线程有异常, 会被 RxJava 吞掉么"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">            .subscribeOn(Schedulers.io())</span><br><span class="line">            .subscribe(emptyConsumer(),</span><br><span class="line">                    <span class="keyword">new</span> Consumer&lt;Throwable&gt;() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Throwable throwable)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                            System.err.println(<span class="string">"I'm Local Exception Handler"</span>);</span><br><span class="line">                            throwable.printStackTrace();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line"></span><br><span class="line">    mainThreadLock.await();</span><br><span class="line">    disposable.dispose();</span><br><span class="line">    workerThreadLock.countDown();</span><br><span class="line"></span><br><span class="line">    keepRunning.await(<span class="number">5</span>, TimeUnit.SECONDS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>写代码来看看复现结果 (注，这段代码参考自 <a target="_blank" rel="noopener" href="https://github.com/ReactiveX/RxJava/issues/5214">issue #5214</a>)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">disposeBeforeExceptionOccurredWithoutErrorHandler</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    RxJavaPlugins.setErrorHandler(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 让当前线程不要过早退出</span></span><br><span class="line">    <span class="keyword">final</span> <span class="type">CountDownLatch</span> <span class="variable">keepRunning</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CountDownLatch</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> <span class="type">CountDownLatch</span> <span class="variable">mainThreadLock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CountDownLatch</span>(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">final</span> <span class="type">CountDownLatch</span> <span class="variable">workerThreadLock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CountDownLatch</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">Disposable</span> <span class="variable">disposable</span> <span class="operator">=</span> Observable.fromCallable(</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Callable</span>&lt;Integer&gt;() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="keyword">public</span> Integer <span class="title function_">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">                    mainThreadLock.countDown();</span><br><span class="line">                    workerThreadLock.await();</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Exception</span>(<span class="string">&quot;后台线程有异常, 会被 RxJava 吞掉么&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">            .subscribeOn(Schedulers.io())</span><br><span class="line">            .subscribe(emptyConsumer(),</span><br><span class="line">                    <span class="keyword">new</span> <span class="title class_">Consumer</span>&lt;Throwable&gt;() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">accept</span><span class="params">(Throwable throwable)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">                            System.err.println(<span class="string">&quot;I&#x27;m Local Exception Handler&quot;</span>);</span><br><span class="line">                            throwable.printStackTrace();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line"></span><br><span class="line">    mainThreadLock.await();</span><br><span class="line">    disposable.dispose();</span><br><span class="line">    workerThreadLock.countDown();</span><br><span class="line"></span><br><span class="line">    keepRunning.await(<span class="number">5</span>, TimeUnit.SECONDS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这里对代码中有三个不同作用的 <code>CountDownLatch</code></p>
 <ul>
 <li><code>keepRunning</code> 用于保持当前线程至少运行5秒</li>
 <li><code>mainThreadLock</code> 和 <code>workerThreadLock</code> 用于制造 <code>dispose()</code> 后抛出异常的场景</li>
 </ul>
 <p>运行后果然有情况，我们自己抛出的异常不见了，出现另一个预期外的异常 <strong>UndeliverableException</strong>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">io.reactivex.exceptions.UndeliverableException: java.lang.InterruptedException</span><br><span class="line">	at io.reactivex.plugins.RxJavaPlugins.onError(RxJavaPlugins.java:366)</span><br><span class="line">	at io.reactivex.internal.operators.observable.ObservableFromCallable.subscribeActual(ObservableFromCallable.java:48)</span><br><span class="line">	at io.reactivex.Observable.subscribe(Observable.java:11194)</span><br><span class="line">	at io.reactivex.internal.operators.observable.ObservableSubscribeOn$SubscribeTask.run(ObservableSubscribeOn.java:96)</span><br><span class="line">	at io.reactivex.Scheduler$DisposeTask.run(Scheduler.java:463)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">io.reactivex.exceptions.UndeliverableException: java.lang.InterruptedException</span><br><span class="line">	at io.reactivex.plugins.RxJavaPlugins.onError(RxJavaPlugins.java:366)</span><br><span class="line">	at io.reactivex.internal.operators.observable.ObservableFromCallable.subscribeActual(ObservableFromCallable.java:48)</span><br><span class="line">	at io.reactivex.Observable.subscribe(Observable.java:11194)</span><br><span class="line">	at io.reactivex.internal.operators.observable.ObservableSubscribeOn$SubscribeTask.run(ObservableSubscribeOn.java:96)</span><br><span class="line">	at io.reactivex.Scheduler$DisposeTask.run(Scheduler.java:463)</span><br></pre></td></tr></table></figure>
+
 <p>官方对这个预期外的异常解释如下：</p>
 <blockquote>
 <p>The exception is there because RxJava 2 has the policy of NEVER allowing an onError call to be lost. It is either delivered downstream or thrown as a global UndeliverableException if the observable has already terminated. It is up to the creator of the Observable to ‘properly’ handle the case where the observable has ended and an Exception occurs.</p>
@@ -266,13 +313,14 @@
 <li>如果 <code>dispose()</code> 后拿到数据也好，抛出异常也好，RxJava 是不知道该如何处理的。但它肯定不能”吞掉异常”，所以就有了 UndeliverableException</li>
 <li>可以使用 <code>RxJavaPlugins.setErrorHandler()</code> 设置一个 ErrorHandler 用于处理上述情况中的异常</li>
 </ul>
-<p>RxJava 官方文档中 <a href="https://github.com/ReactiveX/RxJava/wiki/What&#39;s-different-in-2.0#error-handling" target="_blank" rel="noopener">Error handle</a> 其实对此有比较详细的描述。</p>
-<h1 id="RxJava-error-handle"><a href="#RxJava-error-handle" class="headerlink" title="RxJava error handle"></a>RxJava error handle</h1><h2 id="文档-译"><a href="#文档-译" class="headerlink" title="文档(译)"></a>文档(译)</h2><p>这一节内容翻译自 <a href="https://github.com/ReactiveX/RxJava/wiki/What&#39;s-different-in-2.0#error-handling" target="_blank" rel="noopener">Error handle</a> 其实对此有比较详细的描述。</p>
+<p>RxJava 官方文档中 <a target="_blank" rel="noopener" href="https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#error-handling">Error handle</a> 其实对此有比较详细的描述。</p>
+<h1 id="RxJava-error-handle"><a href="#RxJava-error-handle" class="headerlink" title="RxJava error handle"></a>RxJava error handle</h1><h2 id="文档-译"><a href="#文档-译" class="headerlink" title="文档(译)"></a>文档(译)</h2><p>这一节内容翻译自 <a target="_blank" rel="noopener" href="https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#error-handling">Error handle</a> 其实对此有比较详细的描述。</p>
 <p>RxJava 2.0 一个重要的设计就是不能吞掉任何 <code>Throwable</code>。这意味着由于下游的生命周期已到达结束状态导致无法发射(emit)错误或者下游取消一个序列等情形，会导致发射(emit)一个错误。</p>
 <p>这类错误会被路由到 <code>RxJavaPlugins.onError</code> 处理器。可以使用 <code>RxJavaPlugins.setErrorHandler(Consumer&lt;Throwable&gt;)</code> 方法来设置新的 <code>onError</code> 处理器。如果没有指定这个处理器，缺省情况下 RxJava 会将 <code>Throwable</code> 堆栈信息输出到控制台并调用当前线程的未捕获异常处理器(uncaught exception handler)。</p>
 <p>在桌面 Java 环境中，uncaught exception handler 不会对基于 <code>ExecutorService</code> 的 <code>Scheduler</code> 中运行的线程产生的错误进行任何处理，所以应用可以继续运行。但 Android 平台处理更严格，它在这种情况下会终止应用。</p>
 <p>这是否是预想中的行为还有争论，但如果你想避免调用到 uncaught exception handler，无论是直接使用还是间接使用 RxJava2，最终的应用都应该设置一个无操作的 handler (no-op handler)：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// If Java 8 lambdas are supported</span></span><br><span class="line">RxJavaPlugins.setErrorHandler(e -&gt; &#123; &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// If no Retrolambda or Jack </span></span><br><span class="line">RxJavaPlugins.setErrorHandler(Functions.&lt;Throwable&gt;emptyConsumer());</span><br></pre></td></tr></table></figure>
+
 <p>不建议基于 RxJava2 的第三方库在测试环境以外修改 error handler。(It is not advised intermediate libraries change the error handler outside their own testing environment.)</p>
 <p>不幸的是，RxJava 不知道哪些对象处于生命周期结束状态(out-of-lifecycle)，未被分发的异常是应该让应用 crash。而定位这类问题的根源又非常麻烦，尤其是问题来自链的底部(especially if they originate from a source and get routed to RxJavaPlugins.onError somewhere lower the chain) 却被路由到 <code>RxJavaPlugins.onError</code> 时。</p>
 <p>所以 RxJava 2.0.6 引入了特定的异常包装器用于包装原始异常以便容易定位问题。</p>
@@ -282,14 +330,18 @@
 <li><code>UndeliverableException</code> - <code>Subscriber/Observer</code> 生命周期限制导致原始异常无法分发时，使用 <code>UndeliverableException</code> 进行包装。<code>RxJavaPlugins.onError</code> 自动使用这个异常以保持原有的完整堆栈信息。</li>
 </ul>
 <p>如果未被分发的异常是 <code>NullPointerException</code>, <code>IllegalStateException</code> (<code>UndeliverableException</code> 和 <code>ProtocolViolationException</code> 继承自 <code>IllegalStateException</code>), <code>IllegalArgumentException</code>, <code>CompositeException</code>, <code>MissingBackpressureException</code>, <code>OnErrorNotImplementedException</code> 的实例或子类实例，不会使用 <code>UndeliverableException</code> 对该异常进行包装。</p>
-<p>此外，一些第三方库被 <code>cancel()</code> 或 <code>dispose()</code> 调用中断时会抛出异常，大部分时候这种中断会引起未分发的异常。RxJava 2.0.6 内部现在总是先对 <code>Subscription/Disposable</code> 执行 <code>cancel</code> 或 <code>dispose</code>，再 cancelling/disposing 一个 task 或 worker (这会导致目标线程出现中断，which causes the interrupt on the target thread)。</p>
+<p>此外，一些第三方库被 <code>cancel()</code> 或 <code>dispose()</code> 调用中断时会抛出异常，大部分时候这种中断会引起未分发的异常。RxJava 2.0.6 内部现在总是先对 <code>Subscription/Disposable</code> 执行 <code>cancel</code> 或 <code>dispose</code>，再 cancelling&#x2F;disposing 一个 task 或 worker (这会导致目标线程出现中断，which causes the interrupt on the target thread)。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// in some library</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">   doSomethingBlockingly()</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException ex) &#123;</span><br><span class="line">   <span class="comment">// check if the interrupt is due to cancellation</span></span><br><span class="line">   <span class="comment">// if so, no need to signal the InterruptedException</span></span><br><span class="line">   <span class="keyword">if</span> (!disposable.isDisposed()) &#123;</span><br><span class="line">      observer.onError(ex);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果第三方库已经这样做了，<code>InterruptedExceptions</code> 会停止而不是继续住下游传递。如果第三方库还没有使用这个模式，建议尽快升级/更新有问题的代码。</p>
-<p>如果准备添加一个非空的全局 error consumer，以下是个例子。这个例子基于异常是 bug 还是可忽略的应用/网络状态来管理未分发的异常。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">RxJavaPlugins.setErrorHandler(e -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (e <span class="keyword">instanceof</span> UndeliverableException) &#123;</span><br><span class="line">        e = e.getCause();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((e <span class="keyword">instanceof</span> IOException) || (e <span class="keyword">instanceof</span> SocketException)) &#123;</span><br><span class="line">        <span class="comment">// fine, irrelevant network problem or API that throws on cancellation</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (e <span class="keyword">instanceof</span> InterruptedException) &#123;</span><br><span class="line">        <span class="comment">// fine, some blocking code was interrupted by a dispose call</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((e <span class="keyword">instanceof</span> NullPointerException) || (e <span class="keyword">instanceof</span> IllegalArgumentException)) &#123;</span><br><span class="line">        <span class="comment">// that's likely a bug in the application</span></span><br><span class="line">        Thread.currentThread().getUncaughtExceptionHandler()</span><br><span class="line">            .handleException(Thread.currentThread(), e);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (e <span class="keyword">instanceof</span> IllegalStateException) &#123;</span><br><span class="line">        <span class="comment">// that's a bug in RxJava or in a custom operator</span></span><br><span class="line">        Thread.currentThread().getUncaughtExceptionHandler()</span><br><span class="line">            .handleException(Thread.currentThread(), e);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    Log.warning(<span class="string">"Undeliverable exception received, not sure what to do"</span>, e);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<h2 id="RxJava2-Adapter"><a href="#RxJava2-Adapter" class="headerlink" title="RxJava2 Adapter"></a><a href="https://github.com/square/retrofit/blob/master/retrofit-adapters/rxjava2/src/main/java/retrofit2/adapter/rxjava2/CallExecuteObservable.java#L34" target="_blank" rel="noopener">RxJava2 Adapter</a></h2><p>RxJava2 Adapter 用于 Retrofit 2 集成 RxJava 2。看看它是如何进行错误处理的。关键代码见 <a href="https://github.com/square/retrofit/blob/master/retrofit-adapters/rxjava2/src/main/java/retrofit2/adapter/rxjava2/CallExecuteObservable.java" target="_blank" rel="noopener">CallExecuteObservable.java</a></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">CallExecuteObservable</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">Observable</span>&lt;<span class="title">Response</span>&lt;<span class="title">T</span>&gt;&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">subscribeActual</span><span class="params">(Observer&lt;? <span class="keyword">super</span> Response&lt;T&gt;&gt; observer)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Since Call is a one-shot type, clone it for each new observer.</span></span><br><span class="line">    Call&lt;T&gt; call = originalCall.clone();</span><br><span class="line">    CallDisposable disposable = <span class="keyword">new</span> CallDisposable(call);</span><br><span class="line">    observer.onSubscribe(disposable);</span><br><span class="line">    <span class="keyword">if</span> (disposable.isDisposed()) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">boolean</span> terminated = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      Response&lt;T&gt; response = call.execute();</span><br><span class="line">      <span class="keyword">if</span> (!disposable.isDisposed()) &#123;</span><br><span class="line">        observer.onNext(response);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (!disposable.isDisposed()) &#123;</span><br><span class="line">        terminated = <span class="keyword">true</span>;</span><br><span class="line">        observer.onComplete();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">      Exceptions.throwIfFatal(t);</span><br><span class="line">      <span class="keyword">if</span> (terminated) &#123;</span><br><span class="line">        RxJavaPlugins.onError(t);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!disposable.isDisposed()) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          observer.onError(t);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable inner) &#123;</span><br><span class="line">          Exceptions.throwIfFatal(inner);</span><br><span class="line">          RxJavaPlugins.onError(<span class="keyword">new</span> CompositeException(t, inner));</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">RxJavaPlugins</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">volatile</span> Consumer&lt;? <span class="keyword">super</span> Throwable&gt; errorHandler;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setErrorHandler</span><span class="params">(@Nullable Consumer&lt;? <span class="keyword">super</span> Throwable&gt; handler)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (lockdown) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Plugins can't be changed anymore"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        errorHandler = handler;</span><br><span class="line">    &#125;    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(@NonNull Throwable error)</span> </span>&#123;</span><br><span class="line">        Consumer&lt;? <span class="keyword">super</span> Throwable&gt; f = errorHandler;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (error == <span class="keyword">null</span>) &#123;</span><br><span class="line">            error = <span class="keyword">new</span> NullPointerException(<span class="string">"onError called with null. Null values are generally not allowed in 2.x operators and sources."</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (!isBug(error)) &#123;</span><br><span class="line">                error = <span class="keyword">new</span> UndeliverableException(error);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (f != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 关键点二</span></span><br><span class="line">                f.accept(error);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">                <span class="comment">// Exceptions.throwIfFatal(e); TODO decide</span></span><br><span class="line">                e.printStackTrace(); <span class="comment">// NOPMD</span></span><br><span class="line">                uncaught(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 关键点三</span></span><br><span class="line">        error.printStackTrace(); <span class="comment">// NOPMD</span></span><br><span class="line">        uncaught(error);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">uncaught</span><span class="params">(@NonNull Throwable error)</span> </span>&#123;</span><br><span class="line">        Thread currentThread = Thread.currentThread();</span><br><span class="line">        UncaughtExceptionHandler handler = currentThread.getUncaughtExceptionHandler();</span><br><span class="line">        handler.uncaughtException(currentThread, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ObservableFromCallable</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">Observable</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Callable&lt;? extends T&gt; callable;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ObservableFromCallable</span><span class="params">(Callable&lt;? extends T&gt; callable)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.callable = callable;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">subscribeActual</span><span class="params">(Observer&lt;? <span class="keyword">super</span> T&gt; s)</span> </span>&#123;</span><br><span class="line">        DeferredScalarDisposable&lt;T&gt; d = <span class="keyword">new</span> DeferredScalarDisposable&lt;T&gt;(s);</span><br><span class="line">        s.onSubscribe(d);</span><br><span class="line">        <span class="keyword">if</span> (d.isDisposed()) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        T value;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            value = ObjectHelper.requireNonNull(callable.call(), <span class="string">"Callable returned null"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">            Exceptions.throwIfFatal(e);</span><br><span class="line">            <span class="comment">// 关键点一            </span></span><br><span class="line">            <span class="keyword">if</span> (!d.isDisposed()) &#123;</span><br><span class="line">                s.onError(e);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                RxJavaPlugins.onError(e);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        d.complete(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果第三方库已经这样做了，<code>InterruptedExceptions</code> 会停止而不是继续住下游传递。如果第三方库还没有使用这个模式，建议尽快升级&#x2F;更新有问题的代码。</p>
+<p>如果准备添加一个非空的全局 error consumer，以下是个例子。这个例子基于异常是 bug 还是可忽略的应用&#x2F;网络状态来管理未分发的异常。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">RxJavaPlugins.setErrorHandler(e -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (e <span class="keyword">instanceof</span> UndeliverableException) &#123;</span><br><span class="line">        e = e.getCause();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((e <span class="keyword">instanceof</span> IOException) || (e <span class="keyword">instanceof</span> SocketException)) &#123;</span><br><span class="line">        <span class="comment">// fine, irrelevant network problem or API that throws on cancellation</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (e <span class="keyword">instanceof</span> InterruptedException) &#123;</span><br><span class="line">        <span class="comment">// fine, some blocking code was interrupted by a dispose call</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((e <span class="keyword">instanceof</span> NullPointerException) || (e <span class="keyword">instanceof</span> IllegalArgumentException)) &#123;</span><br><span class="line">        <span class="comment">// that&#x27;s likely a bug in the application</span></span><br><span class="line">        Thread.currentThread().getUncaughtExceptionHandler()</span><br><span class="line">            .handleException(Thread.currentThread(), e);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (e <span class="keyword">instanceof</span> IllegalStateException) &#123;</span><br><span class="line">        <span class="comment">// that&#x27;s a bug in RxJava or in a custom operator</span></span><br><span class="line">        Thread.currentThread().getUncaughtExceptionHandler()</span><br><span class="line">            .handleException(Thread.currentThread(), e);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    Log.warning(<span class="string">&quot;Undeliverable exception received, not sure what to do&quot;</span>, e);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="RxJava2-Adapter"><a href="#RxJava2-Adapter" class="headerlink" title="RxJava2 Adapter"></a><a target="_blank" rel="noopener" href="https://github.com/square/retrofit/blob/master/retrofit-adapters/rxjava2/src/main/java/retrofit2/adapter/rxjava2/CallExecuteObservable.java#L34">RxJava2 Adapter</a></h2><p>RxJava2 Adapter 用于 Retrofit 2 集成 RxJava 2。看看它是如何进行错误处理的。关键代码见 <a target="_blank" rel="noopener" href="https://github.com/square/retrofit/blob/master/retrofit-adapters/rxjava2/src/main/java/retrofit2/adapter/rxjava2/CallExecuteObservable.java">CallExecuteObservable.java</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">CallExecuteObservable</span>&lt;T&gt; <span class="keyword">extends</span> <span class="title class_">Observable</span>&lt;Response&lt;T&gt;&gt; &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span> <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">subscribeActual</span><span class="params">(Observer&lt;? <span class="built_in">super</span> Response&lt;T&gt;&gt; observer)</span> &#123;</span><br><span class="line">    <span class="comment">// Since Call is a one-shot type, clone it for each new observer.</span></span><br><span class="line">    Call&lt;T&gt; call = originalCall.clone();</span><br><span class="line">    <span class="type">CallDisposable</span> <span class="variable">disposable</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CallDisposable</span>(call);</span><br><span class="line">    observer.onSubscribe(disposable);</span><br><span class="line">    <span class="keyword">if</span> (disposable.isDisposed()) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">terminated</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      Response&lt;T&gt; response = call.execute();</span><br><span class="line">      <span class="keyword">if</span> (!disposable.isDisposed()) &#123;</span><br><span class="line">        observer.onNext(response);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (!disposable.isDisposed()) &#123;</span><br><span class="line">        terminated = <span class="literal">true</span>;</span><br><span class="line">        observer.onComplete();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">      Exceptions.throwIfFatal(t);</span><br><span class="line">      <span class="keyword">if</span> (terminated) &#123;</span><br><span class="line">        RxJavaPlugins.onError(t);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!disposable.isDisposed()) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          observer.onError(t);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable inner) &#123;</span><br><span class="line">          Exceptions.throwIfFatal(inner);</span><br><span class="line">          RxJavaPlugins.onError(<span class="keyword">new</span> <span class="title class_">CompositeException</span>(t, inner));</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">RxJavaPlugins</span> &#123;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">volatile</span> Consumer&lt;? <span class="built_in">super</span> Throwable&gt; errorHandler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">setErrorHandler</span><span class="params">(<span class="meta">@Nullable</span> Consumer&lt;? <span class="built_in">super</span> Throwable&gt; handler)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (lockdown) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;Plugins can&#x27;t be changed anymore&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        errorHandler = handler;</span><br><span class="line">    &#125;    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(<span class="meta">@NonNull</span> Throwable error)</span> &#123;</span><br><span class="line">        Consumer&lt;? <span class="built_in">super</span> Throwable&gt; f = errorHandler;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (error == <span class="literal">null</span>) &#123;</span><br><span class="line">            error = <span class="keyword">new</span> <span class="title class_">NullPointerException</span>(<span class="string">&quot;onError called with null. Null values are generally not allowed in 2.x operators and sources.&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (!isBug(error)) &#123;</span><br><span class="line">                error = <span class="keyword">new</span> <span class="title class_">UndeliverableException</span>(error);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (f != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 关键点二</span></span><br><span class="line">                f.accept(error);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">                <span class="comment">// Exceptions.throwIfFatal(e); TODO decide</span></span><br><span class="line">                e.printStackTrace(); <span class="comment">// NOPMD</span></span><br><span class="line">                uncaught(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 关键点三</span></span><br><span class="line">        error.printStackTrace(); <span class="comment">// NOPMD</span></span><br><span class="line">        uncaught(error);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">uncaught</span><span class="params">(<span class="meta">@NonNull</span> Throwable error)</span> &#123;</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">currentThread</span> <span class="operator">=</span> Thread.currentThread();</span><br><span class="line">        <span class="type">UncaughtExceptionHandler</span> <span class="variable">handler</span> <span class="operator">=</span> currentThread.getUncaughtExceptionHandler();</span><br><span class="line">        handler.uncaughtException(currentThread, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">ObservableFromCallable</span>&lt;T&gt; <span class="keyword">extends</span> <span class="title class_">Observable</span>&lt;T&gt; <span class="keyword">implements</span> <span class="title class_">Callable</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> Callable&lt;? <span class="keyword">extends</span> <span class="title class_">T</span>&gt; callable;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ObservableFromCallable</span><span class="params">(Callable&lt;? extends T&gt; callable)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.callable = callable;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribeActual</span><span class="params">(Observer&lt;? <span class="built_in">super</span> T&gt; s)</span> &#123;</span><br><span class="line">        DeferredScalarDisposable&lt;T&gt; d = <span class="keyword">new</span> <span class="title class_">DeferredScalarDisposable</span>&lt;T&gt;(s);</span><br><span class="line">        s.onSubscribe(d);</span><br><span class="line">        <span class="keyword">if</span> (d.isDisposed()) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        T value;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            value = ObjectHelper.requireNonNull(callable.call(), <span class="string">&quot;Callable returned null&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">            Exceptions.throwIfFatal(e);</span><br><span class="line">            <span class="comment">// 关键点一            </span></span><br><span class="line">            <span class="keyword">if</span> (!d.isDisposed()) &#123;</span><br><span class="line">                s.onError(e);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                RxJavaPlugins.onError(e);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        d.complete(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>以 <code>ObservableFromCallable.subscribeActual()</code> 方法为例可以看到 RxJava 处理异常时有几个关键点：</p>
 <ul>
 <li>关键点一，<code>isDisposed()</code> 为 false 才交由 <em>local error handler</em> 进行错误处理，为 true 时直接交由 <em>global error handler</em></li>
@@ -301,10 +353,11 @@
 <p>On desktop Java, this latter handler does nothing on an ExecutorService backed Scheduler and the application can keep running. However, Android is more strict and terminates the application in such uncaught exception cases.</p>
 </blockquote>
 <h1 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h1><p>经过上面的源码分析，解决方法其实很简单。<code>RxRequestServiceBridge</code> 的代码修改如下，主要变化是调用 <code>ObservableEmitter.onXXX()</code> 方法前先判断是否已经被 dispose 掉了。如果是，不应将数据或异常往下游 <code>ObservableEmitter</code> 继续传递。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RxRequestServiceBridge</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Message&gt; <span class="function">Observable&lt;T&gt; <span class="title">convert</span><span class="params">(<span class="keyword">final</span> Message req)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> convert(<span class="number">900</span>, req);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Message&gt; <span class="function">Observable&lt;T&gt; <span class="title">convert</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> cmd, <span class="keyword">final</span> Message req)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Observable.create(<span class="keyword">new</span> ObservableOnSubscribe&lt;T&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(<span class="keyword">final</span> ObservableEmitter&lt;T&gt; emitter)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                call(emitter, cmd, req);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> &lt;T extends Message&gt; <span class="function"><span class="keyword">void</span> <span class="title">call</span><span class="params">(<span class="keyword">final</span> ObservableEmitter&lt;T&gt; emitter, <span class="keyword">final</span> <span class="keyword">int</span> cmd, <span class="keyword">final</span> Message req)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> RequestService()</span><br><span class="line">                .reqNetWork(cmd, req)</span><br><span class="line">                .setCallBack(<span class="keyword">new</span> RequestService.OnCallBack&lt;T&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">(T message)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">if</span> (!emitter.isDisposed()) &#123;</span><br><span class="line">                            emitter.onNext(message);</span><br><span class="line">                            emitter.onComplete();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailed</span><span class="params">(<span class="keyword">int</span> errorCode, String errorMsg, T message)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">if</span> (!emitter.isDisposed()) &#123;</span><br><span class="line">                            emitter.onError(<span class="keyword">new</span> RetrofitException(errorCode, errorMsg));</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).request();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RxRequestServiceBridge</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Message</span>&gt; Observable&lt;T&gt; <span class="title function_">convert</span><span class="params">(<span class="keyword">final</span> Message req)</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> convert(<span class="number">900</span>, req);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Message</span>&gt; Observable&lt;T&gt; <span class="title function_">convert</span><span class="params">(<span class="keyword">final</span> <span class="type">int</span> cmd, <span class="keyword">final</span> Message req)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Observable.create(<span class="keyword">new</span> <span class="title class_">ObservableOnSubscribe</span>&lt;T&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(<span class="keyword">final</span> ObservableEmitter&lt;T&gt; emitter)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">                call(emitter, cmd, req);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Message</span>&gt; <span class="keyword">void</span> <span class="title function_">call</span><span class="params">(<span class="keyword">final</span> ObservableEmitter&lt;T&gt; emitter, <span class="keyword">final</span> <span class="type">int</span> cmd, <span class="keyword">final</span> Message req)</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">RequestService</span>()</span><br><span class="line">                .reqNetWork(cmd, req)</span><br><span class="line">                .setCallBack(<span class="keyword">new</span> <span class="title class_">RequestService</span>.OnCallBack&lt;T&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSuccess</span><span class="params">(T message)</span> &#123;</span><br><span class="line">                        <span class="keyword">if</span> (!emitter.isDisposed()) &#123;</span><br><span class="line">                            emitter.onNext(message);</span><br><span class="line">                            emitter.onComplete();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onFailed</span><span class="params">(<span class="type">int</span> errorCode, String errorMsg, T message)</span> &#123;</span><br><span class="line">                        <span class="keyword">if</span> (!emitter.isDisposed()) &#123;</span><br><span class="line">                            emitter.onError(<span class="keyword">new</span> <span class="title class_">RetrofitException</span>(errorCode, errorMsg));</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).request();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://stackoverflow.com/questions/48712262/rxjava2s-undeliverableexception-and-disposed-streams" target="_blank" rel="noopener">android - RxJava2’s UndeliverableException and disposed streams - Stack Overflow</a></li>
-<li><a href="https://stackoverflow.com/questions/43525052/rxjava2-observable-take-throws-undeliverableexception" target="_blank" rel="noopener">java - RxJava2 observable take throws UndeliverableException - Stack Overflow</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/48712262/rxjava2s-undeliverableexception-and-disposed-streams">android - RxJava2’s UndeliverableException and disposed streams - Stack Overflow</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/43525052/rxjava2-observable-take-throws-undeliverableexception">java - RxJava2 observable take throws UndeliverableException - Stack Overflow</a></li>
 </ul>
 
     </div>
@@ -313,7 +366,7 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
               <a href="/tags/rxjava/" rel="tag"># RxJava</a>
@@ -321,123 +374,38 @@
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/04/29/constraint-layout-animation/" rel="prev" title="ConstraintLayout 动画">
-      <i class="fa fa-chevron-left"></i> ConstraintLayout 动画
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/05/05/jetpack-lifecycle/" rel="next" title="Android Jetpack 学习笔记之 Lifecycle">
-      Android Jetpack 学习笔记之 Lifecycle <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/04/29/constraint-layout-animation/" rel="prev" title="ConstraintLayout 动画">
+                  <i class="fa fa-chevron-left"></i> ConstraintLayout 动画
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/05/05/jetpack-lifecycle/" rel="next" title="Android Jetpack 学习笔记之 Lifecycle">
+                  Android Jetpack 学习笔记之 Lifecycle <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RxJava-2-异常处理"><span class="nav-number">2.</span> <span class="nav-text">RxJava 2 异常处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RxJava-error-handle"><span class="nav-number">3.</span> <span class="nav-text">RxJava error handle</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#文档-译"><span class="nav-number">3.1.</span> <span class="nav-text">文档(译)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RxJava2-Adapter"><span class="nav-number">3.2.</span> <span class="nav-text">RxJava2 Adapter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码"><span class="nav-number">3.3.</span> <span class="nav-text">源码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决方法"><span class="nav-number">4.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -445,29 +413,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -476,22 +436,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/04/30/rxjava-undeliverable-exception/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

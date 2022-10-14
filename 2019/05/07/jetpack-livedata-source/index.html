@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,64 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="LiveData 是 Android Architecture Components (AAC)中的一个基础类，ViewModel、Room、DataBinding 等多个库用到 LiveData。理解 LiveData 是学习 AAC 的一个关键，本文带你分析 LiveData 源码看看它到底是如何实现的。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="LiveData 是 Android Architecture Components (AAC)中的一个基础类，ViewModel、Room、DataBinding 等多个库用到 LiveData。理解 LiveData 是学习 AAC 的一个关键，本文带你分析 LiveData 源码看看它到底是如何实现的。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android Jetpack 学习笔记之 LiveData 源码解析">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/05/07/jetpack-livedata-source/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="LiveData 是 Android Architecture Components (AAC)中的一个基础类，ViewModel、Room、DataBinding 等多个库用到 LiveData。理解 LiveData 是学习 AAC 的一个关键，本文带你分析 LiveData 源码看看它到底是如何实现的。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.036Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-05-07T12:19:46.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.036Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android Jetpack 学习笔记之 LiveData 源码解析">
-<meta name="twitter:description" content="LiveData 是 Android Architecture Components (AAC)中的一个基础类，ViewModel、Room、DataBinding 等多个库用到 LiveData。理解 LiveData 是学习 AAC 的一个关键，本文带你分析 LiveData 源码看看它到底是如何实现的。">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/05/07/jetpack-livedata-source/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Android Jetpack 学习笔记之 LiveData 源码解析 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/05/07/jetpack-livedata-source/","path":"2019/05/07/jetpack-livedata-source/","title":"Android Jetpack 学习笔记之 LiveData 源码解析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Android Jetpack 学习笔记之 LiveData 源码解析 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +85,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +97,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,61 +120,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8C%81%E6%9C%89"><span class="nav-number">2.1.</span> <span class="nav-text">数据持有</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8F%98%E6%9B%B4"><span class="nav-number">2.2.</span> <span class="nav-text">数据变更</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">观察者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%88%87%E6%8D%A2"><span class="nav-number">2.4.</span> <span class="nav-text">线程切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%84%9F%E7%9F%A5"><span class="nav-number">2.5.</span> <span class="nav-text">生命周期感知</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E6%80%A7"><span class="nav-number">2.6.</span> <span class="nav-text">不可变性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/05/07/jetpack-livedata-source/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Android Jetpack 学习笔记之 LiveData 源码解析 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Android Jetpack 学习笔记之 LiveData 源码解析
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-05-07 20:19:46" itemprop="dateCreated datePublished" datetime="2019-05-07T20:19:46+08:00">2019-05-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-05-07 20:19:46" itemprop="dateCreated datePublished" datetime="2019-05-07T20:19:46+08:00">2019-05-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/05/07/jetpack-livedata-source/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/05/07/jetpack-livedata-source/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -222,16 +264,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-        <p>LiveData 是 Android Architecture Components (AAC)中的一个基础类，ViewModel、Room、DataBinding 等多个库用到 LiveData。理解 LiveData 是学习 AAC 的一个关键，本文带你分析 LiveData 源码看看它到底是如何实现的。<br><a id="more"></a></p>
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p><a href="https://developer.android.com/reference/androidx/lifecycle/LiveData.html" target="_blank" rel="noopener">文档</a>对 LiveData 的介绍是这样的：</p>
+        <p>LiveData 是 Android Architecture Components (AAC)中的一个基础类，ViewModel、Room、DataBinding 等多个库用到 LiveData。理解 LiveData 是学习 AAC 的一个关键，本文带你分析 LiveData 源码看看它到底是如何实现的。</p>
+<span id="more"></span>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p><a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/lifecycle/LiveData.html">文档</a>对 LiveData 的介绍是这样的：</p>
 <blockquote>
 <p>LiveData is a data holder class that can be observed within a given lifecycle</p>
 </blockquote>
 <p>短短一句介绍，细细体会却能发现包含很大信息量。</p>
 <ul>
-<li>首先从结构上讲， LiveData 是 holder/wrapper，它持有数据</li>
+<li>首先从结构上讲， LiveData 是 holder&#x2F;wrapper，它持有数据</li>
 <li>其次，LiveData 是观察者模式的应用，它是被观察的一方</li>
 <li>最后，LiveData 能感知生命周期</li>
 </ul>
@@ -244,23 +285,27 @@
 <li>生命周期感知</li>
 <li>不变性</li>
 </ul>
-<h2 id="数据持有"><a href="#数据持有" class="headerlink" title="数据持有"></a>数据持有</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">LiveData</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Object mData = NOT_SET;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        mData = value;</span><br><span class="line">        ...</span><br><span class="line">    &#125;     </span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">getValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Object data = mData;</span><br><span class="line">        <span class="keyword">if</span> (data != NOT_SET) &#123;</span><br><span class="line">            <span class="comment">//noinspection unchecked</span></span><br><span class="line">            <span class="keyword">return</span> (T) data;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="数据持有"><a href="#数据持有" class="headerlink" title="数据持有"></a>数据持有</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">LiveData</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="type">Object</span> <span class="variable">mData</span> <span class="operator">=</span> NOT_SET;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">setValue</span><span class="params">(T value)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">        mData = value;</span><br><span class="line">        ...</span><br><span class="line">    &#125;     </span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">public</span> T <span class="title function_">getValue</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">data</span> <span class="operator">=</span> mData;</span><br><span class="line">        <span class="keyword">if</span> (data != NOT_SET) &#123;</span><br><span class="line">            <span class="comment">//noinspection unchecked</span></span><br><span class="line">            <span class="keyword">return</span> (T) data;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;    </span><br></pre></td></tr></table></figure>
+
 <p>仅从数据持有者的角度来看 LiveData 的话，它相当简单。LiveData 无非就是一个泛型类，可持有任意类型的数据。Android 应用中随便找个 ViewHolder ，代码可能都要比它要复杂。</p>
-<h2 id="数据变更"><a href="#数据变更" class="headerlink" title="数据变更"></a>数据变更</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">LiveData</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Object mData = NOT_SET;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mVersion = START_VERSION;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        mVersion++;</span><br><span class="line">        mData = value;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getVersion</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mVersion;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">considerNotify</span><span class="params">(ObserverWrapper observer)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">if</span> (observer.mLastVersion &gt;= mVersion) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        observer.mLastVersion = mVersion;</span><br><span class="line">        observer.mObserver.onChanged((T) mData);</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="数据变更"><a href="#数据变更" class="headerlink" title="数据变更"></a>数据变更</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">LiveData</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="type">Object</span> <span class="variable">mData</span> <span class="operator">=</span> NOT_SET;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> <span class="variable">mVersion</span> <span class="operator">=</span> START_VERSION;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">setValue</span><span class="params">(T value)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">        mVersion++;</span><br><span class="line">        mData = value;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> <span class="title function_">getVersion</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> mVersion;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">considerNotify</span><span class="params">(ObserverWrapper observer)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">if</span> (observer.mLastVersion &gt;= mVersion) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        observer.mLastVersion = mVersion;</span><br><span class="line">        observer.mObserver.onChanged((T) mData);</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>从字面意思上理解，LiveData 的 <code>mVersion</code> 是用于对持有的数据做版本控制。它的实际作用是用于标识 <code>mData</code> 是否发生变化：</p>
 <ul>
 <li>每次调用 <code>setValue()</code> 时 <code>mVersion</code> 加1</li>
 <li>通过 <code>mLastVersion &gt;= mVersion</code> 判断 <code>mData</code> 是否发生变化</li>
 </ul>
 <p>其实这里也不一定非要用整型的 <code>mVersion</code>，<code>java.util.Observable</code> 就是用布尔类型的 <code>changed</code>：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// java.util.Observable</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Observable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> changed = <span class="keyword">false</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        changed = <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">clearChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        changed = <span class="keyword">false</span>;</span><br><span class="line">    &#125;       </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">hasChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> changed;</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// java.util.Observable</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Observable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">changed</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">setChanged</span><span class="params">()</span> &#123;</span><br><span class="line">        changed = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">clearChanged</span><span class="params">()</span> &#123;</span><br><span class="line">        changed = <span class="literal">false</span>;</span><br><span class="line">    &#125;       </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="type">boolean</span> <span class="title function_">hasChanged</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> changed;</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>在处理 “数据是否发生变化” 这个问题上，<code>java.util.Observable</code> 使用布尔类型要比 LiveData 使用整型更易于理解，代码上也更清晰。</p>
 <p>个人猜测使用整型 <code>mVersion</code> 的好处是比布尔值有更多的信息量，也许有更好的扩展性。</p>
-<h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Observer</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Called when the data is changed.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> t  The new data</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onChanged</span><span class="params">(@Nullable T t)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">LiveData</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> SafeIterableMap&lt;Observer&lt;T&gt;, ObserverWrapper&gt; mObservers =</span><br><span class="line">            <span class="keyword">new</span> SafeIterableMap&lt;&gt;();</span><br><span class="line">            </span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">observeForever</span><span class="params">(@NonNull Observer&lt;T&gt; observer)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        ObserverWrapper existing = mObservers.putIfAbsent(observer, wrapper);</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeObserver</span><span class="params">(@NonNull <span class="keyword">final</span> Observer&lt;T&gt; observer)</span> </span>&#123;</span><br><span class="line">        ObserverWrapper removed = mObservers.remove(observer);</span><br><span class="line">        ...</span><br><span class="line">    &#125;                 </span><br><span class="line"></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        mData = value;</span><br><span class="line">        dispatchingValue(<span class="keyword">null</span>);</span><br><span class="line">    &#125;    </span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dispatchingValue</span><span class="params">(@Nullable ObserverWrapper initiator)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">for</span> (Iterator&lt;Map.Entry&lt;Observer&lt;T&gt;, ObserverWrapper&gt;&gt; iterator =</span><br><span class="line">            mObservers.iteratorWithAdditions(); iterator.hasNext(); ) &#123;</span><br><span class="line">            considerNotify(iterator.next().getValue());</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">considerNotify</span><span class="params">(ObserverWrapper observer)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">if</span> (observer.mLastVersion &gt;= mVersion) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        observer.mLastVersion = mVersion;</span><br><span class="line">        <span class="comment">//noinspection unchecked</span></span><br><span class="line">        observer.mObserver.onChanged((T) mData);</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Observer</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Called when the data is changed.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> t  The new data</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">onChanged</span><span class="params">(<span class="meta">@Nullable</span> T t)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">LiveData</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> SafeIterableMap&lt;Observer&lt;T&gt;, ObserverWrapper&gt; mObservers =</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">SafeIterableMap</span>&lt;&gt;();</span><br><span class="line">            </span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">observeForever</span><span class="params">(<span class="meta">@NonNull</span> Observer&lt;T&gt; observer)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="type">ObserverWrapper</span> <span class="variable">existing</span> <span class="operator">=</span> mObservers.putIfAbsent(observer, wrapper);</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">removeObserver</span><span class="params">(<span class="meta">@NonNull</span> <span class="keyword">final</span> Observer&lt;T&gt; observer)</span> &#123;</span><br><span class="line">        <span class="type">ObserverWrapper</span> <span class="variable">removed</span> <span class="operator">=</span> mObservers.remove(observer);</span><br><span class="line">        ...</span><br><span class="line">    &#125;                 </span><br><span class="line"></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">setValue</span><span class="params">(T value)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">        mData = value;</span><br><span class="line">        dispatchingValue(<span class="literal">null</span>);</span><br><span class="line">    &#125;    </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">dispatchingValue</span><span class="params">(<span class="meta">@Nullable</span> ObserverWrapper initiator)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">for</span> (Iterator&lt;Map.Entry&lt;Observer&lt;T&gt;, ObserverWrapper&gt;&gt; iterator =</span><br><span class="line">            mObservers.iteratorWithAdditions(); iterator.hasNext(); ) &#123;</span><br><span class="line">            considerNotify(iterator.next().getValue());</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">considerNotify</span><span class="params">(ObserverWrapper observer)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">if</span> (observer.mLastVersion &gt;= mVersion) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        observer.mLastVersion = mVersion;</span><br><span class="line">        <span class="comment">//noinspection unchecked</span></span><br><span class="line">        observer.mObserver.onChanged((T) mData);</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>数据更新之后，要通知给观察者才有意义。来看看 LiveData 是如何应用观察者模式来通知数据更新的。具体分为以下几个阶段：</p>
 <ul>
 <li>创建观察者</li>
-<li>向 LiveData 添加/移除观察者</li>
+<li>向 LiveData 添加&#x2F;移除观察者</li>
 <li>被观察者与观察者之间的交互<ul>
 <li>LiveData 通知数据更新</li>
 <li>观察者响应数据更新</li>
@@ -278,16 +323,17 @@
 </li>
 </ul>
 <h2 id="线程切换"><a href="#线程切换" class="headerlink" title="线程切换"></a>线程切换</h2><p>你应该注意到 <code>setValue()</code> 有个限制，即只允许从主线程调用。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@MainThread</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">    assertMainThread(<span class="string">"setValue"</span>);</span><br><span class="line">    mVersion++;</span><br><span class="line">    mData = value;</span><br><span class="line">    dispatchingValue(<span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isMainThread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Looper.getMainLooper().getThread() == Thread.currentThread();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@MainThread</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">setValue</span><span class="params">(T value)</span> &#123;</span><br><span class="line">    assertMainThread(<span class="string">&quot;setValue&quot;</span>);</span><br><span class="line">    mVersion++;</span><br><span class="line">    mData = value;</span><br><span class="line">    dispatchingValue(<span class="literal">null</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isMainThread</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Looper.getMainLooper().getThread() == Thread.currentThread();</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+
 <p>这既是限制，也是个编码技巧。编写只允许从主线程调用的方法的技巧包括：</p>
 <ul>
 <li>技巧一：给方法添加 <code>@MainThread</code>。注意：这个注解本身并不能让方法一定在主线程中运行，但如果从错误的线程中调用本方法，lint 工具马上能自动揪出这种错误</li>
-<li>技巧二：方法中第一时间检查当前线程是否主线程，如果不是，立马抛出 <code>IllegalStateException</code> 异常，让代码快速出错。(谷歌关键字 <a href="https://www.google.com/search?source=hp&amp;ei=3tbcXLrrJ7aUr7wPpNSzkAo&amp;q=fail-fast+in+java&amp;oq=fail-fast+in+java" target="_blank" rel="noopener">fail-fast in java</a>)</li>
+<li>技巧二：方法中第一时间检查当前线程是否主线程，如果不是，立马抛出 <code>IllegalStateException</code> 异常，让代码快速出错。(谷歌关键字 <a target="_blank" rel="noopener" href="https://www.google.com/search?source=hp&ei=3tbcXLrrJ7aUr7wPpNSzkAo&q=fail-fast+in+java&oq=fail-fast+in+java">fail-fast in java</a>)</li>
 </ul>
-<p>只允许从主线程中调用 <code>setValue()</code> 的好处是避免 <code>Observer.onChanged()</code> 在后台线程中回调这个尴尬的问题。我们知道，最终几乎都是在 Activity/Fragment 实现 <code>Observer</code> 接口，<code>onChanged()</code> 免不了要常常跟 UI 打交道。所以开发者要时时刻刻记得将 <code>onChanged()</code> 切回到主线程，否则 Android 系统一言不合就弹个 crash 提醒你 “Only the original thread that created a view hierarchy can touch its views”。(相当坑是不是？)</p>
+<p>只允许从主线程中调用 <code>setValue()</code> 的好处是避免 <code>Observer.onChanged()</code> 在后台线程中回调这个尴尬的问题。我们知道，最终几乎都是在 Activity&#x2F;Fragment 实现 <code>Observer</code> 接口，<code>onChanged()</code> 免不了要常常跟 UI 打交道。所以开发者要时时刻刻记得将 <code>onChanged()</code> 切回到主线程，否则 Android 系统一言不合就弹个 crash 提醒你 “Only the original thread that created a view hierarchy can touch its views”。(相当坑是不是？)</p>
 <p>所以不得不说 <code>setValue()</code> 只允许在主线程中调用是一种很赞很值得我们学习的设计，它保证你的代码更不容易出错。</p>
 <p>如果非要从其他线程修改 LiveData 的数据，需要使用 <code>postValue()</code> 方法。其源码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">postValue</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">boolean</span> postTask;</span><br><span class="line">    <span class="keyword">synchronized</span> (mDataLock) &#123;</span><br><span class="line">        postTask = mPendingData == NOT_SET;</span><br><span class="line">        mPendingData = value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!postTask) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ArchTaskExecutor.getInstance().postToMainThread(mPostValueRunnable);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Runnable mPostValueRunnable = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Object newValue;</span><br><span class="line">        <span class="keyword">synchronized</span> (mDataLock) &#123;</span><br><span class="line">            newValue = mPendingData;</span><br><span class="line">            mPendingData = NOT_SET;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//noinspection unchecked</span></span><br><span class="line">        setValue((T) newValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">postValue</span><span class="params">(T value)</span> &#123;</span><br><span class="line">    <span class="type">boolean</span> postTask;</span><br><span class="line">    <span class="keyword">synchronized</span> (mDataLock) &#123;</span><br><span class="line">        postTask = mPendingData == NOT_SET;</span><br><span class="line">        mPendingData = value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!postTask) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ArchTaskExecutor.getInstance().postToMainThread(mPostValueRunnable);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Runnable</span> <span class="variable">mPostValueRunnable</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        Object newValue;</span><br><span class="line">        <span class="keyword">synchronized</span> (mDataLock) &#123;</span><br><span class="line">            newValue = mPendingData;</span><br><span class="line">            mPendingData = NOT_SET;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//noinspection unchecked</span></span><br><span class="line">        setValue((T) newValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;    </span><br></pre></td></tr></table></figure>
 <p><code>postValue()</code> 有几个关键点：</p>
 <ul>
 <li>一是 <code>synchronized</code> 关键字的使用。<code>mDataLock</code> 作为锁，保证后台线程和主线程对 <code>mPendingData</code> 的写操作是互斥的</li>
@@ -295,23 +341,28 @@
 <li>最后，回到主线程中后直接调用 <code>setValue()</code>，完成最终的数据更新</li>
 </ul>
 <p>第二点可以作为 Android 开发中线程切换的一个范例。来详细看一下。(注：<code>postToMainThread()</code> 方法涉及到 <code>TaskExecutor</code> 相关的几个类, 我们这里抛开不相关细节直入主题直接看 <code>DefaultTaskExecutor</code> 的代码)</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultTaskExecutor</span> <span class="keyword">extends</span> <span class="title">TaskExecutor</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object mLock = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">private</span> ExecutorService mDiskIO = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Handler mMainHandler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">executeOnDiskIO</span><span class="params">(Runnable runnable)</span> </span>&#123;</span><br><span class="line">        mDiskIO.execute(runnable);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postToMainThread</span><span class="params">(Runnable runnable)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mMainHandler == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (mLock) &#123;</span><br><span class="line">                <span class="keyword">if</span> (mMainHandler == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mMainHandler = <span class="keyword">new</span> Handler(Looper.getMainLooper());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//noinspection ConstantConditions</span></span><br><span class="line">        mMainHandler.post(runnable);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isMainThread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Looper.getMainLooper().getThread() == Thread.currentThread();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DefaultTaskExecutor</span> <span class="keyword">extends</span> <span class="title class_">TaskExecutor</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Object</span> <span class="variable">mLock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">    <span class="keyword">private</span> <span class="type">ExecutorService</span> <span class="variable">mDiskIO</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Handler mMainHandler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">executeOnDiskIO</span><span class="params">(Runnable runnable)</span> &#123;</span><br><span class="line">        mDiskIO.execute(runnable);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">postToMainThread</span><span class="params">(Runnable runnable)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (mMainHandler == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (mLock) &#123;</span><br><span class="line">                <span class="keyword">if</span> (mMainHandler == <span class="literal">null</span>) &#123;</span><br><span class="line">                    mMainHandler = <span class="keyword">new</span> <span class="title class_">Handler</span>(Looper.getMainLooper());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//noinspection ConstantConditions</span></span><br><span class="line">        mMainHandler.post(runnable);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isMainThread</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Looper.getMainLooper().getThread() == Thread.currentThread();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>从后台线程切换到主线程很简单，向一个以跟主线程 <code>Looper</code> 绑定的 <code>Handler</code> 扔 <code>Runnable</code> 消息就可以了。</li>
 <li>反之，从主线程切换到后台线程更简单，向 <strong>恰当的线程池</strong> 扔 <code>Runnable</code> 消息即可。赶紧忘记 new Thread() 吧，不要让你的应用中线程数失控！</li>
 </ul>
 <p><code>postValue()</code> 有个小坑值得提一下，以这段代码为例</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">liveData.postValue(<span class="string">"b"</span>)</span><br><span class="line">liveData.setValue(<span class="string">"a"</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">liveData.postValue(<span class="string">&quot;b&quot;</span>)</span><br><span class="line">liveData.setValue(<span class="string">&quot;a&quot;</span>)</span><br></pre></td></tr></table></figure>
+
 <p>要注意的是这段代码执行后 liveData 当前值是 “b” 而不是 “a” 。原因见 <code>postValue()</code> 的实现机制。这个结果可能跟直观上不一致，小心使用 LiveData 过程不要踩到这个坑。</p>
-<h2 id="生命周期感知"><a href="#生命周期感知" class="headerlink" title="生命周期感知"></a>生命周期感知</h2><p>LiveData 是 lifecycle-aware 的，翻译过来就是对组件(这里的组件不妨简单地理解为 Activity/Fragment) 的生命周期有感知的。</p>
+<h2 id="生命周期感知"><a href="#生命周期感知" class="headerlink" title="生命周期感知"></a>生命周期感知</h2><p>LiveData 是 lifecycle-aware 的，翻译过来就是对组件(这里的组件不妨简单地理解为 Activity&#x2F;Fragment) 的生命周期有感知的。</p>
 <p>你可能会想，尽是新鲜名词，到底有鸟用？先来看 Android 开发中几个经典的坑。</p>
 <ul>
-<li>坑一，使用 Glide 加载图片出现 crash <a href="https://github.com/bumptech/glide/issues/803" target="_blank" rel="noopener">issue#803</a></li>
-<li>坑二，使用 DialogFragment 弹框出现 crash <a href="https://github.com/410063005/cmdemo/blob/master/app/src/main/java/com/sunmoonblog/cmdemo/lifecycle/DialogWillCrashActivity.kt#L26" target="_blank" rel="noopener">Github</a></li>
+<li>坑一，使用 Glide 加载图片出现 crash <a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/issues/803">issue#803</a></li>
+<li>坑二，使用 DialogFragment 弹框出现 crash <a target="_blank" rel="noopener" href="https://github.com/410063005/cmdemo/blob/master/app/src/main/java/com/sunmoonblog/cmdemo/lifecycle/DialogWillCrashActivity.kt#L26">Github</a></li>
 </ul>
-<p>分别沿着这两个 crash 的路径找下去，最后你会发现有个相同之处：在调用链有某处代码会检查 Activity/Fragment 组件的生命周期，如果生命周期状态不对，就抛出 <code>IllegalArgumentException</code> 或 <code>IllegalStateException</code> 异常。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Glide.with()</span><br><span class="line"> -&gt; RequestManagerRetriever.get()</span><br><span class="line">  -&gt; RequestManagerRetriever.assertNotDestroyed()</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">DialogFragment.show()</span><br><span class="line"> -&gt; FragmentTransaction.commit()</span><br><span class="line">  -&gt; BackStackRecord.commit()</span><br><span class="line">   -&gt; BackStackRecord.commitInternal()</span><br><span class="line">    -&gt; FragmentManagerImpl.enqueueAction()</span><br><span class="line">      -&gt; FragmentManagerImpl.checkStateLoss()</span><br><span class="line">       -&gt; FragmentManagerImpl.isStateSaved()</span><br></pre></td></tr></table></figure>
+<p>分别沿着这两个 crash 的路径找下去，最后你会发现有个相同之处：在调用链有某处代码会检查 Activity&#x2F;Fragment 组件的生命周期，如果生命周期状态不对，就抛出 <code>IllegalArgumentException</code> 或 <code>IllegalStateException</code> 异常。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Glide.with()</span><br><span class="line"> -&gt; RequestManagerRetriever.get()</span><br><span class="line">  -&gt; RequestManagerRetriever.assertNotDestroyed()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">DialogFragment.show()</span><br><span class="line"> -&gt; FragmentTransaction.commit()</span><br><span class="line">  -&gt; BackStackRecord.commit()</span><br><span class="line">   -&gt; BackStackRecord.commitInternal()</span><br><span class="line">    -&gt; FragmentManagerImpl.enqueueAction()</span><br><span class="line">      -&gt; FragmentManagerImpl.checkStateLoss()</span><br><span class="line">       -&gt; FragmentManagerImpl.isStateSaved()</span><br></pre></td></tr></table></figure>
+
 <p>从设计上讲，生命周期状态不对时抛出 <code>IllegalArgumentException</code> 或 <code>IllegalStateException</code> 是正确的做法。如果上层代码不能正确地处理这些异常，自然就会 crash。</p>
 <p>问题是，<strong>这些异常太容易被忽略</strong>，你甚至完全意识不到。试想以下场景：</p>
 <ul>
@@ -319,52 +370,58 @@
 <li>场景二：应用收到消息会弹出一个提示框 (<code>DialogFragment</code>)，但收到消息时应用已经被切到后台去了</li>
 </ul>
 <p>时刻记得检查 Activity 是否结束、应用是否在后台显然是不可能的，这也是为什么 Android 开发中这些地方特别容易出现 crash。换个角度考虑，如果 Glide 能自动感知 Activity 是否被销毁，FragmentTransaction 能自动感知 Activity 是否进入后台，我敢断定相关的 crash 会少很多，开发者的日子也会好过很多。</p>
-<p>题外话：<a href="https://github.com/bumptech/glide/issues/3612" target="_blank" rel="noopener">issue#3612</a> 提议 Glide 支持 <code>Glide.with(LifecycleOwner)</code> 这种形式的调用，好处是 Glide 能感知生命周期，能更好地跟 Android Architecture Components 结合使用。</p>
+<p>题外话：<a target="_blank" rel="noopener" href="https://github.com/bumptech/glide/issues/3612">issue#3612</a> 提议 Glide 支持 <code>Glide.with(LifecycleOwner)</code> 这种形式的调用，好处是 Glide 能感知生命周期，能更好地跟 Android Architecture Components 结合使用。</p>
 <p>总的来说，LiveData 能感知生命周期的特性可以解决这个痛点：</p>
 <ul>
-<li>避免了 Activity/Fragment 不活跃时 listener/observer 被回调导致的 crash</li>
+<li>避免了 Activity&#x2F;Fragment 不活跃时 listener&#x2F;observer 被回调导致的 crash</li>
 </ul>
-<p>另外，LiveData 一定程度上避免了忘记 remove listener/observer 导致的内存泄漏，原因稍后解释。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">considerNotify</span><span class="params">(ObserverWrapper observer)</span> </span>&#123;</span><br><span class="line">      ...</span><br><span class="line">      <span class="comment">// Check latest state b4 dispatch. Maybe it changed state but we didn't get the event yet.</span></span><br><span class="line">      <span class="comment">//</span></span><br><span class="line">      <span class="comment">// we still first check observer.active to keep it as the entrance for events. So even if</span></span><br><span class="line">      <span class="comment">// the observer moved to an active state, if we've not received that event, we better not</span></span><br><span class="line">      <span class="comment">// notify for a more predictable notification order.</span></span><br><span class="line">      <span class="comment">// 代码三</span></span><br><span class="line">      <span class="keyword">if</span> (!observer.shouldBeActive()) &#123;</span><br><span class="line">          observer.activeStateChanged(<span class="keyword">false</span>);</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      ...</span><br><span class="line">      observer.mObserver.onChanged((T) mData);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@MainThread</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">observe</span><span class="params">(@NonNull LifecycleOwner owner, @NonNull Observer&lt;T&gt; observer)</span> </span>&#123;</span><br><span class="line">      <span class="comment">// 代码四</span></span><br><span class="line">      <span class="keyword">if</span> (owner.getLifecycle().getCurrentState() == DESTROYED) &#123;</span><br><span class="line">          <span class="comment">// ignore</span></span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 代码一</span></span><br><span class="line">      LifecycleBoundObserver wrapper = <span class="keyword">new</span> LifecycleBoundObserver(owner, observer);</span><br><span class="line">      ObserverWrapper existing = mObservers.putIfAbsent(observer, wrapper);</span><br><span class="line">      ...</span><br><span class="line">      <span class="comment">// 代码二</span></span><br><span class="line">      owner.getLifecycle().addObserver(wrapper);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">LifecycleBoundObserver</span> <span class="keyword">extends</span> <span class="title">ObserverWrapper</span> <span class="keyword">implements</span> <span class="title">GenericLifecycleObserver</span> </span>&#123;</span><br><span class="line">      <span class="meta">@NonNull</span> <span class="keyword">final</span> LifecycleOwner mOwner;</span><br><span class="line"></span><br><span class="line">      LifecycleBoundObserver(<span class="meta">@NonNull</span> LifecycleOwner owner, Observer&lt;T&gt; observer) &#123;</span><br><span class="line">          <span class="keyword">super</span>(observer);</span><br><span class="line">          mOwner = owner;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">boolean</span> <span class="title">shouldBeActive</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> mOwner.getLifecycle().getCurrentState().isAtLeast(STARTED);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStateChanged</span><span class="params">(LifecycleOwner source, Lifecycle.Event event)</span> </span>&#123;</span><br><span class="line">          <span class="comment">// 代码五</span></span><br><span class="line">          <span class="keyword">if</span> (mOwner.getLifecycle().getCurrentState() == DESTROYED) &#123;</span><br><span class="line">              removeObserver(mObserver);</span><br><span class="line">              <span class="keyword">return</span>;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">// 代码六</span></span><br><span class="line">          activeStateChanged(shouldBeActive());</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">void</span> <span class="title">detachObserver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          mOwner.getLifecycle().removeObserver(<span class="keyword">this</span>);</span><br><span class="line">      &#125;        </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>另外，LiveData 一定程度上避免了忘记 remove listener&#x2F;observer 导致的内存泄漏，原因稍后解释。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">considerNotify</span><span class="params">(ObserverWrapper observer)</span> &#123;</span><br><span class="line">      ...</span><br><span class="line">      <span class="comment">// Check latest state b4 dispatch. Maybe it changed state but we didn&#x27;t get the event yet.</span></span><br><span class="line">      <span class="comment">//</span></span><br><span class="line">      <span class="comment">// we still first check observer.active to keep it as the entrance for events. So even if</span></span><br><span class="line">      <span class="comment">// the observer moved to an active state, if we&#x27;ve not received that event, we better not</span></span><br><span class="line">      <span class="comment">// notify for a more predictable notification order.</span></span><br><span class="line">      <span class="comment">// 代码三</span></span><br><span class="line">      <span class="keyword">if</span> (!observer.shouldBeActive()) &#123;</span><br><span class="line">          observer.activeStateChanged(<span class="literal">false</span>);</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      ...</span><br><span class="line">      observer.mObserver.onChanged((T) mData);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@MainThread</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">observe</span><span class="params">(<span class="meta">@NonNull</span> LifecycleOwner owner, <span class="meta">@NonNull</span> Observer&lt;T&gt; observer)</span> &#123;</span><br><span class="line">      <span class="comment">// 代码四</span></span><br><span class="line">      <span class="keyword">if</span> (owner.getLifecycle().getCurrentState() == DESTROYED) &#123;</span><br><span class="line">          <span class="comment">// ignore</span></span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 代码一</span></span><br><span class="line">      <span class="type">LifecycleBoundObserver</span> <span class="variable">wrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">LifecycleBoundObserver</span>(owner, observer);</span><br><span class="line">      <span class="type">ObserverWrapper</span> <span class="variable">existing</span> <span class="operator">=</span> mObservers.putIfAbsent(observer, wrapper);</span><br><span class="line">      ...</span><br><span class="line">      <span class="comment">// 代码二</span></span><br><span class="line">      owner.getLifecycle().addObserver(wrapper);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">class</span> <span class="title class_">LifecycleBoundObserver</span> <span class="keyword">extends</span> <span class="title class_">ObserverWrapper</span> <span class="keyword">implements</span> <span class="title class_">GenericLifecycleObserver</span> &#123;</span><br><span class="line">      <span class="meta">@NonNull</span> <span class="keyword">final</span> LifecycleOwner mOwner;</span><br><span class="line"></span><br><span class="line">      LifecycleBoundObserver(<span class="meta">@NonNull</span> LifecycleOwner owner, Observer&lt;T&gt; observer) &#123;</span><br><span class="line">          <span class="built_in">super</span>(observer);</span><br><span class="line">          mOwner = owner;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="type">boolean</span> <span class="title function_">shouldBeActive</span><span class="params">()</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> mOwner.getLifecycle().getCurrentState().isAtLeast(STARTED);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onStateChanged</span><span class="params">(LifecycleOwner source, Lifecycle.Event event)</span> &#123;</span><br><span class="line">          <span class="comment">// 代码五</span></span><br><span class="line">          <span class="keyword">if</span> (mOwner.getLifecycle().getCurrentState() == DESTROYED) &#123;</span><br><span class="line">              removeObserver(mObserver);</span><br><span class="line">              <span class="keyword">return</span>;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">// 代码六</span></span><br><span class="line">          activeStateChanged(shouldBeActive());</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">void</span> <span class="title function_">detachObserver</span><span class="params">()</span> &#123;</span><br><span class="line">          mOwner.getLifecycle().removeObserver(<span class="built_in">this</span>);</span><br><span class="line">      &#125;        </span><br><span class="line">  &#125;    </span><br></pre></td></tr></table></figure>
+
 <p>前文讲观察者模式时只提到 <code>observeForever()</code> 方法。从名字上可以知道使用 <code>observeForever()</code> 注册的观察者会持续对当前 LiveData 观察，直到手动调用 <code>removeObserver()</code> 删除这个观察者。</p>
 <p>除 <code>observeForever()</code> 外还有另外一个 <code>observe()</code>，这个方法也是用来注册观察者。 它的神奇之处在于通过它注册的观察者，<strong>观察 LiveData 的同时还能感知生命周期</strong>。具体说来：</p>
 <ul>
-<li>通过 <code>observe()</code> 注册的观察者只在 Activity/Fragment 处于活跃的生命周期时才能收到数据更新/回调<ul>
-<li>代码一，注册的 <em>初始的观察者</em> 及 <a href="https://developer.android.com/reference/android/arch/lifecycle/LifecycleOwner" target="_blank" rel="noopener">LifecycleOwner</a> 被包装成 LifecycleBoundObserver。LifecycleBoundObserver 是 LiveData 真正的观察者</li>
+<li>通过 <code>observe()</code> 注册的观察者只在 Activity&#x2F;Fragment 处于活跃的生命周期时才能收到数据更新&#x2F;回调<ul>
+<li>代码一，注册的 <em>初始的观察者</em> 及 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/arch/lifecycle/LifecycleOwner">LifecycleOwner</a> 被包装成 LifecycleBoundObserver。LifecycleBoundObserver 是 LiveData 真正的观察者</li>
 <li>代码二，LifecycleBoundObserver 同时作为 Lifecycle 的观察者</li>
 <li>代码六，LifecycleOwner 生命周期的变化会影响 LifecycleBoundObserver 的活跃状态</li>
 <li>代码三，LifecycleBoundObserver 处于不活跃状态时，<em>初始的观察者</em> 并不会收到数据更新</li>
 </ul>
 </li>
-<li>不必手动删除 <code>observe()</code> 方法注册的观察者，它会随着 Activity/Fragment 的结束而自动清理 (忘记取消注册观察者/监听器是 Android 应用内存泄漏问题的一个重要原因，所以这个特性能在一定程度上减少内存泄漏)<ul>
+<li>不必手动删除 <code>observe()</code> 方法注册的观察者，它会随着 Activity&#x2F;Fragment 的结束而自动清理 (忘记取消注册观察者&#x2F;监听器是 Android 应用内存泄漏问题的一个重要原因，所以这个特性能在一定程度上减少内存泄漏)<ul>
 <li>代码四，<code>observe()</code> 方法在 LifecycleOwner 的 Lifecycle 处于 DESTROYED 状态时并不会真正注册观察</li>
 <li>代码五，LifecycleOwner 的 Lifecycle 进入 DESTROYED 时会自动删除 LifecycleBoundObserver</li>
 </ul>
 </li>
 </ul>
 <p><code>LifecycleBoundObserver</code> 是否处于活动状态由 <code>shouldBeActive()</code> 来判断。其依据很简单：判断LifecycleOwner 当前的 Lifecycle 是否至少处理 STARTED 状态即可。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Lifecycle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> State &#123;</span><br><span class="line">        DESTROYED,</span><br><span class="line"></span><br><span class="line">        INITIALIZED,</span><br><span class="line"></span><br><span class="line">        CREATED,</span><br><span class="line"></span><br><span class="line">        STARTED,</span><br><span class="line"></span><br><span class="line">        RESUMED;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isAtLeast</span><span class="params">(@NonNull State state)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> compareTo(state) &gt;= <span class="number">0</span>;</span><br><span class="line">        &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>LiveData 生命周期感知的要点其实很简单，概括一下就是：<font color="red">注册到 LiveData 的观察者同时也观察 LifecycleOwner (Activity/Fragment) 的生命周期状态，仅在 LifecycleOwner 生命周期处于活跃状态时才将 LiveData 中的数据变化通知/加回调给观察者</font>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Lifecycle</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">State</span> &#123;</span><br><span class="line">        DESTROYED,</span><br><span class="line"></span><br><span class="line">        INITIALIZED,</span><br><span class="line"></span><br><span class="line">        CREATED,</span><br><span class="line"></span><br><span class="line">        STARTED,</span><br><span class="line"></span><br><span class="line">        RESUMED;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isAtLeast</span><span class="params">(<span class="meta">@NonNull</span> State state)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> compareTo(state) &gt;= <span class="number">0</span>;</span><br><span class="line">        &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>LiveData 生命周期感知的要点其实很简单，概括一下就是：<font color="red">注册到 LiveData 的观察者同时也观察 LifecycleOwner (Activity&#x2F;Fragment) 的生命周期状态，仅在 LifecycleOwner 生命周期处于活跃状态时才将 LiveData 中的数据变化通知&#x2F;加回调给观察者</font>。</p>
 <p>LiveData 看似微不足道的改进，解决了 Android 开发长期以来这两个痛点： 1. 不正确的生命周期状态时回调导致 crash 2. 忘记取消注册观察导致内存泄漏</p>
 <h2 id="不可变性"><a href="#不可变性" class="headerlink" title="不可变性"></a>不可变性</h2><p>应用 LiveData 时，会有两个不同的角色：</p>
 <ul>
-<li>一方是消费者/观察者，它响应数据更新，具体来说通常是在 UI 中监听 LiveData 的变化</li>
-<li>另一方是生产者/被观察者，它通知数据更新，具体来说通常是在 ViewModel 中修改 LiveData</li>
+<li>一方是消费者&#x2F;观察者，它响应数据更新，具体来说通常是在 UI 中监听 LiveData 的变化</li>
+<li>另一方是生产者&#x2F;被观察者，它通知数据更新，具体来说通常是在 ViewModel 中修改 LiveData</li>
 </ul>
 <p>来看个例子：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        </span><br><span class="line">        viewModel.liveData</span><br><span class="line">                .observe(<span class="keyword">this</span>, Observer &#123;newValue -&gt;</span><br><span class="line">                    Log.i(<span class="string">"MainActivity"</span>, newValue)</span><br><span class="line">                &#125;)        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyViewModel</span> : <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">val</span> liveData = LiveData&lt;String&gt;()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">doSomething</span><span class="params">()</span></span> &#123;</span><br><span class="line">        liveData.value = <span class="string">"a new value"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MainActivity</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        </span><br><span class="line">        viewModel.liveData</span><br><span class="line">                .observe(<span class="keyword">this</span>, Observer &#123;newValue -&gt;</span><br><span class="line">                    Log.i(<span class="string">&quot;MainActivity&quot;</span>, newValue)</span><br><span class="line">                &#125;)        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">val</span> liveData = LiveData&lt;String&gt;()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">doSomething</span><span class="params">()</span></span> &#123;</span><br><span class="line">        liveData.value = <span class="string">&quot;a new value&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>不过你会发现这里的代码有个编译错误，无法给 <code>liveData.value</code> 赋值，因为无法访问 <code>setValue()</code> 方法。仔细看 LiveData 的源码中相关的你会发现这是有意为之：LiveData 是不可变的！</p>
 <ul>
 <li><code>setValue()/postValue()</code> 的访问修饰符是 <code>protected</code>，不允许子类以外的类来访问</li>
 <li><code>getValue()</code> 公开的</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">LiveData</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">postValue</span><span class="params">(T value)</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(T value)</span> </span>&#123;&#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">getValue</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">LiveData</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">postValue</span><span class="params">(T value)</span> &#123;&#125;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">setValue</span><span class="params">(T value)</span> &#123;&#125; </span><br><span class="line">    <span class="keyword">public</span> T <span class="title function_">getValue</span><span class="params">()</span> &#123;&#125;</span><br><span class="line">&#125;               </span><br></pre></td></tr></table></figure>
+
 <p><code>MainActivity</code> 作为 LiveData 的观察者和消费方，<strong>不应修改</strong> LiveData，所以让 LiveData 对其保持不可变是个非常好的设计。但 <code>MyViewModel</code> LiveData 的生产方，必须要修改 LiveData，该怎么办？</p>
 <p>别急，LiveData 还有个子类 MutableLiveData。由于 MutableLiveData 的代码简单得不能再简单，就完整地贴上来。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MutableLiveData</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">LiveData</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postValue</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.postValue(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.setValue(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MutableLiveData</span>&lt;T&gt; <span class="keyword">extends</span> <span class="title class_">LiveData</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">postValue</span><span class="params">(T value)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.postValue(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setValue</span><span class="params">(T value)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.setValue(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>MutableLiveData 不过是将 <code>setValue()/postValue()</code> 的访问修饰符从 <code>protected</code> 修改成 <code>public</code>，让其可变。</p>
 <p>使用 MutableLiveData 对之前代码略加修改，这回没有编译错误了，也满足了观察者不修改 LiveData 的要求。</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        </span><br><span class="line">        viewModel.getLiveData()</span><br><span class="line">                .observe(<span class="keyword">this</span>, Observer &#123;newValue -&gt;</span><br><span class="line">                    Log.i(<span class="string">"MainActivity"</span>, newValue)</span><br><span class="line">                &#125;)        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyViewModel</span> : <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">val</span> liveData = MutableLiveData&lt;String&gt;()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getLiveData</span><span class="params">()</span></span>: LiveData&lt;String&gt; = liveData</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">doSomething</span><span class="params">()</span></span> &#123;</span><br><span class="line">        liveData.value = <span class="string">"a new value"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MainActivity</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        </span><br><span class="line">        viewModel.getLiveData()</span><br><span class="line">                .observe(<span class="keyword">this</span>, Observer &#123;newValue -&gt;</span><br><span class="line">                    Log.i(<span class="string">&quot;MainActivity&quot;</span>, newValue)</span><br><span class="line">                &#125;)        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">val</span> liveData = MutableLiveData&lt;String&gt;()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getLiveData</span><span class="params">()</span></span>: LiveData&lt;String&gt; = liveData</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">doSomething</span><span class="params">()</span></span> &#123;</span><br><span class="line">        liveData.value = <span class="string">&quot;a new value&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>顺便简单提一下，LiveData 除了 MutableLiveData 子类，还有另一个子类 MediatorLiveData。另外，Transformations 还提供 LiveData 的变换操作 (是不是有些 RxJava 的感觉？)，目前提供的变换操作包括：</p>
 <ul>
 <li>map()</li>
@@ -383,10 +440,13 @@
 <hr>
 <p>限于篇幅本文只分析 LiveData 源码。LiveData 作为基础设施，在整个 AAC 中被大量使用，所以其实有不少有意思的话题。这里举几个例子以便有兴趣的读者继续深入了解。</p>
 <p>例一，Room 中结合使用 LiveData 简直完美。比方说你调用 <code>PersonDao.delete()</code> 删除一条数据，会发现原先注册在 <code>PersonDao.getAll()</code> 上的观察者能感知到这个删除动作，新的数据通过 <code>onChanged()</code> 自动通知给活跃的观察者(响应式 UI 就是这么来的)。那么 Room 内部又是如何基于 LiveData 实现这个特性的？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Dao</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PersonDao</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Delete</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">delete</span><span class="params">(Person person)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Query</span>(<span class="string">"select * from person order by id desc"</span>)</span><br><span class="line">    LiveData&lt;List&lt;Person&gt;&gt; getAll();        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Dao</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">PersonDao</span> &#123;</span><br><span class="line">    <span class="meta">@Delete</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">(Person person)</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Query(&quot;select * from person order by id desc&quot;)</span></span><br><span class="line">    LiveData&lt;List&lt;Person&gt;&gt; <span class="title function_">getAll</span><span class="params">()</span>;        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>例二，进行数据绑定时 LiveData 比 BaseObservable 和 ObservableField 方式好用得多。但是，为了保证这里布局中 <code>viewModel.liveData</code> 能正常绑定，事先必须先调用 <code>binding.setLifecycleOwner()</code> 方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyViewModel</span> </span>&#123;</span><br><span class="line">    val liveData = LiveData&lt;String&gt;()</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">layout</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">data</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">variable</span> <span class="attr">type</span>=<span class="string">"MyViewModel"</span> <span class="attr">name</span>=<span class="string">"viewModel"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">data</span>&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="tag">&lt;<span class="name">TextView</span> <span class="attr">text</span>=<span class="string">"@&#123;viewModel.liveData&#125;"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyViewModel</span> &#123;</span><br><span class="line">    <span class="type">val</span> <span class="variable">liveData</span> <span class="operator">=</span> LiveData&lt;String&gt;()</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">layout</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">data</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">variable</span> <span class="attr">type</span>=<span class="string">&quot;MyViewModel&quot;</span> <span class="attr">name</span>=<span class="string">&quot;viewModel&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">data</span>&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="tag">&lt;<span class="name">TextView</span> <span class="attr">text</span>=<span class="string">&quot;@&#123;viewModel.liveData&#125;&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p>为什么必须先调用 <code>binding.setLifecycleOwner()</code> ？binding 又是如何跟 liveData 绑定上的？</p>
 
     </div>
@@ -395,130 +455,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/05/07/jetpack-data-binding-2/" rel="prev" title="Android Jetpack 学习笔记之 DataBinding">
-      <i class="fa fa-chevron-left"></i> Android Jetpack 学习笔记之 DataBinding
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/05/22/kotlin-autocloseable-use/" rel="next" title="Kotlin 之 AutoCloseable.use()">
-      Kotlin 之 AutoCloseable.use() <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/05/07/jetpack-data-binding-2/" rel="prev" title="Android Jetpack 学习笔记之 DataBinding">
+                  <i class="fa fa-chevron-left"></i> Android Jetpack 学习笔记之 DataBinding
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/05/22/kotlin-autocloseable-use/" rel="next" title="Kotlin 之 AutoCloseable.use()">
+                  Kotlin 之 AutoCloseable.use() <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码解析"><span class="nav-number">2.</span> <span class="nav-text">源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据持有"><span class="nav-number">2.1.</span> <span class="nav-text">数据持有</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据变更"><span class="nav-number">2.2.</span> <span class="nav-text">数据变更</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观察者模式"><span class="nav-number">2.3.</span> <span class="nav-text">观察者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程切换"><span class="nav-number">2.4.</span> <span class="nav-text">线程切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生命周期感知"><span class="nav-number">2.5.</span> <span class="nav-text">生命周期感知</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不可变性"><span class="nav-number">2.6.</span> <span class="nav-text">不可变性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -526,29 +501,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -557,22 +524,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/05/07/jetpack-livedata-source/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

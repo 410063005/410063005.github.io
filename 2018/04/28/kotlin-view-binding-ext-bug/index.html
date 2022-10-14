@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,95 +14,67 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="本文记录了使用kotlin android extions时遇到的小问题以及对应的解决方法。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文记录了使用kotlin android extions时遇到的小问题以及对应的解决方法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用Kotlin Android Extensions时碰到的一个问题">
 <meta property="og:url" content="http://www.sunmoonblog.com/2018/04/28/kotlin-view-binding-ext-bug/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="本文记录了使用kotlin android extions时遇到的小问题以及对应的解决方法。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/04/28/kotlin-view-binding-ext-bug/koltin-android-ext1.gif">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/04/28/kotlin-view-binding-ext-bug/koltin-android-ext2.gif">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.870Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/koltin-android-ext1.gif">
+<meta property="og:image" content="http://www.sunmoonblog.com/koltin-android-ext2.gif">
+<meta property="article:published_time" content="2018-04-28T08:30:27.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.870Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用Kotlin Android Extensions时碰到的一个问题">
-<meta name="twitter:description" content="本文记录了使用kotlin android extions时遇到的小问题以及对应的解决方法。">
-<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/04/28/kotlin-view-binding-ext-bug/koltin-android-ext1.gif">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/koltin-android-ext1.gif">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2018/04/28/kotlin-view-binding-ext-bug/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>使用Kotlin Android Extensions时碰到的一个问题 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2018/04/28/kotlin-view-binding-ext-bug/","path":"2018/04/28/kotlin-view-binding-ext-bug/","title":"使用Kotlin Android Extensions时碰到的一个问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>使用Kotlin Android Extensions时碰到的一个问题 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -115,19 +88,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -138,23 +100,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -162,180 +123,18 @@
   </div>
 
 </div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/04/28/kotlin-view-binding-ext-bug/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sunmoon的博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          使用Kotlin Android Extensions时碰到的一个问题
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-04-28 16:30:27" itemprop="dateCreated datePublished" datetime="2018-04-28T16:30:27+08:00">2018-04-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>本文记录了使用kotlin android extions时遇到的小问题以及对应的解决方法。<br><a id="more"></a></p>
-<h1 id="Kotlin-Android-Extensions"><a href="#Kotlin-Android-Extensions" class="headerlink" title="Kotlin Android Extensions"></a>Kotlin Android Extensions</h1><p><a href="https://kotlinlang.org/docs/tutorials/android-plugin.html" target="_blank" rel="noopener">Kotlin Android Extensions</a>是用于Kotlin android开发的插件。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &apos;kotlin-android-extensions&apos;</span><br></pre></td></tr></table></figure>
-<p>借助该插件我们在Kotlin代码中不必再使用<code>findViewById()</code>，直接通过view id访问相应View即可。例如：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.android.synthetic.main.activity_main.*</span><br><span class="line"><span class="keyword">import</span> kotlinx.android.synthetic.main.content_main_clip.*</span><br><span class="line"></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">    setContentView(R.layout.activity_main)</span><br><span class="line"></span><br><span class="line">	btn_clip_demo.setOnClickListener &#123;&#125;</span><br><span class="line">	iv_demo.setImageDrawable(ContextCompat.getDrawable(<span class="keyword">this</span>, R.color.colorAccent))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对Java代码中繁琐的<code>findViewById()</code>方便许多，对吧。</p>
-<p>更多用法可以参考<a href="https://antonioleiva.com/kotlin-android-extensions/" target="_blank" rel="noopener">这篇文章</a>。</p>
-<h1 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h1><p>很不幸，使用<a href="https://kotlinlang.org/docs/tutorials/android-plugin.html" target="_blank" rel="noopener">Kotlin Android Extensions</a>时遇到一个奇怪的问题。布局和代码如下：</p>
-<p>activity_main.xml</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">android.support.constraint.ConstraintLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:context</span>=<span class="string">"com.example.cm.drawabledemo.MainActivity"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">FrameLayout</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/fl_container"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"0dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"300dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintBottom_toBottomOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintLeft_toLeftOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintRight_toRightOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">"parent"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Button</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/btn_clip_demo"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_marginStart</span>=<span class="string">"8dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_marginTop</span>=<span class="string">"8dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">"clip demo"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintStart_toEndOf</span>=<span class="string">"@+id/btn_gravity"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">"parent"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">android.support.constraint.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>content_main_clip.xml</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">android.support.constraint.ConstraintLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ImageView</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:padding</span>=<span class="string">"2dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/iv_demo"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"92dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"78dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_marginEnd</span>=<span class="string">"24dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_marginTop</span>=<span class="string">"104dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintEnd_toEndOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">"parent"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">android.support.constraint.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>MainActivity.kt</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">		</span><br><span class="line">        btn_clip_demo.setOnClickListener &#123;</span><br><span class="line">            fl_container.removeAllViews()</span><br><span class="line">            layoutInflater.inflate(R.layout.content_main_clip, fl_container)</span><br><span class="line">			iv_demo.setImageDrawable(ContextCompat.getDrawable(<span class="keyword">this</span>, R.color.colorAccent))</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>代码功能：点击<code>btn_clip_demo</code>后，将<code>content_main_clip</code>中的内容(其中有一个id为<code>iv_demo</code>的ImageView)重新添加到<code>fl_container</code>，并且将<code>iv_demo</code>设置为红色。</p>
-<p>问题描述：第一次点击<code>btn_clip_demo</code>，<code>iv_demo</code>被设置成红色。<font color="red">但之后再点击btn_clip_demo，iv_demo没有被设置成红色</font>。</p>
-<p><img src="koltin-android-ext1.gif" alt></p>
-<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>Android Studio查看Kotlin对应Java代码的方式： Tools -&gt; Kotlin -&gt; Show Kotlin Bytecode -&gt; Decompile</p>
-<p>上述kotlin代码对应的Java代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">   <span class="keyword">private</span> HashMap _$_findViewCache;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">      <span class="keyword">this</span>.setContentView(<span class="number">2131296283</span>);</span><br><span class="line">      ((Button)<span class="keyword">this</span>._$_findCachedViewById(id.btn_clip_demo)).setOnClickListener((OnClickListener)(<span class="keyword">new</span> OnClickListener() &#123;</span><br><span class="line">         <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View it)</span> </span>&#123;</span><br><span class="line">            ((FrameLayout)M.<span class="keyword">this</span>._$_findCachedViewById(id.fl_container)).removeAllViews();</span><br><span class="line">            M.<span class="keyword">this</span>.getLayoutInflater().inflate(<span class="number">2131296285</span>, (FrameLayout)M.<span class="keyword">this</span>._$_findCachedViewById(id.fl_container));</span><br><span class="line">            ((ImageView)M.<span class="keyword">this</span>._$_findCachedViewById(id.iv_demo)).setImageDrawable(ContextCompat.getDrawable((Context)M.<span class="keyword">this</span>, <span class="number">2130968614</span>));</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;));</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> View _$_findCachedViewById(<span class="keyword">int</span> var1) &#123;</span><br><span class="line">      <span class="keyword">if</span>(<span class="keyword">this</span>._$_findViewCache == <span class="keyword">null</span>) &#123;</span><br><span class="line">         <span class="keyword">this</span>._$_findViewCache = <span class="keyword">new</span> HashMap();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      View var2 = (View)<span class="keyword">this</span>._$_findViewCache.get(Integer.valueOf(var1));</span><br><span class="line">      <span class="keyword">if</span>(var2 == <span class="keyword">null</span>) &#123;</span><br><span class="line">         var2 = <span class="keyword">this</span>.findViewById(var1);</span><br><span class="line">         <span class="keyword">this</span>._$_findViewCache.put(Integer.valueOf(var1), var2);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> var2;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> _$_clearFindViewByIdCache() &#123;</span><br><span class="line">      <span class="keyword">if</span>(<span class="keyword">this</span>._$_findViewCache != <span class="keyword">null</span>) &#123;</span><br><span class="line">         <span class="keyword">this</span>._$_findViewCache.clear();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>高大上的Kotlin Android Extensions生成的代码其实非常简单，要点如下：</p>
-<ul>
-<li>View cache策略<ul>
-<li>自动生成一个HashMap类型的findViewCache，用于缓存访问过的View</li>
-<li>自动生成findCachedViewById()和clearFindViewByIdCache()方法</li>
-</ul>
-</li>
-<li>Kotlin代码中对view id的直接访问被转换成相应的findCachedViewById()调用</li>
-</ul>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">btn_clip_demo.setOnClickListener &#123;</span><br><span class="line">    fl_container.removeAllViews()</span><br><span class="line">    layoutInflater.inflate(R.layout.content_main_clip, fl_container)</span><br><span class="line">    iv_demo.setImageDrawable(ContextCompat.getDrawable(<span class="keyword">this</span>, R.color.colorAccent))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对照代码不难理解问题的原因在于：</p>
-<p>第一次点击<code>btn_clip_demo</code>时，view cache策略并不生效，所以一切正常。第二次点击<code>btn_clip_demo</code>时，view cache策略生效。但view cache策略对我们的场景是错误的(从另一角度讲，可能是我的用法有误？)。从view cache中拿到的<code>iv_demo</code>对象是旧的。关键是，它已经从屏幕上移除，是不可见的。我们给它设置红色当然不起作用！而<code>inflate()</code>操作新添加到布局中的、在屏幕上可见的那个<code>iv_demo</code>，实际上被我们晾在一边。</p>
-<p>所以这里我们不得不使用<code>findViewById</code>来获取那个被晾在一边的新的<code>iv_demo</code>。以下是修改后的代码：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">btn_clip_demo.setOnClickListener &#123;</span><br><span class="line">    fl_container.removeAllViews()</span><br><span class="line">    layoutInflater.inflate(R.layout.content_main_clip, fl_container)</span><br><span class="line">	<span class="keyword">val</span> ivDemoNew = findViewById&lt;ImageView&gt;(R.id.iv_demo)</span><br><span class="line">    ivDemoNew.setImageDrawable(ContextCompat.getDrawable(<span class="keyword">this</span>, R.color.colorAccent))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="koltin-android-ext2.gif" alt></p>
-<p>这回，无论我们如何点击按钮，<code>iv_demo</code>永远会被正确地设置为红色。</p>
-
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/android/" rel="tag"># Android</a>
-          </div>
-
         
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/03/30/map-sync-problem/" rel="prev" title="记一个多线程并发读写HashMap时遇到的问题">
-      <i class="fa fa-chevron-left"></i> 记一个多线程并发读写HashMap时遇到的问题
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/05/23/kotlin-map/" rel="next" title="谈谈Kotlin中的Map">
-      谈谈Kotlin中的Map <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
   
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
 
   <aside class="sidebar">
-    <div class="sidebar-inner">
 
-      <ul class="sidebar-nav motion-element">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
         </li>
@@ -344,29 +143,29 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlin-Android-Extensions"><span class="nav-number">1.</span> <span class="nav-text">Kotlin Android Extensions</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#遇到的问题"><span class="nav-number">2.</span> <span class="nav-text">遇到的问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题分析"><span class="nav-number">3.</span> <span class="nav-text">问题分析</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlin-Android-Extensions"><span class="nav-number">1.</span> <span class="nav-text">Kotlin Android Extensions</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">遇到的问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">问题分析</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
   <p class="site-author-name" itemprop="name">Sunmoon</p>
   <div class="site-description" itemprop="description">移动开发 Android 生活</div>
 </div>
-<div class="site-state-wrap motion-element">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
+        <a href="/archives/">
           <span class="site-state-item-count">158</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -374,26 +173,189 @@
 
 
 
+        </div>
       </div>
-
     </div>
   </aside>
-  <div id="sidebar-dimmer"></div>
+  <div class="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
+    </header>
 
-    <footer class="footer">
-      <div class="footer-inner">
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/04/28/kotlin-view-binding-ext-bug/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="使用Kotlin Android Extensions时碰到的一个问题 | Sunmoon的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用Kotlin Android Extensions时碰到的一个问题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-04-28 16:30:27" itemprop="dateCreated datePublished" datetime="2018-04-28T16:30:27+08:00">2018-04-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2018/04/28/kotlin-view-binding-ext-bug/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2018/04/28/kotlin-view-binding-ext-bug/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文记录了使用kotlin android extions时遇到的小问题以及对应的解决方法。</p>
+<span id="more"></span>
+<h1 id="Kotlin-Android-Extensions"><a href="#Kotlin-Android-Extensions" class="headerlink" title="Kotlin Android Extensions"></a>Kotlin Android Extensions</h1><p><a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/tutorials/android-plugin.html">Kotlin Android Extensions</a>是用于Kotlin android开发的插件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &#x27;kotlin-android-extensions&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>借助该插件我们在Kotlin代码中不必再使用<code>findViewById()</code>，直接通过view id访问相应View即可。例如：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.android.synthetic.main.activity_main.*</span><br><span class="line"><span class="keyword">import</span> kotlinx.android.synthetic.main.content_main_clip.*</span><br><span class="line"></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">    setContentView(R.layout.activity_main)</span><br><span class="line"></span><br><span class="line">	btn_clip_demo.setOnClickListener &#123;&#125;</span><br><span class="line">	iv_demo.setImageDrawable(ContextCompat.getDrawable(<span class="keyword">this</span>, R.color.colorAccent))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对Java代码中繁琐的<code>findViewById()</code>方便许多，对吧。</p>
+<p>更多用法可以参考<a target="_blank" rel="noopener" href="https://antonioleiva.com/kotlin-android-extensions/">这篇文章</a>。</p>
+<h1 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h1><p>很不幸，使用<a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/tutorials/android-plugin.html">Kotlin Android Extensions</a>时遇到一个奇怪的问题。布局和代码如下：</p>
+<p>activity_main.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">android.support.constraint.ConstraintLayout</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">&quot;http://schemas.android.com/apk/res-auto&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">&quot;http://schemas.android.com/tools&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:context</span>=<span class="string">&quot;com.example.cm.drawabledemo.MainActivity&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">FrameLayout</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">&quot;@+id/fl_container&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;0dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;300dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintBottom_toBottomOf</span>=<span class="string">&quot;parent&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintLeft_toLeftOf</span>=<span class="string">&quot;parent&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintRight_toRightOf</span>=<span class="string">&quot;parent&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">&quot;parent&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Button</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">&quot;@+id/btn_clip_demo&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_marginStart</span>=<span class="string">&quot;8dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_marginTop</span>=<span class="string">&quot;8dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">&quot;clip demo&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintStart_toEndOf</span>=<span class="string">&quot;@+id/btn_gravity&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">&quot;parent&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">android.support.constraint.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>content_main_clip.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">android.support.constraint.ConstraintLayout</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">&quot;http://schemas.android.com/apk/res-auto&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">&quot;http://schemas.android.com/tools&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;match_parent&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ImageView</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:padding</span>=<span class="string">&quot;2dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">&quot;@+id/iv_demo&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;92dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;78dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_marginEnd</span>=<span class="string">&quot;24dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_marginTop</span>=<span class="string">&quot;104dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintEnd_toEndOf</span>=<span class="string">&quot;parent&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">&quot;parent&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">android.support.constraint.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>MainActivity.kt</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MainActivity</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">		</span><br><span class="line">        btn_clip_demo.setOnClickListener &#123;</span><br><span class="line">            fl_container.removeAllViews()</span><br><span class="line">            layoutInflater.inflate(R.layout.content_main_clip, fl_container)</span><br><span class="line">			iv_demo.setImageDrawable(ContextCompat.getDrawable(<span class="keyword">this</span>, R.color.colorAccent))</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码功能：点击<code>btn_clip_demo</code>后，将<code>content_main_clip</code>中的内容(其中有一个id为<code>iv_demo</code>的ImageView)重新添加到<code>fl_container</code>，并且将<code>iv_demo</code>设置为红色。</p>
+<p>问题描述：第一次点击<code>btn_clip_demo</code>，<code>iv_demo</code>被设置成红色。<font color="red">但之后再点击btn_clip_demo，iv_demo没有被设置成红色</font>。</p>
+<p><img src="/koltin-android-ext1.gif"></p>
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>Android Studio查看Kotlin对应Java代码的方式： Tools -&gt; Kotlin -&gt; Show Kotlin Bytecode -&gt; Decompile</p>
+<p>上述kotlin代码对应的Java代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">MainActivity</span> <span class="keyword">extends</span> <span class="title class_">AppCompatActivity</span> &#123;</span><br><span class="line">   <span class="keyword">private</span> HashMap _$_findViewCache;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(<span class="meta">@Nullable</span> Bundle savedInstanceState)</span> &#123;</span><br><span class="line">      <span class="built_in">super</span>.onCreate(savedInstanceState);</span><br><span class="line">      <span class="built_in">this</span>.setContentView(<span class="number">2131296283</span>);</span><br><span class="line">      ((Button)<span class="built_in">this</span>._$_findCachedViewById(id.btn_clip_demo)).setOnClickListener((OnClickListener)(<span class="keyword">new</span> <span class="title class_">OnClickListener</span>() &#123;</span><br><span class="line">         <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">onClick</span><span class="params">(View it)</span> &#123;</span><br><span class="line">            ((FrameLayout)M.<span class="built_in">this</span>._$_findCachedViewById(id.fl_container)).removeAllViews();</span><br><span class="line">            M.<span class="built_in">this</span>.getLayoutInflater().inflate(<span class="number">2131296285</span>, (FrameLayout)M.<span class="built_in">this</span>._$_findCachedViewById(id.fl_container));</span><br><span class="line">            ((ImageView)M.<span class="built_in">this</span>._$_findCachedViewById(id.iv_demo)).setImageDrawable(ContextCompat.getDrawable((Context)M.<span class="built_in">this</span>, <span class="number">2130968614</span>));</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;));</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> View _$_findCachedViewById(<span class="type">int</span> var1) &#123;</span><br><span class="line">      <span class="keyword">if</span>(<span class="built_in">this</span>._$_findViewCache == <span class="literal">null</span>) &#123;</span><br><span class="line">         <span class="built_in">this</span>._$_findViewCache = <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="type">View</span> <span class="variable">var2</span> <span class="operator">=</span> (View)<span class="built_in">this</span>._$_findViewCache.get(Integer.valueOf(var1));</span><br><span class="line">      <span class="keyword">if</span>(var2 == <span class="literal">null</span>) &#123;</span><br><span class="line">         var2 = <span class="built_in">this</span>.findViewById(var1);</span><br><span class="line">         <span class="built_in">this</span>._$_findViewCache.put(Integer.valueOf(var1), var2);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> var2;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> _$_clearFindViewByIdCache() &#123;</span><br><span class="line">      <span class="keyword">if</span>(<span class="built_in">this</span>._$_findViewCache != <span class="literal">null</span>) &#123;</span><br><span class="line">         <span class="built_in">this</span>._$_findViewCache.clear();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>高大上的Kotlin Android Extensions生成的代码其实非常简单，要点如下：</p>
+<ul>
+<li>View cache策略</li>
+<li>自动生成一个HashMap类型的findViewCache，用于缓存访问过的View</li>
+<li>自动生成findCachedViewById()和clearFindViewByIdCache()方法</li>
+<li>Kotlin代码中对view id的直接访问被转换成相应的findCachedViewById()调用</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">btn_clip_demo.setOnClickListener &#123;</span><br><span class="line">    fl_container.removeAllViews()</span><br><span class="line">    layoutInflater.inflate(R.layout.content_main_clip, fl_container)</span><br><span class="line">    iv_demo.setImageDrawable(ContextCompat.getDrawable(<span class="keyword">this</span>, R.color.colorAccent))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对照代码不难理解问题的原因在于：</p>
+<p>第一次点击<code>btn_clip_demo</code>时，view cache策略并不生效，所以一切正常。第二次点击<code>btn_clip_demo</code>时，view cache策略生效。但view cache策略对我们的场景是错误的(从另一角度讲，可能是我的用法有误？)。从view cache中拿到的<code>iv_demo</code>对象是旧的。关键是，它已经从屏幕上移除，是不可见的。我们给它设置红色当然不起作用！而<code>inflate()</code>操作新添加到布局中的、在屏幕上可见的那个<code>iv_demo</code>，实际上被我们晾在一边。</p>
+<p>所以这里我们不得不使用<code>findViewById</code>来获取那个被晾在一边的新的<code>iv_demo</code>。以下是修改后的代码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">btn_clip_demo.setOnClickListener &#123;</span><br><span class="line">    fl_container.removeAllViews()</span><br><span class="line">    layoutInflater.inflate(R.layout.content_main_clip, fl_container)</span><br><span class="line">	<span class="keyword">val</span> ivDemoNew = findViewById&lt;ImageView&gt;(R.id.iv_demo)</span><br><span class="line">    ivDemoNew.setImageDrawable(ContextCompat.getDrawable(<span class="keyword">this</span>, R.color.colorAccent))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/koltin-android-ext2.gif"></p>
+<p>这回，无论我们如何点击按钮，<code>iv_demo</code>永远会被正确地设置为红色。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
         
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/03/30/map-sync-problem/" rel="prev" title="记一个多线程并发读写HashMap时遇到的问题">
+                  <i class="fa fa-chevron-left"></i> 记一个多线程并发读写HashMap时遇到的问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/05/23/kotlin-map/" rel="next" title="谈谈Kotlin中的Map">
+                  谈谈Kotlin中的Map <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -401,29 +363,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -432,22 +386,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2018/04/28/kotlin-view-binding-ext-bug/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

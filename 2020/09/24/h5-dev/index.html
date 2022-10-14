@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,21 +14,19 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="离职中。离职前最后一个项目是前端项目，用到了一些之前不了解的工具，也遇到不少的问题。预计接下来几年都不会再接触前端开发工作，但记录一下以备忘、拓展知识广度总是好的。">
-<meta name="keywords" content="android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="离职中。离职前最后一个项目是前端项目，用到了一些之前不了解的工具，也遇到不少的问题。预计接下来几年都不会再接触前端开发工作，但记录一下以备忘、拓展知识广度总是好的。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="H5开发小记">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/09/24/h5-dev/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="离职中。离职前最后一个项目是前端项目，用到了一些之前不了解的工具，也遇到不少的问题。预计接下来几年都不会再接触前端开发工作，但记录一下以备忘、拓展知识广度总是好的。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/16009472822261.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/16009474285734.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/vuejs-devtools.gif">
@@ -37,78 +36,52 @@
 <meta property="og:image" content="http://www.sunmoonblog.com/images/16010220630144.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/16010240487770.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/16009498051466.jpg">
-<meta property="og:updated_time" content="2020-11-13T04:03:36.121Z">
+<meta property="article:published_time" content="2020-09-24T11:29:29.000Z">
+<meta property="article:modified_time" content="2020-11-13T04:03:36.121Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="H5开发小记">
-<meta name="twitter:description" content="离职中。离职前最后一个项目是前端项目，用到了一些之前不了解的工具，也遇到不少的问题。预计接下来几年都不会再接触前端开发工作，但记录一下以备忘、拓展知识广度总是好的。">
 <meta name="twitter:image" content="http://www.sunmoonblog.com/images/16009472822261.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/09/24/h5-dev/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>H5开发小记 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2020/09/24/h5-dev/","path":"2020/09/24/h5-dev/","title":"H5开发小记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>H5开发小记 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -122,19 +95,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -145,23 +107,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -169,61 +130,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7"><span class="nav-number">1.</span> <span class="nav-text">工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DOM-%E4%B8%8E-Vue-js"><span class="nav-number">2.1.</span> <span class="nav-text">DOM 与 Vue.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%90%8D%E7%BB%84%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">重名组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E4%BA%AB%E5%9B%BE%E7%99%BD%E8%BE%B9"><span class="nav-number">2.3.</span> <span class="nav-text">分享图白边</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E8%B7%A8%E5%9F%9F"><span class="nav-number">2.4.</span> <span class="nav-text">图片跨域</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%80%E5%B7%A7"><span class="nav-number">3.</span> <span class="nav-text">技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E8%81%94CSS"><span class="nav-number">3.1.</span> <span class="nav-text">内联CSS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%9B%BE%E7%89%87"><span class="nav-number">3.2.</span> <span class="nav-text">使用图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E5%AD%98%E5%88%86%E4%BA%AB%E5%9B%BE"><span class="nav-number">3.3.</span> <span class="nav-text">保存分享图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/09/24/h5-dev/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="H5开发小记 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           H5开发小记
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-09-24 19:29:29" itemprop="dateCreated datePublished" datetime="2020-09-24T19:29:29+08:00">2020-09-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 12:03:36" itemprop="dateModified" datetime="2020-11-13T12:03:36+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2020-09-24 19:29:29" itemprop="dateCreated datePublished" datetime="2020-09-24T19:29:29+08:00">2020-09-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 12:03:36" itemprop="dateModified" datetime="2020-11-13T12:03:36+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2020/09/24/h5-dev/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/09/24/h5-dev/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -232,17 +274,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>离职中。离职前最后一个项目是前端项目，用到了一些之前不了解的工具，也遇到不少的问题。预计接下来几年都不会再接触前端开发工作，但记录一下以备忘、拓展知识广度总是好的。</p>
-<a id="more"></a>
+<span id="more"></span>
+
 <p>具体分成三类话题。</p>
 <ul>
 <li>工具</li>
 <li>问题</li>
 <li>技巧</li>
 </ul>
-<h1 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h1><p>首先谈谈<strong>开发工具</strong>。Chrome Devtools 真是个神器。<a href="(https://juejin.im/post/5f1542e16fb9a07e6f7b80fe">这里</a>)有篇介绍 Devtools 的文章。只挑几个我觉得特别有用的功能说说。</p>
+<h1 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h1><p>首先谈谈<strong>开发工具</strong>。Chrome Devtools 真是个神器。<a href="(https://juejin.im/post/5f1542e16fb9a07e6f7b80fe)">这里</a>有篇介绍 Devtools 的文章。只挑几个我觉得特别有用的功能说说。</p>
 <p><img src="/images/16009472822261.jpg" alt="-w451"></p>
 <p>一是选择机型，便于在不同分辨率下调试。二是选中元素开关(点击一下后变成蓝色)，打开后选择 html 页面中的元素非常方便</p>
 <p><img src="/images/16009474285734.jpg" alt="-w444"></p>
@@ -254,41 +295,49 @@
 <p>大部分场景下这种做并不会有问题，直接这个点击用户名后编辑的功能：</p>
 <p><img src="/images/edit-name.gif" alt="edit-name"></p>
 <p>伪代码类似这样，其关键在于 <code>vm.inputTeamName = newtxt</code>。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"name"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">span</span>&gt;</span>&#123;&#123;inputTeamName&#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 更改名称</span></span><br><span class="line">$(<span class="string">".btn-change"</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="keyword">var</span> td = $(<span class="keyword">this</span>).siblings(<span class="string">'span'</span>);</span><br><span class="line">	<span class="keyword">var</span> txt = td.text();</span><br><span class="line">	<span class="keyword">var</span> input = $(<span class="string">"&lt;input type='text'value='"</span> + txt + <span class="string">"'/&gt;"</span>);</span><br><span class="line">	td.html(input);</span><br><span class="line">	input.click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;);</span><br><span class="line">	input.trigger(<span class="string">"focus"</span>);</span><br><span class="line">	input.blur(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">		<span class="keyword">var</span> newtxt = $(<span class="keyword">this</span>).val();</span><br><span class="line">		<span class="keyword">if</span>(newtxt != txt) &#123;</span><br><span class="line">		  <span class="comment">// 更新 inputTeamName</span></span><br><span class="line">		  vm.inputTeamName = newtxt</span><br><span class="line">			td.html(newtxt);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			td.html(newtxt);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>不过这段代码时灵时不灵。我疑惑了好久。但仔细一想又很简单：操作 span 这个<font color="red">真实DOM节点后</font>，就不能指望 <code></code> 是可靠的了 (毕竟它跟 Vue.js 的<font color="red">虚拟DOM节点</font>相关)</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">&quot;name&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">span</span>&gt;</span>&#123;&#123;inputTeamName&#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 更改名称</span></span><br><span class="line">$(<span class="string">&quot;.btn-change&quot;</span>).<span class="title function_">click</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">	<span class="keyword">var</span> td = $(<span class="variable language_">this</span>).<span class="title function_">siblings</span>(<span class="string">&#x27;span&#x27;</span>);</span><br><span class="line">	<span class="keyword">var</span> txt = td.<span class="title function_">text</span>();</span><br><span class="line">	<span class="keyword">var</span> input = $(<span class="string">&quot;&lt;input type=&#x27;text&#x27;value=&#x27;&quot;</span> + txt + <span class="string">&quot;&#x27;/&gt;&quot;</span>);</span><br><span class="line">	td.<span class="title function_">html</span>(input);</span><br><span class="line">	input.<span class="title function_">click</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;);</span><br><span class="line">	input.<span class="title function_">trigger</span>(<span class="string">&quot;focus&quot;</span>);</span><br><span class="line">	input.<span class="title function_">blur</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">		<span class="keyword">var</span> newtxt = $(<span class="variable language_">this</span>).<span class="title function_">val</span>();</span><br><span class="line">		<span class="keyword">if</span>(newtxt != txt) &#123;</span><br><span class="line">		  <span class="comment">// 更新 inputTeamName</span></span><br><span class="line">		  vm.<span class="property">inputTeamName</span> = newtxt</span><br><span class="line">			td.<span class="title function_">html</span>(newtxt);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			td.<span class="title function_">html</span>(newtxt);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>不过这段代码时灵时不灵。我疑惑了好久。但仔细一想又很简单：操作 span 这个<font color="red">真实DOM节点后</font>，就不能指望 <code>&#123;&#123;inputTeamName&#125;&#125;</code> 是可靠的了 (毕竟它跟 Vue.js 的<font color="red">虚拟DOM节点</font>相关)</p>
 <p>类似的情况还有操作过真实DOM节点后，<code>v-model</code>指令失效。原因也类似。</p>
 <h2 id="重名组件"><a href="#重名组件" class="headerlink" title="重名组件"></a>重名组件</h2><p>封装了一个 <code>RegisterDialog</code> 组件，组件中指定了 id。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"pop-wrap pop-bg02 pop-box01"</span> <span class="attr">id</span>=<span class="string">"pop-box01"</span> <span class="attr">style</span>=<span class="string">"display: none"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">h4</span> <span class="attr">class</span>=<span class="string">"p-title"</span>&gt;</span>绑定手机<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"phone-input"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;pop-wrap pop-bg02 pop-box01&quot;</span> <span class="attr">id</span>=<span class="string">&quot;pop-box01&quot;</span> <span class="attr">style</span>=<span class="string">&quot;display: none&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">h4</span> <span class="attr">class</span>=<span class="string">&quot;p-title&quot;</span>&gt;</span>绑定手机<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">&quot;phone-input&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p><code>RegisterDialog</code> 组件被多处使用。如下图：</p>
 <p><img src="/images/16010202840140.jpg" alt="-w502"></p>
 <p>发现有时操作不能按预期方式操作 <code>RegisterDialog</code>。比如，头像和昵称无法正常显示。推测问题原因是 <code>RegisterDialog</code> 导致 html 页面内元素 ID 冲突。</p>
 <p>一种解决方式是使用更合理的页面结构，保证只有一个 <code>RegisterDialog</code>。如下图：</p>
 <p><img src="/images/16010202885727.jpg" alt="-w503"></p>
 <p>另一种解决方式是避免 <code>RegisterDialog</code> 组件中 div 元素的 ID 写死为 <code>pop-box01</code>，而是使用动态ID。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"pop-wrap pop-bg02 pop-box01"</span> <span class="attr">:id</span>=<span class="string">"myID"</span> <span class="attr">style</span>=<span class="string">"display: none"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">h4</span> <span class="attr">class</span>=<span class="string">"p-title"</span>&gt;</span>绑定手机<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"phone-input"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;pop-wrap pop-bg02 pop-box01&quot;</span> <span class="attr">:id</span>=<span class="string">&quot;myID&quot;</span> <span class="attr">style</span>=<span class="string">&quot;display: none&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">h4</span> <span class="attr">class</span>=<span class="string">&quot;p-title&quot;</span>&gt;</span>绑定手机<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">&quot;phone-input&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="分享图白边"><a href="#分享图白边" class="headerlink" title="分享图白边"></a>分享图白边</h2><p>我们的H5在某些机型上生成的分享图会出现一条白边。如下图：</p>
 <p><img src="/images/16010220630144.jpg" alt="-w383"></p>
 <p>白边问题的原因是rem和px转化存在小数点。提前将rem转换成px即可：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fixDimen(domId) &#123;</span><br><span class="line">  <span class="keyword">const</span> ele = <span class="built_in">document</span>.getElementById(domId);</span><br><span class="line">  <span class="keyword">if</span> (ele) &#123;</span><br><span class="line">    <span class="comment">// 解决rem和px转化存在小数点，导致的白边问题</span></span><br><span class="line">    ele.style.width = <span class="string">`<span class="subst">$&#123;ele.offsetWidth&#125;</span>px`</span>;</span><br><span class="line">    ele.style.height = <span class="string">`<span class="subst">$&#123;ele.offsetHeight&#125;</span>px`</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fixDimen</span>(<span class="params">domId</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> ele = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(domId);</span><br><span class="line">  <span class="keyword">if</span> (ele) &#123;</span><br><span class="line">    <span class="comment">// 解决rem和px转化存在小数点，导致的白边问题</span></span><br><span class="line">    ele.<span class="property">style</span>.<span class="property">width</span> = <span class="string">`<span class="subst">$&#123;ele.offsetWidth&#125;</span>px`</span>;</span><br><span class="line">    ele.<span class="property">style</span>.<span class="property">height</span> = <span class="string">`<span class="subst">$&#123;ele.offsetHeight&#125;</span>px`</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
 <h2 id="图片跨域"><a href="#图片跨域" class="headerlink" title="图片跨域"></a>图片跨域</h2><p>dom2img 库用于将 DOM 节点转换成图片。使用 dom2img 时要注意图片跨域问题。一种简单的解决办法是将托管在图片服务器上的图片保存到本地，同时修改部分css代码。</p>
 <p>修改前：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span>  </span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://image-1251917893.cos.ap-guangzhou.myqcloud.com/gp-match/css/match.css"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span>  </span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">&quot;https://image-1251917893.cos.ap-guangzhou.myqcloud.com/gp-match/css/match.css&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p>修改后：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span>  </span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://image-1251917893.cos.ap-guangzhou.myqcloud.com/gp-match/css/match.css"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"match.css"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span>  </span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">&quot;https://image-1251917893.cos.ap-guangzhou.myqcloud.com/gp-match/css/match.css&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">&quot;match.css&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p>修改后本地新增一个 <code>match.css</code> 文件。这个css会重写几个样式(主要是将背景图片指向本地图片，而非图片服务器)以覆盖前一个css中某些规则，以避免图片跨域问题。</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.xspr1</span> &#123; <span class="attribute">background-image</span>: <span class="built_in">url</span>(img/xspr1.png); <span class="attribute">background-repeat</span>: no-repeat; <span class="attribute">background-size</span>: <span class="number">9.94rem</span> <span class="number">5.18rem</span>; &#125;</span><br><span class="line"><span class="selector-class">.xspr</span> &#123; <span class="attribute">background-image</span>: <span class="built_in">url</span>(img/xspr.png); <span class="attribute">background-repeat</span>: no-repeat; <span class="attribute">background-size</span>: <span class="number">9.92rem</span> <span class="number">11.21rem</span>; &#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.xspr1</span> &#123; <span class="attribute">background-image</span>: <span class="built_in">url</span>(<span class="string">img/xspr1.png</span>); <span class="attribute">background-repeat</span>: no-repeat; <span class="attribute">background-size</span>: <span class="number">9.94rem</span> <span class="number">5.18rem</span>; &#125;</span><br><span class="line"><span class="selector-class">.xspr</span> &#123; <span class="attribute">background-image</span>: <span class="built_in">url</span>(<span class="string">img/xspr.png</span>); <span class="attribute">background-repeat</span>: no-repeat; <span class="attribute">background-size</span>: <span class="number">9.92rem</span> <span class="number">11.21rem</span>; &#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
 <h1 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h1><h2 id="内联CSS"><a href="#内联CSS" class="headerlink" title="内联CSS"></a>内联CSS</h2><p>有时需要在 Vue.js 中内联 css 文件。</p>
 <p>比如我遇到这样一个问题。一些图片和css文件在测试环境中可以正常访问，但发布到正式环境就不行。</p>
 <ul>
 <li>测试环境中能正常访问<ul>
-<li><a href="https://test.igame.qq.com/newcss/admin/hp-match/match.css" target="_blank" rel="noopener">https://test.igame.qq.com/newcss/admin/hp-match/match.css</a></li>
-<li><a href="https://test.igame.qq.com/newcss/admin/hp-match/img/share1.jpg" target="_blank" rel="noopener">https://test.igame.qq.com/newcss/admin/hp-match/img/share1.jpg</a></li>
+<li><a target="_blank" rel="noopener" href="https://test.igame.qq.com/newcss/admin/hp-match/match.css">https://test.igame.qq.com/newcss/admin/hp-match/match.css</a></li>
+<li><a target="_blank" rel="noopener" href="https://test.igame.qq.com/newcss/admin/hp-match/img/share1.jpg">https://test.igame.qq.com/newcss/admin/hp-match/img/share1.jpg</a></li>
 </ul>
 </li>
 <li>正式环境中不能正常访问<ul>
-<li><a href="https://igame.qq.com/newcss/admin/hp-match/match.css" target="_blank" rel="noopener">https://igame.qq.com/newcss/admin/hp-match/match.css</a></li>
-<li><a href="https://igame.qq.com/newcss/admin/hp-match/img/share1.jpg" target="_blank" rel="noopener">https://igame.qq.com/newcss/admin/hp-match/img/share1.jpg</a></li>
+<li><a target="_blank" rel="noopener" href="https://igame.qq.com/newcss/admin/hp-match/match.css">https://igame.qq.com/newcss/admin/hp-match/match.css</a></li>
+<li><a target="_blank" rel="noopener" href="https://igame.qq.com/newcss/admin/hp-match/img/share1.jpg">https://igame.qq.com/newcss/admin/hp-match/img/share1.jpg</a></li>
 </ul>
 </li>
 </ul>
@@ -296,14 +345,17 @@
 <p><img src="/images/16010240487770.jpg" alt="-w936"></p>
 <p>无奈我没权限修改正式服务器配置。于是换另一种思路，将 css 内存到 Vue.js。</p>
 <p>修改前：在 <code>index.html</code> 引入 <code>match.css</code></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"match.css"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">&quot;match.css&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p>修改后：在 <code>App.vue</code> 引入 <code>match.css</code></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;style scoped&gt;</span><br><span class="line">@<span class="keyword">import</span> <span class="string">'./../../../public/match.css'</span>;</span><br><span class="line">&lt;<span class="regexp">/style&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;style scoped&gt;</span><br><span class="line">@<span class="keyword">import</span> <span class="string">&#x27;./../../../public/match.css&#x27;</span>;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
 <p>修改后成功绕过正式服务器的 <code>content-type</code> 配置问题，可正常加载 <code>match.css</code>，避免了随之而来的图片跨域问题！</p>
 <h2 id="使用图片"><a href="#使用图片" class="headerlink" title="使用图片"></a>使用图片</h2><p>vue 文件中也可以直接使用图片。方法如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// register-dialog.vue</span></span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">&lt;img <span class="class"><span class="keyword">class</span></span>=<span class="string">"info-txt-1"</span> :src=<span class="string">"imgs.share_text"</span> alt /&gt;</span><br><span class="line">&lt;<span class="regexp">/template&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">&lt;script&gt;</span></span><br><span class="line"><span class="regexp">import head_name from 'src/m</span>odule/xxx/img/head-name.png<span class="string">'</span></span><br><span class="line"><span class="string">import headbox from '</span>src/<span class="built_in">module</span>/xxx/img/headbox.png<span class="string">'</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export default &#123;</span></span><br><span class="line"><span class="string">  data() &#123;</span></span><br><span class="line"><span class="string">    return &#123;</span></span><br><span class="line"><span class="string">      imgs: &#123;</span></span><br><span class="line"><span class="string">        head_name: head_name,</span></span><br><span class="line"><span class="string">        headbox: headbox</span></span><br><span class="line"><span class="string">      &#125;,</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// register-dialog.vue</span></span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">class</span>=<span class="string">&quot;info-txt-1&quot;</span> <span class="attr">:src</span>=<span class="string">&quot;imgs.share_text&quot;</span> <span class="attr">alt</span> /&gt;</span></span></span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"><span class="keyword">import</span> head_name <span class="keyword">from</span> <span class="string">&#x27;src/module/xxx/img/head-name.png&#x27;</span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"><span class="keyword">import</span> headbox <span class="keyword">from</span> <span class="string">&#x27;src/module/xxx/img/headbox.png&#x27;</span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">  <span class="title function_">data</span>(<span class="params"></span>) &#123;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">    <span class="keyword">return</span> &#123;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">      <span class="attr">imgs</span>: &#123;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">        <span class="attr">head_name</span>: head_name,</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">        <span class="attr">headbox</span>: headbox</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">      &#125;,</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">    &#125;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">  &#125;,</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">&#125;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
 <h2 id="保存分享图"><a href="#保存分享图" class="headerlink" title="保存分享图"></a>保存分享图</h2><p>一个需求是这样的：用户长按h5保存图片时，实际保存的图片上要求有一个二维码和提示。</p>
-<p><a href="https://blog.csdn.net/w20101310/article/details/60580241/" target="_blank" rel="noopener">微信中如何长按图片保存的是另一张图片_小朱的专栏-CSDN博客</a>中介绍了一种解决方案。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/w20101310/article/details/60580241/">微信中如何长按图片保存的是另一张图片_小朱的专栏-CSDN博客</a>中介绍了一种解决方案。</p>
 <h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p><img src="/images/16009498051466.jpg" alt="-w102"></p>
 <ul>
 <li>chrome devtools 中快速qq登录 (一直觉得H5中QQ登录很麻烦，实际上是没有掌握技巧。使用 Toggle device toolbar 将浏览器切换成PC模式而不是Mobile模式，可以拉起PC端的QQ登录页，然后手机QQ扫一扫登录，非常方便)</li>
@@ -316,8 +368,8 @@
 <li>css 作用域问题 (dialog 样式)</li>
 </ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://juejin.im/post/5f1542e16fb9a07e6f7b80fe" target="_blank" rel="noopener">脱离996，Chrome DevTools 面板全攻略！！！ - 掘金</a></li>
-<li><a href="https://blog.csdn.net/w20101310/article/details/60580241/" target="_blank" rel="noopener">微信中如何长按图片保存的是另一张图片_小朱的专栏-CSDN博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5f1542e16fb9a07e6f7b80fe">脱离996，Chrome DevTools 面板全攻略！！！ - 掘金</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/w20101310/article/details/60580241/">微信中如何长按图片保存的是另一张图片_小朱的专栏-CSDN博客</a></li>
 </ul>
 
     </div>
@@ -326,127 +378,42 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/07/22/flutter-mmamp-memory/" rel="prev" title="Android 内存优化之优化 so 文件">
-      <i class="fa fa-chevron-left"></i> Android 内存优化之优化 so 文件
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/11/13/ios-bundle/" rel="next" title="ios-bundle">
-      ios-bundle <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/22/flutter-mmamp-memory/" rel="prev" title="Android 内存优化之优化 so 文件">
+                  <i class="fa fa-chevron-left"></i> Android 内存优化之优化 so 文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/13/ios-bundle/" rel="next" title="ios-bundle">
+                  ios-bundle <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#工具"><span class="nav-number">1.</span> <span class="nav-text">工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题"><span class="nav-number">2.</span> <span class="nav-text">问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DOM-与-Vue-js"><span class="nav-number">2.1.</span> <span class="nav-text">DOM 与 Vue.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重名组件"><span class="nav-number">2.2.</span> <span class="nav-text">重名组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分享图白边"><span class="nav-number">2.3.</span> <span class="nav-text">分享图白边</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图片跨域"><span class="nav-number">2.4.</span> <span class="nav-text">图片跨域</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#技巧"><span class="nav-number">3.</span> <span class="nav-text">技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#内联CSS"><span class="nav-number">3.1.</span> <span class="nav-text">内联CSS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用图片"><span class="nav-number">3.2.</span> <span class="nav-text">使用图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#保存分享图"><span class="nav-number">3.3.</span> <span class="nav-text">保存分享图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -454,29 +421,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -485,22 +444,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2020/09/24/h5-dev/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

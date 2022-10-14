@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,21 +14,19 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="翻译自 View the Java Heap and Memory Allocations with Memory Profiler。介绍了 Memory Profiler 的用法。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="翻译自 View the Java Heap and Memory Allocations with Memory Profiler。介绍了 Memory Profiler 的用法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(译)Memory Profiler">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/01/10/memory-profile-1/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="翻译自 View the Java Heap and Memory Allocations with Memory Profiler。介绍了 Memory Profiler 的用法。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://developer.android.com/studio/images/profile/memory-profiler-callouts_2x.png">
 <meta property="og:image" content="https://developer.android.com/studio/images/profile/memory-profiler-counts_2x.png">
 <meta property="og:image" content="https://storage.googleapis.com/androiddevelopers/videos/studio/memory-profiler-allocations-jvmti.mp4">
@@ -35,78 +34,52 @@
 <meta property="og:image" content="https://developer.android.com/studio/images/profile/memory-profiler-allocations-detail_2x.png">
 <meta property="og:image" content="https://developer.android.com/studio/images/profile/memory-profiler-dump_2x.png">
 <meta property="og:image" content="https://developer.android.com/studio/images/profile/memory-profiler-dump-stacktrace_2x.png">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.994Z">
+<meta property="article:published_time" content="2019-01-10T09:13:47.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.994Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="(译)Memory Profiler">
-<meta name="twitter:description" content="翻译自 View the Java Heap and Memory Allocations with Memory Profiler。介绍了 Memory Profiler 的用法。">
 <meta name="twitter:image" content="https://developer.android.com/studio/images/profile/memory-profiler-callouts_2x.png">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/01/10/memory-profile-1/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>(译)Memory Profiler | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/01/10/memory-profile-1/","path":"2019/01/10/memory-profile-1/","title":"(译)Memory Profiler"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>(译)Memory Profiler | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -120,19 +93,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -143,23 +105,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -167,61 +128,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%88%86%E6%9E%90%E5%86%85%E5%AD%98"><span class="nav-number">1.</span> <span class="nav-text">为什么要分析内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-Profiler%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">Memory Profiler简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%98%AF%E5%A6%82%E4%BD%95%E7%BB%9F%E8%AE%A1%E7%9A%84"><span class="nav-number">3.</span> <span class="nav-text">内存是如何统计的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">4.</span> <span class="nav-text">查看内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%87%BAheap"><span class="nav-number">5.</span> <span class="nav-text">导出heap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#heap-dump%E4%BF%9D%E5%AD%98%E4%B8%BAHPROF"><span class="nav-number">6.</span> <span class="nav-text">heap dump保存为HPROF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90%E6%8A%80%E5%B7%A7"><span class="nav-number">7.</span> <span class="nav-text">内存分析技巧</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/01/10/memory-profile-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="(译)Memory Profiler | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           (译)Memory Profiler
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-01-10 17:13:47" itemprop="dateCreated datePublished" datetime="2019-01-10T17:13:47+08:00">2019-01-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-01-10 17:13:47" itemprop="dateCreated datePublished" datetime="2019-01-10T17:13:47+08:00">2019-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/01/10/memory-profile-1/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/01/10/memory-profile-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -230,17 +272,17 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-        <p>翻译自 <a href="https://developer.android.com/studio/profile/memory-profiler.html" target="_blank" rel="noopener">View the Java Heap and Memory Allocations with Memory Profiler</a>。介绍了 Memory Profiler 的用法。<br><a id="more"></a><br>Memory Profiler是<a href="https://developer.android.com/studio/preview/features/android-profiler.html" target="_blank" rel="noopener">Android Profiler</a>提供的内存分析组件，它可用于分析内存泄漏、内存抖动，这些内存问题会导致卡顿甚至崩溃。Memory Profiler可展示应用的实时内存图，可导出heap，强制GC以及跟踪内存分配。</p>
+        <p>翻译自 <a target="_blank" rel="noopener" href="https://developer.android.com/studio/profile/memory-profiler.html">View the Java Heap and Memory Allocations with Memory Profiler</a>。介绍了 Memory Profiler 的用法。</p>
+<span id="more"></span>
+<p>Memory Profiler是<a target="_blank" rel="noopener" href="https://developer.android.com/studio/preview/features/android-profiler.html">Android Profiler</a>提供的内存分析组件，它可用于分析内存泄漏、内存抖动，这些内存问题会导致卡顿甚至崩溃。Memory Profiler可展示应用的实时内存图，可导出heap，强制GC以及跟踪内存分配。</p>
 <p>通过以下步骤打开Memory Profiler</p>
 <ol>
 <li>点击 <strong>View &gt; Tool Windows &gt; Android Profiler</strong> (也可点击工具栏中的 <strong>Android Profiler</strong>)</li>
 <li>选择待分析的设备和应用进程</li>
 <li>点击 <strong>MEMORY</strong> 时间线中任意地方来打开Memory Profiler</li>
 </ol>
-<p>另外，也可以通过<a href="https://developer.android.com/studio/command-line/dumpsys.html" target="_blank" rel="noopener">dumpsys</a>或<a href="https://developer.android.com/studio/debug/am-logcat.html#memory-logs" target="_blank" rel="noopener">观察logcat中的GC事件</a>来检查内存。</p>
-<h2 id="为什么要分析内存"><a href="#为什么要分析内存" class="headerlink" title="为什么要分析内存"></a>为什么要分析内存</h2><p>Android提供<a href="https://developer.android.com/topic/performance/memory-overview.html" target="_blank" rel="noopener">内存管理环境</a>，当它检查到应用不再需要某些对象时垃圾回收器会自动回收不再使用的内存。Android一直在改进找到不再使用内存的算法，但无论哪个版本的Android中一定会在某个时候短暂地停止执行应用代码。大部分时候这种暂停不被察觉到。但当应用分配内存的速度快过系统回收内存的速度，应用在等待系统回收释放内存以重新分配过程中会产生延迟。应用延迟会导致掉帧或可察觉的运行缓慢。</p>
+<p>另外，也可以通过<a target="_blank" rel="noopener" href="https://developer.android.com/studio/command-line/dumpsys.html">dumpsys</a>或<a target="_blank" rel="noopener" href="https://developer.android.com/studio/debug/am-logcat.html#memory-logs">观察logcat中的GC事件</a>来检查内存。</p>
+<h2 id="为什么要分析内存"><a href="#为什么要分析内存" class="headerlink" title="为什么要分析内存"></a>为什么要分析内存</h2><p>Android提供<a target="_blank" rel="noopener" href="https://developer.android.com/topic/performance/memory-overview.html">内存管理环境</a>，当它检查到应用不再需要某些对象时垃圾回收器会自动回收不再使用的内存。Android一直在改进找到不再使用内存的算法，但无论哪个版本的Android中一定会在某个时候短暂地停止执行应用代码。大部分时候这种暂停不被察觉到。但当应用分配内存的速度快过系统回收内存的速度，应用在等待系统回收释放内存以重新分配过程中会产生延迟。应用延迟会导致掉帧或可察觉的运行缓慢。</p>
 <p>就算应用并不慢，但当它有内存泄漏时，即使在后台它仍然会占用不必要的内存。这种行为会导致不必要的内存回收，拖慢系整体统内存性能。系统可能最终不得不强制杀死内存泄漏的应用进程 。当用户返回到应用时，它不得不完全重启。</p>
 <p>为了避免这些问题，你可以使用Memory Profiler：</p>
 <ul>
@@ -248,20 +290,18 @@
 <li>导出Java堆观察哪些对象正在占用内存。某些周期较长的heap dump中可以发现内存泄漏</li>
 <li>记录正常用户操作和极端用户操作时内存的分配过程，分析哪些地方你的代码在短时间内创建了太多对象，或者某些对象存在泄漏。</li>
 </ul>
-<p>更多关于减少应用内存占用的编程技巧请参考[Manage Your App’s Memory](<a href="https://developer.android.com/topic/performance/memory.html。" target="_blank" rel="noopener">https://developer.android.com/topic/performance/memory.html。</a></p>
+<p>更多关于减少应用内存占用的编程技巧请参考[Manage Your App’s Memory](<a target="_blank" rel="noopener" href="https://developer.android.com/topic/performance/memory.html%E3%80%82">https://developer.android.com/topic/performance/memory.html。</a></p>
 <h2 id="Memory-Profiler简介"><a href="#Memory-Profiler简介" class="headerlink" title="Memory Profiler简介"></a>Memory Profiler简介</h2><p>打开Memory Profiler首先看到的内存使用时间线，以及强制GC，导出heap dump，记录内存分配的访问入口。</p>
-<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-callouts_2x.png" alt></p>
+<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-callouts_2x.png"></p>
 <p>这里只介绍几个新的功能</p>
 <ul>
 <li>5, A button to jump forward to the live memory data</li>
 <li>6, The event timeline, which shows the activity states, user input events, and screen rotation events</li>
-<li>7, 内存使用时间线，它包括以下部分：<ul>
+<li>7, 内存使用时间线，它包括以下部分：</li>
 <li>各内存类别占用图，左边的y轴显示了各具体类别</li>
 <li>一条表示对象数量的虚线，由右边的y轴表示</li>
 </ul>
-</li>
-</ul>
-<p>但如果使用Android 7.1或以下版本，并不是所有数据缺省可见。如果你看到提示信息”Advanced profiling is unavailable for the selected process”，则需要<a href="https://developer.android.com/studio/preview/features/android-profiler.html#advanced-profiling" target="_blank" rel="noopener">开启高级分析功能</a>以显示以下信息：</p>
+<p>但如果使用Android 7.1或以下版本，并不是所有数据缺省可见。如果你看到提示信息”Advanced profiling is unavailable for the selected process”，则需要<a target="_blank" rel="noopener" href="https://developer.android.com/studio/preview/features/android-profiler.html#advanced-profiling">开启高级分析功能</a>以显示以下信息：</p>
 <ul>
 <li>Event timeline</li>
 <li>Number of allocated objects</li>
@@ -269,7 +309,7 @@
 </ul>
 <p>在Android 8.0或更高版本上，高级分析功能一直会为可调试的app打开。</p>
 <h2 id="内存是如何统计的"><a href="#内存是如何统计的" class="headerlink" title="内存是如何统计的"></a>内存是如何统计的</h2><p>Memory Profiler(图2)中顶部显示的数据是基于应用的私有内存页面统计的。这个数字不包括应用跟系统或其他应用共享的内存页面。</p>
-<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-counts_2x.png" alt></p>
+<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-counts_2x.png"></p>
 <p>内存的类型包括以下几种：</p>
 <ul>
 <li><strong>Java</strong>: Java或Kotlin代码创建的对象占用的内存</li>
@@ -292,9 +332,9 @@
 <li>对象在什么时候回收(仅在Android 8.0及以上设备上可见)</li>
 </ul>
 <p>如果是Android 8.0或以上设备上运行，可以在任意时刻查看对象的分配。点击并按下时间线，然后拖动以选择想要查看内存分配的时间段(如下图)。Android 8.0上自带一个可一直跟踪应用内存分配的工具，所以没必要”Start Allocation Tracking”。</p>
-<p><img src="https://storage.googleapis.com/androiddevelopers/videos/studio/memory-profiler-allocations-jvmti.mp4" alt></p>
+<p><img src="https://storage.googleapis.com/androiddevelopers/videos/studio/memory-profiler-allocations-jvmti.mp4"></p>
 <p>如果是Android 7.1或以下设备上运行，则需要点击Memory Profiler工具条中的 <strong>Record memory allcations</strong> 。开始后，Android Monitor会一直记录应用中发生的内存分配。点击 <strong>Stop recording</strong> 来查看分配过程。</p>
-<p><img src="https://storage.googleapis.com/androiddevelopers/videos/studio/memory-profiler-allocations-record.mp4" alt></p>
+<p><img src="https://storage.googleapis.com/androiddevelopers/videos/studio/memory-profiler-allocations-record.mp4"></p>
 <p>一旦选择了时间线区域或完成了一次”Record memory allcations”，已分配对象列表会出现在时间线下面，按类名分组，并按heap count排序。</p>
 <blockquote>
 <p>在Android 7.1及以下版本中，可以记录最多65536个分配。如果超过这个数字，仅在记录中保存最近的65535个分配。Android 8.0中没有这个限制。</p>
@@ -305,7 +345,7 @@
 <li>在 <strong>Instance View</strong> 中点击一个instance, 在下方会出现 <strong>Call Stack</strong> ， call stack中会显示该instance在哪里以及哪个线程分配的。</li>
 <li>在 <strong>Call Stack</strong> 标签页，点击任意一行会跳转到相应的代码行</li>
 </ol>
-<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-allocations-detail_2x.png" alt></p>
+<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-allocations-detail_2x.png"></p>
 <p>缺省情况下左边的分配列表按类名排列。在列表上方，你可以根据右边的下拉菜单来在下列的方式中切换：</p>
 <ul>
 <li><strong>Arrange by class</strong> 按类名分组</li>
@@ -320,8 +360,8 @@
 <li>对象在调用栈的什么地方被创建 (Call stacks are currently available with a heap dump only with Android 7.1 and lower when you capture the heap dump while recording allocations.)</li>
 </ul>
 <p>点击 <strong>Dump Java heap</strong> 来导出heap。导出时，Java内存总量可能短暂增加。这是正常的，因为heap dump发生在应用进程中，它需要一些内存用于收集数据。</p>
-<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-dump_2x.png" alt></p>
-<p>如果你需要更精确的heap dump，可以在代码中调用<a href="https://developer.android.com/reference/android/os/Debug.html#dumpHprofData(java.lang.String" target="_blank" rel="noopener">dumpHprofData()</a>)来导出heap。</p>
+<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-dump_2x.png"></p>
+<p>如果你需要更精确的heap dump，可以在代码中调用<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/os/Debug.html#dumpHprofData(java.lang.String)">dumpHprofData()</a>来导出heap。</p>
 <p>在类列表中，可以看到如下信息：</p>
 <ul>
 <li><strong>Alloc Count</strong> : heap中的Allocations数量</li>
@@ -348,12 +388,12 @@
 <li><strong>Depth</strong> : 从GC根节点到当前对象的最短路径</li>
 <li><strong>Native Size</strong> : 这种对象类型使用的native memory数量。这列数据仅在Android 7.0以及更高设备上可见。</li>
 <li><strong>Shallow Size</strong> : 这种对象类型使用的Java内存</li>
-<li><strong>Retained Size</strong> : 这个对象持有的所有内存数量 (见<a href="https://en.wikipedia.org/wiki/Dominator_(graph_theory" target="_blank" rel="noopener">dominator tree</a>))</li>
+<li><strong>Retained Size</strong> : 这个对象持有的所有内存数量 (见<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dominator_(graph_theory)">dominator tree</a>)</li>
 </ul>
 <blockquote>
-<p>注意：缺省时heap dump中并不显示每个对象的stack trace。想要看到stack trace，在点击 <strong>Dump Java heap</strong> 前必须开始<a href="https://developer.android.com/studio/profile/memory-profiler.html#record-allocations" target="_blank" rel="noopener">recording memory allocations</a>。只有这样才能在 <strong>Instance View</strong> 中选择实例看到 <strong>Reference</strong> 和 <strong>Call Stack</strong> 标签，如下图。但有可能某些对象在你开始recording allcations之前创建，所以这些对象并没有call stack。(由于要求执行allcation recording才能看到stack trace，所以Android 8.0上目前无法看到heap dump中的stack trace)</p>
+<p>注意：缺省时heap dump中并不显示每个对象的stack trace。想要看到stack trace，在点击 <strong>Dump Java heap</strong> 前必须开始<a target="_blank" rel="noopener" href="https://developer.android.com/studio/profile/memory-profiler.html#record-allocations">recording memory allocations</a>。只有这样才能在 <strong>Instance View</strong> 中选择实例看到 <strong>Reference</strong> 和 <strong>Call Stack</strong> 标签，如下图。但有可能某些对象在你开始recording allcations之前创建，所以这些对象并没有call stack。(由于要求执行allcation recording才能看到stack trace，所以Android 8.0上目前无法看到heap dump中的stack trace)</p>
 </blockquote>
-<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-dump-stacktrace_2x.png" alt></p>
+<p><img src="https://developer.android.com/studio/images/profile/memory-profiler-dump-stacktrace_2x.png"></p>
 <p>按以下步骤检查heap：</p>
 <ol>
 <li>浏览列表找到大小反常的对象，它们可能存在泄漏。点 <strong>Class Name</strong> 可以对数据按字母表顺序排序。 然后点击类列， <strong>Instance View</strong> 面板显示在右边，显示该类的每个实例</li>
@@ -368,8 +408,9 @@
 </ul>
 <h2 id="heap-dump保存为HPROF"><a href="#heap-dump保存为HPROF" class="headerlink" title="heap dump保存为HPROF"></a>heap dump保存为HPROF</h2><p>一旦导出heap，这些数据仅在Memory Profiler运行时才可见。当你退出Memory Profiler，heap dump会丢失。如何想保存该数据以便以后查看，可使用 <strong>Export capture to file</strong> 将其导出为HPROF文件。请确保以<code>.hprof</code>作为文件后缀名。</p>
 <p>可将<code>.hprof</code>文件拖放到Android Studio来打开。</p>
-<p>如果使用其他HPROF分析工具，比如<a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jhat.html" target="_blank" rel="noopener">jhat</a>，你需要把HPROF文件从Android格式转换为标准的Java SE HPROF格式。使用 <code>android_sdk/platform-tools</code>目录下的<code>hprof-conv</code>工具进行转换。用法如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hprof-conv heap-original.hprof heap-converted.hprof</span><br></pre></td></tr></table></figure>
+<p>如果使用其他HPROF分析工具，比如<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jhat.html">jhat</a>，你需要把HPROF文件从Android格式转换为标准的Java SE HPROF格式。使用 <code>android_sdk/platform-tools</code>目录下的<code>hprof-conv</code>工具进行转换。用法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hprof-conv heap-original.hprof heap-converted.hprof</span><br></pre></td></tr></table></figure>
+
 <h2 id="内存分析技巧"><a href="#内存分析技巧" class="headerlink" title="内存分析技巧"></a>内存分析技巧</h2><p>暴露内存泄漏问题的一个办法时让应用运行一段时间然后再检查内存。泄漏可能发生在heap的前一部分(Leaks might trickle up to the top of the allocations in the heap.)。当泄漏越小，需要运行应用以发现问题的时间越长。</p>
 <p>可以使用下面的方法触发内存泄漏：</p>
 <ul>
@@ -377,7 +418,7 @@
 <li>在不同的activity状态下，在当前应用和别的应用之前进行切换。比如，回到Home然后又返回应用</li>
 </ul>
 <blockquote>
-<p>Tip: 也可以使用<a href="https://developer.android.com/tools/help/monkeyrunner_concepts.html" target="_blank" rel="noopener">monkeyrunner</a>完成上述操作。</p>
+<p>Tip: 也可以使用<a target="_blank" rel="noopener" href="https://developer.android.com/tools/help/monkeyrunner_concepts.html">monkeyrunner</a>完成上述操作。</p>
 </blockquote>
 <!--
 ===
@@ -391,130 +432,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/01/10/manage-your-memory/" rel="prev" title="(译)Manage Your App's Memory">
-      <i class="fa fa-chevron-left"></i> (译)Manage Your App's Memory
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/01/11/profile-gpu/" rel="next" title="(译)Analyze with Profile GPU Rendering">
-      (译)Analyze with Profile GPU Rendering <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/01/10/manage-your-memory/" rel="prev" title="(译)Manage Your App's Memory">
+                  <i class="fa fa-chevron-left"></i> (译)Manage Your App's Memory
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/01/11/profile-gpu/" rel="next" title="(译)Analyze with Profile GPU Rendering">
+                  (译)Analyze with Profile GPU Rendering <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要分析内存"><span class="nav-number">1.</span> <span class="nav-text">为什么要分析内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-Profiler简介"><span class="nav-number">2.</span> <span class="nav-text">Memory Profiler简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存是如何统计的"><span class="nav-number">3.</span> <span class="nav-text">内存是如何统计的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看内存分配"><span class="nav-number">4.</span> <span class="nav-text">查看内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#导出heap"><span class="nav-number">5.</span> <span class="nav-text">导出heap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#heap-dump保存为HPROF"><span class="nav-number">6.</span> <span class="nav-text">heap dump保存为HPROF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存分析技巧"><span class="nav-number">7.</span> <span class="nav-text">内存分析技巧</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -522,29 +478,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -553,22 +501,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/01/10/memory-profile-1/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

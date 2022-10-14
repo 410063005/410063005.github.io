@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,97 +14,69 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="[TOC] 回顾一下 Transform 相关的知识。">
-<meta name="keywords" content="Gradle">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="[TOC] 回顾一下 Transform 相关的知识。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android Gradle Transform 简介">
 <meta property="og:url" content="http://www.sunmoonblog.com/2022/03/19/android-gradle-transform/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="[TOC] 回顾一下 Transform 相关的知识。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476630335052.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476732191547.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476911150553.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476917603072.jpg">
-<meta property="og:updated_time" content="2022-03-19T12:39:24.616Z">
+<meta property="article:published_time" content="2022-03-19T03:58:23.000Z">
+<meta property="article:modified_time" content="2022-03-19T12:39:24.616Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Gradle">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android Gradle Transform 简介">
-<meta name="twitter:description" content="[TOC] 回顾一下 Transform 相关的知识。">
 <meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476630335052.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2022/03/19/android-gradle-transform/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Android Gradle Transform 简介 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2022/03/19/android-gradle-transform/","path":"2022/03/19/android-gradle-transform/","title":"Android Gradle Transform 简介"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Android Gradle Transform 简介 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -117,19 +90,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -140,23 +102,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -164,55 +125,136 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Transform"><span class="nav-number">1.</span> <span class="nav-text">什么是 Transform</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-App%E6%9E%84%E5%BB%BA%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">Android App构建流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Transform-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">Transform 的作用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Transform-%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">2.</span> <span class="nav-text">使用 Transform 的场景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%B8%80-Instant-run"><span class="nav-number">2.1.</span> <span class="nav-text">示例一 - Instant run</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BA%8C-Network-Profiler"><span class="nav-number">2.2.</span> <span class="nav-text">示例二 - Network Profiler</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transform-API-%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.</span> <span class="nav-text">Transform API 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.1.</span> <span class="nav-text">输入类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E8%8C%83%E5%9B%B4"><span class="nav-number">3.2.</span> <span class="nav-text">输入范围</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89-Transform"><span class="nav-number">4.</span> <span class="nav-text">如何自定义 Transform</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FAQ"><span class="nav-number">5.</span> <span class="nav-text">FAQ</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2022/03/19/android-gradle-transform/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Android Gradle Transform 简介 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Android Gradle Transform 简介
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
 
-              <time title="创建时间：2022-03-19 11:58:23 / 修改时间：20:39:24" itemprop="dateCreated datePublished" datetime="2022-03-19T11:58:23+08:00">2022-03-19</time>
-            </span>
+      <time title="创建时间：2022-03-19 11:58:23 / 修改时间：20:39:24" itemprop="dateCreated datePublished" datetime="2022-03-19T11:58:23+08:00">2022-03-19</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2022/03/19/android-gradle-transform/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2022/03/19/android-gradle-transform/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -221,31 +263,31 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>[TOC]</p>
-<p>回顾一下 Transform 相关的知识。<br><a id="more"></a></p>
-<h1 id="什么是-Transform"><a href="#什么是-Transform" class="headerlink" title="什么是 Transform"></a>什么是 Transform</h1><h2 id="Android-App构建流程"><a href="#Android-App构建流程" class="headerlink" title="Android App构建流程"></a>Android App构建流程</h2><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476630335052.jpg" alt></p>
-<p>上图来自 <a href="https://developer.android.google.cn/studio/build/" target="_blank" rel="noopener">Android Developers</a>。不过上图缺失一些细节，我们稍作展开。</p>
+<p>回顾一下 Transform 相关的知识。</p>
+<span id="more"></span>
+
+<h1 id="什么是-Transform"><a href="#什么是-Transform" class="headerlink" title="什么是 Transform"></a>什么是 Transform</h1><h2 id="Android-App构建流程"><a href="#Android-App构建流程" class="headerlink" title="Android App构建流程"></a>Android App构建流程</h2><p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476630335052.jpg"></p>
+<p>上图来自 <a target="_blank" rel="noopener" href="https://developer.android.google.cn/studio/build/">Android Developers</a>。不过上图缺失一些细节，我们稍作展开。</p>
 <p>我们知道，Android应用是Java或Kotlin语言写的。简单起见，我们只考虑Java。以Java语言编写的 <strong>Source Code</strong>，经Java编译器编译成 Java字节码(<code>.class</code>文件)。Java编译器的编译产物是<code>.class</code>，那么上图的中dex文件是怎么来的呢？</p>
 <p>Dex之于Android，类似于jar之于Java。dex中保存的也是字节码，不过需要说明的是这里的字节码并非标准的Java字节码，而是专门<strong>为Android平台设计的字节码</strong>。</p>
 <p>所以完整的编译流程是这样的：multiple .java files –&gt; multiple .classes files –&gt; a single .dex file</p>
 <p>更多细节可以参考以下资料：</p>
 <ul>
-<li><a href="https://stackoverflow.com/questions/14230573/role-of-classes-dex-file-in-an-apk-file" target="_blank" rel="noopener">Role of classes.dex file in an apk file</a></li>
-<li><a href="https://stackoverflow.com/questions/8210173/what-is-the-difference-between-class-and-dex-files" target="_blank" rel="noopener">java - What is the difference between .class and .dex files?</a></li>
-<li><a href="https://source.android.com/devices/tech/dalvik/dex-format" target="_blank" rel="noopener">Dex File Format</a> v.s. <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html" target="_blank" rel="noopener">Class File Format specification</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/14230573/role-of-classes-dex-file-in-an-apk-file">Role of classes.dex file in an apk file</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/8210173/what-is-the-difference-between-class-and-dex-files">java - What is the difference between .class and .dex files?</a></li>
+<li><a target="_blank" rel="noopener" href="https://source.android.com/devices/tech/dalvik/dex-format">Dex File Format</a> v.s. <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html">Class File Format specification</a></li>
 </ul>
 <h2 id="Transform-的作用"><a href="#Transform-的作用" class="headerlink" title="Transform 的作用"></a>Transform 的作用</h2><p>从Android App构建流程可以看到，构建过程中需要对代码、资源文件和AIDL做各种处理。于是，Android Gradle插件提供了 Transform 以及相应的API。</p>
-<p>以下内容翻译自 <a href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/Transform.html" target="_blank" rel="noopener">Transform (Android Gradle API)</a>。</p>
+<p>以下内容翻译自 <a target="_blank" rel="noopener" href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/Transform.html">Transform (Android Gradle API)</a>。</p>
 <blockquote>
 <p>Transform 类代表构建过程中的一个转换操作，用于处理中间构建产物。对于每个新增的 transform，都会创建一个新的 task。添加新的 transform 时需要处理好task之间的依赖。transfrom 的输出由其他 transform 消费，而相关的 task 则自动关联到一起。</p>
 <p>Transform 需要明确它作用于哪个 (content,scope)，以及它会生成什么 (content)</p>
-<p>Transform 接收一个 <a href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/TransformInput.html" target="_blank" rel="noopener">TransformInput</a> 集合作为输入，它由 <a href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/JarInput.html" target="_blank" rel="noopener">JarInput</a> 和 <a href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/DirectoryInput.html" target="_blank" rel="noopener">DirectoryInput</a> 组成。两者都需要提供关于特定内容的 <a href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/QualifiedContent.Scope.html" target="_blank" rel="noopener">QualifiedContent.Scope</a> 和 <a href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/QualifiedContent.ContentType.html" target="_blank" rel="noopener">QualifiedContent.ContentType</a> 信息。</p>
-<p>Transform 的输出由 <a href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/TransformOutputProvider.html" target="_blank" rel="noopener">TransformOutputProvider</a> 处理，它可以创建新的自包含的内容，这些内容有自己的 Scopes 和 Content Types。TransformInput/Output 处理的内容由 transform 系统管理，其路径不可配置。</p>
-<p>It is best practice to write into as many outputs as Jar/Folder Inputs have been received by the transform. 将所有输入处理后放到同一个输出，会让下游的 transform 无法处理指定的 scopes。(Combining all the inputs into a single output prevents downstream transform from processing limited scopes.)</p>
-<p>虽然可以通过文件名后缀来区分不同的 Content Types，但无法通过文件名后缀来区分 Scopes。因此如果一个 transform 要求某种 Scope，但 Output 中包含的 Scope 种类多于要求的，构建会失败。(While it’s possible to differentiate different Content Types by file extension, it’s not possible to do so for Scopes. Therefore if a transform request a Scope but the only available Output contains more than the requested Scope, the build will fail.)<br>If a transform request a single content type but the only available content includes more than the requested type, the input file/folder will contain all the files of all the types, but the transform should only read, process and output the type(s) it requested.</p>
-<p>另外，transform 还可指定辅助的输入输出目录(secondary inputs/outputs)。上下游的 transform 不处理这个目录，目录中的内容也不局限为 transform 能处理的文件类型，它们可以是任意内容。由每个 transform 来管理这些文件，并且保证在 transform 被调用前生成文件内容. This is done through additional parameters when register the transform.<br>These secondary inputs/outputs allow a transform to read but not process any content. This can be achieved by having getScopes() return an empty list and use getReferencedScopes() to indicate what to read instead.</p>
+<p>Transform 接收一个 <a target="_blank" rel="noopener" href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/TransformInput.html">TransformInput</a> 集合作为输入，它由 <a target="_blank" rel="noopener" href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/JarInput.html">JarInput</a> 和 <a target="_blank" rel="noopener" href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/DirectoryInput.html">DirectoryInput</a> 组成。两者都需要提供关于特定内容的 <a target="_blank" rel="noopener" href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/QualifiedContent.Scope.html">QualifiedContent.Scope</a> 和 <a target="_blank" rel="noopener" href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/QualifiedContent.ContentType.html">QualifiedContent.ContentType</a> 信息。</p>
+<p>Transform 的输出由 <a target="_blank" rel="noopener" href="https://google.github.io/android-gradle-dsl/javadoc/2.1/com/android/build/api/transform/TransformOutputProvider.html">TransformOutputProvider</a> 处理，它可以创建新的自包含的内容，这些内容有自己的 Scopes 和 Content Types。TransformInput&#x2F;Output 处理的内容由 transform 系统管理，其路径不可配置。</p>
+<p>It is best practice to write into as many outputs as Jar&#x2F;Folder Inputs have been received by the transform. 将所有输入处理后放到同一个输出，会让下游的 transform 无法处理指定的 scopes。(Combining all the inputs into a single output prevents downstream transform from processing limited scopes.)</p>
+<p>虽然可以通过文件名后缀来区分不同的 Content Types，但无法通过文件名后缀来区分 Scopes。因此如果一个 transform 要求某种 Scope，但 Output 中包含的 Scope 种类多于要求的，构建会失败。(While it’s possible to differentiate different Content Types by file extension, it’s not possible to do so for Scopes. Therefore if a transform request a Scope but the only available Output contains more than the requested Scope, the build will fail.)<br>If a transform request a single content type but the only available content includes more than the requested type, the input file&#x2F;folder will contain all the files of all the types, but the transform should only read, process and output the type(s) it requested.</p>
+<p>另外，transform 还可指定辅助的输入输出目录(secondary inputs&#x2F;outputs)。上下游的 transform 不处理这个目录，目录中的内容也不局限为 transform 能处理的文件类型，它们可以是任意内容。由每个 transform 来管理这些文件，并且保证在 transform 被调用前生成文件内容. This is done through additional parameters when register the transform.<br>These secondary inputs&#x2F;outputs allow a transform to read but not process any content. This can be achieved by having getScopes() return an empty list and use getReferencedScopes() to indicate what to read instead.</p>
 </blockquote>
 <p>(太难翻译了!)</p>
 <p>简单来说，</p>
@@ -253,7 +295,7 @@
 <li>Transform API 是由 Android Gradle Plugin 插件提供的，而非 Gradle 官方提供的，</li>
 <li>Transform API 是一套用来修改构建产物的标准API</li>
 </ul>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476732191547.jpg" alt></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476732191547.jpg"></p>
 <p>Android App 打包过程中的代码混淆、desugar等过程，其实都是一个个的 Transform。</p>
 <h1 id="使用-Transform-的场景"><a href="#使用-Transform-的场景" class="headerlink" title="使用 Transform 的场景"></a>使用 Transform 的场景</h1><ul>
 <li>对编译产生的class文件做自定义的处理。</li>
@@ -265,16 +307,19 @@
 </ul>
 <h2 id="示例二-Network-Profiler"><a href="#示例二-Network-Profiler" class="headerlink" title="示例二 - Network Profiler"></a>示例二 - Network Profiler</h2><p>TODO</p>
 <h1 id="Transform-API-介绍"><a href="#Transform-API-介绍" class="headerlink" title="Transform API 介绍"></a>Transform API 介绍</h1><p>自定义的 transform 要继承自 <code>Transform</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Transform</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">getName</span><span class="params">()</span></span>; <span class="comment">// 自定义 Transform的名字</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Set&lt;ContentType&gt; <span class="title">getInputTypes</span><span class="params">()</span></span>; <span class="comment">// 自定义 Transform 的输入类型</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> Set&lt;? <span class="keyword">super</span> Scope&gt; getScopes();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">isIncremental</span><span class="params">()</span></span>; <span class="comment">// 是否支持增量编译</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Transform</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title function_">getName</span><span class="params">()</span>; <span class="comment">// 自定义 Transform的名字</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> Set&lt;ContentType&gt; <span class="title function_">getInputTypes</span><span class="params">()</span>; <span class="comment">// 自定义 Transform 的输入类型</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> Set&lt;? <span class="built_in">super</span> Scope&gt; getScopes();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="type">boolean</span> <span class="title function_">isIncremental</span><span class="params">()</span>; <span class="comment">// 是否支持增量编译</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="输入类型"><a href="#输入类型" class="headerlink" title="输入类型"></a>输入类型</h2><p><code>getInputTypes()</code> 指定 transform 的输入类型。</p>
 <ul>
 <li><code>DefaultContentType</code> 包括 <code>CLASSES</code> 和 <code>RESOURCES</code> 两种类型</li>
 <li><code>ExtendedContentType</code> 包括 <code>DEX</code>、<code>NATIVE_LIBS</code>、<code>CLASSES_ENHANCED</code>、<code>DATA_BINDING</code> 等几种类型。</li>
 </ul>
 <h2 id="输入范围"><a href="#输入范围" class="headerlink" title="输入范围"></a>输入范围</h2><p><code>getScopes()</code> 指定 transform 的输入范围。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Scope implements ScopeType &#123;</span><br><span class="line">    <span class="comment">/** Only the project (module) content */</span></span><br><span class="line">    PROJECT(<span class="number">0x01</span>),</span><br><span class="line">    <span class="comment">/** Only the sub-projects (other modules) */</span></span><br><span class="line">    SUB_PROJECTS(<span class="number">0x04</span>),</span><br><span class="line">    <span class="comment">/** Only the external libraries */</span></span><br><span class="line">    EXTERNAL_LIBRARIES(<span class="number">0x10</span>),</span><br><span class="line">    <span class="comment">/** Code that is being tested by the current variant, including dependencies */</span></span><br><span class="line">    TESTED_CODE(<span class="number">0x20</span>),</span><br><span class="line">    <span class="comment">/** Local or remote dependencies that are provided-only */</span></span><br><span class="line">    PROVIDED_ONLY(<span class="number">0x40</span>),</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Scope</span> <span class="keyword">implements</span> <span class="title class_">ScopeType</span> &#123;</span><br><span class="line">    <span class="comment">/** Only the project (module) content */</span></span><br><span class="line">    PROJECT(<span class="number">0x01</span>),</span><br><span class="line">    <span class="comment">/** Only the sub-projects (other modules) */</span></span><br><span class="line">    SUB_PROJECTS(<span class="number">0x04</span>),</span><br><span class="line">    <span class="comment">/** Only the external libraries */</span></span><br><span class="line">    EXTERNAL_LIBRARIES(<span class="number">0x10</span>),</span><br><span class="line">    <span class="comment">/** Code that is being tested by the current variant, including dependencies */</span></span><br><span class="line">    TESTED_CODE(<span class="number">0x20</span>),</span><br><span class="line">    <span class="comment">/** Local or remote dependencies that are provided-only */</span></span><br><span class="line">    PROVIDED_ONLY(<span class="number">0x40</span>),</span><br></pre></td></tr></table></figure>
+
 <p>注意 <code>getScopes()</code> 和 <code>getReferencedScopes()</code> 的区别。前者用于表示将要消费的范围，后者表示引用的范围(可查看内容、但并不消费)。所以，如果一个Transform不想处理任何输入，只是想查看输入的内容,那么只需在getScopes()返回一个空集合，在getReferencedScopes()返回想要接收的范围。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the scope(s) of the Transform. This indicates which scopes the transform consumes.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@NonNull</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> Set&lt;? <span class="keyword">super</span> Scope&gt; getScopes();</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the referenced scope(s) for the Transform. These scopes are not consumed by</span></span><br><span class="line"><span class="comment"> * the Transform. They are provided as inputs, but are still available as inputs for</span></span><br><span class="line"><span class="comment"> * other Transforms to consume.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;The default implementation returns an empty Set.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@NonNull</span></span><br><span class="line"><span class="keyword">public</span> Set&lt;? <span class="keyword">super</span> Scope&gt; getReferencedScopes() &#123;</span><br><span class="line">    <span class="keyword">return</span> ImmutableSet.of();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the scope(s) of the Transform. This indicates which scopes the transform consumes.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@NonNull</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> Set&lt;? <span class="built_in">super</span> Scope&gt; getScopes();</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the referenced scope(s) for the Transform. These scopes are not consumed by</span></span><br><span class="line"><span class="comment"> * the Transform. They are provided as inputs, but are still available as inputs for</span></span><br><span class="line"><span class="comment"> * other Transforms to consume.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;The default implementation returns an empty Set.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@NonNull</span></span><br><span class="line"><span class="keyword">public</span> Set&lt;? <span class="built_in">super</span> Scope&gt; getReferencedScopes() &#123;</span><br><span class="line">    <span class="keyword">return</span> ImmutableSet.of();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="如何自定义-Transform"><a href="#如何自定义-Transform" class="headerlink" title="如何自定义 Transform"></a>如何自定义 Transform</h1><p>时序图如下：<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476911150553.jpg" alt="-w809"></p>
 <p>类图如下：<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/03/19/16476917603072.jpg" alt="-w824"></p>
 <h1 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h1><ul>
@@ -282,7 +327,7 @@
 <li>A: ASM并不能直接运行于Android系统。ASM主要用于Android应用构建流程中修改Java字节码(Transform)</li>
 </ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://www.jianshu.com/p/031b62d02607" target="_blank" rel="noopener">Gradle Transform API 的基本使用 - 简书</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/031b62d02607">Gradle Transform API 的基本使用 - 简书</a></li>
 </ul>
 
     </div>
@@ -291,130 +336,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/gradle/" rel="tag"># Gradle</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2022/03/18/gradle-best-practices/" rel="prev" title="(译) Organizing Gradle Projects">
-      <i class="fa fa-chevron-left"></i> (译) Organizing Gradle Projects
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/03/19/network-monitor-roadmap/" rel="next" title="移动端网络监控小结">
-      移动端网络监控小结 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/03/18/gradle-best-practices/" rel="prev" title="(译) Organizing Gradle Projects">
+                  <i class="fa fa-chevron-left"></i> (译) Organizing Gradle Projects
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/03/19/network-monitor-roadmap/" rel="next" title="移动端网络监控小结">
+                  移动端网络监控小结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是-Transform"><span class="nav-number">1.</span> <span class="nav-text">什么是 Transform</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-App构建流程"><span class="nav-number">1.1.</span> <span class="nav-text">Android App构建流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Transform-的作用"><span class="nav-number">1.2.</span> <span class="nav-text">Transform 的作用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用-Transform-的场景"><span class="nav-number">2.</span> <span class="nav-text">使用 Transform 的场景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#示例一-Instant-run"><span class="nav-number">2.1.</span> <span class="nav-text">示例一 - Instant run</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#示例二-Network-Profiler"><span class="nav-number">2.2.</span> <span class="nav-text">示例二 - Network Profiler</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transform-API-介绍"><span class="nav-number">3.</span> <span class="nav-text">Transform API 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#输入类型"><span class="nav-number">3.1.</span> <span class="nav-text">输入类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输入范围"><span class="nav-number">3.2.</span> <span class="nav-text">输入范围</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何自定义-Transform"><span class="nav-number">4.</span> <span class="nav-text">如何自定义 Transform</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FAQ"><span class="nav-number">5.</span> <span class="nav-text">FAQ</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -422,29 +382,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -453,22 +405,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2022/03/19/android-gradle-transform/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

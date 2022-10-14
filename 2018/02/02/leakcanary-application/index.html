@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,97 +14,69 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="LeakCanary的傻瓜式配置在实际项目中其实是不够用的，本文讨论了如何对LeakCanary进行自定义配置以便更好应用。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="LeakCanary的傻瓜式配置在实际项目中其实是不够用的，本文讨论了如何对LeakCanary进行自定义配置以便更好应用。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LeakCanary实战">
 <meta property="og:url" content="http://www.sunmoonblog.com/2018/02/02/leakcanary-application/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="LeakCanary的傻瓜式配置在实际项目中其实是不够用的，本文讨论了如何对LeakCanary进行自定义配置以便更好应用。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/1517477051927.webp">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/1517369532736.webp">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/1517369491050.webp">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/1517556169211.webp">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.865Z">
+<meta property="article:published_time" content="2018-02-02T07:56:46.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.865Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="LeakCanary实战">
-<meta name="twitter:description" content="LeakCanary的傻瓜式配置在实际项目中其实是不够用的，本文讨论了如何对LeakCanary进行自定义配置以便更好应用。">
 <meta name="twitter:image" content="http://www.sunmoonblog.com/images/1517477051927.webp">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2018/02/02/leakcanary-application/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>LeakCanary实战 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2018/02/02/leakcanary-application/","path":"2018/02/02/leakcanary-application/","title":"LeakCanary实战"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>LeakCanary实战 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -117,19 +90,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -140,23 +102,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -164,61 +125,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RefWatcher%E5%92%8CHeapDumper"><span class="nav-number">1.</span> <span class="nav-text">RefWatcher和HeapDumper</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#buildType%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">buildType问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Fragment%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">Fragment内存泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80"><span class="nav-number">2.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C"><span class="nav-number">2.2.</span> <span class="nav-text">方法二</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%89"><span class="nav-number">2.3.</span> <span class="nav-text">方法三</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">2.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Heap%E4%B8%8A%E4%BC%A0"><span class="nav-number">3.</span> <span class="nav-text">Heap上传</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HeapDump%E6%96%87%E4%BB%B6"><span class="nav-number">3.1.</span> <span class="nav-text">HeapDump文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E5%88%B0COS"><span class="nav-number">3.2.</span> <span class="nav-text">上传到COS</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/02/02/leakcanary-application/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="LeakCanary实战 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           LeakCanary实战
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-02-02 15:56:46" itemprop="dateCreated datePublished" datetime="2018-02-02T15:56:46+08:00">2018-02-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2018-02-02 15:56:46" itemprop="dateCreated datePublished" datetime="2018-02-02T15:56:46+08:00">2018-02-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2018/02/02/leakcanary-application/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2018/02/02/leakcanary-application/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -227,14 +269,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>LeakCanary的傻瓜式配置在实际项目中其实是不够用的，本文讨论了如何对LeakCanary进行自定义配置以便更好应用。</p>
+<span id="more"></span>
 
-      
-        <p>LeakCanary的傻瓜式配置在实际项目中其实是不够用的，本文讨论了如何对LeakCanary进行自定义配置以便更好应用。<br><a id="more"></a></p>
-<p>如何使用LeakCanary呢？按照<a href="https://github.com/square/leakcanary" target="_blank" rel="noopener">官网</a>说明简单配置即可。</p>
+<p>如何使用LeakCanary呢？按照<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary">官网</a>说明简单配置即可。</p>
 <p>在<code>build.gradle</code>中添加如下依赖：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'</span><br><span class="line">  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  debugCompile &#x27;com.squareup.leakcanary:leakcanary-android:1.5.4&#x27;</span><br><span class="line">  releaseCompile &#x27;com.squareup.leakcanary:leakcanary-android-no-op:1.5.4&#x27;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>在<code>Application</code>类中添加代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate();</span><br><span class="line">    <span class="keyword">if</span> (LeakCanary.isInAnalyzerProcess(<span class="keyword">this</span>)) &#123;</span><br><span class="line">      <span class="comment">// This process is dedicated to LeakCanary for heap analysis.</span></span><br><span class="line">      <span class="comment">// You should not init your app in this process.</span></span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    LeakCanary.install(<span class="keyword">this</span>);</span><br><span class="line">    <span class="comment">// Normal app init code...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExampleApplication</span> <span class="keyword">extends</span> <span class="title class_">Application</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>.onCreate();</span><br><span class="line">    <span class="keyword">if</span> (LeakCanary.isInAnalyzerProcess(<span class="built_in">this</span>)) &#123;</span><br><span class="line">      <span class="comment">// This process is dedicated to LeakCanary for heap analysis.</span></span><br><span class="line">      <span class="comment">// You should not init your app in this process.</span></span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    LeakCanary.install(<span class="built_in">this</span>);</span><br><span class="line">    <span class="comment">// Normal app init code...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>配置好之后我们就可以检测内存泄漏了。非常好用，完全傻瓜式的。很快就找到了不少内存泄漏，得意地向小伙伴秀一下。</p>
 <p>可以就此打住吗？可以啊，为什么不可以。(之前就是停留在这个层面，于是被问到LeakCanary原理时一脸懵逼)</p>
 <p>有兴趣往下看的话，先问自己几个问题：</p>
@@ -244,42 +288,51 @@
 <li>LeakCanary检查结果可以上报到后台吗？实际中往往有比内存泄漏优先级更高的任务要处理，我们最好能保存结果供后续分析</li>
 </ul>
 <p>上面问题的答案是Fragment也会泄漏，所有对象都可能泄漏。Activity和Fragment的生命周期非常明确，所以我们通常是检查它们存在内存泄漏。而其他对象，只要有明确的生命周期，也是可以检查是否有内存泄漏的。</p>
-<p>具体如何做呢？对LeakCanary进行自定义配置即可。<a href="https://github.com/square/leakcanary/wiki/Customizing-LeakCanary" target="_blank" rel="noopener">官网</a>有提供方案，接下来我们尝试将这些方式整合到实际项目中。</p>
-<p>注：本文关注LeakCanary的应用，所以略过了LeakCanary的很多细节。更多细节请参考<a href="https://github.com/square/leakcanary/wiki/" target="_blank" rel="noopener">LeakCanary wiki</a></p>
-<p>注：本文中提供的方案参考整理自<a href="https://github.com/square/leakcanary/wiki/" target="_blank" rel="noopener">LeakCanary wiki</a>，我的工作是如何将这些方案整合并应用于实际工程项目。</p>
-<h1 id="RefWatcher和HeapDumper"><a href="#RefWatcher和HeapDumper" class="headerlink" title="RefWatcher和HeapDumper"></a>RefWatcher和HeapDumper</h1><p>要实现LeakCanary开关功能，先要看看<a href="https://github.com/square/leakcanary/blob/master/leakcanary-watcher/src/main/java/com/squareup/leakcanary/RefWatcher.java" target="_blank" rel="noopener">RefWatcher</a>和<a href="https://github.com/square/leakcanary/blob/master/leakcanary-watcher/src/main/java/com/squareup/leakcanary/HeapDumper.java" target="_blank" rel="noopener">HeapDumper</a>。</p>
-<p><a href="https://github.com/square/leakcanary/blob/master/leakcanary-watcher/src/main/java/com/squareup/leakcanary/RefWatcher.java" target="_blank" rel="noopener">RefWatcher</a>是LeakCanary的核心类。见名知义，它用于监视对象引用，当它发现某个弱引用指向的对象应当是只能由弱引用可达而事实并非如此，将触发<a href="https://github.com/square/leakcanary/blob/master/leakcanary-watcher/src/main/java/com/squareup/leakcanary/HeapDumper.java" target="_blank" rel="noopener">HeapDumper</a>开始工作。 (When the link RefWatcher detects that a reference might not be weakly reachable when it should, it triggers the HeapDumper 原文是这样的，我翻译得很绕口。简单点说就是某个对象应该是弱引用的，但由于某个强引用导致它不能回收，就出现我们所说的内存泄漏啦)</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HeapDumper</span> </span>&#123;</span><br><span class="line">    HeapDumper NONE = <span class="keyword">new</span> HeapDumper() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> File <span class="title">dumpHeap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> RETRY_LATER;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    File RETRY_LATER = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">File <span class="title">dumpHeap</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体如何做呢？对LeakCanary进行自定义配置即可。<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/wiki/Customizing-LeakCanary">官网</a>有提供方案，接下来我们尝试将这些方式整合到实际项目中。</p>
+<p>注：本文关注LeakCanary的应用，所以略过了LeakCanary的很多细节。更多细节请参考<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/wiki/">LeakCanary wiki</a></p>
+<p>注：本文中提供的方案参考整理自<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/wiki/">LeakCanary wiki</a>，我的工作是如何将这些方案整合并应用于实际工程项目。</p>
+<h1 id="RefWatcher和HeapDumper"><a href="#RefWatcher和HeapDumper" class="headerlink" title="RefWatcher和HeapDumper"></a>RefWatcher和HeapDumper</h1><p>要实现LeakCanary开关功能，先要看看<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/blob/master/leakcanary-watcher/src/main/java/com/squareup/leakcanary/RefWatcher.java">RefWatcher</a>和<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/blob/master/leakcanary-watcher/src/main/java/com/squareup/leakcanary/HeapDumper.java">HeapDumper</a>。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/blob/master/leakcanary-watcher/src/main/java/com/squareup/leakcanary/RefWatcher.java">RefWatcher</a>是LeakCanary的核心类。见名知义，它用于监视对象引用，当它发现某个弱引用指向的对象应当是只能由弱引用可达而事实并非如此，将触发<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/blob/master/leakcanary-watcher/src/main/java/com/squareup/leakcanary/HeapDumper.java">HeapDumper</a>开始工作。 (When the link RefWatcher detects that a reference might not be weakly reachable when it should, it triggers the HeapDumper 原文是这样的，我翻译得很绕口。简单点说就是某个对象应该是弱引用的，但由于某个强引用导致它不能回收，就出现我们所说的内存泄漏啦)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">HeapDumper</span> &#123;</span><br><span class="line">    <span class="type">HeapDumper</span> <span class="variable">NONE</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HeapDumper</span>() &#123;</span><br><span class="line">        <span class="keyword">public</span> File <span class="title function_">dumpHeap</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> RETRY_LATER;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="type">File</span> <span class="variable">RETRY_LATER</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    File <span class="title function_">dumpHeap</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><code>HeapDumper</code>接口仅有<code>dumpHeap()</code>方法，我们实现自己的 <strong>可开关</strong> HeapDumper 如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TogglableHeapDumper</span> <span class="keyword">implements</span> <span class="title">HeapDumper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> HeapDumper defaultDumper;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> enabled = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TogglableHeapDumper</span><span class="params">(HeapDumper defaultDumper)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.defaultDumper = defaultDumper;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">toggle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        enabled = !enabled;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEnabled</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> enabled;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> File <span class="title">dumpHeap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> enabled? defaultDumper.dumpHeap() : HeapDumper.RETRY_LATER;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TogglableHeapDumper</span> <span class="keyword">implements</span> <span class="title class_">HeapDumper</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> HeapDumper defaultDumper;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">enabled</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">TogglableHeapDumper</span><span class="params">(HeapDumper defaultDumper)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.defaultDumper = defaultDumper;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">toggle</span><span class="params">()</span> &#123;</span><br><span class="line">        enabled = !enabled;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isEnabled</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> enabled;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">public</span> File <span class="title function_">dumpHeap</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> enabled? defaultDumper.dumpHeap() : HeapDumper.RETRY_LATER;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>然后自定义<code>RefWatcher</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">RefWatcher <span class="title">installLeakCanary</span><span class="params">(Context application)</span> </span>&#123;</span><br><span class="line">    LeakDirectoryProvider leakDirectoryProvider = <span class="keyword">new</span> DefaultLeakDirectoryProvider(application);</span><br><span class="line">    AndroidHeapDumper defaultDumper = <span class="keyword">new</span> AndroidHeapDumper(application, leakDirectoryProvider);</span><br><span class="line">    heapDumper = <span class="keyword">new</span> TogglableHeapDumper(defaultDumper);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Build a customized RefWatcher</span></span><br><span class="line">    <span class="keyword">return</span> LeakCanary.refWatcher(application)</span><br><span class="line">            .heapDumper(heapDumper)</span><br><span class="line">            .buildAndInstall();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">RefWatcher <span class="title function_">installLeakCanary</span><span class="params">(Context application)</span> &#123;</span><br><span class="line">    <span class="type">LeakDirectoryProvider</span> <span class="variable">leakDirectoryProvider</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultLeakDirectoryProvider</span>(application);</span><br><span class="line">    <span class="type">AndroidHeapDumper</span> <span class="variable">defaultDumper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AndroidHeapDumper</span>(application, leakDirectoryProvider);</span><br><span class="line">    heapDumper = <span class="keyword">new</span> <span class="title class_">TogglableHeapDumper</span>(defaultDumper);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Build a customized RefWatcher</span></span><br><span class="line">    <span class="keyword">return</span> LeakCanary.refWatcher(application)</span><br><span class="line">            .heapDumper(heapDumper)</span><br><span class="line">            .buildAndInstall();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>App中添加开关入口控制<code>TogglableHeapDumper</code>的开启状态即可。</p>
 <h2 id="buildType问题"><a href="#buildType问题" class="headerlink" title="buildType问题"></a>buildType问题</h2><p>Gradle打包时分不同的buildType，缺省包括<code>debug</code>和<code>release</code>。</p>
-<p>实际工程中可能会遇到<code>release</code>包找不到LeakCanary中某些类而无法编译的问题。这是正常的，因为<code>release</code>包依赖的是<code>leakcanary-android-no-op</code>，<code>leakcanary-android-no-op</code>中只有<code>RefWatcher</code>和<code>LeakCanary</code>两个空类，并不包含那些可以用于自定义<code>RefWatcher</code>和<code>HeapDumper</code>的辅助类，所以我们需要通过gradle的build type特性解决这个问题。可以参考<a href="https://github.com/square/leakcanary/wiki/Customizing-LeakCanary#using-the-no-op-dependency" target="_blank" rel="noopener">官网</a>。本文提供基于同一思路采用如下方式实现。</p>
+<p>实际工程中可能会遇到<code>release</code>包找不到LeakCanary中某些类而无法编译的问题。这是正常的，因为<code>release</code>包依赖的是<code>leakcanary-android-no-op</code>，<code>leakcanary-android-no-op</code>中只有<code>RefWatcher</code>和<code>LeakCanary</code>两个空类，并不包含那些可以用于自定义<code>RefWatcher</code>和<code>HeapDumper</code>的辅助类，所以我们需要通过gradle的build type特性解决这个问题。可以参考<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/wiki/Customizing-LeakCanary#using-the-no-op-dependency">官网</a>。本文提供基于同一思路采用如下方式实现。</p>
 <p>注意到<code>build.gradle</code>中有这样几行注释：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    sourceSets &#123;</span><br><span class="line">        // Move the build types to build-types/&lt;type&gt;</span><br><span class="line">        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...</span><br><span class="line">        // This moves them out of them default location under src/&lt;type&gt;/... which would</span><br><span class="line">        // conflict with src/ being used by the main source set.</span><br><span class="line">        // Adding new build types or product flavors should be accompanied</span><br><span class="line">        // by a similar customization.</span><br><span class="line">        debug.setRoot(&apos;build-types/debug&apos;)</span><br><span class="line">        release.setRoot(&apos;build-types/release&apos;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    sourceSets &#123;</span><br><span class="line">        // Move the build types to build-types/&lt;type&gt;</span><br><span class="line">        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...</span><br><span class="line">        // This moves them out of them default location under src/&lt;type&gt;/... which would</span><br><span class="line">        // conflict with src/ being used by the main source set.</span><br><span class="line">        // Adding new build types or product flavors should be accompanied</span><br><span class="line">        // by a similar customization.</span><br><span class="line">        debug.setRoot(&#x27;build-types/debug&#x27;)</span><br><span class="line">        release.setRoot(&#x27;build-types/release&#x27;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>所以我们为<code>debug</code>和<code>release</code>分别封装不同的<code>LeakCanaryWrapper</code>即可。</p>
-<p><img src="/images/1517477051927.webp" alt></p>
+<p><img src="/images/1517477051927.webp"></p>
 <p>debug版本的<code>LeakCanaryWrapper</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LeakCanaryWrapper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RefWatcher <span class="title">installLeakCanary</span><span class="params">(Application application)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Build a customized RefWatcher</span></span><br><span class="line">        RefWatcher refWatcher = LeakCanary.refWatcher(application)</span><br><span class="line">                .watchDelay(<span class="number">10</span>, TimeUnit.SECONDS)</span><br><span class="line">                .buildAndInstall();</span><br><span class="line">        <span class="keyword">return</span> refWatcher;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LeakCanaryWrapper</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> RefWatcher <span class="title function_">installLeakCanary</span><span class="params">(Application application)</span> &#123;</span><br><span class="line">        <span class="comment">// Build a customized RefWatcher</span></span><br><span class="line">        <span class="type">RefWatcher</span> <span class="variable">refWatcher</span> <span class="operator">=</span> LeakCanary.refWatcher(application)</span><br><span class="line">                .watchDelay(<span class="number">10</span>, TimeUnit.SECONDS)</span><br><span class="line">                .buildAndInstall();</span><br><span class="line">        <span class="keyword">return</span> refWatcher;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>release版本的<code>LeakCanaryWrapper</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LeakCanaryWrapper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RefWatcher <span class="title">installLeakCanary</span><span class="params">(Application application)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> RefWatcher.DISABLED;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上述代码参考自<a href="https://github.com/square/leakcanary/wiki/Customizing-LeakCanary" target="_blank" rel="noopener">官网</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LeakCanaryWrapper</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> RefWatcher <span class="title function_">installLeakCanary</span><span class="params">(Application application)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> RefWatcher.DISABLED;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码参考自<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/wiki/Customizing-LeakCanary">官网</a></p>
 <h1 id="Fragment内存泄漏"><a href="#Fragment内存泄漏" class="headerlink" title="Fragment内存泄漏"></a>Fragment内存泄漏</h1><p>Fragment同样也会内存泄漏。为什么LeakCanary可以自动检测Activity的内存泄漏却没有自动检查Fragment内存泄漏？部分原因在于，Fragment跟Activity关联，如果Fragment出现泄漏，最终一定会导致Activity泄漏。所以某种程度上，我们只需要检测Activity的泄漏即可。</p>
-<p>但如果想自动检查Fragment内存泄漏，该怎么做？我们先来看看LeakCanary是如何实现自动检测Activity的内存泄漏的。关键在于<a href="https://github.com/square/leakcanary/blob/master/leakcanary-android/src/main/java/com/squareup/leakcanary/ActivityRefWatcher.java#L80" target="_blank" rel="noopener"><code>ActivityRefWatcher.watchActivities()</code></a></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Application.ActivityLifecycleCallbacks lifecycleCallbacks =</span><br><span class="line">    <span class="keyword">new</span> Application.ActivityLifecycleCallbacks() &#123;</span><br><span class="line">      </span><br><span class="line"><span class="comment">// 这里代码有省略</span></span><br><span class="line">      </span><br><span class="line">   <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityDestroyed</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        ActivityRefWatcher.<span class="keyword">this</span>.onActivityDestroyed(activity);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">watchActivities</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Make sure you don't get installed twice.</span></span><br><span class="line">  stopWatchingActivities();</span><br><span class="line">  application.registerActivityLifecycleCallbacks(lifecycleCallbacks);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但如果想自动检查Fragment内存泄漏，该怎么做？我们先来看看LeakCanary是如何实现自动检测Activity的内存泄漏的。关键在于<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/blob/master/leakcanary-android/src/main/java/com/squareup/leakcanary/ActivityRefWatcher.java#L80"><code>ActivityRefWatcher.watchActivities()</code></a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Application.<span class="type">ActivityLifecycleCallbacks</span> <span class="variable">lifecycleCallbacks</span> <span class="operator">=</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Application</span>.ActivityLifecycleCallbacks() &#123;</span><br><span class="line">      </span><br><span class="line"><span class="comment">// 这里代码有省略</span></span><br><span class="line">      </span><br><span class="line">   <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onActivityDestroyed</span><span class="params">(Activity activity)</span> &#123;</span><br><span class="line">        ActivityRefWatcher.<span class="built_in">this</span>.onActivityDestroyed(activity);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">watchActivities</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// Make sure you don&#x27;t get installed twice.</span></span><br><span class="line">  stopWatchingActivities();</span><br><span class="line">  application.registerActivityLifecycleCallbacks(lifecycleCallbacks);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><code>watchActivities()</code>方法给<code>application</code>对象注册了一个用于监听Activity生命的回调接口，可以很方便地监听每一个Activity对象的<code>onDestroyed()</code>回调。这里有一个基本前提就是<code>onDestroyed()</code>回调后的Activity应该是可以GC回收掉的，如果没有，那一定是这个Activity发生泄漏了。</p>
 <p>有没有类似<code>Application.registerActivityLifecycleCallbacks()</code>的方法可以用来实现自动检测Fragment的内存泄漏呢？答案是有的。</p>
-<p><a href="https://developer.android.com/topic/libraries/support-library/rev-archive.html#25-2-0" target="_blank" rel="noopener">Support Library 25.2.0</a>中将<a href="https://developer.android.com/reference/android/support/v4/app/FragmentManager.FragmentLifecycleCallbacks.html" target="_blank" rel="noopener">FragmentManager.FragmentLifecycleCallbacks</a>修改成static类。从25.2.0版本开始，开发者很方便就能使用<code>FragmentLifecycleCallbacks</code>。它的用法如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> RefWatcher refWatcher = MyApplication.getRefWatcher(<span class="keyword">this</span>);</span><br><span class="line">    <span class="comment">// initialization code</span></span><br><span class="line">    getSupportFragmentManager()</span><br><span class="line">            .registerFragmentLifecycleCallbacks(<span class="keyword">new</span> FragmentLifecycleCallbacks() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFragmentDestroyed</span><span class="params">(FragmentManager fm, Fragment f)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">super</span>.onFragmentDestroyed(fm, f);</span><br><span class="line">                    refWatcher.watch(f);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFragmentViewDestroyed</span><span class="params">(FragmentManager fm, Fragment f)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">super</span>.onFragmentViewDestroyed(fm, f);</span><br><span class="line">                    refWatcher.watch(f.getView());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/support-library/rev-archive.html#25-2-0">Support Library 25.2.0</a>中将<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/support/v4/app/FragmentManager.FragmentLifecycleCallbacks.html">FragmentManager.FragmentLifecycleCallbacks</a>修改成static类。从25.2.0版本开始，开发者很方便就能使用<code>FragmentLifecycleCallbacks</code>。它的用法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(Bundle savedInstanceState)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>.onCreate(savedInstanceState);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> <span class="type">RefWatcher</span> <span class="variable">refWatcher</span> <span class="operator">=</span> MyApplication.getRefWatcher(<span class="built_in">this</span>);</span><br><span class="line">    <span class="comment">// initialization code</span></span><br><span class="line">    getSupportFragmentManager()</span><br><span class="line">            .registerFragmentLifecycleCallbacks(<span class="keyword">new</span> <span class="title class_">FragmentLifecycleCallbacks</span>() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onFragmentDestroyed</span><span class="params">(FragmentManager fm, Fragment f)</span> &#123;</span><br><span class="line">                    <span class="built_in">super</span>.onFragmentDestroyed(fm, f);</span><br><span class="line">                    refWatcher.watch(f);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onFragmentViewDestroyed</span><span class="params">(FragmentManager fm, Fragment f)</span> &#123;</span><br><span class="line">                    <span class="built_in">super</span>.onFragmentViewDestroyed(fm, f);</span><br><span class="line">                    refWatcher.watch(f.getView());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>如果提示<code>android.support.v4.app.Fragment is not an enclosing class</code>，请检查你的 SupportLibrary 版本是否低于25.2.0。</p>
-<p><code>Fragment.onDestory()</code>和<code>Fragment.onDestoryView()</code>中分别如何检查内存泄漏可能容易让人混淆。<a href="https://github.com/square/leakcanary/issues/806" target="_blank" rel="noopener">issue 806</a>中提到正确的做法是在<code>onDestroy()</code>中检查<code>Fragment</code>这个对象是否有泄漏，在<code>onDestroyView()</code>中检查<code>Fragment.getView()</code>返回的对象是否有泄漏。</p>
+<p><code>Fragment.onDestory()</code>和<code>Fragment.onDestoryView()</code>中分别如何检查内存泄漏可能容易让人混淆。<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/issues/806">issue 806</a>中提到正确的做法是在<code>onDestroy()</code>中检查<code>Fragment</code>这个对象是否有泄漏，在<code>onDestroyView()</code>中检查<code>Fragment.getView()</code>返回的对象是否有泄漏。</p>
 <p>由于25.2.0及之后的SupportLibrary库才能方便地调用<code>FragmentManager.registerFragmentLifecycleCallbacks()</code>方法，兼容性不好，这应该是LeakCanary官方没有实现<code>FragmentRefWatcher</code>的另一个原因。我们如何检查Fragment是否内存泄漏呢？</p>
-<h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><p>一种容易想到的方法在<a href="https://github.com/square/leakcanary/wiki/FAQ#how-do-i-use-it" target="_blank" rel="noopener">官网</a>中有提到，即改造<code>BaseFragment</code>。这种方法的不足之处在于不能保证App中所有的Fragment都继承自<code>BaseFragment</code>。比方说，很可能<code>DialogFragment</code>或<code>BottomSheetDialogFragment</code>更好用、更适合我的需求，很显然我会继承自它们而不是<code>BaseFragment</code>。该怎么办？或许可以使用<code>BaseFragment</code>类似的方式定义<code>BaseDialogFragment</code>和<code>BottomSheetDialogFragment</code>，整体上还是非常繁琐的。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseFragment</span> <span class="keyword">extends</span> <span class="title">Fragment</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onDestroy();</span><br><span class="line">    RefWatcher refWatcher = ExampleApplication.getRefWatcher(getActivity());</span><br><span class="line">    refWatcher.watch(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><p>一种容易想到的方法在<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/wiki/FAQ#how-do-i-use-it">官网</a>中有提到，即改造<code>BaseFragment</code>。这种方法的不足之处在于不能保证App中所有的Fragment都继承自<code>BaseFragment</code>。比方说，很可能<code>DialogFragment</code>或<code>BottomSheetDialogFragment</code>更好用、更适合我的需求，很显然我会继承自它们而不是<code>BaseFragment</code>。该怎么办？或许可以使用<code>BaseFragment</code>类似的方式定义<code>BaseDialogFragment</code>和<code>BottomSheetDialogFragment</code>，整体上还是非常繁琐的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">BaseFragment</span> <span class="keyword">extends</span> <span class="title class_">Fragment</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onDestroy</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>.onDestroy();</span><br><span class="line">    <span class="type">RefWatcher</span> <span class="variable">refWatcher</span> <span class="operator">=</span> ExampleApplication.getRefWatcher(getActivity());</span><br><span class="line">    refWatcher.watch(<span class="built_in">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>(更新于 2019-01-31)</p>
-<p>LeakCanary 在 2018-10-17 合入了这个 pull request，见 <a href="https://github.com/square/leakcanary/pull/1061" target="_blank" rel="noopener">Detect fragment view leaks #1061</a>。</p>
+<p>LeakCanary 在 2018-10-17 合入了这个 pull request，见 <a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/pull/1061">Detect fragment view leaks #1061</a>。</p>
 <p>做法跟我的一模一样，唉，下次我也提个 PR。不过这个 PR 有几点比我做得好，值得学习：</p>
 <ul>
 <li>如何解决 SupportLibrary 版本问题 (不过考虑到目前 SupportLibrary V25.2.0 已经是很旧的版本的，版本问题其实不必担心)<ul>
@@ -290,44 +343,50 @@
 </li>
 <li>它写了 TestCase！</li>
 </ul>
-<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>修改LeakCanary的源码。<a href="https://github.com/square/leakcanary/blob/master/leakcanary-android/src/main/java/com/squareup/leakcanary/ActivityRefWatcher.java#L38" target="_blank" rel="noopener">ActivityRefWatcher</a>代码修改如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Application.ActivityLifecycleCallbacks lifecycleCallbacks =</span><br><span class="line">    <span class="keyword">new</span> Application.ActivityLifecycleCallbacks() &#123;</span><br><span class="line">      <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityCreated</span><span class="params">(Activity activity, Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (activity <span class="keyword">instanceof</span> FragmentActivity) &#123;</span><br><span class="line">		FragmentActivity fa = (FragmentActivity) activity;</span><br><span class="line">		fa.getSupportFragmentManager().registerFragmentLifecycleCallbacks(<span class="keyword">new</span> FragmentLifecycleCallbacks() &#123;</span><br><span class="line">			<span class="comment">// 省略</span></span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityDestroyed</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        ActivityRefWatcher.<span class="keyword">this</span>.onActivityDestroyed(activity);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
-<p>但是这么改的话就让LeakCanary产生兼容性问题，使用25.2.0及以上版本的SupportLibrary的应用才能使用LeakCanary。虽然截止到2018年2月2日最新的SupportLibrary是2017年11月份发布的<a href="https://developer.android.com/topic/libraries/support-library/revisions.html" target="_blank" rel="noopener">27.0.2</a>，25.2.0已经是比较旧的版本了，但LeakCanary作为一个library却对应用的依赖有额外要求显然不合适。</p>
+<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>修改LeakCanary的源码。<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/blob/master/leakcanary-android/src/main/java/com/squareup/leakcanary/ActivityRefWatcher.java#L38">ActivityRefWatcher</a>代码修改如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Application.<span class="type">ActivityLifecycleCallbacks</span> <span class="variable">lifecycleCallbacks</span> <span class="operator">=</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Application</span>.ActivityLifecycleCallbacks() &#123;</span><br><span class="line">      <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onActivityCreated</span><span class="params">(Activity activity, Bundle savedInstanceState)</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> (activity <span class="keyword">instanceof</span> FragmentActivity) &#123;</span><br><span class="line">		<span class="type">FragmentActivity</span> <span class="variable">fa</span> <span class="operator">=</span> (FragmentActivity) activity;</span><br><span class="line">		fa.getSupportFragmentManager().registerFragmentLifecycleCallbacks(<span class="keyword">new</span> <span class="title class_">FragmentLifecycleCallbacks</span>() &#123;</span><br><span class="line">			<span class="comment">// 省略</span></span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onActivityDestroyed</span><span class="params">(Activity activity)</span> &#123;</span><br><span class="line">        ActivityRefWatcher.<span class="built_in">this</span>.onActivityDestroyed(activity);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>但是这么改的话就让LeakCanary产生兼容性问题，使用25.2.0及以上版本的SupportLibrary的应用才能使用LeakCanary。虽然截止到2018年2月2日最新的SupportLibrary是2017年11月份发布的<a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/support-library/revisions.html">27.0.2</a>，25.2.0已经是比较旧的版本了，但LeakCanary作为一个library却对应用的依赖有额外要求显然不合适。</p>
 <h2 id="方法三"><a href="#方法三" class="headerlink" title="方法三"></a>方法三</h2><p>在<code>BaseActivity</code>中进行Fragment内存泄漏检查。代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseActivity</span> <span class="keyword">extends</span> <span class="title">FragmentActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">final</span> RefWatcher refWatcher = MyApplication.getRefWatcher(<span class="keyword">this</span>);</span><br><span class="line">        <span class="comment">// initialization code</span></span><br><span class="line">        getSupportFragmentManager()</span><br><span class="line">                .registerFragmentLifecycleCallbacks(<span class="keyword">new</span> FragmentLifecycleCallbacks() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFragmentDestroyed</span><span class="params">(FragmentManager fm, Fragment f)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">super</span>.onFragmentDestroyed(fm, f);</span><br><span class="line">                        refWatcher.watch(f);</span><br><span class="line">                    &#125;</span><br><span class="line">    </span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFragmentViewDestroyed</span><span class="params">(FragmentManager fm, Fragment f)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">super</span>.onFragmentViewDestroyed(fm, f);</span><br><span class="line">                        refWatcher.watch(f.getView());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">BaseActivity</span> <span class="keyword">extends</span> <span class="title class_">FragmentActivity</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(Bundle savedInstanceState)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">final</span> <span class="type">RefWatcher</span> <span class="variable">refWatcher</span> <span class="operator">=</span> MyApplication.getRefWatcher(<span class="built_in">this</span>);</span><br><span class="line">        <span class="comment">// initialization code</span></span><br><span class="line">        getSupportFragmentManager()</span><br><span class="line">                .registerFragmentLifecycleCallbacks(<span class="keyword">new</span> <span class="title class_">FragmentLifecycleCallbacks</span>() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onFragmentDestroyed</span><span class="params">(FragmentManager fm, Fragment f)</span> &#123;</span><br><span class="line">                        <span class="built_in">super</span>.onFragmentDestroyed(fm, f);</span><br><span class="line">                        refWatcher.watch(f);</span><br><span class="line">                    &#125;</span><br><span class="line">    </span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onFragmentViewDestroyed</span><span class="params">(FragmentManager fm, Fragment f)</span> &#123;</span><br><span class="line">                        <span class="built_in">super</span>.onFragmentViewDestroyed(fm, f);</span><br><span class="line">                        refWatcher.watch(f.getView());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>对比后可以看到上述第三种方式对采用了25.0.2及以上版本的SupportLibrary的应用来说是最合理的方案，可以简单有效地检查Fragment内存泄漏问题，不像方案一那么复杂，也不会像方案二那样导致LeakCanary库兼容性降低。所以我们应用中采用这一方案。</p>
-<h1 id="Heap上传"><a href="#Heap上传" class="headerlink" title="Heap上传"></a>Heap上传</h1><p>前面提到过有时我们并不会立即去分析LeakCanary的检查结果，原因可能是手头有更重要的任务，也可能是内存泄漏并不是发生在你自己的设备上。所以有必要让实现LeakCanary检查结果上传功能。对此<a href="https://github.com/square/leakcanary/wiki/Customizing-LeakCanary#uploading-to-a-server" target="_blank" rel="noopener">LeakCanary wiki</a>仍有提供解决方案。</p>
+<h1 id="Heap上传"><a href="#Heap上传" class="headerlink" title="Heap上传"></a>Heap上传</h1><p>前面提到过有时我们并不会立即去分析LeakCanary的检查结果，原因可能是手头有更重要的任务，也可能是内存泄漏并不是发生在你自己的设备上。所以有必要让实现LeakCanary检查结果上传功能。对此<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/wiki/Customizing-LeakCanary#uploading-to-a-server">LeakCanary wiki</a>仍有提供解决方案。</p>
 <p>我们可以创建自己的<code>AbstractAnalysisResultService</code>来调整LeakCanary的缺省行为，将原来的分析heap dump修改成上传leak trace和heap dump到后台服务器。不过没必要从头开始创建<code>AbstractAnalysisResultService</code>。建议的做法是继承<code>DisplayLeakService</code>：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LeakUploadService</span> <span class="keyword">extends</span> <span class="title">DisplayLeakService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">afterDefaultHandling</span><span class="params">(HeapDump heapDump, AnalysisResult result, String leakInfo)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!result.leakFound || result.excludedLeak) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    myServer.uploadLeakBlocking(heapDump.heapDumpFile, leakInfo);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>不要忘记在<code>AndroidManifest.xml</code>中配置这个service。如何实现这里的上传service呢？热心网友直接给出了<a href="https://gist.github.com/pyricau/06c2c486d24f5f85f7f0" target="_blank" rel="noopener">源码</a>。不过源码中使用的是<a href="https://slack.com/" target="_blank" rel="noopener">Slack Channel</a>或<a href="https://www.atlassian.com/software/hipchat" target="_blank" rel="noopener">HipChat</a>。这两个看起来更为高大上，但考虑在我们应用的用户主要是在国内，所以还是使用比较接地气的腾讯云对象存储服务(COS)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LeakUploadService</span> <span class="keyword">extends</span> <span class="title class_">DisplayLeakService</span> &#123;</span><br><span class="line">  <span class="meta">@Override</span> <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">afterDefaultHandling</span><span class="params">(HeapDump heapDump, AnalysisResult result, String leakInfo)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!result.leakFound || result.excludedLeak) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    myServer.uploadLeakBlocking(heapDump.heapDumpFile, leakInfo);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不要忘记在<code>AndroidManifest.xml</code>中配置这个service。如何实现这里的上传service呢？热心网友直接给出了<a target="_blank" rel="noopener" href="https://gist.github.com/pyricau/06c2c486d24f5f85f7f0">源码</a>。不过源码中使用的是<a target="_blank" rel="noopener" href="https://slack.com/">Slack Channel</a>或<a target="_blank" rel="noopener" href="https://www.atlassian.com/software/hipchat">HipChat</a>。这两个看起来更为高大上，但考虑在我们应用的用户主要是在国内，所以还是使用比较接地气的腾讯云对象存储服务(COS)。</p>
 <p>粗略地看了下COS的文档，可以选择API的方式接入或SDK方式。使用API更轻量，使用SDK更简单。不过有个问题需要注意：对于大文件(超过20MB)是采用分片上传方式，所以调用的API跟小文件上传有所不同，较为繁琐。又有一个问题需要注意：LeakCanary的heap dump文件有多大呢？保存在哪里？</p>
-<h2 id="HeapDump文件"><a href="#HeapDump文件" class="headerlink" title="HeapDump文件"></a>HeapDump文件</h2><p>具体代码见<a href="https://github.com/square/leakcanary/blob/master/leakcanary-android/src/main/java/com/squareup/leakcanary/DefaultLeakDirectoryProvider.java" target="_blank" rel="noopener">DefaultLeakDirectoryProvider</a></p>
+<h2 id="HeapDump文件"><a href="#HeapDump文件" class="headerlink" title="HeapDump文件"></a>HeapDump文件</h2><p>具体代码见<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/blob/master/leakcanary-android/src/main/java/com/squareup/leakcanary/DefaultLeakDirectoryProvider.java">DefaultLeakDirectoryProvider</a></p>
 <p>HeapDump文件，即hprof文件，保存的位置是<code>Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS)</code>目录。具体的策略是：</p>
 <ol>
 <li>优先使用<code>externalStorageDirectory()</code>返回的目录</li>
 <li>其次是<code>appStorageDirectory()</code>返回的目录</li>
 </ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> File <span class="title">externalStorageDirectory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  File downloadsDirectory = Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> File(downloadsDirectory, <span class="string">"leakcanary-"</span> + context.getPackageName());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> File <span class="title">appStorageDirectory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  File appFilesDirectory = context.getFilesDir();</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> File(appFilesDirectory, <span class="string">"leakcanary"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div align="center"><br><img src="/images/1517369532736.webp" width="30%" height="30%"><img src="/images/1517369491050.webp" width="30%" height="30%"><br></div>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> File <span class="title function_">externalStorageDirectory</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">File</span> <span class="variable">downloadsDirectory</span> <span class="operator">=</span> Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">File</span>(downloadsDirectory, <span class="string">&quot;leakcanary-&quot;</span> + context.getPackageName());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> File <span class="title function_">appStorageDirectory</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">File</span> <span class="variable">appFilesDirectory</span> <span class="operator">=</span> context.getFilesDir();</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">File</span>(appFilesDirectory, <span class="string">&quot;leakcanary&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<div align="center">
+<img src="/images/1517369532736.webp" width="30%" height="30%" ><img src="/images/1517369491050.webp" width="30%" height="30%">
+</div>
 
 <ol>
 <li>两张图中的保存位置分别是<code>Download\leakcanary\detected_leaks</code>和<code>Download\leakcanary-&lt;包名&gt;\</code></li>
 <li>上面第一张图中的hprof大小居然是170MB，暗示该应用可能存在比较严重的内存泄漏</li>
 </ol>
 <p>另外，对每一个hprof文件会有一个对应的result文件。hprof文件一般较大，其大小通常就是heap dump操作时应用占用的内存数量。你会发现hprof和result文件数并不多，最多一共14个。这是因为<code>DefaultLeakDirectoryProvider.DEFAULT_MAX_STORED_HEAP_DUMPS</code>值限制了hprof文件的数量，默认为7。我们可以根据自己的需求调整这个值。当然考虑到hprof文件可能较大，如果我们把<code>DEFAULT_MAX_STORED_HEAP_DUMPS</code>调整到很高，最后可能会占用很多存储空间。</p>
-<h2 id="上传到COS"><a href="#上传到COS" class="headerlink" title="上传到COS"></a>上传到COS</h2><p>好吧，heap dump文件可能非常大，如果要上传COS的话，还是乖乖使用<a href="https://github.com/tencentyun/qcloud-sdk-android/releases" target="_blank" rel="noopener">COS SDK</a>。这里提供一个基于COS Android SDK封装的<a href="https://gist.github.com/410063005/d0e75c5e5bfe21ea62e11ba3db129c52" target="_blank" rel="noopener"><code>CosClient</code></a>。最后的上传service如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LeakUploadService</span> <span class="keyword">extends</span> <span class="title">DisplayLeakService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">afterDefaultHandling</span><span class="params">(HeapDump heapDump, AnalysisResult result, String leakInfo)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!result.leakFound || result.excludedLeak) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            CosClient cosClient = CosClient.create(getApplicationContext(), getAssets().open(<span class="string">"heap.json"</span>));</span><br><span class="line">             cosClient.upload(heapDump.heapDumpFile, heapDump.heapDumpFile.getName(), <span class="keyword">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="上传到COS"><a href="#上传到COS" class="headerlink" title="上传到COS"></a>上传到COS</h2><p>好吧，heap dump文件可能非常大，如果要上传COS的话，还是乖乖使用<a target="_blank" rel="noopener" href="https://github.com/tencentyun/qcloud-sdk-android/releases">COS SDK</a>。这里提供一个基于COS Android SDK封装的<a target="_blank" rel="noopener" href="https://gist.github.com/410063005/d0e75c5e5bfe21ea62e11ba3db129c52"><code>CosClient</code></a>。最后的上传service如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LeakUploadService</span> <span class="keyword">extends</span> <span class="title class_">DisplayLeakService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">afterDefaultHandling</span><span class="params">(HeapDump heapDump, AnalysisResult result, String leakInfo)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!result.leakFound || result.excludedLeak) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">CosClient</span> <span class="variable">cosClient</span> <span class="operator">=</span> CosClient.create(getApplicationContext(), getAssets().open(<span class="string">&quot;heap.json&quot;</span>));</span><br><span class="line">             cosClient.upload(heapDump.heapDumpFile, heapDump.heapDumpFile.getName(), <span class="literal">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>创建<code>RefWatcher</code>时指定<code>LeakUploadService</code>即可。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RefWatcher refWatcher = LeakCanary.refWatcher(<span class="keyword">this</span>)</span><br><span class="line">  .listenerServiceClass(LeakUploadService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">  .buildAndInstall();</span><br></pre></td></tr></table></figure>
-<p><img src="/images/1517556169211.webp" alt></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RefWatcher</span> <span class="variable">refWatcher</span> <span class="operator">=</span> LeakCanary.refWatcher(<span class="built_in">this</span>)</span><br><span class="line">  .listenerServiceClass(LeakUploadService.class);</span><br><span class="line">  .buildAndInstall();</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1517556169211.webp"></p>
 <p>注：考虑到heap dump文件实在太大，而简单的leak info常常也足够分析出内存泄漏问题，所以实际上我只上传了leak info。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>最终我对LeakCanary做了自定义配置，比起最简单的傻瓜式配置它有几个额外的好处：</p>
 <ul>
-<li>使用方便<ul>
+<li>使用方便</li>
 <li>Debug包中有开关控制LeakCanary的开启，默认是关闭状态。但必要时，我们可以随时打开开关检查内存泄漏问题</li>
 <li>内存泄漏问题上传后台，可以合理安排时间进行统一集中的处理</li>
-</ul>
-</li>
 <li>检查更为全面。除了能自动检查Activity内存泄漏，还可以自动检查Fragment内存泄漏</li>
 </ul>
 <p>但是，这里仍然有问题没有解决。由于LeakCanary的heap dump以及heap analysis非常耗时耗资源，所以官方要求一定不要用在release包中以免影响性能。这么做的结果是我们在无法对真实用户的设备监测内存泄漏问题。</p>
@@ -337,8 +396,8 @@
 <li>内存泄漏检查得足够准，但不提供详情的reference path辅助定位内存泄漏问题 (全靠人肉分析)</li>
 </ul>
 <p>怎么实现，容我再想想。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://github.com/square/leakcanary/wiki" target="_blank" rel="noopener">LeakCanary wiki</a></p>
-<p><a href="https://www.liaohuqiu.net/cn/posts/leak-canary-read-me/" target="_blank" rel="noopener">LeakCanary 中文使用说明</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/wiki">LeakCanary wiki</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.liaohuqiu.net/cn/posts/leak-canary-read-me/">LeakCanary 中文使用说明</a></p>
 
     </div>
 
@@ -346,130 +405,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/02/01/build-opt-series/" rel="prev" title="Android项目构建环境优化">
-      <i class="fa fa-chevron-left"></i> Android项目构建环境优化
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/02/08/how-to-publish-your-lib/" rel="next" title="如何发布自己的Java库">
-      如何发布自己的Java库 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/02/01/build-opt-series/" rel="prev" title="Android项目构建环境优化">
+                  <i class="fa fa-chevron-left"></i> Android项目构建环境优化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/02/08/how-to-publish-your-lib/" rel="next" title="如何发布自己的Java库">
+                  如何发布自己的Java库 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RefWatcher和HeapDumper"><span class="nav-number">1.</span> <span class="nav-text">RefWatcher和HeapDumper</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#buildType问题"><span class="nav-number">1.1.</span> <span class="nav-text">buildType问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Fragment内存泄漏"><span class="nav-number">2.</span> <span class="nav-text">Fragment内存泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方法一"><span class="nav-number">2.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法二"><span class="nav-number">2.2.</span> <span class="nav-text">方法二</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法三"><span class="nav-number">2.3.</span> <span class="nav-text">方法三</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">2.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Heap上传"><span class="nav-number">3.</span> <span class="nav-text">Heap上传</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HeapDump文件"><span class="nav-number">3.1.</span> <span class="nav-text">HeapDump文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上传到COS"><span class="nav-number">3.2.</span> <span class="nav-text">上传到COS</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -477,29 +451,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -508,22 +474,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2018/02/02/leakcanary-application/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

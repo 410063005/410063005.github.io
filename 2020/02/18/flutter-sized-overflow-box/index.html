@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,97 +14,69 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="OverflowBox 和 SizedOverflowBox 允许子控件超出父控件的边界。这个特性可以用来实现一些比较棘手的视觉效果。">
-<meta name="keywords" content="android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="OverflowBox 和 SizedOverflowBox 允许子控件超出父控件的边界。这个特性可以用来实现一些比较棘手的视觉效果。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flutter SizedOverflowBox 简介及案例">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/02/18/flutter-sized-overflow-box/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="OverflowBox 和 SizedOverflowBox 允许子控件超出父控件的边界。这个特性可以用来实现一些比较棘手的视觉效果。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820301730961.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820344976572.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820345882075.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820350888457.jpg">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.047Z">
+<meta property="article:published_time" content="2020-02-18T12:46:35.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.047Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Flutter SizedOverflowBox 简介及案例">
-<meta name="twitter:description" content="OverflowBox 和 SizedOverflowBox 允许子控件超出父控件的边界。这个特性可以用来实现一些比较棘手的视觉效果。">
 <meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820301730961.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/02/18/flutter-sized-overflow-box/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Flutter SizedOverflowBox 简介及案例 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2020/02/18/flutter-sized-overflow-box/","path":"2020/02/18/flutter-sized-overflow-box/","title":"Flutter SizedOverflowBox 简介及案例"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Flutter SizedOverflowBox 简介及案例 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -117,19 +90,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -140,23 +102,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -164,61 +125,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80-%E2%80%9C%E7%90%86%E6%83%B3%E7%9A%84%E8%83%8C%E6%99%AF%E5%9B%BE%E2%80%9D"><span class="nav-number">1.</span> <span class="nav-text">方案一 - “理想的背景图”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C-%E2%80%9C%E8%81%AA%E6%98%8E%E7%9A%84%E8%BE%B9%E8%B7%9D%E2%80%9D"><span class="nav-number">2.</span> <span class="nav-text">方案二 - “聪明的边距”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%89-OverflowBox-%E5%92%8C-SizedOverflowBox"><span class="nav-number">3.</span> <span class="nav-text">方案三 - OverflowBox 和 SizedOverflowBox</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%89%8D"><span class="nav-number">3.1.</span> <span class="nav-text">优化前</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%90%8E"><span class="nav-number">3.2.</span> <span class="nav-text">优化后</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SliceSizedOverflowBox-%E4%BB%8B%E7%BB%8D"><span class="nav-number"></span> <span class="nav-text">SliceSizedOverflowBox 介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number"></span> <span class="nav-text">参考</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/02/18/flutter-sized-overflow-box/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Flutter SizedOverflowBox 简介及案例 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Flutter SizedOverflowBox 简介及案例
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-02-18 20:46:35" itemprop="dateCreated datePublished" datetime="2020-02-18T20:46:35+08:00">2020-02-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2020-02-18 20:46:35" itemprop="dateCreated datePublished" datetime="2020-02-18T20:46:35+08:00">2020-02-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2020/02/18/flutter-sized-overflow-box/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/02/18/flutter-sized-overflow-box/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -227,10 +269,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>OverflowBox 和 SizedOverflowBox 允许子控件超出父控件的边界。这个特性可以用来实现一些比较棘手的视觉效果。</p>
-<a id="more"></a>
+<span id="more"></span>
+
 <p>设计给出如下视觉图：</p>
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820301730961.jpg" alt="-w393"></p>
 <p>初看觉得没有什么特别的，不过是7个控件平均水平分布。但仔细观察之后发现并非如此：其中一个控件(表示当天，称之A控件)的背景比较特别，超出边框范围带一点光晕效果。这个光晕背景其实比其他控件(表示非当天，称之B控件)的背景占据的空间要大。</p>
@@ -243,24 +284,28 @@
 <p>不过添加”聪明的边距”的代码会惨不忍睹，几乎没有可维护性。</p>
 <h2 id="方案三-OverflowBox-和-SizedOverflowBox"><a href="#方案三-OverflowBox-和-SizedOverflowBox" class="headerlink" title="方案三 - OverflowBox 和 SizedOverflowBox"></a>方案三 - OverflowBox 和 SizedOverflowBox</h2><p>看如何使用 SizedOverflowBox 来解决这个问题。</p>
 <h3 id="优化前"><a href="#优化前" class="headerlink" title="优化前"></a>优化前</h3><p>优化前，光晕背景图无法占满控件A，视觉效果不佳。</p>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820344976572.jpg" alt></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820344976572.jpg"></p>
 <p>控件A代码如下：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> Container(</span><br><span class="line">    width: <span class="number">36</span>,</span><br><span class="line">    height: <span class="number">36</span>,</span><br><span class="line">    decoration: BoxDecoration(</span><br><span class="line">        border: Border.all(</span><br><span class="line">          width: <span class="number">1</span>,</span><br><span class="line">          color: c_FFFFE1A6,</span><br><span class="line">        ),</span><br><span class="line">        borderRadius: BorderRadius.all(Radius.circular(<span class="number">3</span>)),</span><br><span class="line">        image: DecorationImage(</span><br><span class="line">            image: AssetImage(_bgAwardToday), fit: BoxFit.fitHeight)),</span><br><span class="line">    child: child,</span><br><span class="line">    alignment: Alignment.center,</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="优化后"><a href="#优化后" class="headerlink" title="优化后"></a>优化后</h3><p>优化后，光晕背景图可以占满控件A，<font color="red">完美还原视觉图</font>。<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820345882075.jpg" alt></p>
-<p>此外，控件A的大小为 (width=36.0, height=36.0)，与控件B的大小完全一致。由于控件A和控件B的大小一致，所以让它们<font color="red">水平方向平均分布的代码非常简单优雅</font>，<code>spaceBetween</code> 即可。</p>
+
+<h3 id="优化后"><a href="#优化后" class="headerlink" title="优化后"></a>优化后</h3><p>优化后，光晕背景图可以占满控件A，<font color='red'>完美还原视觉图</font>。<br><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820345882075.jpg"></p>
+<p>此外，控件A的大小为 (width&#x3D;36.0, height&#x3D;36.0)，与控件B的大小完全一致。由于控件A和控件B的大小一致，所以让它们<font color='red'>水平方向平均分布的代码非常简单优雅</font>，<code>spaceBetween</code> 即可。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,</span><br><span class="line">  children: []</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
 <p>控件A代码如下：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> SizedOverflowBox(</span><br><span class="line">    size: <span class="keyword">const</span> Size(<span class="number">36.0</span>, <span class="number">36.0</span>),</span><br><span class="line">    child: Stack(alignment: Alignment.center, children: [</span><br><span class="line">      Image.asset(</span><br><span class="line">        _bgAwardToday,</span><br><span class="line">        width: <span class="number">56</span>,</span><br><span class="line">      ),</span><br><span class="line">      SizedBox(</span><br><span class="line">        child: child,</span><br><span class="line">        width: <span class="number">36</span>,</span><br><span class="line">        height: <span class="number">36</span>,</span><br><span class="line">      ),</span><br><span class="line">    ]),</span><br><span class="line">    alignment: Alignment.center,</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <hr>
 <p>以下是控件B的代码。用于对照参考。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">  <span class="meta">@override</span></span><br><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> Container(</span><br><span class="line">    width: <span class="number">36</span>,</span><br><span class="line">    height: <span class="number">36</span>,</span><br><span class="line">    decoration: BoxDecoration(</span><br><span class="line">        border: Border.all(</span><br><span class="line">          width: <span class="number">1</span>,</span><br><span class="line">          color: Color(<span class="number">0X62FFFFFF</span>),</span><br><span class="line">        ),</span><br><span class="line">        borderRadius: BorderRadius.all(Radius.circular(<span class="number">3</span>)),</span><br><span class="line">        image: DecorationImage(image: AssetImage(_bgAwardOthers))),</span><br><span class="line">    child: child,</span><br><span class="line">    alignment: Alignment.center,</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="SliceSizedOverflowBox-介绍"><a href="#SliceSizedOverflowBox-介绍" class="headerlink" title="SliceSizedOverflowBox 介绍"></a>SliceSizedOverflowBox 介绍</h1><p>TODO</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>如下，蓝色矩形子控件超出了浅蓝色矩形父控件的区域。</p>
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2020/02/18/15820350888457.jpg" alt="-w225"></p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SliceSizedOverflowBox</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> <span class="keyword">implements</span> <span class="title">SliceExample</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">String</span> <span class="keyword">get</span> name =&gt; <span class="string">'SliceSizedOverflowBox'</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Container(</span><br><span class="line">      color: Colors.blue[<span class="number">50</span>],</span><br><span class="line">      child: SizedOverflowBox(</span><br><span class="line">        size: <span class="keyword">const</span> Size(<span class="number">100.0</span>, <span class="number">100.0</span>),</span><br><span class="line">        alignment: AlignmentDirectional.bottomStart,</span><br><span class="line">        child: Container(height: <span class="number">50.0</span>, width: <span class="number">150.0</span>, color: Colors.blue,),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SliceSizedOverflowBox</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> <span class="keyword">implements</span> <span class="title">SliceExample</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">String</span> <span class="keyword">get</span> name =&gt; <span class="string">&#x27;SliceSizedOverflowBox&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Container(</span><br><span class="line">      color: Colors.blue[<span class="number">50</span>],</span><br><span class="line">      child: SizedOverflowBox(</span><br><span class="line">        size: <span class="keyword">const</span> Size(<span class="number">100.0</span>, <span class="number">100.0</span>),</span><br><span class="line">        alignment: AlignmentDirectional.bottomStart,</span><br><span class="line">        child: Container(height: <span class="number">50.0</span>, width: <span class="number">150.0</span>, color: Colors.blue,),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
-<li><a href="https://api.flutter.dev/flutter/widgets/SizedOverflowBox-class.html" target="_blank" rel="noopener">SizedOverflowBox class - widgets library - Dart API</a></li>
-<li><a href="https://github.com/blankapp/flutter-widget-livebook/blob/master/uiexplorer/lib/views/slice_sized_overflow_box/slice_sized_overflow_box.dart" target="_blank" rel="noopener">flutter-widget-livebook/slice_sized_overflow_box.dart at master · blankapp/flutter-widget-livebook</a></li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/SizedOverflowBox-class.html">SizedOverflowBox class - widgets library - Dart API</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/blankapp/flutter-widget-livebook/blob/master/uiexplorer/lib/views/slice_sized_overflow_box/slice_sized_overflow_box.dart">flutter-widget-livebook&#x2F;slice_sized_overflow_box.dart at master · blankapp&#x2F;flutter-widget-livebook</a></li>
 </ul>
 
     </div>
@@ -269,127 +314,42 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/02/15/flutter-stack-usage/" rel="prev" title="Flutter Stack 用法小结">
-      <i class="fa fa-chevron-left"></i> Flutter Stack 用法小结
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/03/09/flutter-dialog/" rel="next" title="Flutter Dialog 详解">
-      Flutter Dialog 详解 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/02/15/flutter-stack-usage/" rel="prev" title="Flutter Stack 用法小结">
+                  <i class="fa fa-chevron-left"></i> Flutter Stack 用法小结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/09/flutter-dialog/" rel="next" title="Flutter Dialog 详解">
+                  Flutter Dialog 详解 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#方案一-“理想的背景图”"><span class="nav-number">1.</span> <span class="nav-text">方案一 - “理想的背景图”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方案二-“聪明的边距”"><span class="nav-number">2.</span> <span class="nav-text">方案二 - “聪明的边距”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方案三-OverflowBox-和-SizedOverflowBox"><span class="nav-number">3.</span> <span class="nav-text">方案三 - OverflowBox 和 SizedOverflowBox</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优化前"><span class="nav-number">3.1.</span> <span class="nav-text">优化前</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化后"><span class="nav-number">3.2.</span> <span class="nav-text">优化后</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SliceSizedOverflowBox-介绍"><span class="nav-number"></span> <span class="nav-text">SliceSizedOverflowBox 介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number"></span> <span class="nav-text">参考</span></a></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -397,29 +357,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -428,22 +380,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2020/02/18/flutter-sized-overflow-box/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

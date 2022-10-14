@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,95 +14,67 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="Gradle系列之从init.gradle说起 - CSDN博客Android | 飞雪无情的博客Gradle完全解析 - Android 同学会 - KM平台 Gradle脚本对Java程序员来说非常简单易懂，我们甚至可以直接在Gradle脚本中写Groovy代码甚至Java代码。但不了解Groovy和Gradle DSL的话，你会发现Gradle脚本其实地方让人很疑惑。">
-<meta name="keywords" content="Gradle">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Gradle系列之从init.gradle说起 - CSDN博客Android | 飞雪无情的博客Gradle完全解析 - Android 同学会 - KM平台 Gradle脚本对Java程序员来说非常简单易懂，我们甚至可以直接在Gradle脚本中写Groovy代码甚至Java代码。但不了解Groovy和Gradle DSL的话，你会发现Gradle脚本其实地方让人很疑惑。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Gradle之Groovy基础">
 <meta property="og:url" content="http://www.sunmoonblog.com/2018/03/08/gradle-groovy-basic/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="Gradle系列之从init.gradle说起 - CSDN博客Android | 飞雪无情的博客Gradle完全解析 - Android 同学会 - KM平台 Gradle脚本对Java程序员来说非常简单易懂，我们甚至可以直接在Gradle脚本中写Groovy代码甚至Java代码。但不了解Groovy和Gradle DSL的话，你会发现Gradle脚本其实地方让人很疑惑。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/03/08/gradle-groovy-basic/groovy-basic.png">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/03/08/gradle-groovy-basic/what-is-closure.png">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.865Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/groovy-basic.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/what-is-closure.png">
+<meta property="article:published_time" content="2018-03-08T08:53:54.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.865Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Gradle">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Gradle之Groovy基础">
-<meta name="twitter:description" content="Gradle系列之从init.gradle说起 - CSDN博客Android | 飞雪无情的博客Gradle完全解析 - Android 同学会 - KM平台 Gradle脚本对Java程序员来说非常简单易懂，我们甚至可以直接在Gradle脚本中写Groovy代码甚至Java代码。但不了解Groovy和Gradle DSL的话，你会发现Gradle脚本其实地方让人很疑惑。">
-<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/03/08/gradle-groovy-basic/groovy-basic.png">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/groovy-basic.png">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2018/03/08/gradle-groovy-basic/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Gradle之Groovy基础 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2018/03/08/gradle-groovy-basic/","path":"2018/03/08/gradle-groovy-basic/","title":"Gradle之Groovy基础"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Gradle之Groovy基础 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -115,19 +88,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -138,23 +100,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -162,215 +123,18 @@
   </div>
 
 </div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/03/08/gradle-groovy-basic/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sunmoon的博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Gradle之Groovy基础
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-03-08 16:53:54" itemprop="dateCreated datePublished" datetime="2018-03-08T16:53:54+08:00">2018-03-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p><a href="http://blog.csdn.net/sbsujjbcy/article/details/52079413" target="_blank" rel="noopener">Gradle系列之从init.gradle说起 - CSDN博客</a><br><a href="http://www.flysnow.org/categories/Android/" target="_blank" rel="noopener">Android | 飞雪无情的博客</a><br><a href="http://km.oa.com/group/22112/articles/show/332186?kmref=search&amp;from_page=1&amp;no=6" target="_blank" rel="noopener">Gradle完全解析 - Android 同学会 - KM平台</a></p>
-<p>Gradle脚本对Java程序员来说非常简单易懂，我们甚至可以直接在Gradle脚本中写Groovy代码甚至Java代码。但不了解Groovy和Gradle DSL的话，你会发现Gradle脚本其实地方让人很疑惑。<br><a id="more"></a></p>
-<h1 id="关于Gradle脚本的疑问"><a href="#关于Gradle脚本的疑问" class="headerlink" title="关于Gradle脚本的疑问"></a>关于Gradle脚本的疑问</h1><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">26</span></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">"com.example.kingcmchen.myapplication"</span></span><br><span class="line">        minSdkVersion <span class="number">15</span></span><br><span class="line">        targetSdkVersion <span class="number">26</span></span><br><span class="line">        versionCode <span class="number">1</span></span><br><span class="line">        versionName <span class="string">"1.0"</span></span><br><span class="line">        testInstrumentationRunner <span class="string">"android.support.test.runner.AndroidJUnitRunner"</span></span><br><span class="line">        vectorDrawables.useSupportLibrary = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="literal">false</span></span><br><span class="line">            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation fileTree(<span class="string">dir:</span> <span class="string">'libs'</span>, <span class="string">include:</span> [<span class="string">'*.jar'</span>])</span><br><span class="line">    implementation <span class="string">'com.android.support:appcompat-v7:26.1.0'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task someTask &lt;&lt; &#123;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这是一个典型的Gradle脚本。就这个脚本而言，我有两个疑问：</p>
-<ul>
-<li>第一，<code>apply plugin: &#39;com.android.application&#39;</code>的语法形式怪怪的，这里有个”:”。Gradle脚本中什么时候会出现”:”，什么时候又不需要”:”？</li>
-<li>第二，<code>defaultConfig {}</code>中<code>minSdkVersion 15</code>和<code>vectorDrawables.useSupportLibrary = true</code>的语法形式并不一致。Gradle脚本中什么时候会出现”=”，什么时候又不需要”=”？</li>
-</ul>
-<p>要清楚地答这两个问题，需要从Groovy语言和Gradle DSL入手。</p>
-<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>掌握Gradle需要了解的Groovy基础知识如下：</p>
-<p><img src="groovy-basic.png" alt></p>
-<p><a href="http://www.flysnow.org/2016/05/22/groovy-basis.html" target="_blank" rel="noopener">Groovy基础</a>一文对Groovy有一个非常简明的介绍，我画了一张图对其内容进行总结。</p>
-<p>下面结合上图以及我的问题，有针对性的了解一些Groovy基础内容，包括</p>
-<ul>
-<li>Groovy的GString</li>
-<li></li>
-</ul>
-<h2 id="String与GString"><a href="#String与GString" class="headerlink" title="String与GString"></a>String与GString</h2><p>GString给我们提供了强大的格式化能力。有了GString，完全可以避免使用Java的<code>String.format()</code>来格式化输出。看看示例。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> version = <span class="number">2.4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Java String, 单引号中的是普通字符串</span></span><br><span class="line"><span class="keyword">def</span> javaString = <span class="string">'Java'</span></span><br><span class="line"><span class="keyword">def</span> javaString2 = <span class="string">'Java $version'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Groovy String, 双引号中且有未被转义的$的是GString, 允许使用占位符</span></span><br><span class="line"><span class="keyword">def</span> groovyString = <span class="string">"Groovy v$version"</span></span><br><span class="line"><span class="comment">// Java String, 双引号中、有被转义的$是普通字符串</span></span><br><span class="line"><span class="keyword">def</span> nonGroovyString = <span class="string">"Groovy v\$version"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// output: Java class java.lang.String</span></span><br><span class="line">println javaString + <span class="string">' '</span> + javaString.getClass().toString()</span><br><span class="line"><span class="comment">// output: Java $version class java.lang.String</span></span><br><span class="line">println javaString2 + <span class="string">' '</span> + javaString2.getClass().toString()</span><br><span class="line"><span class="comment">// output: Groovy v2.4 class org.codehaus.groovy.runtime.GStringImpl</span></span><br><span class="line">println groovyString + <span class="string">' '</span> + groovyString.getClass().toString()</span><br><span class="line"><span class="comment">// output: Groovy v$version class java.lang.String</span></span><br><span class="line">println nonGroovyString + <span class="string">' '</span> + nonGroovyString.getClass().toString()</span><br></pre></td></tr></table></figure>
-<p>通过以上例子不难明白普通字符串与GString的区别。现在不妨看看<a href="https://github.com/square/leakcanary/blob/master/leakcanary-android/build.gradle" target="_blank" rel="noopener">这段Gradle脚本</a>中<code>buildConfigField</code>这一行，考查下自己是否掌握GString的用法。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.library'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> gitSha() &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">'git rev-parse --short HEAD'</span>.execute().text.trim()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">  ...</span><br><span class="line">  defaultConfig &#123;</span><br><span class="line">    minSdkVersion versions.minSdk</span><br><span class="line">	...</span><br><span class="line">    buildConfigField <span class="string">"String"</span>, <span class="string">"GIT_SHA"</span>, <span class="string">"\"$&#123;gitSha()&#125;\""</span></span><br><span class="line">	...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>分析如下：</p>
-<ul>
-<li>首先，这个字符串是双引号且有未被转义的$</li>
-<li>其次，${gitSha()}将调用<code>gitSha()</code>方法并将其结果作为字符串的值。<code>{}</code>中可以是任意合法的groovy表达式</li>
-</ul>
-<h2 id="Groovy方法"><a href="#Groovy方法" class="headerlink" title="Groovy方法"></a>Groovy方法</h2><p>调用Groovy方法时可以省略括号，并且Groovy方法支持命名参数。</p>
-<h3 id="省略括号"><a href="#省略括号" class="headerlink" title="省略括号"></a>省略括号</h3><p>省略括号可以让代码更简短，比如<code>output()</code>方法：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> output(a) &#123;</span><br><span class="line">    println a</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 完整写法 Output: 1</span></span><br><span class="line">output(<span class="number">1</span>)</span><br><span class="line"><span class="comment">// 省略括号的写法 Output: 1</span></span><br><span class="line">output <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>如果方法有两个或两个以上的参数呢？</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> add(a, b) &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 完整写法</span></span><br><span class="line">sum = add(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"><span class="comment">// 省略括号的写法</span></span><br><span class="line">sum2 = add <span class="number">1</span>,<span class="number">2</span></span><br><span class="line"><span class="comment">// true</span></span><br><span class="line"><span class="keyword">assert</span> sum == sum2</span><br></pre></td></tr></table></figure>
-<p> 注意：<code>add 1,2</code>的确是<code>add(1,2)</code>省略括号的写法， <code>1,2</code>表示两个整形参数， 而不是一个包含两个整数的列表或数组，或别的什么东西。</p>
-<h3 id="命名参数"><a href="#命名参数" class="headerlink" title="命名参数"></a>命名参数</h3><p>Groovy方法支持命名参数。当然，跟Python中的命名参数不同，Groovy命名参数并不是真正意义上的命名参数。实际上，Groovy仅仅是在让方法的map参数的key可以在方法中直接使用而已(以map.key这种方式来访问参数)。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> add(map) &#123;</span><br><span class="line">    <span class="comment">// 为所有参数设置默认值</span></span><br><span class="line">    [<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>].each &#123; map.get(it, <span class="number">0</span>)&#125;</span><br><span class="line">    println <span class="string">"a = $map.a, b = $map.b"</span></span><br><span class="line">    <span class="keyword">return</span> map.a + map.b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Output: a = 1, b = 2</span></span><br><span class="line">add(<span class="string">b:</span><span class="number">2</span>, <span class="string">a:</span><span class="number">1</span>)</span><br><span class="line"><span class="comment">// Output: a = 1, b = 2</span></span><br><span class="line">add(<span class="string">a:</span><span class="number">1</span>, <span class="string">b:</span><span class="number">2</span>)</span><br><span class="line"><span class="comment">// Output: a = 1, b = 0</span></span><br><span class="line">add(<span class="string">a:</span><span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 省略括号的写法</span></span><br><span class="line">add <span class="string">a:</span><span class="number">1</span>, <span class="string">b:</span><span class="number">2</span></span><br><span class="line">add <span class="string">a:</span> <span class="number">100</span></span><br></pre></td></tr></table></figure>
-<h2 id="Groovy集合"><a href="#Groovy集合" class="headerlink" title="Groovy集合"></a>Groovy集合</h2><p>集合不是我们关注重点，这里只简单提一下。字面量形式的list和map使用非常方便。另外list和map均提供each()方法用于便捷访问。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">println list[<span class="number">0</span>]</span><br><span class="line">list.each &#123; println it &#125;</span><br><span class="line"></span><br><span class="line">[<span class="string">'w'</span>:<span class="number">1024</span>, <span class="string">'h'</span>:<span class="number">768</span>].each &#123;</span><br><span class="line">    println <span class="string">"$it.key $it.value"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Groovy闭包"><a href="#Groovy闭包" class="headerlink" title="Groovy闭包"></a>Groovy闭包</h2><p>为方便对上述第二个问题展开讨论，我们必须Groovy闭包。闭包是Groovy最强大的特性。</p>
-<h3 id="闭包介绍"><a href="#闭包介绍" class="headerlink" title="闭包介绍"></a>闭包介绍</h3><p>什么是闭包呢？简单来讲，Groovy的闭包可以理解为”代码块”，它本质也是一个对象，所以也可以被引用、被传递以及被执行。(可以类比C中的函数指针以及Java 8的方法引用）Groovy中，”代码块”对象具体来说是<a href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/Closure.html" target="_blank" rel="noopener">Closure</a>的对象。</p>
-<p>为什么需要闭包呢？我们经常遇到单方法接口，比如Java中的<code>FileFilter</code>或Android中的<code>OnClickListener</code>，前者只定义了一个方法<code>accept(File)</code>，后者只定义了一个方法<code>onClick(View)</code>。这种代码组织方式对于单方法接口非常繁琐，我们不得不为一些很简单的操作定义类，导致类数量膨胀。闭包能在一定程度上解决这个问题。</p>
-<p>还是上代码，看代码可能会更直观地了解闭包。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].forEach(<span class="keyword">new</span> Consumer&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> accept(Integer integer) &#123;</span><br><span class="line">        println <span class="string">"for each "</span> + integer</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].each &#123; println <span class="string">"each "</span> + it &#125;</span><br></pre></td></tr></table></figure>
-<p>代码的功能是逐个打印列表中的元素。分别使用单方法接口的方式和闭包的方式来完成功能。显而易见后一个方法更可读，尤其当你习惯这种写法之后。该语句的各个元素如下：</p>
-<p><img src="what-is-closure.png" alt></p>
-<p><code>each()</code>方法接收一个闭包(<a href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/Closure.html" target="_blank" rel="noopener">Closure</a>)作为参数。<a href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/Closure.html" target="_blank" rel="noopener">Closure</a>定义如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Closure</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Closure表示Groovy中的闭包对象，它是一个普通的Java类。Groovy允许Closure以如下形式被调用：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> a = <span class="number">1</span></span><br><span class="line"><span class="keyword">def</span> c = &#123; a &#125;</span><br><span class="line"><span class="keyword">assert</span> c() == <span class="number">1</span></span><br><span class="line"><span class="keyword">assert</span> c.call() == <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>简单来说，一个闭包是被包装为一个对象的代码块。下面的代码</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">log = <span class="string">''</span></span><br><span class="line"><span class="comment">// 使用赋值的方式声明闭包</span></span><br><span class="line">Closure c = &#123; counter -&gt; log += counter&#125;</span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each(c)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 直接声明闭包</span></span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each(&#123; counter -&gt; log += counter &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 闭包的缩写定义，省略了方法调用时的括号</span></span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each &#123; counter -&gt; log += counter&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 闭包的缩写定义，使用隐式参数it</span></span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each &#123; log += it &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><blockquote>
-<p>Groovy闭包的强大之处在于它支持闭包方法的委托。Groovy的闭包有thisObject、owner、delegate三个属性，当你在闭包内调用方法时，由他们来确定使用哪个对象来处理。默认情况下delegate和owner是相等的，但是delegate是可以被修改的，这个功能是非常强大的，Gradle中的很闭包的很多功能都是通过修改delegate实现的 <a href="http://www.flysnow.org/2016/05/22/groovy-basis.html" target="_blank" rel="noopener">来源</a></p>
-</blockquote>
-<p>更多内容见<a href="/2018/03/08/gradle-groovy-closure/" title="理解Groovy闭包委托">理解Groovy闭包委托</a></p>
-<p>了解闭包之后再来看本文开头出现的Gradle脚本，这里只选取关键部分</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">26</span></span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        minSdkVersion <span class="number">15</span></span><br><span class="line">        vectorDrawables.useSupportLibrary = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>分析如下</p>
-<ul>
-<li><code>android {}</code>其实是一个方法调用，方法形式为<code>android(Closure)</code> (还记得方法括号可省略，方法最后一个参数如果是闭包，闭包可以放到括号外面的规则吗？)</li>
-<li><code>minSdkVersion 26</code>也是一个方法调用，方法形式为<code>minSdkVersion(int)</code>，所以它的完整形式其实是<code>minSdkVersion(26)</code> (仍然是方法括号可省略的规则)</li>
-<li><code>vectorDrawables.useSupportLibrary = true</code>是对属性赋值</li>
-</ul>
-<p>不难使用闭包委托实现自己的DSL。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> android(Closure&lt;Android&gt; closure) &#123;</span><br><span class="line">    Android a = <span class="keyword">new</span> Android()</span><br><span class="line">    closure.delegate = a</span><br><span class="line">    <span class="comment">//委托模式优先</span></span><br><span class="line">    closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">    closure(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Android</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> compileSdkVersion(sdkVersion) &#123;</span><br><span class="line">        println <span class="string">"in compileSdkVersion(). compileSdkVersion=$sdkVersion"</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> defaultConfig(Closure&lt;Config&gt; closure) &#123;</span><br><span class="line">        Config c = <span class="keyword">new</span> Config()</span><br><span class="line">        closure.delegate = c</span><br><span class="line">        <span class="comment">//委托模式优先</span></span><br><span class="line">        closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">        closure(c)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Config</span> &#123;</span></span><br><span class="line">    VD vectorDrawables = <span class="keyword">new</span> VD()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> minSdkVersion(sdkVersion) &#123;</span><br><span class="line">        println <span class="string">"in minSdkVersion(). minSdkVersion=$sdkVersion"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span>  <span class="title">VD</span> &#123;</span></span><br><span class="line">    <span class="keyword">boolean</span> useSupportLibrary</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自己实现的DSL</span></span><br><span class="line"><span class="comment">// Output:</span></span><br><span class="line"><span class="comment">// in compileSdkVersion(). compileSdkVersion=26</span></span><br><span class="line"><span class="comment">// in minSdkVersion(). minSdkVersion=15</span></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">26</span></span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        vectorDrawables.useSupportLibrary = <span class="literal">true</span></span><br><span class="line">        minSdkVersion <span class="number">15</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 上述DSL的完整形式是这样的</span></span><br><span class="line"><span class="comment">//android(&#123;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//    a.compileSdkVersion(26)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//    a.defaultConfig(&#123;</span></span><br><span class="line"><span class="comment">//        c.minSdkVersion(15)</span></span><br><span class="line"><span class="comment">//        c.vectorDrawables.put('useSupportLibrary', true)</span></span><br><span class="line"><span class="comment">//    &#125;)</span></span><br><span class="line"><span class="comment">//&#125;)</span></span><br></pre></td></tr></table></figure>
-<p>至此你应该明白为什么<code>defaultConfig {}</code>中<code>minSdkVersion 15</code>和<code>vectorDrawables.useSupportLibrary = true</code>，一个有”=”一个没有”=”了吧。</p>
-<h1 id="Gradle解惑"><a href="#Gradle解惑" class="headerlink" title="Gradle解惑"></a>Gradle解惑</h1><p>上面代码中的<code>add a: 100</code>不仅不会怪怪的，还很眼熟，对吧。嗯，<code>apply plugin: &#39;com.android.library&#39;</code>就是这么来的。当然<code>apply()</code>方法远比我们这里的<code>add()</code>方法要复杂，<code>apply()</code>方法的完整形式是<a href="https://docs.gradle.org/current/dsl/org.gradle.api.plugins.PluginAware.html#org.gradle.api.plugins.PluginAware:apply(java.util.Map" target="_blank" rel="noopener"><code>Project.apply(map)</code></a>)。这里不展开说明，后面的文章中我会详细讨论。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>回头来看Groovy中关于方法的一些规则其实是有意为之，这些小规则再加上Groovy的闭包委托功能，可以非常方便地实现Gradle DSL。要点总结如下：</p>
-<ul>
-<li>闭包的委托优先模式</li>
-<li>方法调用可以省略括号；方法的最后一个参数是闭包，则闭包可以放在括号外面</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://www.flysnow.org/categories/Android/" target="_blank" rel="noopener">Android | 飞雪无情的博客</a></p>
-
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/gradle/" rel="tag"># Gradle</a>
-          </div>
-
         
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/02/08/how-to-publish-your-lib/" rel="prev" title="如何发布自己的Java库">
-      <i class="fa fa-chevron-left"></i> 如何发布自己的Java库
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/03/08/gradle-groovy-closure/" rel="next" title="理解Groovy闭包委托">
-      理解Groovy闭包委托 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
   
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
 
   <aside class="sidebar">
-    <div class="sidebar-inner">
 
-      <ul class="sidebar-nav motion-element">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
         </li>
@@ -379,29 +143,29 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#关于Gradle脚本的疑问"><span class="nav-number">1.</span> <span class="nav-text">关于Gradle脚本的疑问</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Groovy基础"><span class="nav-number">2.</span> <span class="nav-text">Groovy基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#String与GString"><span class="nav-number">2.1.</span> <span class="nav-text">String与GString</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Groovy方法"><span class="nav-number">2.2.</span> <span class="nav-text">Groovy方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#省略括号"><span class="nav-number">2.2.1.</span> <span class="nav-text">省略括号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命名参数"><span class="nav-number">2.2.2.</span> <span class="nav-text">命名参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Groovy集合"><span class="nav-number">2.3.</span> <span class="nav-text">Groovy集合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Groovy闭包"><span class="nav-number">2.4.</span> <span class="nav-text">Groovy闭包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#闭包介绍"><span class="nav-number">2.4.1.</span> <span class="nav-text">闭包介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#闭包委托"><span class="nav-number">2.4.2.</span> <span class="nav-text">闭包委托</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Gradle解惑"><span class="nav-number">3.</span> <span class="nav-text">Gradle解惑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8EGradle%E8%84%9A%E6%9C%AC%E7%9A%84%E7%96%91%E9%97%AE"><span class="nav-number">1.</span> <span class="nav-text">关于Gradle脚本的疑问</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Groovy%E5%9F%BA%E7%A1%80"><span class="nav-number">2.</span> <span class="nav-text">Groovy基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#String%E4%B8%8EGString"><span class="nav-number">2.1.</span> <span class="nav-text">String与GString</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Groovy%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">Groovy方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9C%81%E7%95%A5%E6%8B%AC%E5%8F%B7"><span class="nav-number">2.2.1.</span> <span class="nav-text">省略括号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E5%8F%82%E6%95%B0"><span class="nav-number">2.2.2.</span> <span class="nav-text">命名参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Groovy%E9%9B%86%E5%90%88"><span class="nav-number">2.3.</span> <span class="nav-text">Groovy集合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Groovy%E9%97%AD%E5%8C%85"><span class="nav-number">2.4.</span> <span class="nav-text">Groovy闭包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.4.1.</span> <span class="nav-text">闭包介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E5%A7%94%E6%89%98"><span class="nav-number">2.4.2.</span> <span class="nav-text">闭包委托</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Gradle%E8%A7%A3%E6%83%91"><span class="nav-number">3.</span> <span class="nav-text">Gradle解惑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
   <p class="site-author-name" itemprop="name">Sunmoon</p>
   <div class="site-description" itemprop="description">移动开发 Android 生活</div>
 </div>
-<div class="site-state-wrap motion-element">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
+        <a href="/archives/">
           <span class="site-state-item-count">158</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -409,26 +173,230 @@
 
 
 
+        </div>
       </div>
-
     </div>
   </aside>
-  <div id="sidebar-dimmer"></div>
+  <div class="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
+    </header>
 
-    <footer class="footer">
-      <div class="footer-inner">
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/03/08/gradle-groovy-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Gradle之Groovy基础 | Sunmoon的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Gradle之Groovy基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-03-08 16:53:54" itemprop="dateCreated datePublished" datetime="2018-03-08T16:53:54+08:00">2018-03-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2018/03/08/gradle-groovy-basic/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2018/03/08/gradle-groovy-basic/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="http://blog.csdn.net/sbsujjbcy/article/details/52079413">Gradle系列之从init.gradle说起 - CSDN博客</a><br><a target="_blank" rel="noopener" href="http://www.flysnow.org/categories/Android/">Android | 飞雪无情的博客</a><br><a target="_blank" rel="noopener" href="http://km.oa.com/group/22112/articles/show/332186?kmref=search&from_page=1&no=6">Gradle完全解析 - Android 同学会 - KM平台</a></p>
+<p>Gradle脚本对Java程序员来说非常简单易懂，我们甚至可以直接在Gradle脚本中写Groovy代码甚至Java代码。但不了解Groovy和Gradle DSL的话，你会发现Gradle脚本其实地方让人很疑惑。</p>
+<span id="more"></span>
+<h1 id="关于Gradle脚本的疑问"><a href="#关于Gradle脚本的疑问" class="headerlink" title="关于Gradle脚本的疑问"></a>关于Gradle脚本的疑问</h1><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;com.android.application&#x27;</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">26</span></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">&quot;com.example.kingcmchen.myapplication&quot;</span></span><br><span class="line">        minSdkVersion <span class="number">15</span></span><br><span class="line">        targetSdkVersion <span class="number">26</span></span><br><span class="line">        versionCode <span class="number">1</span></span><br><span class="line">        versionName <span class="string">&quot;1.0&quot;</span></span><br><span class="line">        testInstrumentationRunner <span class="string">&quot;android.support.test.runner.AndroidJUnitRunner&quot;</span></span><br><span class="line">        vectorDrawables.useSupportLibrary = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="literal">false</span></span><br><span class="line">            proguardFiles getDefaultProguardFile(<span class="string">&#x27;proguard-android.txt&#x27;</span>), <span class="string">&#x27;proguard-rules.pro&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation fileTree(<span class="attr">dir:</span> <span class="string">&#x27;libs&#x27;</span>, <span class="attr">include:</span> [<span class="string">&#x27;*.jar&#x27;</span>])</span><br><span class="line">    implementation <span class="string">&#x27;com.android.support:appcompat-v7:26.1.0&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task someTask &lt;&lt; &#123;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是一个典型的Gradle脚本。就这个脚本而言，我有两个疑问：</p>
+<ul>
+<li>第一，<code>apply plugin: &#39;com.android.application&#39;</code>的语法形式怪怪的，这里有个”:”。Gradle脚本中什么时候会出现”:”，什么时候又不需要”:”？</li>
+<li>第二，<code>defaultConfig &#123;&#125;</code>中<code>minSdkVersion 15</code>和<code>vectorDrawables.useSupportLibrary = true</code>的语法形式并不一致。Gradle脚本中什么时候会出现”&#x3D;”，什么时候又不需要”&#x3D;”？</li>
+</ul>
+<p>要清楚地答这两个问题，需要从Groovy语言和Gradle DSL入手。</p>
+<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>掌握Gradle需要了解的Groovy基础知识如下：</p>
+<p><img src="/groovy-basic.png"></p>
+<p><a target="_blank" rel="noopener" href="http://www.flysnow.org/2016/05/22/groovy-basis.html">Groovy基础</a>一文对Groovy有一个非常简明的介绍，我画了一张图对其内容进行总结。</p>
+<p>下面结合上图以及我的问题，有针对性的了解一些Groovy基础内容，包括</p>
+<ul>
+<li>Groovy的GString</li>
+<li></li>
+</ul>
+<h2 id="String与GString"><a href="#String与GString" class="headerlink" title="String与GString"></a>String与GString</h2><p>GString给我们提供了强大的格式化能力。有了GString，完全可以避免使用Java的<code>String.format()</code>来格式化输出。看看示例。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> version = <span class="number">2.4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Java String, 单引号中的是普通字符串</span></span><br><span class="line"><span class="keyword">def</span> javaString = <span class="string">&#x27;Java&#x27;</span></span><br><span class="line"><span class="keyword">def</span> javaString2 = <span class="string">&#x27;Java $version&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Groovy String, 双引号中且有未被转义的$的是GString, 允许使用占位符</span></span><br><span class="line"><span class="keyword">def</span> groovyString = <span class="string">&quot;Groovy v$version&quot;</span></span><br><span class="line"><span class="comment">// Java String, 双引号中、有被转义的$是普通字符串</span></span><br><span class="line"><span class="keyword">def</span> nonGroovyString = <span class="string">&quot;Groovy v\$version&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// output: Java class java.lang.String</span></span><br><span class="line">println javaString + <span class="string">&#x27; &#x27;</span> + javaString.getClass().toString()</span><br><span class="line"><span class="comment">// output: Java $version class java.lang.String</span></span><br><span class="line">println javaString2 + <span class="string">&#x27; &#x27;</span> + javaString2.getClass().toString()</span><br><span class="line"><span class="comment">// output: Groovy v2.4 class org.codehaus.groovy.runtime.GStringImpl</span></span><br><span class="line">println groovyString + <span class="string">&#x27; &#x27;</span> + groovyString.getClass().toString()</span><br><span class="line"><span class="comment">// output: Groovy v$version class java.lang.String</span></span><br><span class="line">println nonGroovyString + <span class="string">&#x27; &#x27;</span> + nonGroovyString.getClass().toString()</span><br></pre></td></tr></table></figure>
+
+<p>通过以上例子不难明白普通字符串与GString的区别。现在不妨看看<a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/blob/master/leakcanary-android/build.gradle">这段Gradle脚本</a>中<code>buildConfigField</code>这一行，考查下自己是否掌握GString的用法。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;com.android.library&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> gitSha() &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;git rev-parse --short HEAD&#x27;</span>.execute().text.trim()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">  ...</span><br><span class="line">  defaultConfig &#123;</span><br><span class="line">    minSdkVersion versions.minSdk</span><br><span class="line">	...</span><br><span class="line">    buildConfigField <span class="string">&quot;String&quot;</span>, <span class="string">&quot;GIT_SHA&quot;</span>, <span class="string">&quot;\&quot;$&#123;gitSha()&#125;\&quot;&quot;</span></span><br><span class="line">	...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>分析如下：</p>
+<ul>
+<li>首先，这个字符串是双引号且有未被转义的$</li>
+<li>其次，${gitSha()}将调用<code>gitSha()</code>方法并将其结果作为字符串的值。<code>&#123;&#125;</code>中可以是任意合法的groovy表达式</li>
+</ul>
+<h2 id="Groovy方法"><a href="#Groovy方法" class="headerlink" title="Groovy方法"></a>Groovy方法</h2><p>调用Groovy方法时可以省略括号，并且Groovy方法支持命名参数。</p>
+<h3 id="省略括号"><a href="#省略括号" class="headerlink" title="省略括号"></a>省略括号</h3><p>省略括号可以让代码更简短，比如<code>output()</code>方法：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> output(a) &#123;</span><br><span class="line">    println a</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 完整写法 Output: 1</span></span><br><span class="line">output(<span class="number">1</span>)</span><br><span class="line"><span class="comment">// 省略括号的写法 Output: 1</span></span><br><span class="line">output <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>如果方法有两个或两个以上的参数呢？</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> add(a, b) &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 完整写法</span></span><br><span class="line">sum = add(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"><span class="comment">// 省略括号的写法</span></span><br><span class="line">sum2 = add <span class="number">1</span>,<span class="number">2</span></span><br><span class="line"><span class="comment">// true</span></span><br><span class="line"><span class="keyword">assert</span> sum == sum2</span><br></pre></td></tr></table></figure>
+<p> 注意：<code>add 1,2</code>的确是<code>add(1,2)</code>省略括号的写法， <code>1,2</code>表示两个整形参数， 而不是一个包含两个整数的列表或数组，或别的什么东西。</p>
+<h3 id="命名参数"><a href="#命名参数" class="headerlink" title="命名参数"></a>命名参数</h3><p>Groovy方法支持命名参数。当然，跟Python中的命名参数不同，Groovy命名参数并不是真正意义上的命名参数。实际上，Groovy仅仅是在让方法的map参数的key可以在方法中直接使用而已(以map.key这种方式来访问参数)。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> add(map) &#123;</span><br><span class="line">    <span class="comment">// 为所有参数设置默认值</span></span><br><span class="line">    [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>].each &#123; map.get(it, <span class="number">0</span>)&#125;</span><br><span class="line">    println <span class="string">&quot;a = $map.a, b = $map.b&quot;</span></span><br><span class="line">    <span class="keyword">return</span> map.a + map.b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Output: a = 1, b = 2</span></span><br><span class="line">add(<span class="attr">b:</span><span class="number">2</span>, <span class="attr">a:</span><span class="number">1</span>)</span><br><span class="line"><span class="comment">// Output: a = 1, b = 2</span></span><br><span class="line">add(<span class="attr">a:</span><span class="number">1</span>, <span class="attr">b:</span><span class="number">2</span>)</span><br><span class="line"><span class="comment">// Output: a = 1, b = 0</span></span><br><span class="line">add(<span class="attr">a:</span><span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 省略括号的写法</span></span><br><span class="line">add <span class="attr">a:</span><span class="number">1</span>, <span class="attr">b:</span><span class="number">2</span></span><br><span class="line">add <span class="attr">a:</span> <span class="number">100</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Groovy集合"><a href="#Groovy集合" class="headerlink" title="Groovy集合"></a>Groovy集合</h2><p>集合不是我们关注重点，这里只简单提一下。字面量形式的list和map使用非常方便。另外list和map均提供each()方法用于便捷访问。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">println list[<span class="number">0</span>]</span><br><span class="line">list.each &#123; println it &#125;</span><br><span class="line"></span><br><span class="line">[<span class="string">&#x27;w&#x27;</span>:<span class="number">1024</span>, <span class="string">&#x27;h&#x27;</span>:<span class="number">768</span>].each &#123;</span><br><span class="line">    println <span class="string">&quot;$it.key $it.value&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Groovy闭包"><a href="#Groovy闭包" class="headerlink" title="Groovy闭包"></a>Groovy闭包</h2><p>为方便对上述第二个问题展开讨论，我们必须Groovy闭包。闭包是Groovy最强大的特性。</p>
+<h3 id="闭包介绍"><a href="#闭包介绍" class="headerlink" title="闭包介绍"></a>闭包介绍</h3><p>什么是闭包呢？简单来讲，Groovy的闭包可以理解为”代码块”，它本质也是一个对象，所以也可以被引用、被传递以及被执行。(可以类比C中的函数指针以及Java 8的方法引用）Groovy中，”代码块”对象具体来说是<a target="_blank" rel="noopener" href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/Closure.html">Closure</a>的对象。</p>
+<p>为什么需要闭包呢？我们经常遇到单方法接口，比如Java中的<code>FileFilter</code>或Android中的<code>OnClickListener</code>，前者只定义了一个方法<code>accept(File)</code>，后者只定义了一个方法<code>onClick(View)</code>。这种代码组织方式对于单方法接口非常繁琐，我们不得不为一些很简单的操作定义类，导致类数量膨胀。闭包能在一定程度上解决这个问题。</p>
+<p>还是上代码，看代码可能会更直观地了解闭包。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].forEach(<span class="keyword">new</span> Consumer&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="type">void</span> accept(Integer integer) &#123;</span><br><span class="line">        println <span class="string">&quot;for each &quot;</span> + integer</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].each &#123; println <span class="string">&quot;each &quot;</span> + it &#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码的功能是逐个打印列表中的元素。分别使用单方法接口的方式和闭包的方式来完成功能。显而易见后一个方法更可读，尤其当你习惯这种写法之后。该语句的各个元素如下：</p>
+<p><img src="/what-is-closure.png"></p>
+<p><code>each()</code>方法接收一个闭包(<a target="_blank" rel="noopener" href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/Closure.html">Closure</a>)作为参数。<a target="_blank" rel="noopener" href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/Closure.html">Closure</a>定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Closure</span>&lt;V&gt; &#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Closure表示Groovy中的闭包对象，它是一个普通的Java类。Groovy允许Closure以如下形式被调用：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> a = <span class="number">1</span></span><br><span class="line"><span class="keyword">def</span> c = &#123; a &#125;</span><br><span class="line"><span class="keyword">assert</span> c() == <span class="number">1</span></span><br><span class="line"><span class="keyword">assert</span> c.call() == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>简单来说，一个闭包是被包装为一个对象的代码块。下面的代码</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">log = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="comment">// 使用赋值的方式声明闭包</span></span><br><span class="line">Closure c = &#123; counter -&gt; log += counter&#125;</span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each(c)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 直接声明闭包</span></span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each(&#123; counter -&gt; log += counter &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 闭包的缩写定义，省略了方法调用时的括号</span></span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each &#123; counter -&gt; log += counter&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 闭包的缩写定义，使用隐式参数it</span></span><br><span class="line">(<span class="number">1.</span><span class="number">.10</span>).each &#123; log += it &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><blockquote>
+<p>Groovy闭包的强大之处在于它支持闭包方法的委托。Groovy的闭包有thisObject、owner、delegate三个属性，当你在闭包内调用方法时，由他们来确定使用哪个对象来处理。默认情况下delegate和owner是相等的，但是delegate是可以被修改的，这个功能是非常强大的，Gradle中的很闭包的很多功能都是通过修改delegate实现的 <a target="_blank" rel="noopener" href="http://www.flysnow.org/2016/05/22/groovy-basis.html">来源</a></p>
+</blockquote>
+<p>更多内容见<a href="/2018/03/08/gradle-groovy-closure/" title="理解Groovy闭包委托">理解Groovy闭包委托</a></p>
+<p>了解闭包之后再来看本文开头出现的Gradle脚本，这里只选取关键部分</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">26</span></span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        minSdkVersion <span class="number">15</span></span><br><span class="line">        vectorDrawables.useSupportLibrary = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>分析如下</p>
+<ul>
+<li><code>android &#123;&#125;</code>其实是一个方法调用，方法形式为<code>android(Closure)</code> (还记得方法括号可省略，方法最后一个参数如果是闭包，闭包可以放到括号外面的规则吗？)</li>
+<li><code>minSdkVersion 26</code>也是一个方法调用，方法形式为<code>minSdkVersion(int)</code>，所以它的完整形式其实是<code>minSdkVersion(26)</code> (仍然是方法括号可省略的规则)</li>
+<li><code>vectorDrawables.useSupportLibrary = true</code>是对属性赋值</li>
+</ul>
+<p>不难使用闭包委托实现自己的DSL。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> android(Closure&lt;Android&gt; closure) &#123;</span><br><span class="line">    Android a = <span class="keyword">new</span> Android()</span><br><span class="line">    closure.delegate = a</span><br><span class="line">    <span class="comment">//委托模式优先</span></span><br><span class="line">    closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">    closure(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Android</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> compileSdkVersion(sdkVersion) &#123;</span><br><span class="line">        println <span class="string">&quot;in compileSdkVersion(). compileSdkVersion=$sdkVersion&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> defaultConfig(Closure&lt;Config&gt; closure) &#123;</span><br><span class="line">        Config c = <span class="keyword">new</span> Config()</span><br><span class="line">        closure.delegate = c</span><br><span class="line">        <span class="comment">//委托模式优先</span></span><br><span class="line">        closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">        closure(c)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Config</span> &#123;</span><br><span class="line">    VD vectorDrawables = <span class="keyword">new</span> VD()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> minSdkVersion(sdkVersion) &#123;</span><br><span class="line">        println <span class="string">&quot;in minSdkVersion(). minSdkVersion=$sdkVersion&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span>  <span class="title class_">VD</span> &#123;</span><br><span class="line">    <span class="type">boolean</span> useSupportLibrary</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自己实现的DSL</span></span><br><span class="line"><span class="comment">// Output:</span></span><br><span class="line"><span class="comment">// in compileSdkVersion(). compileSdkVersion=26</span></span><br><span class="line"><span class="comment">// in minSdkVersion(). minSdkVersion=15</span></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">26</span></span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        vectorDrawables.useSupportLibrary = <span class="literal">true</span></span><br><span class="line">        minSdkVersion <span class="number">15</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 上述DSL的完整形式是这样的</span></span><br><span class="line"><span class="comment">//android(&#123;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//    a.compileSdkVersion(26)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//    a.defaultConfig(&#123;</span></span><br><span class="line"><span class="comment">//        c.minSdkVersion(15)</span></span><br><span class="line"><span class="comment">//        c.vectorDrawables.put(&#x27;useSupportLibrary&#x27;, true)</span></span><br><span class="line"><span class="comment">//    &#125;)</span></span><br><span class="line"><span class="comment">//&#125;)</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>至此你应该明白为什么<code>defaultConfig &#123;&#125;</code>中<code>minSdkVersion 15</code>和<code>vectorDrawables.useSupportLibrary = true</code>，一个有”&#x3D;”一个没有”&#x3D;”了吧。</p>
+<h1 id="Gradle解惑"><a href="#Gradle解惑" class="headerlink" title="Gradle解惑"></a>Gradle解惑</h1><p>上面代码中的<code>add a: 100</code>不仅不会怪怪的，还很眼熟，对吧。嗯，<code>apply plugin: &#39;com.android.library&#39;</code>就是这么来的。当然<code>apply()</code>方法远比我们这里的<code>add()</code>方法要复杂，<code>apply()</code>方法的完整形式是<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/dsl/org.gradle.api.plugins.PluginAware.html#org.gradle.api.plugins.PluginAware:apply(java.util.Map)"><code>Project.apply(map)</code></a>。这里不展开说明，后面的文章中我会详细讨论。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>回头来看Groovy中关于方法的一些规则其实是有意为之，这些小规则再加上Groovy的闭包委托功能，可以非常方便地实现Gradle DSL。要点总结如下：</p>
+<ul>
+<li>闭包的委托优先模式</li>
+<li>方法调用可以省略括号；方法的最后一个参数是闭包，则闭包可以放在括号外面</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="http://www.flysnow.org/categories/Android/">Android | 飞雪无情的博客</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/gradle/" rel="tag"># Gradle</a>
+          </div>
+
         
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/02/08/how-to-publish-your-lib/" rel="prev" title="如何发布自己的Java库">
+                  <i class="fa fa-chevron-left"></i> 如何发布自己的Java库
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/03/08/gradle-groovy-closure/" rel="next" title="理解Groovy闭包委托">
+                  理解Groovy闭包委托 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -436,29 +404,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -467,22 +427,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2018/03/08/gradle-groovy-basic/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

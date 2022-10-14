@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,100 +14,72 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="Android的View Animation是如何实现的？">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Android的View Animation是如何实现的？">
 <meta property="og:type" content="article">
 <meta property="og:title" content="理解Android View Animation">
 <meta property="og:url" content="http://www.sunmoonblog.com/2018/11/06/android-animation-1/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="Android的View Animation是如何实现的？">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/06/android-animation-1/basic-step.png">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/06/android-animation-1/translate.jpg">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/06/android-animation-1/rotate.jpg">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/06/android-animation-1/scale.jpg">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/06/android-animation-1/animation-classes.png">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/06/android-animation-1/animation-matrix.png">
-<meta property="og:image" content="http://www.sunmoonblog.com/2018/11/06/android-animation-1/animation-relationship.png">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.910Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/basic-step.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/translate.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/rotate.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/scale.jpg">
+<meta property="og:image" content="http://www.sunmoonblog.com/animation-classes.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/animation-matrix.png">
+<meta property="og:image" content="http://www.sunmoonblog.com/animation-relationship.png">
+<meta property="article:published_time" content="2018-11-06T09:57:01.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.910Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="理解Android View Animation">
-<meta name="twitter:description" content="Android的View Animation是如何实现的？">
-<meta name="twitter:image" content="http://www.sunmoonblog.com/2018/11/06/android-animation-1/basic-step.png">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/basic-step.png">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2018/11/06/android-animation-1/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>理解Android View Animation | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2018/11/06/android-animation-1/","path":"2018/11/06/android-animation-1/","title":"理解Android View Animation"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>理解Android View Animation | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -120,19 +93,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -143,23 +105,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -167,61 +128,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E4%B8%8E%E7%9F%A9%E9%98%B5"><span class="nav-number">1.</span> <span class="nav-text">几何与矩阵</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Matrix"><span class="nav-number">2.</span> <span class="nav-text">Matrix</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">基本方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">高级方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#View-Animation"><span class="nav-number">3.</span> <span class="nav-text">View Animation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2018/11/06/android-animation-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="理解Android View Animation | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           理解Android View Animation
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-11-06 17:57:01" itemprop="dateCreated datePublished" datetime="2018-11-06T17:57:01+08:00">2018-11-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2018-11-06 17:57:01" itemprop="dateCreated datePublished" datetime="2018-11-06T17:57:01+08:00">2018-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2018/11/06/android-animation-1/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2018/11/06/android-animation-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -230,35 +272,41 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-        <p>Android的View Animation是如何实现的？<br><a id="more"></a><br>Android中的Tween动画由<code>android.view.animation</code>包实现。网上很容易找到<code>Animation</code>相关API的用法，那么背后的原理是什么样的呢？</p>
+        <p>Android的View Animation是如何实现的？</p>
+<span id="more"></span>
+<p>Android中的Tween动画由<code>android.view.animation</code>包实现。网上很容易找到<code>Animation</code>相关API的用法，那么背后的原理是什么样的呢？</p>
 <p>我们由浅入深一步步来看。</p>
-<p><img src="basic-step.png" alt></p>
-<h1 id="几何与矩阵"><a href="#几何与矩阵" class="headerlink" title="几何与矩阵"></a>几何与矩阵</h1><p>参考自<a href="https://blog.csdn.net/oHeHeHou/article/details/46352277" target="_blank" rel="noopener">Android Matrix图形变换</a>和<a href="https://www.jianshu.com/p/6aa6080373ab" target="_blank" rel="noopener">深入理解 Android 中的 Matrix</a></p>
+<p><img src="/basic-step.png"></p>
+<h1 id="几何与矩阵"><a href="#几何与矩阵" class="headerlink" title="几何与矩阵"></a>几何与矩阵</h1><p>参考自<a target="_blank" rel="noopener" href="https://blog.csdn.net/oHeHeHou/article/details/46352277">Android Matrix图形变换</a>和<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/6aa6080373ab">深入理解 Android 中的 Matrix</a></p>
 <p>可以从几何的角度考虑平面中的平移，旋转，缩放以及错切。前三者分别见下图：</p>
-<p><img src="translate.jpg" alt></p>
-<p><img src="rotate.jpg" alt></p>
-<p><img src="scale.jpg" alt></p>
+<p><img src="/translate.jpg"></p>
+<p><img src="/rotate.jpg"></p>
+<p><img src="/scale.jpg"></p>
 <p>引入矩阵(3x3矩阵)可简化并且统一上图中的方程式。为了便于表示，先将(x0, y0)和(x, y)从二维作扩展成三维：</p>
 <ul>
 <li>(x0, y0)写作矩阵X0 (x0, y0, 1)</li>
 <li>(x, y)写作矩阵X (x, y, 1)</li>
 </ul>
 <p>所以原来的方程写成如下形式：</p>
-<p>X = C * X0</p>
+<p>X &#x3D; C * X0</p>
 <p>其中，X0矩阵是变换前的点的位置，X矩阵是变换后的点的位置，C是变换矩阵。C的定义如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ a  b  c</span><br><span class="line">  d  e  f</span><br><span class="line">  g  h  i ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ a  b  c</span><br><span class="line">  d  e  f</span><br><span class="line">  g  h  i ]</span><br></pre></td></tr></table></figure>
+
 <p>不难求出进行平移变换时C的值：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ 1  0  ∆x</span><br><span class="line">  0  1  ∆y</span><br><span class="line">  0  0  1 ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ 1  0  ∆x</span><br><span class="line">  0  1  ∆y</span><br><span class="line">  0  0  1 ]</span><br></pre></td></tr></table></figure>
+
 <p>类似地，旋转变换的时C的值如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ cosθ  -sinθ 0</span><br><span class="line">  sinθ  cosθ  0</span><br><span class="line">  0     0     1 ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ cosθ  -sinθ 0</span><br><span class="line">  sinθ  cosθ  0</span><br><span class="line">  0     0     1 ]</span><br></pre></td></tr></table></figure>
+
 <p>缩放变换时C的值如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ k1  0   0</span><br><span class="line">  0   k2  0</span><br><span class="line">  0   0   1 ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ k1  0   0</span><br><span class="line">  0   k2  0</span><br><span class="line">  0   0   1 ]</span><br></pre></td></tr></table></figure>
+
 <p>另外还有一种错切变换的情形上述没有提及。错切变换时C的值如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ 1   k1  0</span><br><span class="line">  k2  1   0</span><br><span class="line">  0   0   1 ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ 1   k1  0</span><br><span class="line">  k2  1   0</span><br><span class="line">  0   0   1 ]</span><br></pre></td></tr></table></figure>
+
 <p>所以对于矩阵</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ a  b  c</span><br><span class="line">  d  e  f</span><br><span class="line">  g  h  i ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ a  b  c</span><br><span class="line">  d  e  f</span><br><span class="line">  g  h  i ]</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>a, e 控制缩放变换</li>
 <li>b, d 控制错切变换</li>
@@ -267,13 +315,16 @@
 <p>下面这个demo演示上述参数是如何对变换进行控制的：</p>
 <iframe width="300" height="500" src="matrix-demo.mp4" frameborder="0" allowfullscreen></iframe>
 
-<h1 id="Matrix"><a href="#Matrix" class="headerlink" title="Matrix"></a>Matrix</h1><p>参考自<a href="https://blog.csdn.net/xx326664162/article/details/60142947" target="_blank" rel="noopener">Android Matrix图像变换处理</a></p>
+<h1 id="Matrix"><a href="#Matrix" class="headerlink" title="Matrix"></a>Matrix</h1><p>参考自<a target="_blank" rel="noopener" href="https://blog.csdn.net/xx326664162/article/details/60142947">Android Matrix图像变换处理</a></p>
 <p><code>android.graphics.Matrix</code>类是用于坐标变换的3x3矩阵。坐标变换类型包括平移变换、旋转变换、缩放变换和错切变换。<code>Matrix</code>内部维护一个float[9]数组用于表示3x3矩阵，如上一节所述，实际上所有的变换其中本质上是修改矩阵中(即数组中)的某些值。不同于a,b,c这种命名，<code>Matrix</code>中每个值有更有意义的命名：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ MSCALE_X, MSKEW_X,  MTRANS_X,</span><br><span class="line">  MSKEW_Y,  MSCALE_Y, MTRANS_Y,</span><br><span class="line">  MPERSP_0, MPERSP_1, MPERSP_2]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ MSCALE_X, MSKEW_X,  MTRANS_X,</span><br><span class="line">  MSKEW_Y,  MSCALE_Y, MTRANS_Y,</span><br><span class="line">  MPERSP_0, MPERSP_1, MPERSP_2]</span><br></pre></td></tr></table></figure>
+
 <h2 id="基本方法"><a href="#基本方法" class="headerlink" title="基本方法"></a>基本方法</h2><p><code>Matrix</code>的两个最基本方法是向矩阵赋值<code>setValues()</code>，以及从矩阵获取值<code>getValues()</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Copy 9 values from the matrix into the array.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getValues</span><span class="params">(<span class="keyword">float</span>[] values)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Copy 9 values from the array into the matrix. Depending on the implementation of Matrix,</span></span><br><span class="line"><span class="comment"> * these may be transformed into 16.16 integers in the Matrix, such that a subsequent call to</span></span><br><span class="line"><span class="comment"> * getValues() will not yield exactly the same values.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setValues</span><span class="params">(<span class="keyword">float</span>[] values)</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Copy 9 values from the matrix into the array.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getValues</span><span class="params">(<span class="type">float</span>[] values)</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Copy 9 values from the array into the matrix. Depending on the implementation of Matrix,</span></span><br><span class="line"><span class="comment"> * these may be transformed into 16.16 integers in the Matrix, such that a subsequent call to</span></span><br><span class="line"><span class="comment"> * getValues() will not yield exactly the same values.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setValues</span><span class="params">(<span class="type">float</span>[] values)</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <p><code>Matrix</code>的另一个基本操作是乘法。不过，矩阵的乘法不满足交换律。所以左乘<code>preConcat()</code>区别于右乘<code>postConcat()</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Set the matrix to the concatenation of the two specified matrices and return true.</span></span><br><span class="line"><span class="comment"> * /</span></span><br><span class="line"><span class="comment">public boolean setConcat(Matrix a, Matrix b);</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Preconcats the matrix with the specified matrix. M' = M * other</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">preConcat</span><span class="params">(Matrix other)</span></span>;</span><br><span class="line">	</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Postconcats the matrix with the specified matrix. M' = other * M</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">postConcat</span><span class="params">(Matrix other)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Set the matrix to the concatenation of the two specified matrices and return true.</span></span><br><span class="line"><span class="comment"> * /</span></span><br><span class="line"><span class="comment">public boolean setConcat(Matrix a, Matrix b);</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Preconcats the matrix with the specified matrix. M&#x27; = M * other</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">preConcat</span><span class="params">(Matrix other)</span>;</span><br><span class="line">	</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Postconcats the matrix with the specified matrix. M&#x27; = other * M</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">postConcat</span><span class="params">(Matrix other)</span>;</span><br></pre></td></tr></table></figure>
+
 <p>上述几个方法对应矩阵基本运算，可以写代码验证，这里不再赘述。</p>
 <h2 id="高级方法"><a href="#高级方法" class="headerlink" title="高级方法"></a>高级方法</h2><p><code>Matrix</code>用于平移变换、旋转变换、缩放变换和错切变换其实质是修改矩阵的值。但直接调用<code>Matrix.setValues()</code>来修改是低级的做法，非常繁琐易错。<code>Matrix</code>提供了更高级的接口用于完成此类变换操作。</p>
 <ul>
@@ -283,7 +334,7 @@
 <li>Skew</li>
 </ul>
 <p>除Translate外其他三种变换操作都可以围绕一个中心点来进行。对每种变换操作有<code>pre</code>, <code>post</code>和<code>post</code>三种不同形式API。</p>
-<p><a href="https://blog.csdn.net/xx326664162/article/details/60142947" target="_blank" rel="noopener">Android Matrix图像变换处理 - 薛瑄的博客 - CSDN博客</a>中提到</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xx326664162/article/details/60142947">Android Matrix图像变换处理 - 薛瑄的博客 - CSDN博客</a>中提到</p>
 <blockquote>
 <p>我们可以把Matrix变换想象成一个队列，队列里面包含了若干个变换操作，队列中每个操作按照先后顺序操作变换目标完成变换，pre相当于向队首增加一个操作，post相当于向队尾增加一个操作，set相当于清空当前队列重新设置</p>
 </blockquote>
@@ -291,22 +342,23 @@
 <iframe width="300" height="500" src="matrix-demo2.mp4" frameborder="0" allowfullscreen></iframe>
 
 <h1 id="View-Animation"><a href="#View-Animation" class="headerlink" title="View Animation"></a>View Animation</h1><p><code>android.view.animation</code>包下主要类之间的关系：</p>
-<p><img src="animation-classes.png" alt></p>
+<p><img src="/animation-classes.png"></p>
 <p><code>View</code>, <code>Animation</code>, <code>Transformation</code>, <code>Matrix</code>之间的时序关系：</p>
-<p><img src="animation-matrix.png" alt></p>
+<p><img src="/animation-matrix.png"></p>
 <p><code>View</code>, <code>Animation</code>, <code>Transformation</code>, <code>Matrix</code>之间的交互关系：</p>
-<p><img src="animation-relationship.png" alt></p>
-<p>理解以上内容后，不难自定义<code>Animation</code>。下面是一个自定义的<a href="http://www.aviyehuda.com/blog/2011/07/01/android-development-custom-animation/" target="_blank" rel="noopener">ColorAnimation</a>：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ColorAnimation</span> <span class="keyword">extends</span> <span class="title">Animation</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> View mView;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mFromR;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mFromG;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mFromB;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mToR;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mToG;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mToB;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ColorAnimation</span><span class="params">(View view, <span class="keyword">int</span> fromColor, <span class="keyword">int</span> toColor)</span> </span>&#123;</span><br><span class="line">        mView = view;</span><br><span class="line"></span><br><span class="line">        mFromR = Color.red(fromColor);</span><br><span class="line">        mFromG = Color.green(fromColor);</span><br><span class="line">        mFromB = Color.blue(fromColor);</span><br><span class="line">        mToR = Color.red(toColor);</span><br><span class="line">        mToG = Color.green(toColor);</span><br><span class="line">        mToB = Color.blue(toColor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">willChangeBounds</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">willChangeTransformationMatrix</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">applyTransformation</span><span class="params">(<span class="keyword">float</span> interpolatedTime, Transformation t)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> r = (<span class="keyword">int</span>) (mFromR + (mToR - mFromR) * interpolatedTime);</span><br><span class="line">        <span class="keyword">int</span> g = (<span class="keyword">int</span>) (mFromG + (mToG - mFromG) * interpolatedTime);</span><br><span class="line">        <span class="keyword">int</span> b = (<span class="keyword">int</span>) (mFromB + (mToB - mFromB) * interpolatedTime);</span><br><span class="line">        <span class="keyword">int</span> color = Color.rgb(r, g, b);</span><br><span class="line">        mView.setBackgroundColor(color);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/animation-relationship.png"></p>
+<p>理解以上内容后，不难自定义<code>Animation</code>。下面是一个自定义的<a target="_blank" rel="noopener" href="http://www.aviyehuda.com/blog/2011/07/01/android-development-custom-animation/">ColorAnimation</a>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ColorAnimation</span> <span class="keyword">extends</span> <span class="title class_">Animation</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> View mView;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> mFromR;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> mFromG;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> mFromB;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> mToR;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> mToG;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> mToB;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ColorAnimation</span><span class="params">(View view, <span class="type">int</span> fromColor, <span class="type">int</span> toColor)</span> &#123;</span><br><span class="line">        mView = view;</span><br><span class="line"></span><br><span class="line">        mFromR = Color.red(fromColor);</span><br><span class="line">        mFromG = Color.green(fromColor);</span><br><span class="line">        mFromB = Color.blue(fromColor);</span><br><span class="line">        mToR = Color.red(toColor);</span><br><span class="line">        mToG = Color.green(toColor);</span><br><span class="line">        mToB = Color.blue(toColor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">willChangeBounds</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">willChangeTransformationMatrix</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">applyTransformation</span><span class="params">(<span class="type">float</span> interpolatedTime, Transformation t)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">r</span> <span class="operator">=</span> (<span class="type">int</span>) (mFromR + (mToR - mFromR) * interpolatedTime);</span><br><span class="line">        <span class="type">int</span> <span class="variable">g</span> <span class="operator">=</span> (<span class="type">int</span>) (mFromG + (mToG - mFromG) * interpolatedTime);</span><br><span class="line">        <span class="type">int</span> <span class="variable">b</span> <span class="operator">=</span> (<span class="type">int</span>) (mFromB + (mToB - mFromB) * interpolatedTime);</span><br><span class="line">        <span class="type">int</span> <span class="variable">color</span> <span class="operator">=</span> Color.rgb(r, g, b);</span><br><span class="line">        mView.setBackgroundColor(color);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>运行效果如下：</p>
 <iframe width="500" height="280" src="color-animation.mp4" frameborder="0" allowfullscreen></iframe>
 
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://developer.android.com/reference/android/view/animation/package-summary" target="_blank" rel="noopener">animation包</a></li>
-<li><a href="https://developer.android.com/guide/topics/graphics/view-animation" target="_blank" rel="noopener">view animation</a></li>
-<li><a href="https://blog.csdn.net/oHeHeHou/article/details/46352277" target="_blank" rel="noopener">Android Matrix图形变换</a></li>
-<li><a href="https://blog.csdn.net/xx326664162/article/details/60142947" target="_blank" rel="noopener">Android Matrix图像变换处理</a></li>
-<li><a href="https://www.jianshu.com/p/6aa6080373ab" target="_blank" rel="noopener">深入理解 Android 中的 Matrix</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/view/animation/package-summary">animation包</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/guide/topics/graphics/view-animation">view animation</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/oHeHeHou/article/details/46352277">Android Matrix图形变换</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/xx326664162/article/details/60142947">Android Matrix图像变换处理</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/6aa6080373ab">深入理解 Android 中的 Matrix</a></li>
 </ul>
 
     </div>
@@ -315,130 +367,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/10/30/instant-run-1/" rel="prev" title="Instant Run浅析(二)">
-      <i class="fa fa-chevron-left"></i> Instant Run浅析(二)
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/11/07/android-animation-2/" rel="next" title="LayoutAnimationController介绍">
-      LayoutAnimationController介绍 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/10/30/instant-run-1/" rel="prev" title="Instant Run浅析(二)">
+                  <i class="fa fa-chevron-left"></i> Instant Run浅析(二)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/11/07/android-animation-2/" rel="next" title="LayoutAnimationController介绍">
+                  LayoutAnimationController介绍 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#几何与矩阵"><span class="nav-number">1.</span> <span class="nav-text">几何与矩阵</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Matrix"><span class="nav-number">2.</span> <span class="nav-text">Matrix</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本方法"><span class="nav-number">2.1.</span> <span class="nav-text">基本方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高级方法"><span class="nav-number">2.2.</span> <span class="nav-text">高级方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#View-Animation"><span class="nav-number">3.</span> <span class="nav-text">View Animation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -446,29 +413,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -477,22 +436,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2018/11/06/android-animation-1/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,95 +14,67 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="Retrofit通常用于处理HTTP接口，那它是否能支持TCP接口呢？答案是肯定的，本文提供了一种不必修改Retrofit源码就可支持访问TCP接口的文案。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Retrofit通常用于处理HTTP接口，那它是否能支持TCP接口呢？答案是肯定的，本文提供了一种不必修改Retrofit源码就可支持访问TCP接口的文案。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Retrofit如何支持TCP">
 <meta property="og:url" content="http://www.sunmoonblog.com/2017/08/09/retrofit-basic/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="Retrofit通常用于处理HTTP接口，那它是否能支持TCP接口呢？答案是肯定的，本文提供了一种不必修改Retrofit源码就可支持访问TCP接口的文案。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://www.sunmoonblog.com/2017/08/09/retrofit-basic/chrome_2017-08-09_10-42-23.webp">
-<meta property="og:image" content="http://www.sunmoonblog.com/2017/08/09/retrofit-basic/okhttpclient.webp">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.843Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/chrome_2017-08-09_10-42-23.webp">
+<meta property="og:image" content="http://www.sunmoonblog.com/okhttpclient.webp">
+<meta property="article:published_time" content="2017-08-09T08:25:55.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.843Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Retrofit如何支持TCP">
-<meta name="twitter:description" content="Retrofit通常用于处理HTTP接口，那它是否能支持TCP接口呢？答案是肯定的，本文提供了一种不必修改Retrofit源码就可支持访问TCP接口的文案。">
-<meta name="twitter:image" content="http://www.sunmoonblog.com/2017/08/09/retrofit-basic/chrome_2017-08-09_10-42-23.webp">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/chrome_2017-08-09_10-42-23.webp">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2017/08/09/retrofit-basic/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Retrofit如何支持TCP | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2017/08/09/retrofit-basic/","path":"2017/08/09/retrofit-basic/","title":"Retrofit如何支持TCP"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Retrofit如何支持TCP | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -115,19 +88,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -138,23 +100,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -162,61 +123,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Retrofit%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">Retrofit简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%94%AF%E6%8C%81TCP"><span class="nav-number">4.</span> <span class="nav-text">支持TCP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89Converter"><span class="nav-number">5.</span> <span class="nav-text">自定义Converter</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2017/08/09/retrofit-basic/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Retrofit如何支持TCP | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Retrofit如何支持TCP
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2017-08-09 16:25:55" itemprop="dateCreated datePublished" datetime="2017-08-09T16:25:55+08:00">2017-08-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2017-08-09 16:25:55" itemprop="dateCreated datePublished" datetime="2017-08-09T16:25:55+08:00">2017-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2017/08/09/retrofit-basic/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2017/08/09/retrofit-basic/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -225,13 +267,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>Retrofit通常用于处理HTTP接口，那它是否能支持TCP接口呢？答案是肯定的，本文提供了一种不必修改Retrofit源码就可支持访问TCP接口的文案。</p>
-<a id="more"></a>
-<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p><a href="https://github.com/square/retrofit" target="_blank" rel="noopener">Retrofit</a>号称是”Type-safe HTTP client for Android and Java”，它使用Java接口来定义HTTP API，并且支持JSON、Protobuf、XML等各种数据格式 ，使用非常方便。</p>
-<p>实践中，我们的项目后台接口由原有的TCP接口 + Protobuf协议切换到HTTP接口 + JSON协议之后，Android客户端相应地引入Retrofit，大大地简化了接口访问代码的开发工作。配合使用<a href="https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=zh-CN" target="_blank" rel="noopener">Postman</a>(Postman独立版本见<a href="https://www.getpostman.com/" target="_blank" rel="noopener">这里</a>)，原来让人抓狂容易扯皮的接口联调过程变得轻松愉快。</p>
-<p><img src="chrome_2017-08-09_10-42-23.webp" alt="postman截图"></p>
+<span id="more"></span>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p><a target="_blank" rel="noopener" href="https://github.com/square/retrofit">Retrofit</a>号称是”Type-safe HTTP client for Android and Java”，它使用Java接口来定义HTTP API，并且支持JSON、Protobuf、XML等各种数据格式 ，使用非常方便。</p>
+<p>实践中，我们的项目后台接口由原有的TCP接口 + Protobuf协议切换到HTTP接口 + JSON协议之后，Android客户端相应地引入Retrofit，大大地简化了接口访问代码的开发工作。配合使用<a target="_blank" rel="noopener" href="https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=zh-CN">Postman</a>(Postman独立版本见<a target="_blank" rel="noopener" href="https://www.getpostman.com/">这里</a>)，原来让人抓狂容易扯皮的接口联调过程变得轻松愉快。</p>
+<p><img src="/chrome_2017-08-09_10-42-23.webp" alt="postman截图"></p>
 <p>最近加入到另一个项目，发现后台接口也是TCP接口 + Protobuf协议，于是接口联调过程又回到以前状态，变得较为困难：一是PB二进制数据不可读，且难以像JSON文本数据一样可快速手工构造；二是TCP协议上进行私有加解密，导致没有类似Postman现成可用的接口测试工具。</p>
 <p>校园项目有过推倒重来的阶段，由原有的TCP接口 + Protobuf协议切换到HTTP接口 + JSON协议时没有任何包袱换和顾虑。而这个项目后台、iOS终端、Android终端仍在快速迭代，切换后台接口工作量大，可能导致较多不稳定。</p>
 <p>换个思路，我们能否做以下工作呢？</p>
@@ -243,15 +283,17 @@
 <h1 id="Retrofit简介"><a href="#Retrofit简介" class="headerlink" title="Retrofit简介"></a>Retrofit简介</h1><blockquote>
 <p>Type-safe HTTP client for Android and Java by Square, Inc.</p>
 </blockquote>
-<p><a href="https://github.com/square/retrofit" target="_blank" rel="noopener">Retrofit</a>是Android和Java平台的类型安全的HTTP客户端。还不够具体？接下来看</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/square/retrofit">Retrofit</a>是Android和Java平台的类型安全的HTTP客户端。还不够具体？接下来看</p>
 <blockquote>
 <p>Retrofit adapts a Java interface to HTTP calls by using annotations on the declared methods to define how requests are made. Create instances using the builder and pass your interface to create to generate an implementation.</p>
 </blockquote>
 <p>Retrofit中使用注解来描述HTTP请求，动态代理生成可以发起相应HTTP请求的Java接口。举个例子</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GitHubService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@GET</span>(<span class="string">"users/&#123;user&#125;/repos"</span>)</span><br><span class="line">  Call&lt;List&lt;Repo&gt;&gt; listRepos(<span class="meta">@Path</span>(<span class="string">"user"</span>) String user);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()</span><br><span class="line">   .baseUrl(<span class="string">"https://api.github.com/"</span>)</span><br><span class="line">   .addConverterFactory(GsonConverterFactory.create())</span><br><span class="line">   .build();</span><br><span class="line"></span><br><span class="line">GitHubService api = retrofit.create(GitHubService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">Response&lt;List&lt;Repo&gt;&gt; user = api.listRepos(<span class="string">"张三"</span>).execute();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">GitHubService</span> &#123;</span><br><span class="line">  <span class="meta">@GET(&quot;users/&#123;user&#125;/repos&quot;)</span></span><br><span class="line">  Call&lt;List&lt;Repo&gt;&gt; <span class="title function_">listRepos</span><span class="params">(<span class="meta">@Path(&quot;user&quot;)</span> String user)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Retrofit</span> <span class="variable">retrofit</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Retrofit</span>.Builder()</span><br><span class="line">   .baseUrl(<span class="string">&quot;https://api.github.com/&quot;</span>)</span><br><span class="line">   .addConverterFactory(GsonConverterFactory.create())</span><br><span class="line">   .build();</span><br><span class="line"></span><br><span class="line"><span class="type">GitHubService</span> <span class="variable">api</span> <span class="operator">=</span> retrofit.create(GitHubService.class);</span><br><span class="line">Response&lt;List&lt;Repo&gt;&gt; user = api.listRepos(<span class="string">&quot;张三&quot;</span>).execute();</span><br></pre></td></tr></table></figure>
+
 <p><code>Retrofit</code>负责生成<code>GitHubService</code>接口的具体实现。我们只管调用，不必手写后台接口访问代码，够简单吧。Retrofit是如何做到的呢？</p>
-<p><em>作者评论 ：其实原本就应该这么简单！ 想想看，接口访问代码难道多数不是样板代码？很多时候你不过复制粘贴，然后修改下确保参数正确而已。 </em></p>
+<p>*作者评论 ：其实原本就应该这么简单！ 想想看，接口访问代码难道多数不是样板代码？很多时候你不过复制粘贴，然后修改下确保参数正确而已。 *</p>
 <h1 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h1><p>看下Retrofit工作原理。Retrofit包含以下关键类：</p>
 <ul>
 <li><strong>Retrofit</strong> - 它是整个模块的管理者，采用Builder模式。Retrofit可以将不同的<code>Converter.Factory</code>, <code>CallAdapter.Factory</code>, <code>Call.Factory</code>组合起来</li>
@@ -261,16 +303,15 @@
 <li><strong>Call.Factory</strong> - Call工厂。Call工厂是我们让Retroifit支持TCP接口的关键</li>
 <li><strong>CallAdapter</strong> - 不同于Converter，CallAdapter相对就不那么容易理解。简单来说，Retrofit接口不仅仅可以返回Call，也可以将Call适配成<code>AsyncTask</code>、<code>Future</code>、RxJava的<code>Observable</code>, 或其他的任何支持异步操作的对象，只要提供了相应的CallAdapter</li>
 <li><strong>CallAdapter.Factory</strong> - CallAdapter工厂</li>
-<li><strong>ServiceMethod</strong> - 与上面几个类不同，ServiceMethod不是公开的。只有<code>toRequest()</code>和<code>toResponse()</code>两个方法。  ServiceMethod也是Builder模式，ServiceMethod.Builder主要方法包括<ul>
+<li><strong>ServiceMethod</strong> - 与上面几个类不同，ServiceMethod不是公开的。只有<code>toRequest()</code>和<code>toResponse()</code>两个方法。  ServiceMethod也是Builder模式，ServiceMethod.Builder主要方法包括</li>
 <li><code>ServiceMethod.Builder.createCallAdapter()</code></li>
 <li><code>ServiceMethod.Builder.createResponseConverter()</code></li>
 <li><code>ServiceMethod.Builder.parseParameterAnnotation()</code></li>
 </ul>
-</li>
-</ul>
 <p>Retrofit的原理是使用动态代理依据注解生成需要的代码，关键步骤在于<code>Retrofit.create()</code>：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">create</span><span class="params">(<span class="keyword">final</span> Class&lt;T&gt; service)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> (T) Proxy.newProxyInstance(service.getClassLoader(), <span class="keyword">new</span> Class&lt;?&gt;[] &#123; service &#125;,</span><br><span class="line">        <span class="keyword">new</span> InvocationHandler() &#123;</span><br><span class="line">          <span class="keyword">private</span> <span class="keyword">final</span> Platform platform = Platform.get();</span><br><span class="line"></span><br><span class="line">          <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object... args)</span></span></span><br><span class="line"><span class="function">              <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">            ...</span><br><span class="line">            </span><br><span class="line">            ServiceMethod serviceMethod = loadServiceMethod(method);</span><br><span class="line">            OkHttpCall okHttpCall = <span class="keyword">new</span> OkHttpCall&lt;&gt;(serviceMethod, args);</span><br><span class="line">            <span class="keyword">return</span> serviceMethod.callAdapter.adapt(okHttpCall);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>坦白地说，原理你绝对都懂。不过Java中反射、泛型、注解等编码工作较为繁琐，另外Retrofit源码中参数检查、异常处理、调试信息、bug规避等代码占了相当大篇幅，抛开这些，核心代码其实很容易看明白，所以本文就不展开。<a href="http://www.jianshu.com/p/cd69c75d053e" target="_blank" rel="noopener">Retrofit原理浅析</a>中有较为清晰的分析，可以参考。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;T&gt; T <span class="title function_">create</span><span class="params">(<span class="keyword">final</span> Class&lt;T&gt; service)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> (T) Proxy.newProxyInstance(service.getClassLoader(), <span class="keyword">new</span> <span class="title class_">Class</span>&lt;?&gt;[] &#123; service &#125;,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvocationHandler</span>() &#123;</span><br><span class="line">          <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Platform</span> <span class="variable">platform</span> <span class="operator">=</span> Platform.get();</span><br><span class="line"></span><br><span class="line">          <span class="meta">@Override</span> <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object... args)</span></span><br><span class="line">              <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">            ...</span><br><span class="line">            </span><br><span class="line">            <span class="type">ServiceMethod</span> <span class="variable">serviceMethod</span> <span class="operator">=</span> loadServiceMethod(method);</span><br><span class="line">            <span class="type">OkHttpCall</span> <span class="variable">okHttpCall</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OkHttpCall</span>&lt;&gt;(serviceMethod, args);</span><br><span class="line">            <span class="keyword">return</span> serviceMethod.callAdapter.adapt(okHttpCall);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>坦白地说，原理你绝对都懂。不过Java中反射、泛型、注解等编码工作较为繁琐，另外Retrofit源码中参数检查、异常处理、调试信息、bug规避等代码占了相当大篇幅，抛开这些，核心代码其实很容易看明白，所以本文就不展开。<a target="_blank" rel="noopener" href="http://www.jianshu.com/p/cd69c75d053e">Retrofit原理浅析</a>中有较为清晰的分析，可以参考。</p>
 <h1 id="支持TCP"><a href="#支持TCP" class="headerlink" title="支持TCP"></a>支持TCP</h1><p>如何让Retrofit支持TCP？一开始的想法是修改源码不就行了。但修改源码会给后续工作带来很多不便，比如代码维护、项目构建、Retrofit库升级等等。</p>
 <p>Retrofit支持HTTP，而HTTP是基于TCP的。实际上HTTP虽然是应用层协议，使用起来感觉比TCP简单多了，但其实现应该不会比TCP更简单。从这个层面来讲，能实现更复杂的功能，不可能搞不定简单的功能，对不对？ (看源码，其实OkHttp内部不仅实现了TCP连接，还有完善的TCP连接池)</p>
 <p>上一节讲到<code>Call.Factory</code>是让Retrofit支持TCP的关键。使用Builder模式构适Retrofit时，除了使用最基本的<code>Builder.client(OkHttpClient client)</code>方式给Builder塞进一个OkHttpClient对象，还可以使用<code>callFactory</code>方法。实际上以下两个方法作用类似，都是设置Call.Fractory：</p>
@@ -279,21 +320,26 @@
 <li><code>Builder callFactory(okhttp3.Call.Factory factory)</code></li>
 </ul>
 <p>后者是更通用的形式，前者只是一个特例。是的，<code>OkHttpClient</code>也是一个<code>Call.Factory</code>，代码为证。</p>
-<p><img src="okhttpclient.webp" alt="OkHttpClient"></p>
+<p><img src="/okhttpclient.webp" alt="OkHttpClient"></p>
 <p>明白了吧，只要我们实现<code>Call.Factory</code>接口，就可以基于<code>HttpURLConnection</code>写一个”KoHttpClient”，或是基于Apache HttpClient写一个”NotOkHttpClient”，然后替换Retrofit缺省依赖的OkHttpClient。所谓解耦或是扩展性，说的也许就是这个。那<code>Call.Factory</code>到底何方神圣？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> okhttp3;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Call</span> <span class="keyword">extends</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">    <span class="function">Request <span class="title">request</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Response <span class="title">execute</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(Callback responseCallback)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">cancel</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isExecuted</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isCanceled</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Call <span class="title">clone</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">  <span class="class"><span class="keyword">interface</span> <span class="title">Factory</span> </span>&#123;</span><br><span class="line">    <span class="function">Call <span class="title">newCall</span><span class="params">(Request request)</span></span>;</span><br><span class="line">  &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> okhttp3;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Call</span> <span class="keyword">extends</span> <span class="title class_">Cloneable</span> &#123;</span><br><span class="line">    Request <span class="title function_">request</span><span class="params">()</span>;</span><br><span class="line">    Response <span class="title function_">execute</span><span class="params">()</span> <span class="keyword">throws</span> IOException;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">enqueue</span><span class="params">(Callback responseCallback)</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">cancel</span><span class="params">()</span>;</span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">isExecuted</span><span class="params">()</span>;</span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">isCanceled</span><span class="params">()</span>;</span><br><span class="line">    Call <span class="title function_">clone</span><span class="params">()</span>;</span><br><span class="line">    </span><br><span class="line">  <span class="keyword">interface</span> <span class="title class_">Factory</span> &#123;</span><br><span class="line">    Call <span class="title function_">newCall</span><span class="params">(Request request)</span>;</span><br><span class="line">  &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>是不是简单得出乎你的意料。注意，OkHttp并规定Call必须是HTTP Call而不能是TCP Call。那好吧，我们来实现一个<code>TcpCall</code>以及<code>TcpCallFactory</code>：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TcpCallFactory</span> <span class="keyword">implements</span> <span class="title">Call</span>.<span class="title">Factory</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TcpCallFactory</span><span class="params">(String host, <span class="keyword">int</span> port)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Call <span class="title">newCall</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> TcpCall(<span class="keyword">this</span>, request);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">TcpCall</span> <span class="keyword">implements</span> <span class="title">Call</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Response <span class="title">execute</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(Callback responseCallback)</span> </span>&#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TcpCallFactory</span> <span class="keyword">implements</span> <span class="title class_">Call</span>.Factory &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">TcpCallFactory</span><span class="params">(String host, <span class="type">int</span> port)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Call <span class="title function_">newCall</span><span class="params">(Request request)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">TcpCall</span>(<span class="built_in">this</span>, request);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">TcpCall</span> <span class="keyword">implements</span> <span class="title class_">Call</span> &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> Response <span class="title function_">execute</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">enqueue</span><span class="params">(Callback responseCallback)</span> &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>我们的项目中有现成的TcpClient，最终<code>TcpCall</code>是基于它来实现的。如果你没有直接可用的TcpClient，不妨看看<code>okhttp3.internal.io.RealConnection</code>源码，或许用得上。</p>
-<p><code>Call</code>同时支持同步请求和异步请求，见<a href="https://inthecheesefactory.com/blog/retrofit-2.0/en" target="_blank" rel="noopener">Retrofit 2.0：有史以来最大的改进</a> (<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0915/3460.html" target="_blank" rel="noopener">翻译</a>)，对应的方法分别为<code>execute()</code>和<code>enqueue()</code>。前者如何实现非常直观，而后者的实现则有一定技巧。具体代码可以参考<a href="https://github.com/square/okhttp/blob/master/okhttp/src/main/java/okhttp3/Dispatcher.java" target="_blank" rel="noopener">okhttp3.Dispatcher</a>源码。</p>
+<p><code>Call</code>同时支持同步请求和异步请求，见<a target="_blank" rel="noopener" href="https://inthecheesefactory.com/blog/retrofit-2.0/en">Retrofit 2.0：有史以来最大的改进</a> (<a target="_blank" rel="noopener" href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0915/3460.html">翻译</a>)，对应的方法分别为<code>execute()</code>和<code>enqueue()</code>。前者如何实现非常直观，而后者的实现则有一定技巧。具体代码可以参考<a target="_blank" rel="noopener" href="https://github.com/square/okhttp/blob/master/okhttp/src/main/java/okhttp3/Dispatcher.java">okhttp3.Dispatcher</a>源码。</p>
 <p>另一个小细节就是<code>Call.execute()</code>的返回值，只要没有<code>IOException</code>异常，我们永远返回如下对象：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Response.Builder()</span><br><span class="line">    .protocol(Protocol.HTTP_1_1)</span><br><span class="line">    .code(<span class="number">200</span>)</span><br><span class="line">    .message(<span class="string">"OK"</span>)</span><br><span class="line">    .request(originalRequest)</span><br><span class="line">    .body(ResponseBody.create(<span class="keyword">null</span>, rsp))</span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">Response</span>.Builder()</span><br><span class="line">    .protocol(Protocol.HTTP_1_1)</span><br><span class="line">    .code(<span class="number">200</span>)</span><br><span class="line">    .message(<span class="string">&quot;OK&quot;</span>)</span><br><span class="line">    .request(originalRequest)</span><br><span class="line">    .body(ResponseBody.create(<span class="literal">null</span>, rsp))</span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+
 <p>最后看看如何创建一个使用<code>TcpCallFactory</code>发送请求的Retrofit实例：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()</span><br><span class="line">    <span class="comment">// 我们访问tcp接口，所以这行代码无实际意义</span></span><br><span class="line">    <span class="comment">// 仅仅是保证能通过retrofit内部参数检查</span></span><br><span class="line">    .baseUrl(<span class="string">"http://localhost:4000"</span>)</span><br><span class="line">    .callFactory(<span class="keyword">new</span> TcpCallFactory(host, port))</span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Retrofit</span> <span class="variable">retrofit</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Retrofit</span>.Builder()</span><br><span class="line">    <span class="comment">// 我们访问tcp接口，所以这行代码无实际意义</span></span><br><span class="line">    <span class="comment">// 仅仅是保证能通过retrofit内部参数检查</span></span><br><span class="line">    .baseUrl(<span class="string">&quot;http://localhost:4000&quot;</span>)</span><br><span class="line">    .callFactory(<span class="keyword">new</span> <span class="title class_">TcpCallFactory</span>(host, port))</span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+
 <h1 id="自定义Converter"><a href="#自定义Converter" class="headerlink" title="自定义Converter"></a>自定义Converter</h1><p>Retrofit中<code>Convert</code>是接口，具体如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Converter</span>&lt;<span class="title">F</span>, <span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">T <span class="title">convert</span><span class="params">(F value)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Factory</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">public</span> Converter&lt;ResponseBody, ?&gt; responseBodyConverter(Type type, Annotation[] annotations,</span><br><span class="line">            Retrofit retrofit) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;    </span><br><span class="line">        </span><br><span class="line">        <span class="keyword">public</span> Converter&lt;?, RequestBody&gt; requestBodyConverter(Type type,</span><br><span class="line">            Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">public</span> Converter&lt;?, String&gt; stringConverter(Type type, Annotation[] annotations,</span><br><span class="line">            Retrofit retrofit) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Retrofit以独立模块的形式提供了几种<a href="https://github.com/square/retrofit/tree/master/retrofit-converters" target="_blank" rel="noopener">常用格式的Converter</a>。</p>
-<p>上一节中我们已经让Retrofit支持通过TCP收发数据了。但TCP是传输层协议，如何在输入输出流中确定一条二进制消息的开始和结束，还需要自定义格式才行。所以客户端通过TCP接口访问后台并不是简单地使用标准Protobuf协议发送和接收数据，不能直接使用<a href="https://github.com/square/retrofit/tree/master/retrofit-converters/wire" target="_blank" rel="noopener">Wire Converter</a>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Converter</span>&lt;F, T&gt; &#123;</span><br><span class="line">    T <span class="title function_">convert</span><span class="params">(F value)</span> <span class="keyword">throws</span> IOException;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Factory</span> &#123;  </span><br><span class="line">        <span class="keyword">public</span> Converter&lt;ResponseBody, ?&gt; responseBodyConverter(Type type, Annotation[] annotations,</span><br><span class="line">            Retrofit retrofit) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;    </span><br><span class="line">        </span><br><span class="line">        <span class="keyword">public</span> Converter&lt;?, RequestBody&gt; requestBodyConverter(Type type,</span><br><span class="line">            Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">public</span> Converter&lt;?, String&gt; stringConverter(Type type, Annotation[] annotations,</span><br><span class="line">            Retrofit retrofit) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>Retrofit以独立模块的形式提供了几种<a target="_blank" rel="noopener" href="https://github.com/square/retrofit/tree/master/retrofit-converters">常用格式的Converter</a>。</p>
+<p>上一节中我们已经让Retrofit支持通过TCP收发数据了。但TCP是传输层协议，如何在输入输出流中确定一条二进制消息的开始和结束，还需要自定义格式才行。所以客户端通过TCP接口访问后台并不是简单地使用标准Protobuf协议发送和接收数据，不能直接使用<a target="_blank" rel="noopener" href="https://github.com/square/retrofit/tree/master/retrofit-converters/wire">Wire Converter</a>。</p>
 <p>我们的消息格式大致是这样：</p>
 <table>
 <thead>
@@ -303,14 +349,12 @@
 <th>消息体body</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>4字节</td>
 <td>4字节</td>
 <td>不定长，PB</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>请求消息 </p>
 <table>
 <thead>
@@ -320,36 +364,39 @@
 <th>消息体body</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>4字节</td>
 <td>4字节</td>
 <td>不定长，PB</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>响应消息</p>
 <p><em>注意：请求消息中的消息体并不是必须的，某些查询请求就没有消息体</em></p>
 <!-- TODO 图示 -->
-<p>需要根据消息格式实现自定义Converter。先看看<a href="https://github.com/square/retrofit/tree/master/retrofit-converters/wire" target="_blank" rel="noopener">Wire Converter</a>，它的两个Converter功能分别如下</p>
+
+<p>需要根据消息格式实现自定义Converter。先看看<a target="_blank" rel="noopener" href="https://github.com/square/retrofit/tree/master/retrofit-converters/wire">Wire Converter</a>，它的两个Converter功能分别如下</p>
 <ul>
 <li>WireRequestBodyConverter - Message对象转换为字节流(okhttp3.RequestBody)</li>
 <li>WireResponseBodyConverter - 字节流(okhttp3.ResponseBody)转换为Message对象</li>
 </ul>
-<p>HTTP中url本身就是命名良好的命令字，而响应码可以作为错误码，所以<a href="https://github.com/square/retrofit/tree/master/retrofit-converters/wire" target="_blank" rel="noopener">Wire Converter</a>用于HTTP接口数据转换时并不用关心命令字和错误码的问题。但就TCP接口而言，数据转换时需要关心命令字和错误码。设计如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 带命令字的请求</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CmdRequest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> cmd;</span><br><span class="line">    Message message;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 带错误码的响应</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StatusResponse</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Message</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> error;</span><br><span class="line">    T message;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Custom Wire Converter与<a href="https://github.com/square/retrofit/tree/master/retrofit-converters/wire" target="_blank" rel="noopener">Wire Converter</a>差异如下：</p>
+<p>HTTP中url本身就是命名良好的命令字，而响应码可以作为错误码，所以<a target="_blank" rel="noopener" href="https://github.com/square/retrofit/tree/master/retrofit-converters/wire">Wire Converter</a>用于HTTP接口数据转换时并不用关心命令字和错误码的问题。但就TCP接口而言，数据转换时需要关心命令字和错误码。设计如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 带命令字的请求</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CmdRequest</span> &#123;</span><br><span class="line">    <span class="type">int</span> cmd;</span><br><span class="line">    Message message;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 带错误码的响应</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">StatusResponse</span>&lt;T <span class="keyword">extends</span> <span class="title class_">Message</span>&gt; &#123;</span><br><span class="line">    <span class="type">int</span> error;</span><br><span class="line">    T message;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Custom Wire Converter与<a target="_blank" rel="noopener" href="https://github.com/square/retrofit/tree/master/retrofit-converters/wire">Wire Converter</a>差异如下：</p>
 <ul>
 <li>CustomWireRequestBodyConverter - CmdRequest对象转换为字节流(okhttp3.RequestBody)</li>
 <li>CustomWireResponseBodyConverter - 字节流(okhttp3.ResponseBody)转换为StatusResponse对象</li>
 </ul>
 <p>剩下的就是一些具体的编码细节了，这里不过多展开。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>最后给出一个完整的用法，基本上跟添加TCP支持前的<a href="http://square.github.io/retrofit/" target="_blank" rel="noopener">Retrofit用法</a>完全一致：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AddressService.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AddressService</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 固定写法，有@Body参数时为'@POST("/")'，无@Body参数时为'@GET("/")'</span></span><br><span class="line">    <span class="meta">@POST</span>(<span class="string">"/"</span>)</span><br><span class="line">    Call&lt;StatusResponse&lt;SetUserAddressRsp&gt;&gt; modifyAddress(<span class="meta">@Body</span> CmdRequest message);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Demo.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">aDemo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()</span><br><span class="line">        <span class="comment">// 我们访问tcp接口，所以这行代码无实际意义</span></span><br><span class="line">        <span class="comment">// 仅仅是保证能通过retrofit内部参数检查    </span></span><br><span class="line">        .baseUrl(<span class="string">"http://localhost:4000"</span>)</span><br><span class="line">        .callFactory(<span class="keyword">new</span> TcpClient(Env.getHostAddr(), Env.getHostPort()))</span><br><span class="line">        .addConverterFactory(CustomWireConverterFactory.create(mRetrofitLogic.context()))</span><br><span class="line">        .build();</span><br><span class="line">    <span class="comment">// 获取service实例</span></span><br><span class="line">    AddressService addressService = retrofit.create(AddressService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    <span class="comment">// 创建修改地址请求</span></span><br><span class="line">    SetUserAddressReq setUserAddressReq = ...</span><br><span class="line">    <span class="comment">// 创建请求参数</span></span><br><span class="line">    CmdRequest cmdMessage = ...</span><br><span class="line">    <span class="comment">// 获取call对象</span></span><br><span class="line">    Call&lt;StatusResponse&lt;SetUserAddressRsp&gt;&gt; call = addressService.modifyAddress(cmdMessage);</span><br><span class="line">    call.enqueue(callback);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>最后给出一个完整的用法，基本上跟添加TCP支持前的<a target="_blank" rel="noopener" href="http://square.github.io/retrofit/">Retrofit用法</a>完全一致：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AddressService.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">AddressService</span> &#123;</span><br><span class="line">    <span class="comment">// 固定写法，有@Body参数时为&#x27;@POST(&quot;/&quot;)&#x27;，无@Body参数时为&#x27;@GET(&quot;/&quot;)&#x27;</span></span><br><span class="line">    <span class="meta">@POST(&quot;/&quot;)</span></span><br><span class="line">    Call&lt;StatusResponse&lt;SetUserAddressRsp&gt;&gt; <span class="title function_">modifyAddress</span><span class="params">(<span class="meta">@Body</span> CmdRequest message)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Demo.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">aDemo</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Retrofit</span> <span class="variable">retrofit</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Retrofit</span>.Builder()</span><br><span class="line">        <span class="comment">// 我们访问tcp接口，所以这行代码无实际意义</span></span><br><span class="line">        <span class="comment">// 仅仅是保证能通过retrofit内部参数检查    </span></span><br><span class="line">        .baseUrl(<span class="string">&quot;http://localhost:4000&quot;</span>)</span><br><span class="line">        .callFactory(<span class="keyword">new</span> <span class="title class_">TcpClient</span>(Env.getHostAddr(), Env.getHostPort()))</span><br><span class="line">        .addConverterFactory(CustomWireConverterFactory.create(mRetrofitLogic.context()))</span><br><span class="line">        .build();</span><br><span class="line">    <span class="comment">// 获取service实例</span></span><br><span class="line">    <span class="type">AddressService</span> <span class="variable">addressService</span> <span class="operator">=</span> retrofit.create(AddressService.class);</span><br><span class="line">    <span class="comment">// 创建修改地址请求</span></span><br><span class="line">    <span class="type">SetUserAddressReq</span> <span class="variable">setUserAddressReq</span> <span class="operator">=</span> ...</span><br><span class="line">    <span class="comment">// 创建请求参数</span></span><br><span class="line">    <span class="type">CmdRequest</span> <span class="variable">cmdMessage</span> <span class="operator">=</span> ...</span><br><span class="line">    <span class="comment">// 获取call对象</span></span><br><span class="line">    Call&lt;StatusResponse&lt;SetUserAddressRsp&gt;&gt; call = addressService.modifyAddress(cmdMessage);</span><br><span class="line">    call.enqueue(callback);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>添加RxJava依赖之后，你还可以这么写，是不是有种很潮的感觉？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AddressService.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AddressService</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 固定写法，有@Body参数时为'@POST("/")'，无@Body参数时为'@GET("/")'</span></span><br><span class="line">    <span class="meta">@POST</span>(<span class="string">"/"</span>)</span><br><span class="line">    Observable&lt;StatusResponse&lt;SetUserAddressRsp&gt;&gt; modifyAddress2(<span class="meta">@Body</span> CmdRequest message);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Demo.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">aDemo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Retrofit retrofit = ...</span><br><span class="line">    <span class="comment">// 获取service实例</span></span><br><span class="line">    AddressService addressService = retrofit.create(AddressService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    <span class="comment">// 创建修改地址请求</span></span><br><span class="line">    SetUserAddressReq setUserAddressReq = ...</span><br><span class="line">    <span class="comment">// 创建请求参数</span></span><br><span class="line">    CmdRequest cmdMessage = ...</span><br><span class="line">    <span class="comment">// 获取call对象</span></span><br><span class="line">    Observable&lt;StatusResponse&lt;SetUserAddressRsp&gt;&gt; observable = addressService.modifyAddress2(cmdMessage);</span><br><span class="line">    observable.subscribeOn(Schedulers.io())</span><br><span class="line">        .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">        .subscribe(...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AddressService.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">AddressService</span> &#123;</span><br><span class="line">    <span class="comment">// 固定写法，有@Body参数时为&#x27;@POST(&quot;/&quot;)&#x27;，无@Body参数时为&#x27;@GET(&quot;/&quot;)&#x27;</span></span><br><span class="line">    <span class="meta">@POST(&quot;/&quot;)</span></span><br><span class="line">    Observable&lt;StatusResponse&lt;SetUserAddressRsp&gt;&gt; <span class="title function_">modifyAddress2</span><span class="params">(<span class="meta">@Body</span> CmdRequest message)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Demo.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">aDemo</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Retrofit</span> <span class="variable">retrofit</span> <span class="operator">=</span> ...</span><br><span class="line">    <span class="comment">// 获取service实例</span></span><br><span class="line">    <span class="type">AddressService</span> <span class="variable">addressService</span> <span class="operator">=</span> retrofit.create(AddressService.class);</span><br><span class="line">    <span class="comment">// 创建修改地址请求</span></span><br><span class="line">    <span class="type">SetUserAddressReq</span> <span class="variable">setUserAddressReq</span> <span class="operator">=</span> ...</span><br><span class="line">    <span class="comment">// 创建请求参数</span></span><br><span class="line">    <span class="type">CmdRequest</span> <span class="variable">cmdMessage</span> <span class="operator">=</span> ...</span><br><span class="line">    <span class="comment">// 获取call对象</span></span><br><span class="line">    Observable&lt;StatusResponse&lt;SetUserAddressRsp&gt;&gt; observable = addressService.modifyAddress2(cmdMessage);</span><br><span class="line">    observable.subscribeOn(Schedulers.io())</span><br><span class="line">        .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">        .subscribe(...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><em>支持rxjava需要添加以下依赖</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;io.reactivex:rxjava:1.1.6&apos;</span><br><span class="line">compile &apos;com.squareup.retrofit2:adapter-rxjava:2.0.0&apos;</span><br><span class="line">compile &apos;io.reactivex:rxandroid:1.2.1&apos;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">compile &#x27;io.reactivex:rxjava:1.1.6&#x27;</span><br><span class="line">compile &#x27;com.squareup.retrofit2:adapter-rxjava:2.0.0&#x27;</span><br><span class="line">compile &#x27;io.reactivex:rxandroid:1.2.1&#x27;</span><br></pre></td></tr></table></figure>
+
 <!--
 
 https://blog.robinchutaux.com/blog/a-smart-way-to-use-retrofit/
@@ -383,136 +430,52 @@ http://www.jianshu.com/p/308f3c54abdd
 https://news.realm.io/cn/news/droidcon-jake-wharton-simple-http-retrofit-2/
 -->
 
+
     </div>
 
     
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/07/13/js-getter-setter/" rel="prev" title="Javascript中的getter和setter">
-      <i class="fa fa-chevron-left"></i> Javascript中的getter和setter
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/10/20/kotlin-delegate-tutorial/" rel="next" title="Kotlin代理">
-      Kotlin代理 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/07/13/js-getter-setter/" rel="prev" title="Javascript中的getter和setter">
+                  <i class="fa fa-chevron-left"></i> Javascript中的getter和setter
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/10/20/kotlin-delegate-tutorial/" rel="next" title="Kotlin代理">
+                  Kotlin代理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Retrofit简介"><span class="nav-number">2.</span> <span class="nav-text">Retrofit简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#工作原理"><span class="nav-number">3.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#支持TCP"><span class="nav-number">4.</span> <span class="nav-text">支持TCP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义Converter"><span class="nav-number">5.</span> <span class="nav-text">自定义Converter</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -520,29 +483,21 @@ https://news.realm.io/cn/news/droidcon-jake-wharton-simple-http-retrofit-2/
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -551,22 +506,17 @@ https://news.realm.io/cn/news/droidcon-jake-wharton-simple-http-retrofit-2/
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2017/08/09/retrofit-basic/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

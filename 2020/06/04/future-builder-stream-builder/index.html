@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,64 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="翻译一些 Future 和 FutureBuilder 以及 Stream 和 StreamBuilder 相关的资料。">
-<meta name="keywords" content="Flutter">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="翻译一些 Future 和 FutureBuilder 以及 Stream 和 StreamBuilder 相关的资料。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="FutureBuilder 与 StreamBuilder">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/06/04/future-builder-stream-builder/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="翻译一些 Future 和 FutureBuilder 以及 Stream 和 StreamBuilder 相关的资料。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.048Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-04T08:40:20.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.048Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Flutter">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="FutureBuilder 与 StreamBuilder">
-<meta name="twitter:description" content="翻译一些 Future 和 FutureBuilder 以及 Stream 和 StreamBuilder 相关的资料。">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/06/04/future-builder-stream-builder/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>FutureBuilder 与 StreamBuilder | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2020/06/04/future-builder-stream-builder/","path":"2020/06/04/future-builder-stream-builder/","title":"FutureBuilder 与 StreamBuilder"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>FutureBuilder 与 StreamBuilder | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +85,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +97,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,61 +120,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#FutureBuilder"><span class="nav-number">1.</span> <span class="nav-text">FutureBuilder</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Builder-contract"><span class="nav-number">1.1.</span> <span class="nav-text">Builder contract</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Stream"><span class="nav-number">2.</span> <span class="nav-text">Stream</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dart-Stream-%E7%94%A8%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Dart Stream 用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stream-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.2.</span> <span class="nav-text">Stream 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-example-with-StreamController"><span class="nav-number">2.3.</span> <span class="nav-text">Basic example with StreamController</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Streams-exposed-through-libraries"><span class="nav-number">2.4.</span> <span class="nav-text">Streams exposed through libraries</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">2.5.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stream-Transformer-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.6.</span> <span class="nav-text">Stream Transformer 是什么?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Single-subscription-vs-Broadcast-streams"><span class="nav-number">2.7.</span> <span class="nav-text">Single subscription vs Broadcast streams</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA-1"><span class="nav-number">2.8.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB"><span class="nav-number">2.9.</span> <span class="nav-text">延伸阅读</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/06/04/future-builder-stream-builder/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="FutureBuilder 与 StreamBuilder | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           FutureBuilder 与 StreamBuilder
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-04 16:40:20" itemprop="dateCreated datePublished" datetime="2020-06-04T16:40:20+08:00">2020-06-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2020-06-04 16:40:20" itemprop="dateCreated datePublished" datetime="2020-06-04T16:40:20+08:00">2020-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2020/06/04/future-builder-stream-builder/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/06/04/future-builder-stream-builder/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -222,14 +264,13 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>翻译一些 Future 和 FutureBuilder 以及 Stream 和 StreamBuilder 相关的资料。</p>
-<a id="more"></a>
+<span id="more"></span>
+
 <h1 id="FutureBuilder"><a href="#FutureBuilder" class="headerlink" title="FutureBuilder"></a>FutureBuilder</h1><p>FutureBuilder 是一个基于 Future 最后一次结果进行构建的 Widget。</p>
-<p>Future 必须在较早的时间点获取，比如 <a href="https://api.flutter.dev/flutter/widgets/State/initState.html" target="_blank" rel="noopener">State.initState</a>、<code>State.didUpdateConfig</code> 或 <a href="https://api.flutter.dev/flutter/widgets/State/didChangeDependencies.html" target="_blank" rel="noopener">State.didChangeDependencies</a>。<font color="red">一定不要在 <a href="https://api.flutter.dev/flutter/widgets/State/build.html" target="_blank" rel="noopener">State.build</a> 或 <a href="https://api.flutter.dev/flutter/widgets/StatelessWidget/build.html" target="_blank" rel="noopener">StatelessWidget.build</a> 方法中构建 FutureBuilder 的同时去获取 Future</font>。如果创建 FutureBuilder 的同时也去创建 Future，FutureBuilder 的父节点每次构建时会导致异步任务也重启。</p>
-<p>Future 结束时调用 <a href="https://api.flutter.dev/flutter/widgets/State/setState.html" target="_blank" rel="noopener">State.setState</a> 以便让 Widget 重建。Flutter 流水线决定如何调用 <a href="https://api.flutter.dev/flutter/widgets/FutureBuilder/builder.html" target="_blank" rel="noopener">builder</a> 回调，该回调接收一个跟时间无关的、代表 Future 交互过程的 snapshot 序列 (receive a timing-dependent sub-sequence of the snapshots that represent the interaction with the future)</p>
-<h2 id="Builder-contract"><a href="#Builder-contract" class="headerlink" title="Builder contract"></a>Builder contract</h2><p>假设 <a href="https://api.flutter.dev/flutter/widgets/FutureBuilder/initialData.html" target="_blank" rel="noopener">initialData</a> 为 null，对于成功结束的 Future <code>builder</code> 被回调两次(<code>waiting</code> 和 <code>done</code>)或一次(<code>done</code>)</p>
+<p>Future 必须在较早的时间点获取，比如 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/State/initState.html">State.initState</a>、<code>State.didUpdateConfig</code> 或 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/State/didChangeDependencies.html">State.didChangeDependencies</a>。<font color="red">一定不要在 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/State/build.html">State.build</a> 或 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/StatelessWidget/build.html">StatelessWidget.build</a> 方法中构建 FutureBuilder 的同时去获取 Future</font>。如果创建 FutureBuilder 的同时也去创建 Future，FutureBuilder 的父节点每次构建时会导致异步任务也重启。</p>
+<p>Future 结束时调用 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/State/setState.html">State.setState</a> 以便让 Widget 重建。Flutter 流水线决定如何调用 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/FutureBuilder/builder.html">builder</a> 回调，该回调接收一个跟时间无关的、代表 Future 交互过程的 snapshot 序列 (receive a timing-dependent sub-sequence of the snapshots that represent the interaction with the future)</p>
+<h2 id="Builder-contract"><a href="#Builder-contract" class="headerlink" title="Builder contract"></a>Builder contract</h2><p>假设 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/FutureBuilder/initialData.html">initialData</a> 为 null，对于成功结束的 Future <code>builder</code> 被回调两次(<code>waiting</code> 和 <code>done</code>)或一次(<code>done</code>)</p>
 <ul>
 <li><code>waiting</code> - <code>new AsyncSnapshot&lt;String&gt;.withData(ConnectionState.waiting, null)</code></li>
 <li><code>done</code> - <code>new AsyncSnapshot&lt;String&gt;.withData(ConnectionState.done, &#39;some data&#39;)</code></li>
@@ -239,7 +280,7 @@
 <li><code>waiting</code> - <code>new AsyncSnapshot&lt;String&gt;.withData(ConnectionState.waiting, null)</code></li>
 <li><code>error</code> - <code>new AsyncSnapshot&lt;String&gt;.withError(ConnectionState.done, &#39;some error&#39;)</code></li>
 </ul>
-<p>通过 <a href="https://api.flutter.dev/flutter/widgets/FutureBuilder/initialData.html" target="_blank" rel="noopener">initialData</a> 来指定初始的 snapshot (initial snapshot data)。使用这个字段来保证 <code>builder</code> 在 Future 结束之前也被调用一次，这时的 snapshot 持有的值即 <code>initialData</code> 而非缺省的 <code>null</code>。</p>
+<p>通过 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/FutureBuilder/initialData.html">initialData</a> 来指定初始的 snapshot (initial snapshot data)。使用这个字段来保证 <code>builder</code> 在 Future 结束之前也被调用一次，这时的 snapshot 持有的值即 <code>initialData</code> 而非缺省的 <code>null</code>。</p>
 <p>The data and error fields of the snapshot change only as the connection state field transitions from waiting to done, and they will be retained when changing the FutureBuilder configuration to another future. If the old future has already completed successfully with data as above, changing configuration to a new future results in snapshot pairs of the form:</p>
 <p>只在连接状态字段 (the connection state field) 从 <code>waiting</code> 变成 <code>done</code> 时 snapshot 的 <code>data</code> 和 <code>error</code> 字段才会变化。FutureBuilder 的 future 由原先切换成新的 future 时 <code>data</code> 和 <code>error</code> 并不变化。</p>
 <p>If the old future has already completed successfully with data as above, changing configuration to a new future results in snapshot pairs of the form:</p>
@@ -250,53 +291,61 @@
 </ul>
 <p>In general, the latter will be produced only when the new future is non-null, and the former only when the old future is non-null.</p>
 <p>A FutureBuilder behaves identically to a StreamBuilder configured with future?.asStream(), except that snapshots with ConnectionState.active may appear for the latter, depending on how the stream is implemented.</p>
-<h1 id="Stream"><a href="#Stream" class="headerlink" title="Stream"></a>Stream</h1><p>原文见<a href="https://itnext.io/how-to-use-streams-in-dart-part-1-4503fec0cdd7" target="_blank" rel="noopener">这里</a>。</p>
+<h1 id="Stream"><a href="#Stream" class="headerlink" title="Stream"></a>Stream</h1><p>原文见<a target="_blank" rel="noopener" href="https://itnext.io/how-to-use-streams-in-dart-part-1-4503fec0cdd7">这里</a>。</p>
 <p>对多数想要深入了解 Dart (或者有类似概念)的程序员来说 Stream 是个理解起来有挑战的话题，因为想要弄懂这个概念需要尝试一些例子。本文尝试讲清 Dart Stream 的用法，并且在系列文章中构建一些能感知的例子加强理解。</p>
-<h2 id="Dart-Stream-用法"><a href="#Dart-Stream-用法" class="headerlink" title="Dart Stream 用法"></a>Dart Stream 用法</h2><p>原文见<a href="https://itnext.io/how-to-use-streams-in-dart-part-1-4503fec0cdd7" target="_blank" rel="noopener">这里</a>。</p>
+<h2 id="Dart-Stream-用法"><a href="#Dart-Stream-用法" class="headerlink" title="Dart Stream 用法"></a>Dart Stream 用法</h2><p>原文见<a target="_blank" rel="noopener" href="https://itnext.io/how-to-use-streams-in-dart-part-1-4503fec0cdd7">这里</a>。</p>
 <p>对多数想要深入了解 Dart (或者有类似概念)的程序员来说 Stream 是个理解起来有挑战的话题，因为想要弄懂这个概念需要尝试一些例子。本文尝试讲清 Dart Stream 的用法，并且在系列文章中构建一些能感知的例子加强理解。</p>
 <h2 id="Stream-是什么"><a href="#Stream-是什么" class="headerlink" title="Stream 是什么"></a>Stream 是什么</h2><p>Dart 官方文档中是这样定义 Stream 的：</p>
 <blockquote>
 <p>A source of asynchronous data events. A Stream provides a way to receive a sequence of events. Each event is either a data event, also called an element of the stream, or an error event, which is a notification that something has failed. When a stream has emitted all its event, a single “done” event will notify the listener that the end has been reached.</p>
 <p>api.dartlang.org</p>
 </blockquote>
-<p>翻译如下(发现跟 <a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="noopener">RxJava</a> 中 <a href="http://reactivex.io/RxJava/3.x/javadoc/io/reactivex/Flowable.html" target="_blank" rel="noopener">Flowable</a> 的概念基本一样的)</p>
+<p>翻译如下(发现跟 <a target="_blank" rel="noopener" href="https://github.com/ReactiveX/RxJava">RxJava</a> 中 <a target="_blank" rel="noopener" href="http://reactivex.io/RxJava/3.x/javadoc/io/reactivex/Flowable.html">Flowable</a> 的概念基本一样的)</p>
 <blockquote>
 <p>它是异步数据事件源。Stream 提供接收事件序列的方法。每个事件要么是数据事件，也称为 stream 元素；要么是错误事件，它代表某个失败。当 stream 发射完所有事件后，会使用 “done” 事件通知监听器 stream 已结束。</p>
 </blockquote>
 <p>Stream 指的是数据从 A 流动到的 B 的通道。在这个通道中可以在到达 B 之前对”读入”的数据进行不同的变换。以小块来传输而不是整体传输数据时这个通道非常有用。</p>
 <p>Dart 中使用 SDK 提供的工具类来使用 Stream。这些工具类提供方法将数据推到 stream 中，并通知 stream 的监听器捕获数据。</p>
 <p>代表 stream 的最通用的类是 <code>Stream&lt;T&gt;</code>。但通常不直接使用这个类，而是在 Dart 库的其他类中向外暴露这个类。所以可以将其视为用于跟数据流动通道交互的接口。</p>
-<h2 id="Basic-example-with-StreamController"><a href="#Basic-example-with-StreamController" class="headerlink" title="Basic example with StreamController"></a>Basic example with StreamController<t></t></h2><p><code>StreamController&lt;T&gt;</code> 包含一个 stream，允许消费者向它发送数据事件、结束事件以及错误事件。可以使用 <code>streamController.stream</code> 访问及调用<a href="[documentation](https://api.dartlang.org/stable/2.1.1/dart-async/Stream-class.html?source=post_page---------------------------">文档</a>)中定义的方法。</p>
+<h2 id="Basic-example-with-StreamController"><a href="#Basic-example-with-StreamController" class="headerlink" title="Basic example with StreamController"></a>Basic example with StreamController<T></h2><p><code>StreamController&lt;T&gt;</code> 包含一个 stream，允许消费者向它发送数据事件、结束事件以及错误事件。可以使用 <code>streamController.stream</code> 访问及调用<a href="%5Bdocumentation%5D(https://api.dartlang.org/stable/2.1.1/dart-async/Stream-class.html?source=post_page---------------------------)">文档</a>中定义的方法。</p>
 <p>来看个 <code>StreamController&lt;T&gt;</code> 类的例子:</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> streamController = StreamController();</span><br><span class="line"><span class="comment">// Accessing the stream and listening for data event</span></span><br><span class="line">streamController.stream.listen((data) &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Got eem! <span class="subst">$data</span>'</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> streamController = StreamController();</span><br><span class="line"><span class="comment">// Accessing the stream and listening for data event</span></span><br><span class="line">streamController.stream.listen((data) &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;Got eem! <span class="subst">$data</span>&#x27;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
 <p>以上代码片断允许监听 stream 通道上输入的数据块。我们对这个数据的响应方式是将其打印到控制台。</p>
 <p>我猜接下来的疑问是：<em>如何触发监听器事件呢？</em> 答案是：<em>向 stream 喂数据。</em> 通过 <code>EventSink&lt;T&gt;</code> 的 <code>add()</code> 方法向 stream 喂数据。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">streamController.sink.add(<span class="string">'Added this string'</span>);</span><br><span class="line"><span class="comment">// Result</span></span><br><span class="line"><span class="comment">// Got eem! Added this string</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">streamController.sink.add(<span class="string">&#x27;Added this string&#x27;</span>);</span><br><span class="line"><span class="comment">// Result</span></span><br><span class="line"><span class="comment">// Got eem! Added this string</span></span><br></pre></td></tr></table></figure>
+
 <p>stream 上的 <code>listen()</code> 方法也能用于捕获错误信息。监听 stream 时会生成一个 <code>StreamSubscription&lt;T&gt;</code> 对象。这个对象可用于处理不同的事件，比如数据、数据、结束 (调用 stream 的 <code>close()</code> 方法时产生结束事件)。</p>
 <p>这是 <code>listen()</code> 方法的完整定义：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">StreamSubscription&lt;T&gt; listen (</span><br><span class="line">  <span class="keyword">void</span> onData(T event), </span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">Function</span> onError,</span><br><span class="line">    <span class="keyword">void</span> onDone(), <span class="comment">// Invoked when the stream is closed</span></span><br><span class="line">    <span class="built_in">bool</span> cancelOnError <span class="comment">// Kills the stream when an error occurs</span></span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+
 <p>像这样调用 “error” 和 “done” 事件：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">streamController.sink.addError(<span class="string">'Houston, we have a problem!'</span>); <span class="comment">// Got an error! Houston, we have a problem!</span></span><br><span class="line">streamController.sink.close(); <span class="comment">// Mission complete!</span></span><br></pre></td></tr></table></figure>
-<p><a href="https://dartpad.dartlang.org/3baf3a9c229dcfa962878905e478a1a7?source=post_page---------------------------" target="_blank" rel="noopener">Try this on DartPad</a></p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">streamController.sink.addError(<span class="string">&#x27;Houston, we have a problem!&#x27;</span>); <span class="comment">// Got an error! Houston, we have a problem!</span></span><br><span class="line">streamController.sink.close(); <span class="comment">// Mission complete!</span></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://dartpad.dartlang.org/3baf3a9c229dcfa962878905e478a1a7?source=post_page---------------------------">Try this on DartPad</a></p>
 <h2 id="Streams-exposed-through-libraries"><a href="#Streams-exposed-through-libraries" class="headerlink" title="Streams exposed through libraries"></a>Streams exposed through libraries</h2><p>尽管 <code>StreamController&lt;T&gt;</code> 允许我们更好精细地控制 stream，但内置的 Dart 库其实内部也大量使用 Stream。比如，以下代码创建一个服务器： </p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> main() <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> server = <span class="keyword">await</span> HttpServer.bind(<span class="string">'localhost'</span>, <span class="number">8080</span>);</span><br><span class="line">  <span class="comment">// HttpServer exposes a Stream&lt;T&gt; interface</span></span><br><span class="line">  server.listen((HttpRequest request) &#123;</span><br><span class="line">    request.response.write(<span class="string">'Hello, World!'</span>);</span><br><span class="line">    request.response.close();</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面代码初始化一个 <code>HttpServer</code> 用于创建 web 服务器。这个类暴露 <code>Stream&lt;T&gt;</code> 接口，这意味着我们可以监听这个 stream，它包含用户在浏览器访问该 web 服务器时发出的请求。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> main() <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> server = <span class="keyword">await</span> HttpServer.bind(<span class="string">&#x27;localhost&#x27;</span>, <span class="number">8080</span>);</span><br><span class="line">  <span class="comment">// HttpServer exposes a Stream&lt;T&gt; interface</span></span><br><span class="line">  server.listen((HttpRequest request) &#123;</span><br><span class="line">    request.response.write(<span class="string">&#x27;Hello, World!&#x27;</span>);</span><br><span class="line">    request.response.close();</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面代码初始化一个 <code>HttpServer</code> 用于创建 web 服务器。这个类暴露 <code> Stream&lt;T&gt;</code> 接口，这意味着我们可以监听这个 stream，它包含用户在浏览器访问该 web 服务器时发出的请求。</p>
 <p>另一个例子是 web 浏览器也暴露 stream：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:html'</span>;</span><br><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">  <span class="keyword">var</span> button = <span class="built_in">querySelector</span>(<span class="string">'button'</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// `onClick` is a Stream&lt;T&gt; instance that receives user click data events</span></span><br><span class="line">  button.onClick.listen((_) =&gt; <span class="built_in">print</span>(<span class="string">'Button clicked!'</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:html&#x27;</span>;</span><br><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">  <span class="keyword">var</span> button = <span class="built_in">querySelector</span>(<span class="string">&#x27;button&#x27;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// `onClick` is a Stream&lt;T&gt; instance that receives user click data events</span></span><br><span class="line">  button.onClick.listen((_) =&gt; <span class="built_in">print</span>(<span class="string">&#x27;Button clicked!&#x27;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>浏览器中用户交互行为有点击，滚动及输入等等，这些行为作为”数据”事件发射到 stream 中。另外，HTML 元素也暴露 <code>Stream&lt;T&gt;</code> 用于处理用户在页面上的交互。</p>
 <p>还有很多类使用 Stream。这里想要说的是，你不必直接初始化 <code>Stream&lt;T&gt;</code> 对象，而是 SDK 库中的类为你初始化。</p>
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>Stream 提供一种强大的数据块处理方式。由于是以异步的方式操作，所以得到的好处是以非阻塞式的方式来运行代码。建议阅读文章，尤其是 <code>dart:async</code> 库，它包含有用于异步编程的 <code>Streams</code> 和 <code>Futures</code>。</p>
 <p>下一篇将介绍如何对 stream 进行变换，并且展示了 stream 用法的常用设计模式。</p>
 <hr>
-<p>原文见<a href="https://creativebracket.com/how-to-use-streams-in-dart-2/?source=post_page---------------------------" target="_blank" rel="noopener">这里</a>。</p>
+<p>原文见<a target="_blank" rel="noopener" href="https://creativebracket.com/how-to-use-streams-in-dart-2/?source=post_page---------------------------">这里</a>。</p>
 <p>是前一篇中我们学习了 stream，以及两种跟 stream 交互的方式，另外还看到了使用 <code>StreamController&lt;T&gt;</code> 类型处理 stream 的灵活性，以及 Dart 库暴露 <code>Stream&lt;T&gt;</code> 类型供监听和数据处理。</p>
 <p>本篇将先看看如何使用 Stream Transformers 对 stream 进行变换。之后学习 stream 用法的常用设计模式。</p>
 <h2 id="Stream-Transformer-是什么"><a href="#Stream-Transformer-是什么" class="headerlink" title="Stream Transformer 是什么?"></a>Stream Transformer 是什么?</h2><p>Stream Transformer 允许对 stream 进行数据变换。这些变换被推进 stream，并且被所有监听器接收。</p>
 <p>Dart 使用 <code>StreamTransformer&lt;S,T&gt;</code> 类进行 stream 变换，它有三种不同的形式：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. Creates a transformer based on the provided `onListen` callback</span></span><br><span class="line">StreamTransformer(</span><br><span class="line">  StreamSubscription&lt;T&gt; onListen(</span><br><span class="line">    Stream&lt;S&gt; stream,</span><br><span class="line">    <span class="built_in">bool</span> cancelOnError</span><br><span class="line">  )</span><br><span class="line">);</span><br><span class="line"><span class="comment">// 2. Creates a transformer based on the provided `bind` callback fn</span></span><br><span class="line">StreamTransformer.fromBind(</span><br><span class="line">  Stream&lt;T&gt; bind(Stream&lt;S&gt;)</span><br><span class="line">);</span><br><span class="line"><span class="comment">// 3. Creates a transformer that will delegate events to the</span></span><br><span class="line"><span class="comment">// provided `handleData`, `handleError` and `handleDone` callback functions</span></span><br><span class="line">StreamTransformer.fromHandlers(&#123;</span><br><span class="line">  <span class="keyword">void</span> handleData(</span><br><span class="line">    S data,</span><br><span class="line">    EventSink&lt;T&gt; sink</span><br><span class="line">  ),</span><br><span class="line">  <span class="keyword">void</span> handleError(</span><br><span class="line">    <span class="built_in">Object</span> error,</span><br><span class="line">    StackTrace stackTrace,</span><br><span class="line">    EventSink&lt;T&gt; sink</span><br><span class="line">  ),</span><br><span class="line">  <span class="keyword">void</span> handleDone(</span><br><span class="line">    EventSink&lt;T&gt; sink</span><br><span class="line">  ), </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. Creates a transformer based on the provided `onListen` callback</span></span><br><span class="line">StreamTransformer(</span><br><span class="line">  StreamSubscription&lt;T&gt; onListen(</span><br><span class="line">    Stream&lt;S&gt; stream,</span><br><span class="line">    <span class="built_in">bool</span> cancelOnError</span><br><span class="line">  )</span><br><span class="line">);</span><br><span class="line"><span class="comment">// 2. Creates a transformer based on the provided `bind` callback fn</span></span><br><span class="line">StreamTransformer.fromBind(</span><br><span class="line">  Stream&lt;T&gt; bind(Stream&lt;S&gt;)</span><br><span class="line">);</span><br><span class="line"><span class="comment">// 3. Creates a transformer that will delegate events to the</span></span><br><span class="line"><span class="comment">// provided `handleData`, `handleError` and `handleDone` callback functions</span></span><br><span class="line">StreamTransformer.fromHandlers(&#123;</span><br><span class="line">  <span class="keyword">void</span> handleData(</span><br><span class="line">    S data,</span><br><span class="line">    EventSink&lt;T&gt; sink</span><br><span class="line">  ),</span><br><span class="line">  <span class="keyword">void</span> handleError(</span><br><span class="line">    <span class="built_in">Object</span> error,</span><br><span class="line">    StackTrace stackTrace,</span><br><span class="line">    EventSink&lt;T&gt; sink</span><br><span class="line">  ),</span><br><span class="line">  <span class="keyword">void</span> handleDone(</span><br><span class="line">    EventSink&lt;T&gt; sink</span><br><span class="line">  ), </span><br><span class="line">&#125;);  </span><br></pre></td></tr></table></figure>
+
 <p>For this post I will focus on </p>
 <p>本文重点介绍 <code>StreamTransformer.fromHandlers(...)</code>，因为它最容易使用。以下是一个例子：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> streamTransformer = StreamTransformer&lt;<span class="built_in">num</span>, <span class="built_in">num</span>&gt;.fromHandlers(</span><br><span class="line">    handleData: (<span class="built_in">num</span> data, EventSink sink) &#123;</span><br><span class="line">      <span class="comment">// The actual transformation we're making</span></span><br><span class="line">      <span class="comment">// here is multiplying $data by 2</span></span><br><span class="line">      sink.add(data * <span class="number">2</span>);</span><br><span class="line">    &#125;, </span><br><span class="line">    handleError: (<span class="built_in">Object</span> error, StackTrace stacktrace, EventSink sink) &#123;</span><br><span class="line">      sink.addError(<span class="string">'Something went wrong: <span class="subst">$error</span>'</span>);</span><br><span class="line">    &#125;, </span><br><span class="line">    handleDone: (EventSink sink) =&gt; sink.close(),</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> streamTransformer = StreamTransformer&lt;<span class="built_in">num</span>, <span class="built_in">num</span>&gt;.fromHandlers(</span><br><span class="line">    handleData: (<span class="built_in">num</span> data, EventSink sink) &#123;</span><br><span class="line">      <span class="comment">// The actual transformation we&#x27;re making</span></span><br><span class="line">      <span class="comment">// here is multiplying $data by 2</span></span><br><span class="line">      sink.add(data * <span class="number">2</span>);</span><br><span class="line">    &#125;, </span><br><span class="line">    handleError: (<span class="built_in">Object</span> error, StackTrace stacktrace, EventSink sink) &#123;</span><br><span class="line">      sink.addError(<span class="string">&#x27;Something went wrong: <span class="subst">$error</span>&#x27;</span>);</span><br><span class="line">    &#125;, </span><br><span class="line">    handleDone: (EventSink sink) =&gt; sink.close(),</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+
 <p><code>StreamTransformer.fromHandlers(...)</code> 命名构造方法接收回调函数，有三个命名参数：</p>
 <ul>
 <li><code>handleData</code>: 这个方法响应 stream 发射的任意数据事件。它的参数是发射事件中的数据，<code>EventSink&lt;T&gt;</code> 实例则是当前变换所属的 stream 的成员。<code>EventSink&lt;T&gt;.add()</code> 方法用于向 stream 的监听器重传变换后的数据。</li>
@@ -304,22 +353,26 @@
 <li><code>handleDone</code>: 当 stream 中没有更多数据需要处理时运行这个方法。调用 stream 的 <code>EventSink&lt;T&gt;</code> 实例的 <code>close()</code> 方法时会出现没有数据需要处理的情况。</li>
 </ul>
 <p>使用时，将 <code>streamTransformer</code> 作为 stream 的 <code>transform()</code> 方法参数：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> controller = StreamController&lt;<span class="built_in">num</span>&gt;();</span><br><span class="line"><span class="comment">// Call the `transform` method on the controller's stream</span></span><br><span class="line"><span class="comment">// while passing in the stream transformer</span></span><br><span class="line"><span class="keyword">var</span> controllerStream = controller.stream.transform(streamTransformer);</span><br><span class="line"><span class="comment">// Just print out transformations to the console</span></span><br><span class="line">controllerStream.listen(<span class="built_in">print</span>);</span><br><span class="line"><span class="comment">// Add data to stream to see transformations in effect</span></span><br><span class="line">controller.sink.add(<span class="number">1</span>); <span class="comment">// 2</span></span><br><span class="line">controller.sink.add(<span class="number">2</span>); <span class="comment">// 4</span></span><br><span class="line">controller.sink.add(<span class="number">3</span>); <span class="comment">// 6</span></span><br><span class="line">controller.sink.add(<span class="number">4</span>); <span class="comment">// 8</span></span><br><span class="line">controller.sink.add(<span class="number">5</span>); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> controller = StreamController&lt;<span class="built_in">num</span>&gt;();</span><br><span class="line"><span class="comment">// Call the `transform` method on the controller&#x27;s stream</span></span><br><span class="line"><span class="comment">// while passing in the stream transformer</span></span><br><span class="line"><span class="keyword">var</span> controllerStream = controller.stream.transform(streamTransformer);</span><br><span class="line"><span class="comment">// Just print out transformations to the console</span></span><br><span class="line">controllerStream.listen(<span class="built_in">print</span>);</span><br><span class="line"><span class="comment">// Add data to stream to see transformations in effect</span></span><br><span class="line">controller.sink.add(<span class="number">1</span>); <span class="comment">// 2</span></span><br><span class="line">controller.sink.add(<span class="number">2</span>); <span class="comment">// 4</span></span><br><span class="line">controller.sink.add(<span class="number">3</span>); <span class="comment">// 6</span></span><br><span class="line">controller.sink.add(<span class="number">4</span>); <span class="comment">// 8</span></span><br><span class="line">controller.sink.add(<span class="number">5</span>); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="Single-subscription-vs-Broadcast-streams"><a href="#Single-subscription-vs-Broadcast-streams" class="headerlink" title="Single subscription vs Broadcast streams"></a>Single subscription vs Broadcast streams</h2><p>有两种形式的 stream：单个订阅或者广播。概念上的区别是单个订阅只一个监听器。添加多个监听器抛出异常：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">controllerStream.listen(<span class="built_in">print</span>);</span><br><span class="line">controllerStream.listen(<span class="built_in">print</span>); <span class="comment">// Throws the error below:</span></span><br><span class="line"><span class="comment">// ---</span></span><br><span class="line"><span class="comment">// Uncaught exception: Bad state: Stream has already been listened to.</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">controllerStream.listen(<span class="built_in">print</span>);</span><br><span class="line">controllerStream.listen(<span class="built_in">print</span>); <span class="comment">// Throws the error below:</span></span><br><span class="line"><span class="comment">// ---</span></span><br><span class="line"><span class="comment">// Uncaught exception: Bad state: Stream has already been listened to. </span></span><br></pre></td></tr></table></figure>
+
 <p>但广播 stream 允许定义多个数据监听器。使用广播 stream 修正以上代码：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> controller = StreamController&lt;<span class="built_in">num</span>&gt;.broadcast();</span><br></pre></td></tr></table></figure>
+
 <p>再测试一次，结果如下：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">controllerStream.listen(<span class="built_in">print</span>);</span><br><span class="line">controllerStream.listen(<span class="built_in">print</span>)</span><br><span class="line"><span class="comment">// --</span></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="comment">// 4</span></span><br><span class="line"><span class="comment">// 4</span></span><br><span class="line"><span class="comment">// 6</span></span><br><span class="line"><span class="comment">// 6</span></span><br><span class="line"><span class="comment">// 8</span></span><br><span class="line"><span class="comment">// 8</span></span><br><span class="line"><span class="comment">// 10</span></span><br><span class="line"><span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="结论-1"><a href="#结论-1" class="headerlink" title="结论"></a>结论</h2><p>Dart Stream 的优雅之处在于所有平台的 API 以一致的方式来实现，无论是 web，服务器端还是移动端。这一事实展示了 “light bulb moment”，你能跨平台写可重用的逻辑，只要它用的是 Stream API。 (原文：This fact presents a “light bulb moment” where we can write reusable logic for use across the platforms as long as it utilizes the Stream API.)</p>
 <p>这种模式可称为 Business Logic Components ( 简称 BLoC)，我们将在第三部分介绍它。</p>
 <h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
-<li><a href="https://www.dartlang.org/tutorials/language/streams" target="_blank" rel="noopener">Asynchronous Programming: Streams</a></li>
-<li><a href="https://api.dartlang.org/stable/2.2.0/dart-async/StreamTransformer-class.html" target="_blank" rel="noopener">StreamTransformer&lt;S, T&gt; Class Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.dartlang.org/tutorials/language/streams">Asynchronous Programming: Streams</a></li>
+<li><a target="_blank" rel="noopener" href="https://api.dartlang.org/stable/2.2.0/dart-async/StreamTransformer-class.html">StreamTransformer&lt;S, T&gt; Class Documentation</a></li>
 </ul>
 <hr>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html" target="_blank" rel="noopener">FutureBuilder class - widgets library - Dart API</a></li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html">FutureBuilder class - widgets library - Dart API</a></li>
 </ul>
 
     </div>
@@ -328,130 +381,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/flutter/" rel="tag"># Flutter</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/03/10/flutter-add-to-app/" rel="prev" title="Flutter 应用集成浅析">
-      <i class="fa fa-chevron-left"></i> Flutter 应用集成浅析
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/06/04/dart-file/" rel="next" title="Dart File">
-      Dart File <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/10/flutter-add-to-app/" rel="prev" title="Flutter 应用集成浅析">
+                  <i class="fa fa-chevron-left"></i> Flutter 应用集成浅析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/06/04/dart-file/" rel="next" title="Dart File">
+                  Dart File <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#FutureBuilder"><span class="nav-number">1.</span> <span class="nav-text">FutureBuilder</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Builder-contract"><span class="nav-number">1.1.</span> <span class="nav-text">Builder contract</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Stream"><span class="nav-number">2.</span> <span class="nav-text">Stream</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dart-Stream-用法"><span class="nav-number">2.1.</span> <span class="nav-text">Dart Stream 用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stream-是什么"><span class="nav-number">2.2.</span> <span class="nav-text">Stream 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-example-with-StreamController"><span class="nav-number">2.3.</span> <span class="nav-text">Basic example with StreamController</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Streams-exposed-through-libraries"><span class="nav-number">2.4.</span> <span class="nav-text">Streams exposed through libraries</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-number">2.5.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stream-Transformer-是什么"><span class="nav-number">2.6.</span> <span class="nav-text">Stream Transformer 是什么?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Single-subscription-vs-Broadcast-streams"><span class="nav-number">2.7.</span> <span class="nav-text">Single subscription vs Broadcast streams</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论-1"><span class="nav-number">2.8.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#延伸阅读"><span class="nav-number">2.9.</span> <span class="nav-text">延伸阅读</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -459,29 +427,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -490,22 +450,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2020/06/04/future-builder-stream-builder/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

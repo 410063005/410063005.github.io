@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,94 +14,66 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="简单记录下如何在 Dart 中使用 Protobuf。">
-<meta name="keywords" content="Dart">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="简单记录下如何在 Dart 中使用 Protobuf。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Dart Protobuf 用法简介">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/06/24/dart-protobuf/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="简单记录下如何在 Dart 中使用 Protobuf。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://www.sunmoonblog.com/2020/06/24/dart-protobuf/media/15635014696032/15635045817933.jpg">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.048Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.sunmoonblog.com/media/15635014696032/15635045817933.jpg">
+<meta property="article:published_time" content="2020-06-24T02:25:14.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.048Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Dart">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dart Protobuf 用法简介">
-<meta name="twitter:description" content="简单记录下如何在 Dart 中使用 Protobuf。">
-<meta name="twitter:image" content="http://www.sunmoonblog.com/2020/06/24/dart-protobuf/media/15635014696032/15635045817933.jpg">
+<meta name="twitter:image" content="http://www.sunmoonblog.com/media/15635014696032/15635045817933.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/06/24/dart-protobuf/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Dart Protobuf 用法简介 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2020/06/24/dart-protobuf/","path":"2020/06/24/dart-protobuf/","title":"Dart Protobuf 用法简介"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Dart Protobuf 用法简介 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -114,19 +87,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -137,23 +99,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -161,197 +122,18 @@
   </div>
 
 </div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/06/24/dart-protobuf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sunmoon的博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Dart Protobuf 用法简介
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-24 10:25:14" itemprop="dateCreated datePublished" datetime="2020-06-24T10:25:14+08:00">2020-06-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>简单记录下如何在 Dart 中使用 Protobuf。</p>
-<a id="more"></a>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://developers.google.com/protocol-buffers/docs/reference/dart-generated" target="_blank" rel="noopener">Dart Generated Code</a></li>
-<li><a href="https://github.com/dart-lang/protobuf/tree/master/protoc_plugin" target="_blank" rel="noopener">dart-lang/protobuf</a></li>
-</ul>
-<p>注意点：</p>
-<ul>
-<li>Protobuf 编译器依赖独立安装的<a href="https://github.com/dart-lang/dart-protoc-plugin" target="_blank" rel="noopener">Dart 插件</a>来生成 Dart 代码 <a href="https://developers.google.com/protocol-buffers/docs/reference/dart-generated" target="_blank" rel="noopener">参考来源</a></li>
-<li>Dart 要求 Protobuf 编译器版本为 3.0.0 及以上 <a href="https://github.com/dart-lang/protobuf/tree/master/protoc_plugin" target="_blank" rel="noopener">参考来源</a></li>
-<li>Dart 只支持 <a href="https://developers.google.com/protocol-buffers/docs/proto" target="_blank" rel="noopener">proto3</a> scheme <a href="https://github.com/dart-lang/protobuf/tree/master/protoc_plugin" target="_blank" rel="noopener">参考来源</a> <del>Dart 只支持 <a href="https://developers.google.com/protocol-buffers/docs/proto" target="_blank" rel="noopener">proto2</a> scheme <a href="https://github.com/dart-lang/protobuf/tree/master/protoc_plugin" target="_blank" rel="noopener">参考来源</a></del></li>
-</ul>
-<h1 id="安装和编译"><a href="#安装和编译" class="headerlink" title="安装和编译"></a>安装和编译</h1><p>第一步，安装 Protobuf 编译器。可以从 <a href="https://github.com/protocolbuffers/protobuf/releases" target="_blank" rel="noopener">Protobuf release</a> 页面下载和安装，也可以 <code>brew install protobuf</code> 安装。</p>
-<p>第二步，安装 Protobuf Dart 插件。</p>
-<ul>
-<li>下载<a href="https://github.com/dart-lang/protobuf.git" target="_blank" rel="noopener">代码</a>。<code>git clone https://github.com/dart-lang/protobuf.git</code></li>
-<li><strong>编译插件</strong>。调用 <code>pub install</code> 编译插件，编译后源码 <code>bin</code> 目录下可以找到 <code>proto-gen-dart</code> 文件。如果出错，可以使用 <code>pub --trace install</code> 查看详细错误日志</li>
-<li>使用插件。将插件配置到 PATH 路径中，或者调用 <code>protoc</code> 时使用 <code>--plugin</code> 参数指定插件路径</li>
-</ul>
-<p>第三步，运行 protoc 编译生成 <code>.proto.dart</code> 文件。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜  aproj_pub_proj git:(cm) ✗ protoc --proto_path=proto --dart_out=build/gen --plugin=/Users/xxx/Documents/GitHub/protobuf/protoc_plugin/bin proto/aproj/comm_conn.proto</span><br><span class="line">protoc-gen-dart: program not found or is not executable</span><br><span class="line">--dart_out: protoc-gen-dart: Plugin failed with status code 1.</span><br><span class="line">➜  aproj_pub_proj git:(cm) ✗ protoc --proto_path=proto --dart_out=build/gen --plugin=/Users/xxx/Documents/GitHub/protobuf/protoc_plugin/bin/protoc-gen-dart proto/aproj/comm_conn.proto</span><br><span class="line">/Users/kingcmchen/Documents/GitHub/protobuf/protoc_plugin/bin/protoc-gen-dart: line 3: dart: command not found</span><br><span class="line">--dart_out: protoc-gen-dart: Plugin failed with status code 127.</span><br></pre></td></tr></table></figure>
-<ul>
-<li>第一次出错是因为 <code>--plugin</code> 指定的 Dart 插件路径不正确，应当指定具体文件而不是文件所在的目录</li>
-<li>第二次出错是因为 Dart 插件依赖 <code>dart</code> 命令，要确保 PATH 中有配置 <code>dart</code>。 </li>
-</ul>
-<p>PATH 中配置 <code>dart</code> 命令方法如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export DART_PATH=&quot;$HOME/flutter/bin/cache/dart-sdk/bin&quot;</span><br></pre></td></tr></table></figure>
-<p>编译成功！</p>
-<p><img src="media/15635014696032/15635045817933.jpg" alt="-w770"></p>
-<h1 id="发送字符串"><a href="#发送字符串" class="headerlink" title="发送字符串"></a>发送字符串</h1><p>先使用 Dart 实现简单的服务器端 <code>SimpleServer</code> 和客户端 <code>SimpleClient</code>，代码分别如下。</p>
-<p><code>SimpleServer</code> 收到客户端发送的数据，转换成大写的 UTF-8 后发回客户端，并关闭 Socket。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:convert'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line"></span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  ServerSocket serverSocket =</span><br><span class="line">      <span class="keyword">await</span> ServerSocket.bind(InternetAddress.anyIPv4, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Started'</span>);</span><br><span class="line"></span><br><span class="line">  serverSocket.listen((Socket socket) &#123;</span><br><span class="line">    socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) <span class="keyword">async</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> msg = utf8.decode(event);</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">'Received <span class="subst">$msg</span>'</span>);</span><br><span class="line">      socket.write(msg.toUpperCase());</span><br><span class="line"></span><br><span class="line">      <span class="keyword">await</span> socket.close();</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>SimpleClient</code> 向服务器端发送 ‘hello’，并且接收和输出服务器端的响应。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:async'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:convert'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  Socket socket = <span class="keyword">await</span> Socket.connect(<span class="string">'127.0.0.1'</span>, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Connected'</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// listen to the received data event stream</span></span><br><span class="line">  socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) &#123;</span><br><span class="line">    <span class="built_in">print</span>(utf8.decode(event));</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send hello</span></span><br><span class="line">  socket.add(utf8.encode(<span class="string">'hello'</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// wait 5 seconds</span></span><br><span class="line">  <span class="keyword">await</span> Future.delayed(<span class="built_in">Duration</span>(seconds: <span class="number">5</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// .. and close the socket</span></span><br><span class="line">  socket.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="发送-Protobuf-数据"><a href="#发送-Protobuf-数据" class="headerlink" title="发送 Protobuf 数据"></a>发送 Protobuf 数据</h1><p>如何在使用 Protobuf 数据在 <code>SimpleServer</code> 和 <code>SimpleClient</code> 之间通信？</p>
-<p>注意，生成的 <code>.pb.dart</code> 文件中有如下 <code>import</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import &apos;package:fixnum/fixnum.dart&apos;;</span><br><span class="line">import &apos;package:protobuf/protobuf.dart&apos; as $pb;</span><br></pre></td></tr></table></figure>
-<p>所以相应地需要在 <code>pubspec.yaml</code> 中添加对应的依赖。</p>
-<p>第一步，为工程添加 <code>fixnum</code> 和 <a href="https://pub.dev/packages/protobuf" target="_blank" rel="noopener">protobuf</a> 依赖。添加后记得运行 <code>flutter pb get</code> 同步一下。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dependencies:</span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">  http: 0.12.0+2</span><br><span class="line">  fixnum: 0.10.9</span><br><span class="line">  protobuf: 0.13.15</span><br></pre></td></tr></table></figure>
-<p>第二步，将生成的 <code>.pb.dart</code> 文件拷贝到工程，供 <code>SimpleServer</code> 和 <code>SimpleClient</code> 引用。</p>
-<p>第三步，修改服务器端 <code>SimpleServer</code> 和客户端 <code>SimpleClient</code> 代码，使用 Protobuf 通信。修改后的代码分别如下：</p>
-<p><code>SimpleServer</code> 收到客户端发送的 Protobuf 数据并以 JSON 格式打印出来，然后向客户端发送 Protobuf 数据 <code>CommRsp</code>，最后关闭 Socket。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">'comm_conn.pb.dart'</span>;</span><br><span class="line"></span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  ServerSocket serverSocket =</span><br><span class="line">      <span class="keyword">await</span> ServerSocket.bind(InternetAddress.anyIPv4, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Started'</span>);</span><br><span class="line"></span><br><span class="line">  serverSocket.listen((Socket socket) &#123;</span><br><span class="line">    socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) <span class="keyword">async</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> msg = CommReq.fromBuffer(event).writeToJson();</span><br><span class="line"></span><br><span class="line">      <span class="built_in">print</span>(<span class="string">'Received <span class="subst">$msg</span>'</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">var</span> rsp = CommRsp.create();</span><br><span class="line">      rsp.cmd = <span class="number">0</span>;</span><br><span class="line">      rsp.result = <span class="number">0</span>;</span><br><span class="line">      rsp.uid = <span class="string">'41006'</span>;</span><br><span class="line">      <span class="comment">// socket.write(writeToBuffer);</span></span><br><span class="line">      socket.add(rsp.writeToBuffer());</span><br><span class="line">      socket.close();</span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>SimpleClient</code> 向服务器端发送 Protobuf 数据 <code>CommReq</code>，并且接收和打印服务器端的响应。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">'comm_conn.pb.dart'</span>;</span><br><span class="line"></span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  Socket socket = <span class="keyword">await</span> Socket.connect(<span class="string">'127.0.0.1'</span>, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Connected'</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// listen to the received data event stream</span></span><br><span class="line">  socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) &#123;</span><br><span class="line">    <span class="built_in">print</span>(CommRsp.fromBuffer(event));</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send hello</span></span><br><span class="line">  <span class="keyword">var</span> req = CommReq.create();</span><br><span class="line">  req.cmd = <span class="number">0</span>;</span><br><span class="line">  req.uid = <span class="string">'cm'</span>;</span><br><span class="line">  req.ext1 = <span class="string">'hello'</span>;</span><br><span class="line">  socket.add(req.writeToBuffer());</span><br><span class="line"></span><br><span class="line">  <span class="comment">// .. and close the socket</span></span><br><span class="line">  <span class="keyword">await</span> socket.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意以下两点：</p>
-<ul>
-<li>注意 Protobuf 数据字段分为 required 字段和 optional 字段</li>
-<li>使用 <code>socket.add()</code> 发送数据而不是 <code>socket.write()</code>。注意 <code>socket.write()</code> 先对要发送的数据编码后再调用 <code>socket.add()</code>，实际发送的是编码后的数据</li>
-</ul>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> write(<span class="built_in">Object</span> obj) &#123;</span><br><span class="line">  <span class="built_in">String</span> string = <span class="string">'<span class="subst">$obj</span>'</span>;</span><br><span class="line">  <span class="keyword">if</span> (string.isEmpty) <span class="keyword">return</span>;</span><br><span class="line">  add(_encoding.encode(string));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如何在 Dart 中创建和解析 Protobuf 数据，请参考<a href="https://developers.google.com/protocol-buffers/docs/reference/dart-generated" target="_blank" rel="noopener">官方文档</a>。</p>
-
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/dart/" rel="tag"># Dart</a>
-          </div>
-
         
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/06/23/dart-basic/" rel="prev" title="Dart 入门笔记">
-      <i class="fa fa-chevron-left"></i> Dart 入门笔记
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/06/29/flutter-memory/" rel="next" title="(译) 使用 DevTools 分析 Flutter 内存">
-      (译) 使用 DevTools 分析 Flutter 内存 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
   
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
 
   <aside class="sidebar">
-    <div class="sidebar-inner">
 
-      <ul class="sidebar-nav motion-element">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
         </li>
@@ -360,29 +142,29 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装和编译"><span class="nav-number">2.</span> <span class="nav-text">安装和编译</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#发送字符串"><span class="nav-number">3.</span> <span class="nav-text">发送字符串</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#发送-Protobuf-数据"><span class="nav-number">4.</span> <span class="nav-text">发送 Protobuf 数据</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%92%8C%E7%BC%96%E8%AF%91"><span class="nav-number">2.</span> <span class="nav-text">安装和编译</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">3.</span> <span class="nav-text">发送字符串</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%91%E9%80%81-Protobuf-%E6%95%B0%E6%8D%AE"><span class="nav-number">4.</span> <span class="nav-text">发送 Protobuf 数据</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
   <p class="site-author-name" itemprop="name">Sunmoon</p>
   <div class="site-description" itemprop="description">移动开发 Android 生活</div>
 </div>
-<div class="site-state-wrap motion-element">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
+        <a href="/archives/">
           <span class="site-state-item-count">158</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -390,26 +172,209 @@
 
 
 
+        </div>
       </div>
-
     </div>
   </aside>
-  <div id="sidebar-dimmer"></div>
+  <div class="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
+    </header>
 
-    <footer class="footer">
-      <div class="footer-inner">
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/06/24/dart-protobuf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Dart Protobuf 用法简介 | Sunmoon的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Dart Protobuf 用法简介
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-24 10:25:14" itemprop="dateCreated datePublished" datetime="2020-06-24T10:25:14+08:00">2020-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2020/06/24/dart-protobuf/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/06/24/dart-protobuf/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>简单记录下如何在 Dart 中使用 Protobuf。</p>
+<span id="more"></span>
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/reference/dart-generated">Dart Generated Code</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dart-lang/protobuf/tree/master/protoc_plugin">dart-lang&#x2F;protobuf</a></li>
+</ul>
+<p>注意点：</p>
+<ul>
+<li>Protobuf 编译器依赖独立安装的<a target="_blank" rel="noopener" href="https://github.com/dart-lang/dart-protoc-plugin">Dart 插件</a>来生成 Dart 代码 <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/reference/dart-generated">参考来源</a></li>
+<li>Dart 要求 Protobuf 编译器版本为 3.0.0 及以上 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/protobuf/tree/master/protoc_plugin">参考来源</a></li>
+<li>Dart 只支持 <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/proto">proto3</a> scheme <a target="_blank" rel="noopener" href="https://github.com/dart-lang/protobuf/tree/master/protoc_plugin">参考来源</a> <del>Dart 只支持 <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/proto">proto2</a> scheme <a target="_blank" rel="noopener" href="https://github.com/dart-lang/protobuf/tree/master/protoc_plugin">参考来源</a></del></li>
+</ul>
+<h1 id="安装和编译"><a href="#安装和编译" class="headerlink" title="安装和编译"></a>安装和编译</h1><p>第一步，安装 Protobuf 编译器。可以从 <a target="_blank" rel="noopener" href="https://github.com/protocolbuffers/protobuf/releases">Protobuf release</a> 页面下载和安装，也可以 <code>brew install protobuf</code> 安装。</p>
+<p>第二步，安装 Protobuf Dart 插件。</p>
+<ul>
+<li>下载<a target="_blank" rel="noopener" href="https://github.com/dart-lang/protobuf.git">代码</a>。<code>git clone https://github.com/dart-lang/protobuf.git</code></li>
+<li><strong>编译插件</strong>。调用 <code>pub install</code> 编译插件，编译后源码 <code>bin</code> 目录下可以找到 <code>proto-gen-dart</code> 文件。如果出错，可以使用 <code>pub --trace install</code> 查看详细错误日志</li>
+<li>使用插件。将插件配置到 PATH 路径中，或者调用 <code>protoc</code> 时使用 <code>--plugin</code> 参数指定插件路径</li>
+</ul>
+<p>第三步，运行 protoc 编译生成 <code>.proto.dart</code> 文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜  aproj_pub_proj git:(cm) ✗ protoc --proto_path=proto --dart_out=build/gen --plugin=/Users/xxx/Documents/GitHub/protobuf/protoc_plugin/bin proto/aproj/comm_conn.proto</span><br><span class="line">protoc-gen-dart: program not found or is not executable</span><br><span class="line">--dart_out: protoc-gen-dart: Plugin failed with status code 1.</span><br><span class="line">➜  aproj_pub_proj git:(cm) ✗ protoc --proto_path=proto --dart_out=build/gen --plugin=/Users/xxx/Documents/GitHub/protobuf/protoc_plugin/bin/protoc-gen-dart proto/aproj/comm_conn.proto</span><br><span class="line">/Users/kingcmchen/Documents/GitHub/protobuf/protoc_plugin/bin/protoc-gen-dart: line 3: dart: command not found</span><br><span class="line">--dart_out: protoc-gen-dart: Plugin failed with status code 127.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第一次出错是因为 <code>--plugin</code> 指定的 Dart 插件路径不正确，应当指定具体文件而不是文件所在的目录</li>
+<li>第二次出错是因为 Dart 插件依赖 <code>dart</code> 命令，要确保 PATH 中有配置 <code>dart</code>。</li>
+</ul>
+<p>PATH 中配置 <code>dart</code> 命令方法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export DART_PATH=&quot;$HOME/flutter/bin/cache/dart-sdk/bin&quot;</span><br></pre></td></tr></table></figure>
+
+<p>编译成功！</p>
+<p><img src="/media/15635014696032/15635045817933.jpg" alt="-w770"></p>
+<h1 id="发送字符串"><a href="#发送字符串" class="headerlink" title="发送字符串"></a>发送字符串</h1><p>先使用 Dart 实现简单的服务器端 <code>SimpleServer</code> 和客户端 <code>SimpleClient</code>，代码分别如下。</p>
+<p><code>SimpleServer</code> 收到客户端发送的数据，转换成大写的 UTF-8 后发回客户端，并关闭 Socket。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:convert&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span>;</span><br><span class="line"></span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  ServerSocket serverSocket =</span><br><span class="line">      <span class="keyword">await</span> ServerSocket.bind(InternetAddress.anyIPv4, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;Started&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  serverSocket.listen((Socket socket) &#123;</span><br><span class="line">    socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) <span class="keyword">async</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> msg = utf8.decode(event);</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&#x27;Received <span class="subst">$msg</span>&#x27;</span>);</span><br><span class="line">      socket.write(msg.toUpperCase());</span><br><span class="line"></span><br><span class="line">      <span class="keyword">await</span> socket.close();</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>SimpleClient</code> 向服务器端发送 ‘hello’，并且接收和输出服务器端的响应。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:async&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:convert&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span>;</span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  Socket socket = <span class="keyword">await</span> Socket.connect(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;Connected&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// listen to the received data event stream</span></span><br><span class="line">  socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) &#123;</span><br><span class="line">    <span class="built_in">print</span>(utf8.decode(event));</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send hello</span></span><br><span class="line">  socket.add(utf8.encode(<span class="string">&#x27;hello&#x27;</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// wait 5 seconds</span></span><br><span class="line">  <span class="keyword">await</span> Future.delayed(<span class="built_in">Duration</span>(seconds: <span class="number">5</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// .. and close the socket</span></span><br><span class="line">  socket.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="发送-Protobuf-数据"><a href="#发送-Protobuf-数据" class="headerlink" title="发送 Protobuf 数据"></a>发送 Protobuf 数据</h1><p>如何在使用 Protobuf 数据在 <code>SimpleServer</code> 和 <code>SimpleClient</code> 之间通信？</p>
+<p>注意，生成的 <code>.pb.dart</code> 文件中有如下 <code>import</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import &#x27;package:fixnum/fixnum.dart&#x27;;</span><br><span class="line">import &#x27;package:protobuf/protobuf.dart&#x27; as $pb;</span><br></pre></td></tr></table></figure>
+
+<p>所以相应地需要在 <code>pubspec.yaml</code> 中添加对应的依赖。</p>
+<p>第一步，为工程添加 <code>fixnum</code> 和 <a target="_blank" rel="noopener" href="https://pub.dev/packages/protobuf">protobuf</a> 依赖。添加后记得运行 <code>flutter pb get</code> 同步一下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dependencies:</span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">  http: 0.12.0+2</span><br><span class="line">  fixnum: 0.10.9</span><br><span class="line">  protobuf: 0.13.15</span><br></pre></td></tr></table></figure>
+
+<p>第二步，将生成的 <code>.pb.dart</code> 文件拷贝到工程，供 <code>SimpleServer</code> 和 <code>SimpleClient</code> 引用。</p>
+<p>第三步，修改服务器端 <code>SimpleServer</code> 和客户端 <code>SimpleClient</code> 代码，使用 Protobuf 通信。修改后的代码分别如下：</p>
+<p><code>SimpleServer</code> 收到客户端发送的 Protobuf 数据并以 JSON 格式打印出来，然后向客户端发送 Protobuf 数据 <code>CommRsp</code>，最后关闭 Socket。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;comm_conn.pb.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  ServerSocket serverSocket =</span><br><span class="line">      <span class="keyword">await</span> ServerSocket.bind(InternetAddress.anyIPv4, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;Started&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  serverSocket.listen((Socket socket) &#123;</span><br><span class="line">    socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) <span class="keyword">async</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> msg = CommReq.fromBuffer(event).writeToJson();</span><br><span class="line"></span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&#x27;Received <span class="subst">$msg</span>&#x27;</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">var</span> rsp = CommRsp.create();</span><br><span class="line">      rsp.cmd = <span class="number">0</span>;</span><br><span class="line">      rsp.result = <span class="number">0</span>;</span><br><span class="line">      rsp.uid = <span class="string">&#x27;41006&#x27;</span>;</span><br><span class="line">      <span class="comment">// socket.write(writeToBuffer);</span></span><br><span class="line">      socket.add(rsp.writeToBuffer());</span><br><span class="line">      socket.close();</span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>SimpleClient</code> 向服务器端发送 Protobuf 数据 <code>CommReq</code>，并且接收和打印服务器端的响应。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;comm_conn.pb.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  Socket socket = <span class="keyword">await</span> Socket.connect(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;Connected&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// listen to the received data event stream</span></span><br><span class="line">  socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) &#123;</span><br><span class="line">    <span class="built_in">print</span>(CommRsp.fromBuffer(event));</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send hello</span></span><br><span class="line">  <span class="keyword">var</span> req = CommReq.create();</span><br><span class="line">  req.cmd = <span class="number">0</span>;</span><br><span class="line">  req.uid = <span class="string">&#x27;cm&#x27;</span>;</span><br><span class="line">  req.ext1 = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">  socket.add(req.writeToBuffer());</span><br><span class="line"></span><br><span class="line">  <span class="comment">// .. and close the socket</span></span><br><span class="line">  <span class="keyword">await</span> socket.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意以下两点：</p>
+<ul>
+<li>注意 Protobuf 数据字段分为 required 字段和 optional 字段</li>
+<li>使用 <code>socket.add()</code> 发送数据而不是 <code>socket.write()</code>。注意 <code>socket.write()</code> 先对要发送的数据编码后再调用 <code>socket.add()</code>，实际发送的是编码后的数据</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> write(<span class="built_in">Object</span> obj) &#123;</span><br><span class="line">  <span class="built_in">String</span> string = <span class="string">&#x27;<span class="subst">$obj</span>&#x27;</span>;</span><br><span class="line">  <span class="keyword">if</span> (string.isEmpty) <span class="keyword">return</span>;</span><br><span class="line">  add(_encoding.encode(string));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如何在 Dart 中创建和解析 Protobuf 数据，请参考<a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/reference/dart-generated">官方文档</a>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/dart/" rel="tag"># Dart</a>
+          </div>
+
         
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/06/23/dart-basic/" rel="prev" title="Dart 入门笔记">
+                  <i class="fa fa-chevron-left"></i> Dart 入门笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/06/29/flutter-memory/" rel="next" title="(译) 使用 DevTools 分析 Flutter 内存">
+                  (译) 使用 DevTools 分析 Flutter 内存 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -417,29 +382,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -448,22 +405,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2020/06/24/dart-protobuf/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

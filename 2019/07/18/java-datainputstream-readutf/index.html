@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,94 +14,67 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="记录今天遇到的 DataInputStream.readUTF() 的一个小坑。">
-<meta name="keywords" content="Java,Dart">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="记录今天遇到的 DataInputStream.readUTF() 的一个小坑。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记 Java DataInputStream.readUTF() 的一个小坑">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/07/18/java-datainputstream-readutf/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="记录今天遇到的 DataInputStream.readUTF() 的一个小坑。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15634533594124.jpg">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.042Z">
+<meta property="article:published_time" content="2019-07-18T12:16:11.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.042Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Dart">
+<meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="记 Java DataInputStream.readUTF() 的一个小坑">
-<meta name="twitter:description" content="记录今天遇到的 DataInputStream.readUTF() 的一个小坑。">
 <meta name="twitter:image" content="http://www.sunmoonblog.com/images/15634533594124.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/07/18/java-datainputstream-readutf/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>记 Java DataInputStream.readUTF() 的一个小坑 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/07/18/java-datainputstream-readutf/","path":"2019/07/18/java-datainputstream-readutf/","title":"记 Java DataInputStream.readUTF() 的一个小坑"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>记 Java DataInputStream.readUTF() 的一个小坑 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -114,19 +88,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -137,23 +100,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -161,61 +123,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#readUTF-%E5%92%8C-writeUTF"><span class="nav-number">2.</span> <span class="nav-text">readUTF() 和 writeUTF()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/07/18/java-datainputstream-readutf/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="记 Java DataInputStream.readUTF() 的一个小坑 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           记 Java DataInputStream.readUTF() 的一个小坑
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-18 20:16:11" itemprop="dateCreated datePublished" datetime="2019-07-18T20:16:11+08:00">2019-07-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-07-18 20:16:11" itemprop="dateCreated datePublished" datetime="2019-07-18T20:16:11+08:00">2019-07-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/07/18/java-datainputstream-readutf/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/07/18/java-datainputstream-readutf/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -224,21 +267,27 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>记录今天遇到的 <code>DataInputStream.readUTF()</code> 的一个小坑。</p>
+<span id="more"></span>
 
-      
-        <p>记录今天遇到的 <code>DataInputStream.readUTF()</code> 的一个小坑。<br><a id="more"></a></p>
+
 <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>最近在看 Flutter 和 Dart。感觉 Dart 上手应该比较容易，所以准备动手写 Dart 代码 (Dart Socket) 访问我们 app 后台接口的。但考虑到实际后台接口是使用私有的协议，其中的数据变换和加解密会带来一些不必要的工作，不易快速实现，所以我自己写了个简单的 Java Server (Java 是我最熟悉的，写起来快) 来验证 Dart Client。说是 Server，其实就是简单地接收 Client 发来的字符串，转换成大写形式，然后发送给 Client。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ExecutorService e = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">        ServerSocket ss = <span class="keyword">new</span> ServerSocket();</span><br><span class="line">        ss.bind(<span class="keyword">new</span> InetSocketAddress(<span class="string">"127.0.0.1"</span>, <span class="number">6760</span>));</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"Server started at port 6760"</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            e.execute(<span class="keyword">new</span> ClientHandler(ss.accept()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientHandler</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Socket socket;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> DataInputStream input;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> DataOutputStream output;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">ClientHandler</span><span class="params">(Socket socket)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.socket = socket;</span><br><span class="line">            input = <span class="keyword">new</span> DataInputStream(socket.getInputStream());</span><br><span class="line">            output = <span class="keyword">new</span> DataOutputStream((socket.getOutputStream()));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            System.out.println(<span class="string">"A client coming "</span> + socket.getInetAddress() + <span class="string">":"</span> + socket.getPort());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                String echo = input.readUTF();</span><br><span class="line">                System.out.println(<span class="string">"Client said: "</span> + echo);</span><br><span class="line">                output.writeUTF(echo.toUpperCase());</span><br><span class="line">                output.flush();</span><br><span class="line">                System.out.println(<span class="string">"Server said: "</span> + echo.toUpperCase());</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                close(input);</span><br><span class="line">                close(output);</span><br><span class="line">                close(socket);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">"This client has leave "</span> + socket.getInetAddress() + <span class="string">":"</span> + socket.getPort());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">(Closeable closeable)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (closeable != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                closeable.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>再用 Dart 写一个 Client (参考自 <a href="https://stackoverflow.com/questions/54481818/how-to-connect-flutter-app-to-tcp-socket-server" target="_blank" rel="noopener">Stack Overflow</a>)。代码如下：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:async'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:convert'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  Socket socket = <span class="keyword">await</span> Socket.connect(<span class="string">'127.0.0.1'</span>, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'connected'</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// listen to the received data event stream</span></span><br><span class="line">  socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) &#123;</span><br><span class="line">    <span class="built_in">print</span>(event);</span><br><span class="line">    <span class="built_in">print</span>(utf8.decode(event));</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send hello</span></span><br><span class="line">  socket.add(utf8.encode(<span class="string">'hello'</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// wait 5 seconds</span></span><br><span class="line">  <span class="keyword">await</span> Future.delayed(<span class="built_in">Duration</span>(seconds: <span class="number">5</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// .. and close the socket</span></span><br><span class="line">  socket.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleServer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="type">ExecutorService</span> <span class="variable">e</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">ServerSocket</span> <span class="variable">ss</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerSocket</span>();</span><br><span class="line">        ss.bind(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6760</span>));</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;Server started at port 6760&quot;</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            e.execute(<span class="keyword">new</span> <span class="title class_">ClientHandler</span>(ss.accept()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ClientHandler</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Socket socket;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> DataInputStream input;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> DataOutputStream output;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="title function_">ClientHandler</span><span class="params">(Socket socket)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">            <span class="built_in">this</span>.socket = socket;</span><br><span class="line">            input = <span class="keyword">new</span> <span class="title class_">DataInputStream</span>(socket.getInputStream());</span><br><span class="line">            output = <span class="keyword">new</span> <span class="title class_">DataOutputStream</span>((socket.getOutputStream()));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;A client coming &quot;</span> + socket.getInetAddress() + <span class="string">&quot;:&quot;</span> + socket.getPort());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">echo</span> <span class="operator">=</span> input.readUTF();</span><br><span class="line">                System.out.println(<span class="string">&quot;Client said: &quot;</span> + echo);</span><br><span class="line">                output.writeUTF(echo.toUpperCase());</span><br><span class="line">                output.flush();</span><br><span class="line">                System.out.println(<span class="string">&quot;Server said: &quot;</span> + echo.toUpperCase());</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                close(input);</span><br><span class="line">                close(output);</span><br><span class="line">                close(socket);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">&quot;This client has leave &quot;</span> + socket.getInetAddress() + <span class="string">&quot;:&quot;</span> + socket.getPort());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">(Closeable closeable)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (closeable != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                closeable.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再用 Dart 写一个 Client (参考自 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/54481818/how-to-connect-flutter-app-to-tcp-socket-server">Stack Overflow</a>)。代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:async&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:convert&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span>;</span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  Socket socket = <span class="keyword">await</span> Socket.connect(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;connected&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// listen to the received data event stream</span></span><br><span class="line">  socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) &#123;</span><br><span class="line">    <span class="built_in">print</span>(event);</span><br><span class="line">    <span class="built_in">print</span>(utf8.decode(event));</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send hello</span></span><br><span class="line">  socket.add(utf8.encode(<span class="string">&#x27;hello&#x27;</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// wait 5 seconds</span></span><br><span class="line">  <span class="keyword">await</span> Future.delayed(<span class="built_in">Duration</span>(seconds: <span class="number">5</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// .. and close the socket</span></span><br><span class="line">  socket.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>看起来也不难，无奈调试发现一个奇怪的问题： Server 端可以看到 Client 端连上来，但死活收不到数据，阻塞在 <code>String echo = input.readUTF()</code> 这里。</p>
 <p>毫无头绪，于用 Java 写个类似的 Client 验证， Server 和 Client 之间收发数据完全正常。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        Socket s = <span class="keyword">new</span> Socket();</span><br><span class="line"></span><br><span class="line">        s.connect(<span class="keyword">new</span> InetSocketAddress(<span class="string">"127.0.0.1"</span>, <span class="number">6760</span>));</span><br><span class="line"></span><br><span class="line">        DataInputStream input = <span class="keyword">new</span> DataInputStream(<span class="keyword">new</span> BufferedInputStream(s.getInputStream()));</span><br><span class="line">        DataOutputStream output = <span class="keyword">new</span> DataOutputStream(<span class="keyword">new</span> BufferedOutputStream(s.getOutputStream()));</span><br><span class="line"></span><br><span class="line">        output.writeUTF(<span class="string">"hello"</span>);</span><br><span class="line">        output.flush();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"received: "</span> + input.readUTF());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        close(input);</span><br><span class="line">        close(output);</span><br><span class="line">        close(s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">(Closeable closeable)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (closeable != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                closeable.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleClient</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">Socket</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Socket</span>();</span><br><span class="line"></span><br><span class="line">        s.connect(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6760</span>));</span><br><span class="line"></span><br><span class="line">        <span class="type">DataInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DataInputStream</span>(<span class="keyword">new</span> <span class="title class_">BufferedInputStream</span>(s.getInputStream()));</span><br><span class="line">        <span class="type">DataOutputStream</span> <span class="variable">output</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DataOutputStream</span>(<span class="keyword">new</span> <span class="title class_">BufferedOutputStream</span>(s.getOutputStream()));</span><br><span class="line"></span><br><span class="line">        output.writeUTF(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">        output.flush();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;received: &quot;</span> + input.readUTF());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        close(input);</span><br><span class="line">        close(output);</span><br><span class="line">        close(s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">(Closeable closeable)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (closeable != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                closeable.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>排查问题各种折腾偶然发现另一个现象：Dart Client 打印出 Java Server 发送的数据时有一个多出来的乱码。</p>
 <p>Java Server 使用 <code>DataOutputStream.writeUTF()</code> 发送数据：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">output.writeUTF(<span class="string">"HELLO"</span>);</span><br><span class="line">output.flush();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">output.writeUTF(<span class="string">&quot;HELLO&quot;</span>);</span><br><span class="line">output.flush();</span><br></pre></td></tr></table></figure>
+
 <p>Dart Client 使用 <code>socket.listen()</code> 接收数据并打印：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) &#123;</span><br><span class="line">  <span class="built_in">print</span>(utf8.decode(event)); <span class="comment">// HELLO 前面有一个乱码</span></span><br><span class="line">  <span class="built_in">print</span>(event);              <span class="comment">// [0, 5, 72, 69, 76, 76, 79]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><img src="/images/15634533594124.jpg" alt="-w446"></p>
 <p><code>event</code> 是 <code>List&lt;int&gt;</code>，其中后面几个数字容易理解，就是 “HELLO” 对应的 ASCII 码。<strong>那 <code>0</code> 和 <code>5</code> 又是什么？</strong></p>
 <h1 id="readUTF-和-writeUTF"><a href="#readUTF-和-writeUTF" class="headerlink" title="readUTF() 和 writeUTF()"></a>readUTF() 和 writeUTF()</h1><p>基于这两个现象，</p>
@@ -247,11 +296,13 @@
 <li><code>DataOutputStream.writeUTF()</code> 发送的数据会多出一些字节</li>
 </ul>
 <p>我看了下 <code>DataOutputStream.writeUTF()</code> 的文档和代码。(其实稍加仔细看下文档就能明白问题所在了)</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Writes a string to the underlying output stream using</span></span><br><span class="line"><span class="comment"> * &lt;a href="DataInput.html#modified-utf-8"&gt;modified UTF-8&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * encoding in a machine-independent manner.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * First, two bytes are written to the output stream as if by the</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;writeShort&lt;/code&gt; method giving the number of bytes to</span></span><br><span class="line"><span class="comment"> * follow. This value is the number of bytes actually written out,</span></span><br><span class="line"><span class="comment"> * not the length of the string. Following the length, each character</span></span><br><span class="line"><span class="comment"> * of the string is output, in sequence, using the modified UTF-8 encoding</span></span><br><span class="line"><span class="comment"> * for the character. If no exception is thrown, the counter</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;written&lt;/code&gt; is incremented by the total number of</span></span><br><span class="line"><span class="comment"> * bytes written to the output stream. This will be at least two</span></span><br><span class="line"><span class="comment"> * plus the length of &lt;code&gt;str&lt;/code&gt;, and at most two plus</span></span><br><span class="line"><span class="comment"> * thrice the length of &lt;code&gt;str&lt;/code&gt;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>      str   a string to be written.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  IOException  if an I/O error occurs.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">writeUTF</span><span class="params">(String str)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    writeUTF(str, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">writeUTF</span><span class="params">(String str, DataOutput out)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> strlen = str.length();</span><br><span class="line">    <span class="keyword">int</span> utflen = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> c, count = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    out.write(bytearr, <span class="number">0</span>, utflen+<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">return</span> utflen + <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * See the general contract of the &lt;code&gt;readUTF&lt;/code&gt;</span></span><br><span class="line"><span class="comment"> * method of &lt;code&gt;DataInput&lt;/code&gt;.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Bytes</span></span><br><span class="line"><span class="comment"> * for this operation are read from the contained</span></span><br><span class="line"><span class="comment"> * input stream.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>     a Unicode string.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  EOFException  if this input stream reaches the end before</span></span><br><span class="line"><span class="comment"> *               reading all the bytes.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  IOException   the stream has been closed and the contained</span></span><br><span class="line"><span class="comment"> *             input stream does not support reading after close, or</span></span><br><span class="line"><span class="comment"> *             another I/O error occurs.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  UTFDataFormatException if the bytes do not represent a valid</span></span><br><span class="line"><span class="comment"> *             modified UTF-8 encoding of a string.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>        java.io.DataInputStream#readUTF(java.io.DataInput)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> String <span class="title">readUTF</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> readUTF(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Reads from the</span></span><br><span class="line"><span class="comment"> * stream &lt;code&gt;in&lt;/code&gt; a representation</span></span><br><span class="line"><span class="comment"> * of a Unicode  character string encoded in</span></span><br><span class="line"><span class="comment"> * &lt;a href="DataInput.html#modified-utf-8"&gt;modified UTF-8&lt;/a&gt; format;</span></span><br><span class="line"><span class="comment"> * this string of characters is then returned as a &lt;code&gt;String&lt;/code&gt;.</span></span><br><span class="line"><span class="comment"> * The details of the modified UTF-8 representation</span></span><br><span class="line"><span class="comment"> * are  exactly the same as for the &lt;code&gt;readUTF&lt;/code&gt;</span></span><br><span class="line"><span class="comment"> * method of &lt;code&gt;DataInput&lt;/code&gt;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>      in   a data input stream.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>     a Unicode string.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  EOFException            if the input stream reaches the end</span></span><br><span class="line"><span class="comment"> *               before all the bytes.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  IOException   the stream has been closed and the contained</span></span><br><span class="line"><span class="comment"> *             input stream does not support reading after close, or</span></span><br><span class="line"><span class="comment"> *             another I/O error occurs.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  UTFDataFormatException  if the bytes do not represent a</span></span><br><span class="line"><span class="comment"> *               valid modified UTF-8 encoding of a Unicode string.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>        java.io.DataInputStream#readUnsignedShort()</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> String <span class="title">readUTF</span><span class="params">(DataInput in)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> utflen = in.readUnsignedShort();</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Writes a string to the underlying output stream using</span></span><br><span class="line"><span class="comment"> * &lt;a href=&quot;DataInput.html#modified-utf-8&quot;&gt;modified UTF-8&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * encoding in a machine-independent manner.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * First, two bytes are written to the output stream as if by the</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;writeShort&lt;/code&gt; method giving the number of bytes to</span></span><br><span class="line"><span class="comment"> * follow. This value is the number of bytes actually written out,</span></span><br><span class="line"><span class="comment"> * not the length of the string. Following the length, each character</span></span><br><span class="line"><span class="comment"> * of the string is output, in sequence, using the modified UTF-8 encoding</span></span><br><span class="line"><span class="comment"> * for the character. If no exception is thrown, the counter</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;written&lt;/code&gt; is incremented by the total number of</span></span><br><span class="line"><span class="comment"> * bytes written to the output stream. This will be at least two</span></span><br><span class="line"><span class="comment"> * plus the length of &lt;code&gt;str&lt;/code&gt;, and at most two plus</span></span><br><span class="line"><span class="comment"> * thrice the length of &lt;code&gt;str&lt;/code&gt;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>      str   a string to be written.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  IOException  if an I/O error occurs.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">writeUTF</span><span class="params">(String str)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    writeUTF(str, <span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="type">int</span> <span class="title function_">writeUTF</span><span class="params">(String str, DataOutput out)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">strlen</span> <span class="operator">=</span> str.length();</span><br><span class="line">    <span class="type">int</span> <span class="variable">utflen</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> c, count = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    out.write(bytearr, <span class="number">0</span>, utflen+<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">return</span> utflen + <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * See the general contract of the &lt;code&gt;readUTF&lt;/code&gt;</span></span><br><span class="line"><span class="comment"> * method of &lt;code&gt;DataInput&lt;/code&gt;.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Bytes</span></span><br><span class="line"><span class="comment"> * for this operation are read from the contained</span></span><br><span class="line"><span class="comment"> * input stream.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>     a Unicode string.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  EOFException  if this input stream reaches the end before</span></span><br><span class="line"><span class="comment"> *               reading all the bytes.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  IOException   the stream has been closed and the contained</span></span><br><span class="line"><span class="comment"> *             input stream does not support reading after close, or</span></span><br><span class="line"><span class="comment"> *             another I/O error occurs.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  UTFDataFormatException if the bytes do not represent a valid</span></span><br><span class="line"><span class="comment"> *             modified UTF-8 encoding of a string.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>        java.io.DataInputStream#readUTF(java.io.DataInput)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> String <span class="title function_">readUTF</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="keyword">return</span> readUTF(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Reads from the</span></span><br><span class="line"><span class="comment"> * stream &lt;code&gt;in&lt;/code&gt; a representation</span></span><br><span class="line"><span class="comment"> * of a Unicode  character string encoded in</span></span><br><span class="line"><span class="comment"> * &lt;a href=&quot;DataInput.html#modified-utf-8&quot;&gt;modified UTF-8&lt;/a&gt; format;</span></span><br><span class="line"><span class="comment"> * this string of characters is then returned as a &lt;code&gt;String&lt;/code&gt;.</span></span><br><span class="line"><span class="comment"> * The details of the modified UTF-8 representation</span></span><br><span class="line"><span class="comment"> * are  exactly the same as for the &lt;code&gt;readUTF&lt;/code&gt;</span></span><br><span class="line"><span class="comment"> * method of &lt;code&gt;DataInput&lt;/code&gt;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>      in   a data input stream.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>     a Unicode string.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  EOFException            if the input stream reaches the end</span></span><br><span class="line"><span class="comment"> *               before all the bytes.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  IOException   the stream has been closed and the contained</span></span><br><span class="line"><span class="comment"> *             input stream does not support reading after close, or</span></span><br><span class="line"><span class="comment"> *             another I/O error occurs.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span>  UTFDataFormatException  if the bytes do not represent a</span></span><br><span class="line"><span class="comment"> *               valid modified UTF-8 encoding of a Unicode string.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>        java.io.DataInputStream#readUnsignedShort()</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> String <span class="title function_">readUTF</span><span class="params">(DataInput in)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">utflen</span> <span class="operator">=</span> in.readUnsignedShort();</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>文档明确提到：</p>
 <ul>
-<li><code>DataOutputStream.writeUTF()</code> 和 <code>DataInputStream.readUTF()</code> 实际发送/接收的并不是 UTF-8 编码数据，而是一个修改过的 UTF-8 <a href="https://stackoverflow.com/questions/7921016/what-does-it-mean-to-say-java-modified-utf-8-encoding" target="_blank" rel="noopener">参考</a></li>
+<li><code>DataOutputStream.writeUTF()</code> 和 <code>DataInputStream.readUTF()</code> 实际发送&#x2F;接收的并不是 UTF-8 编码数据，而是一个修改过的 UTF-8 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/7921016/what-does-it-mean-to-say-java-modified-utf-8-encoding">参考</a></li>
 <li>更要命的是，<code>writeUTF()</code> 发送实际 UTF-8 前先会以 “UnsignedShort” 形式发送其长度，占两个字节</li>
 </ul>
 <p>第2点会导致几个问题：</p>
@@ -276,143 +327,60 @@
 <li>Java Server 会先调用 <code>readUnsignedShort()</code>，[72, 69] 作为 “UnsignedShort” 值为 18501</li>
 <li><code>readUTF()</code> 会尝试读取 18501 个字节，但实际上只能读取 3 个字节，所以一直阻塞</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ByteBuffer bb = ByteBuffer.wrap(<span class="keyword">new</span> <span class="keyword">byte</span>[] &#123;<span class="number">72</span>, <span class="number">69</span>&#125;);</span><br><span class="line">    ShortBuffer sb = bb.asShortBuffer();</span><br><span class="line">    System.out.println(sb.get(<span class="number">0</span>)); <span class="comment">// [72, 69] 作为 short 值为 18501</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">ByteBuffer</span> <span class="variable">bb</span> <span class="operator">=</span> ByteBuffer.wrap(<span class="keyword">new</span> <span class="title class_">byte</span>[] &#123;<span class="number">72</span>, <span class="number">69</span>&#125;);</span><br><span class="line">    <span class="type">ShortBuffer</span> <span class="variable">sb</span> <span class="operator">=</span> bb.asShortBuffer();</span><br><span class="line">    System.out.println(sb.get(<span class="number">0</span>)); <span class="comment">// [72, 69] 作为 short 值为 18501</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>对 Java Server 进行修复，其代码避免调用 <code>writeUTF()</code> 和 <code>readUTF()</code>，而是分别使用 <code>write()</code> 和 <code>read()</code> 代替。 </p>
 <p>修复后的 Java Server 代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ExecutorService e = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">        ServerSocket ss = <span class="keyword">new</span> ServerSocket();</span><br><span class="line">        ss.bind(<span class="keyword">new</span> InetSocketAddress(<span class="string">"127.0.0.1"</span>, <span class="number">6760</span>));</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"Server started at port 6760"</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            e.execute(<span class="keyword">new</span> ClientHandler(ss.accept()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientHandler</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Socket socket;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> DataInputStream input;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> DataOutputStream output;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] buf;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">ClientHandler</span><span class="params">(Socket socket)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.socket = socket;</span><br><span class="line">            input = <span class="keyword">new</span> DataInputStream(socket.getInputStream());</span><br><span class="line">            output = <span class="keyword">new</span> DataOutputStream((socket.getOutputStream()));</span><br><span class="line">            buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            System.out.println(<span class="string">"A client coming "</span> + socket.getInetAddress() + <span class="string">":"</span> + socket.getPort());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">int</span> hasRead = input.read(buf);</span><br><span class="line">                <span class="keyword">if</span> (hasRead &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    String echo = <span class="keyword">new</span> String(buf, <span class="number">0</span>, hasRead);</span><br><span class="line">                    System.out.println(<span class="string">"Client said: "</span> + echo);</span><br><span class="line">                    output.write(echo.toUpperCase().getBytes());</span><br><span class="line">                    output.flush();</span><br><span class="line">                    System.out.println(<span class="string">"Server said: "</span> + echo.toUpperCase());</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"len is "</span> + hasRead);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                close(input);</span><br><span class="line">                close(output);</span><br><span class="line">                close(socket);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">"This client has leave "</span> + socket.getInetAddress() + <span class="string">":"</span> + socket.getPort());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">(Closeable closeable)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (closeable != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                closeable.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleServer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="type">ExecutorService</span> <span class="variable">e</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">ServerSocket</span> <span class="variable">ss</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerSocket</span>();</span><br><span class="line">        ss.bind(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6760</span>));</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;Server started at port 6760&quot;</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            e.execute(<span class="keyword">new</span> <span class="title class_">ClientHandler</span>(ss.accept()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ClientHandler</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Socket socket;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> DataInputStream input;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> DataOutputStream output;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">byte</span>[] buf;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="title function_">ClientHandler</span><span class="params">(Socket socket)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">            <span class="built_in">this</span>.socket = socket;</span><br><span class="line">            input = <span class="keyword">new</span> <span class="title class_">DataInputStream</span>(socket.getInputStream());</span><br><span class="line">            output = <span class="keyword">new</span> <span class="title class_">DataOutputStream</span>((socket.getOutputStream()));</span><br><span class="line">            buf = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;A client coming &quot;</span> + socket.getInetAddress() + <span class="string">&quot;:&quot;</span> + socket.getPort());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">hasRead</span> <span class="operator">=</span> input.read(buf);</span><br><span class="line">                <span class="keyword">if</span> (hasRead &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="type">String</span> <span class="variable">echo</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(buf, <span class="number">0</span>, hasRead);</span><br><span class="line">                    System.out.println(<span class="string">&quot;Client said: &quot;</span> + echo);</span><br><span class="line">                    output.write(echo.toUpperCase().getBytes());</span><br><span class="line">                    output.flush();</span><br><span class="line">                    System.out.println(<span class="string">&quot;Server said: &quot;</span> + echo.toUpperCase());</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IOException</span>(<span class="string">&quot;len is &quot;</span> + hasRead);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                close(input);</span><br><span class="line">                close(output);</span><br><span class="line">                close(socket);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">&quot;This client has leave &quot;</span> + socket.getInetAddress() + <span class="string">&quot;:&quot;</span> + socket.getPort());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">(Closeable closeable)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (closeable != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                closeable.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>修复后的 Dart Client 如下：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:async'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:convert'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  Socket socket = <span class="keyword">await</span> Socket.connect(<span class="string">'127.0.0.1'</span>, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'connected'</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// listen to the received data event stream</span></span><br><span class="line">  socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) &#123;</span><br><span class="line">    <span class="built_in">print</span>(event);</span><br><span class="line">    <span class="built_in">print</span>(utf8.decode(event));</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send hello</span></span><br><span class="line">  socket.add(utf8.encode(<span class="string">'hello'</span>));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">// wait 5 seconds</span></span><br><span class="line">  <span class="keyword">await</span> Future.delayed(<span class="built_in">Duration</span>(seconds: <span class="number">5</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// .. and close the socket</span></span><br><span class="line">  socket.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:async&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:convert&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span>;</span><br><span class="line">main() <span class="keyword">async</span> &#123;</span><br><span class="line">  Socket socket = <span class="keyword">await</span> Socket.connect(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">6760</span>);</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;connected&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// listen to the received data event stream</span></span><br><span class="line">  socket.listen((<span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; event) &#123;</span><br><span class="line">    <span class="built_in">print</span>(event);</span><br><span class="line">    <span class="built_in">print</span>(utf8.decode(event));</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send hello</span></span><br><span class="line">  socket.add(utf8.encode(<span class="string">&#x27;hello&#x27;</span>));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">// wait 5 seconds</span></span><br><span class="line">  <span class="keyword">await</span> Future.delayed(<span class="built_in">Duration</span>(seconds: <span class="number">5</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// .. and close the socket</span></span><br><span class="line">  socket.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
     </div>
 
     
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/java/" rel="tag"># Java</a>
               <a href="/tags/dart/" rel="tag"># Dart</a>
+              <a href="/tags/java/" rel="tag"># Java</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/07/16/dart-stream/" rel="prev" title="(译) Dart 异步编程之 Stream">
-      <i class="fa fa-chevron-left"></i> (译) Dart 异步编程之 Stream
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/08/15/add-flutter-to-existing-apps/" rel="next" title="Flutter 踩坑记之集成 Flutter 到 Android 工程">
-      Flutter 踩坑记之集成 Flutter 到 Android 工程 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/07/16/dart-stream/" rel="prev" title="(译) Dart 异步编程之 Stream">
+                  <i class="fa fa-chevron-left"></i> (译) Dart 异步编程之 Stream
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/08/15/add-flutter-to-existing-apps/" rel="next" title="Flutter 踩坑记之集成 Flutter 到 Android 工程">
+                  Flutter 踩坑记之集成 Flutter 到 Android 工程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
   </article>
-  
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#readUTF-和-writeUTF"><span class="nav-number">2.</span> <span class="nav-text">readUTF() 和 writeUTF()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -420,29 +388,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -451,22 +411,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/07/18/java-datainputstream-readutf/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

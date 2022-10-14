@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,65 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="翻译 Dart Stream 文档，了解 Stream 的用法。">
-<meta name="keywords" content="Flutter,Dart">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="翻译 Dart Stream 文档，了解 Stream 的用法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(译) Dart 异步编程之 Stream">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/07/16/dart-stream/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="翻译 Dart Stream 文档，了解 Stream 的用法。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.042Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-16T12:57:10.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.042Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Flutter">
+<meta property="article:tag" content="Dart">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="(译) Dart 异步编程之 Stream">
-<meta name="twitter:description" content="翻译 Dart Stream 文档，了解 Stream 的用法。">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/07/16/dart-stream/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>(译) Dart 异步编程之 Stream | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/07/16/dart-stream/","path":"2019/07/16/dart-stream/","title":"(译) Dart 异步编程之 Stream"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>(译) Dart 异步编程之 Stream | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +86,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +98,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,61 +121,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6-stream-%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">接收 stream 事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E4%BA%8B%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">错误事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-stream"><span class="nav-number">3.</span> <span class="nav-text">使用 stream</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D-Stream"><span class="nav-number">4.</span> <span class="nav-text">两种 Stream</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Single-subscription-streams"><span class="nav-number">4.1.</span> <span class="nav-text">Single subscription streams</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Broadcast-streams"><span class="nav-number">4.2.</span> <span class="nav-text">Broadcast streams</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%84%E7%90%86-stream"><span class="nav-number">5.</span> <span class="nav-text">处理 stream</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-stream"><span class="nav-number">6.</span> <span class="nav-text">修改 stream</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#transform-function"><span class="nav-number">6.1.</span> <span class="nav-text">transform() function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reading-and-decoding-a-file"><span class="nav-number">6.2.</span> <span class="nav-text">Reading and decoding a file</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-listen-method"><span class="nav-number">7.</span> <span class="nav-text">The listen() method</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E8%B5%84%E6%BA%90"><span class="nav-number">8.</span> <span class="nav-text">其他资源</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/07/16/dart-stream/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="(译) Dart 异步编程之 Stream | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           (译) Dart 异步编程之 Stream
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-16 20:57:10" itemprop="dateCreated datePublished" datetime="2019-07-16T20:57:10+08:00">2019-07-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-07-16 20:57:10" itemprop="dateCreated datePublished" datetime="2019-07-16T20:57:10+08:00">2019-07-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/07/16/dart-stream/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/07/16/dart-stream/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -222,11 +265,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>翻译 Dart Stream 文档，了解 Stream 的用法。</p>
-<a id="more"></a>
-<p>原文见<a href="https://dart.dev/tutorials/language/streams" target="_blank" rel="noopener">这里</a>。</p>
+<span id="more"></span>
+
+<p>原文见<a target="_blank" rel="noopener" href="https://dart.dev/tutorials/language/streams">这里</a>。</p>
 <p>重点：</p>
 <ul>
 <li>Steams 提供异步的数据序列</li>
@@ -240,6 +282,7 @@
 <p>Stream 是异步事件序列。它有点像一个异步的 Iterable，不同之处在于，你不是自己获取下一个事件，而是由 Stream 在下一个事件准备好后通知你。</p>
 <h1 id="接收-stream-事件"><a href="#接收-stream-事件" class="headerlink" title="接收 stream 事件"></a>接收 stream 事件</h1><p>可以通过多种方式创建 streams，这个话题后面文章再讨论。无论哪种方式创建 stream，它们的用法都相同：用于 stream 事件上进行异步 for 循环迭代 (即 <strong>await for</strong>)，就像 Iterable 中进行普通 <strong>for 循环</strong> 迭代一样。比如，</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="built_in">int</span>&gt; sumStream(Stream&lt;<span class="built_in">int</span>&gt; stream) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">for</span> (<span class="keyword">var</span> value <span class="keyword">in</span> stream) &#123;</span><br><span class="line">    sum += value;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这段代码只是接收整数事件 stream 的每个事件，然后返回它们的和 (一个 Future)。循环体结束后，函数暂停并等待下一个事件到来，直到 stream 结束。</p>
 <p>使用 <strong>await for</strong> 循环时要求函数带 <code>async</code> 关键字。</p>
 <h1 id="错误事件"><a href="#错误事件" class="headerlink" title="错误事件"></a>错误事件</h1><p>Streams 在没有更多事件时结束。使用 <strong>await for</strong> 循环读取事件时，循环在 stream 结束时停止。</p>
@@ -248,37 +291,46 @@
 <p>使用 <strong>await for</strong> 读取 stream 时，循环语句抛出错误同时结束循环。可以使用 <strong>try-catch</strong> 来捕获错误。</p>
 <h1 id="使用-stream"><a href="#使用-stream" class="headerlink" title="使用 stream"></a>使用 stream</h1><p><code>Stream</code> 类有许多工具方法用于在 stream 上执行常用操作，跟 <code>Iterable</code> 的方法类似。比如，可以使用 Stream API 的 <code>lastWhere()</code> 方法查找 stream 中最后一个正整数：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="built_in">int</span>&gt; lastPositive(Stream&lt;<span class="built_in">int</span>&gt; stream) =&gt;</span><br><span class="line">    stream.lastWhere((x) =&gt; x &gt;= <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
 <h1 id="两种-Stream"><a href="#两种-Stream" class="headerlink" title="两种 Stream"></a>两种 Stream</h1><p>有两种 stream。</p>
 <h2 id="Single-subscription-streams"><a href="#Single-subscription-streams" class="headerlink" title="Single subscription streams"></a>Single subscription streams</h2><p>最常用的 stream 包含整个事件中的一个小序列。事件必须以正确的顺序分发。读取文件或接收网络响应时得到的正是这种 stream。</p>
 <h2 id="Broadcast-streams"><a href="#Broadcast-streams" class="headerlink" title="Broadcast streams"></a>Broadcast streams</h2><p>另一种 stream 专门用于每次只能处理一条消息的场景。比如，用于浏览器中的鼠标事件。</p>
 <p>可以在任何时候监听这个 stream，监听后会收到发送出来的事件。同一时刻可以监听多个 listener，取消前一个订阅后还能再次监听。</p>
 <h1 id="处理-stream"><a href="#处理-stream" class="headerlink" title="处理 stream"></a>处理 stream</h1><p><code>Stream&lt;T&gt;</code> 上的以下方法用于处理 stream 并且返回结果：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;T&gt; <span class="keyword">get</span> first;</span><br><span class="line">Future&lt;<span class="built_in">bool</span>&gt; <span class="keyword">get</span> isEmpty;</span><br><span class="line">Future&lt;T&gt; <span class="keyword">get</span> last;</span><br><span class="line">Future&lt;<span class="built_in">int</span>&gt; <span class="keyword">get</span> length;</span><br><span class="line">Future&lt;T&gt; <span class="keyword">get</span> single;</span><br><span class="line">Future&lt;<span class="built_in">bool</span>&gt; any(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test);</span><br><span class="line">Future&lt;<span class="built_in">bool</span>&gt; contains(<span class="built_in">Object</span> needle);</span><br><span class="line">Future&lt;E&gt; drain&lt;E&gt;([E futureValue]);</span><br><span class="line">Future&lt;T&gt; elementAt(<span class="built_in">int</span> index);</span><br><span class="line">Future&lt;<span class="built_in">bool</span>&gt; every(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test);</span><br><span class="line">Future&lt;T&gt; firstWhere(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test, &#123;T <span class="built_in">Function</span>() orElse&#125;);</span><br><span class="line">Future&lt;S&gt; fold&lt;S&gt;(S initialValue, S <span class="built_in">Function</span>(S previous, T element) combine);</span><br><span class="line">Future forEach(<span class="keyword">void</span> <span class="built_in">Function</span>(T element) action);</span><br><span class="line">Future&lt;<span class="built_in">String</span>&gt; join([<span class="built_in">String</span> separator = <span class="string">""</span>]);</span><br><span class="line">Future&lt;T&gt; lastWhere(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test, &#123;T <span class="built_in">Function</span>() orElse&#125;);</span><br><span class="line">Future pipe(StreamConsumer&lt;T&gt; streamConsumer);</span><br><span class="line">Future&lt;T&gt; reduce(T <span class="built_in">Function</span>(T previous, T element) combine);</span><br><span class="line">Future&lt;T&gt; singleWhere(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test, &#123;T <span class="built_in">Function</span>() orElse&#125;);</span><br><span class="line">Future&lt;<span class="built_in">List</span>&lt;T&gt;&gt; toList();</span><br><span class="line">Future&lt;<span class="built_in">Set</span>&lt;T&gt;&gt; toSet();</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;T&gt; <span class="keyword">get</span> first;</span><br><span class="line">Future&lt;<span class="built_in">bool</span>&gt; <span class="keyword">get</span> isEmpty;</span><br><span class="line">Future&lt;T&gt; <span class="keyword">get</span> last;</span><br><span class="line">Future&lt;<span class="built_in">int</span>&gt; <span class="keyword">get</span> length;</span><br><span class="line">Future&lt;T&gt; <span class="keyword">get</span> single;</span><br><span class="line">Future&lt;<span class="built_in">bool</span>&gt; any(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test);</span><br><span class="line">Future&lt;<span class="built_in">bool</span>&gt; contains(<span class="built_in">Object</span> needle);</span><br><span class="line">Future&lt;E&gt; drain&lt;E&gt;([E futureValue]);</span><br><span class="line">Future&lt;T&gt; elementAt(<span class="built_in">int</span> index);</span><br><span class="line">Future&lt;<span class="built_in">bool</span>&gt; every(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test);</span><br><span class="line">Future&lt;T&gt; firstWhere(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test, &#123;T <span class="built_in">Function</span>() orElse&#125;);</span><br><span class="line">Future&lt;S&gt; fold&lt;S&gt;(S initialValue, S <span class="built_in">Function</span>(S previous, T element) combine);</span><br><span class="line">Future forEach(<span class="keyword">void</span> <span class="built_in">Function</span>(T element) action);</span><br><span class="line">Future&lt;<span class="built_in">String</span>&gt; join([<span class="built_in">String</span> separator = <span class="string">&quot;&quot;</span>]);</span><br><span class="line">Future&lt;T&gt; lastWhere(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test, &#123;T <span class="built_in">Function</span>() orElse&#125;);</span><br><span class="line">Future pipe(StreamConsumer&lt;T&gt; streamConsumer);</span><br><span class="line">Future&lt;T&gt; reduce(T <span class="built_in">Function</span>(T previous, T element) combine);</span><br><span class="line">Future&lt;T&gt; singleWhere(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test, &#123;T <span class="built_in">Function</span>() orElse&#125;);</span><br><span class="line">Future&lt;<span class="built_in">List</span>&lt;T&gt;&gt; toList();</span><br><span class="line">Future&lt;<span class="built_in">Set</span>&lt;T&gt;&gt; toSet();</span><br></pre></td></tr></table></figure>
+
 <p>除了 <code>drain()</code> 和 <code>pipe()</code>，其他方法都能在 Iterable 中找到相应的方法。这些方法很容易写，在 async 方法使用 <strong>await for</strong> 循环。比如，以下是一些方法的实现：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="built_in">bool</span>&gt; contains(<span class="built_in">Object</span> needle) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">for</span> (<span class="keyword">var</span> event <span class="keyword">in</span> <span class="keyword">this</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (event == needle) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future forEach(<span class="keyword">void</span> <span class="built_in">Function</span>(T element) action) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">for</span> (<span class="keyword">var</span> event <span class="keyword">in</span> <span class="keyword">this</span>) &#123;</span><br><span class="line">    action(event);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="built_in">List</span>&lt;T&gt;&gt; toList() <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">final</span> result = &lt;T&gt;[];</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">this</span>.forEach(result.add);</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="built_in">String</span>&gt; join([<span class="built_in">String</span> separator = <span class="string">""</span>]) <span class="keyword">async</span> =&gt;</span><br><span class="line">    (<span class="keyword">await</span> <span class="keyword">this</span>.toList()).join(separator);</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="built_in">bool</span>&gt; contains(<span class="built_in">Object</span> needle) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">for</span> (<span class="keyword">var</span> event <span class="keyword">in</span> <span class="keyword">this</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (event == needle) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future forEach(<span class="keyword">void</span> <span class="built_in">Function</span>(T element) action) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">for</span> (<span class="keyword">var</span> event <span class="keyword">in</span> <span class="keyword">this</span>) &#123;</span><br><span class="line">    action(event);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="built_in">List</span>&lt;T&gt;&gt; toList() <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">final</span> result = &lt;T&gt;[];</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">this</span>.forEach(result.add);</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="built_in">String</span>&gt; join([<span class="built_in">String</span> separator = <span class="string">&quot;&quot;</span>]) <span class="keyword">async</span> =&gt;</span><br><span class="line">    (<span class="keyword">await</span> <span class="keyword">this</span>.toList()).join(separator);</span><br></pre></td></tr></table></figure>
+
 <p>(注意，以上只是精简后的代码，由于历史原因实际实现可能更复杂。)</p>
 <h1 id="修改-stream"><a href="#修改-stream" class="headerlink" title="修改 stream"></a>修改 stream</h1><p>Stream 类的以下方法基于原先的 stream 返回一个新的 stream。Each one waits until someone listens on the new stream before listening on the original.</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;R&gt; cast&lt;R&gt;();</span><br><span class="line">Stream&lt;S&gt; expand&lt;S&gt;(<span class="built_in">Iterable</span>&lt;S&gt; <span class="built_in">Function</span>(T element) convert);</span><br><span class="line">Stream&lt;S&gt; map&lt;S&gt;(S <span class="built_in">Function</span>(T event) convert);</span><br><span class="line">Stream&lt;R&gt; retype&lt;R&gt;();</span><br><span class="line">Stream&lt;T&gt; skip(<span class="built_in">int</span> count);</span><br><span class="line">Stream&lt;T&gt; skipWhile(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test);</span><br><span class="line">Stream&lt;T&gt; take(<span class="built_in">int</span> count);</span><br><span class="line">Stream&lt;T&gt; takeWhile(<span class="built_in">bool</span> <span class="built_in">Function</span>(T element) test);</span><br><span class="line">Stream&lt;T&gt; where(<span class="built_in">bool</span> <span class="built_in">Function</span>(T event) test);</span><br></pre></td></tr></table></figure>
+
 <p>相应地，Iterable 中也有类似的方法用于将一个 iterable 转换成另外一个 iterable。这些方法很容易使用带 <strong>await for</strong> 循环的 async 方法编写。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;E&gt; asyncExpand&lt;E&gt;(Stream&lt;E&gt; <span class="built_in">Function</span>(T event) convert);</span><br><span class="line">Stream&lt;E&gt; asyncMap&lt;E&gt;(FutureOr&lt;E&gt; <span class="built_in">Function</span>(T event) convert);</span><br><span class="line">Stream&lt;T&gt; distinct([<span class="built_in">bool</span> <span class="built_in">Function</span>(T previous, T next) equals]);</span><br></pre></td></tr></table></figure>
+
 <p><code>asyncExpand()</code> 和 <code>asyncMap()</code> 函数跟 <code>expand()</code> 和 <code>map()</code> 类似，但允许其函数参数为异步函数。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;T&gt; handleError(<span class="built_in">Function</span> onError, &#123;<span class="built_in">bool</span> test(error)&#125;);</span><br><span class="line">Stream&lt;T&gt; timeout(<span class="built_in">Duration</span> timeLimit,</span><br><span class="line">    &#123;<span class="keyword">void</span> <span class="built_in">Function</span>(EventSink&lt;T&gt; sink) onTimeout&#125;);</span><br><span class="line">Stream&lt;S&gt; transform&lt;S&gt;(StreamTransformer&lt;T, S&gt; streamTransformer);</span><br></pre></td></tr></table></figure>
+
 <p>最后的三个方法更特别。它们用于处理 <strong>await for</strong> 循环不能处理的错误，循环中首次出现的错误会导致循环结束，对 stream 的订阅也被结束。没法从这种情况恢复。可以使用 <code>handleError()</code> 在错误事件到达 <strong>await for</strong> 循环之前从 stream 中移除错误。(原文：You can use handleError() to remove errors from a stream before using it in an await for loop.)</p>
-<h2 id="transform-function"><a href="#transform-function" class="headerlink" title="transform() function"></a>transform() function</h2><p><code>transform()</code> 函数不仅仅用于错误处理，还能用于对 stream 进行更通用的 “map”。通常的 map 要求为每个收到的事件得到一个值。但是在 I/O 操作中，常常出现几个输入事件生成一个输出事件的情形。<code>StreamTransformer</code> 用于处理这种情况。比如，<code>Utf8Decoder</code> 等解码器也是 transformer。transformer 只需要实现 <code>bind()</code> 方法。</p>
+<h2 id="transform-function"><a href="#transform-function" class="headerlink" title="transform() function"></a>transform() function</h2><p><code>transform()</code> 函数不仅仅用于错误处理，还能用于对 stream 进行更通用的 “map”。通常的 map 要求为每个收到的事件得到一个值。但是在 I&#x2F;O 操作中，常常出现几个输入事件生成一个输出事件的情形。<code>StreamTransformer</code> 用于处理这种情况。比如，<code>Utf8Decoder</code> 等解码器也是 transformer。transformer 只需要实现 <code>bind()</code> 方法。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;S&gt; mapLogErrors&lt;S, T&gt;(</span><br><span class="line">  Stream&lt;T&gt; stream,</span><br><span class="line">  S <span class="built_in">Function</span>(T event) convert,</span><br><span class="line">) <span class="keyword">async</span>* &#123;</span><br><span class="line">  <span class="keyword">var</span> streamWithoutErrors = stream.handleError((e) =&gt; log(e));</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">for</span> (<span class="keyword">var</span> event <span class="keyword">in</span> streamWithoutErrors) &#123;</span><br><span class="line">    <span class="keyword">yield</span> convert(event);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Reading-and-decoding-a-file"><a href="#Reading-and-decoding-a-file" class="headerlink" title="Reading and decoding a file"></a>Reading and decoding a file</h2><p>以下代码读文件并且对 stream 运用两个 transform。首先从 UTF8 转换数据，然后再使用 <code>LineSplitter</code>。最后打印所有行，除了以 <code>#</code> 开头的行。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:convert'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="keyword">void</span>&gt; main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> file = File(args[<span class="number">0</span>]);</span><br><span class="line">  <span class="keyword">var</span> lines = utf8.decoder</span><br><span class="line">      .bind(file.openRead())</span><br><span class="line">      .transform(LineSplitter());</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">for</span> (<span class="keyword">var</span> line <span class="keyword">in</span> lines) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!line.startsWith(<span class="string">'#'</span>)) <span class="built_in">print</span>(line);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:convert&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span>;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="keyword">void</span>&gt; main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> file = File(args[<span class="number">0</span>]);</span><br><span class="line">  <span class="keyword">var</span> lines = utf8.decoder</span><br><span class="line">      .bind(file.openRead())</span><br><span class="line">      .transform(LineSplitter());</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">for</span> (<span class="keyword">var</span> line <span class="keyword">in</span> lines) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!line.startsWith(<span class="string">&#x27;#&#x27;</span>)) <span class="built_in">print</span>(line);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="The-listen-method"><a href="#The-listen-method" class="headerlink" title="The listen() method"></a>The listen() method</h1><p>最后要介绍的是 Stream 中的 <code>listen()</code> 方法。它是一个低级方法，所有的其他 stream 方法都是某种意义上的 <code>listen()</code> 方法。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">StreamSubscription&lt;T&gt; listen(<span class="keyword">void</span> <span class="built_in">Function</span>(T event) onData,</span><br><span class="line">    &#123;<span class="built_in">Function</span> onError, <span class="keyword">void</span> <span class="built_in">Function</span>() onDone, <span class="built_in">bool</span> cancelOnError&#125;);</span><br></pre></td></tr></table></figure>
+
 <p>要创建新的 <code>Stream</code> 类型，只需要继承 <code>Stream</code> 类并且实现 <code>listen()</code> 方法。<code>Stream</code> 上的其他方法都会调用 <code>listen()</code> 方法。</p>
 <p><code>listen()</code> 方法允许监听 stream。直接被监听，否则 stream 就是静态的。开始监听后，将返回 <code>StreamSubscription</code> 对象，它代表活动的、可以产生事件的流。这跟 <code>Iterable</code> 类似，它只是对象集合，itertor 才会真正进行迭代。</p>
 <p>stream subscription 允许暂停以及恢复，或者完全取消。还能设置回调，当产生数据事件、错误事件或者 stream 被关闭时都会收到回调。 </p>
 <h1 id="其他资源"><a href="#其他资源" class="headerlink" title="其他资源"></a>其他资源</h1><p>阅读以下 stream 用法及 Dart 异步编程文档，了解更多内容。</p>
 <ul>
-<li><a href="https://dart.dev/articles/libraries/creating-streams" target="_blank" rel="noopener">Creating Streams in Dart</a>, an article about creating your own streams</li>
-<li><a href="https://dart.dev/guides/libraries/futures-error-handling" target="_blank" rel="noopener">Futures and Error Handling</a>, an article that explains how to handle errors using the Future API</li>
-<li><a href="https://dart.dev/guides/language/language-tour#asynchrony-support" target="_blank" rel="noopener">Asynchrony support</a>, a section in the <a href="https://dart.dev/guides/language/language-tour" target="_blank" rel="noopener">language tour</a></li>
-<li><a href="https://api.dart.dev/stable/dart-async/Stream-class.html" target="_blank" rel="noopener">Stream API reference</a></li>
+<li><a target="_blank" rel="noopener" href="https://dart.dev/articles/libraries/creating-streams">Creating Streams in Dart</a>, an article about creating your own streams</li>
+<li><a target="_blank" rel="noopener" href="https://dart.dev/guides/libraries/futures-error-handling">Futures and Error Handling</a>, an article that explains how to handle errors using the Future API</li>
+<li><a target="_blank" rel="noopener" href="https://dart.dev/guides/language/language-tour#asynchrony-support">Asynchrony support</a>, a section in the <a target="_blank" rel="noopener" href="https://dart.dev/guides/language/language-tour">language tour</a></li>
+<li><a target="_blank" rel="noopener" href="https://api.dart.dev/stable/dart-async/Stream-class.html">Stream API reference</a></li>
 </ul>
 
     </div>
@@ -287,7 +339,7 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/flutter/" rel="tag"># Flutter</a>
               <a href="/tags/dart/" rel="tag"># Dart</a>
@@ -295,123 +347,38 @@
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/07/15/inline-hook-basic/" rel="prev" title="Android inline hook 浅析">
-      <i class="fa fa-chevron-left"></i> Android inline hook 浅析
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/07/18/java-datainputstream-readutf/" rel="next" title="记 Java DataInputStream.readUTF() 的一个小坑">
-      记 Java DataInputStream.readUTF() 的一个小坑 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/07/15/inline-hook-basic/" rel="prev" title="Android inline hook 浅析">
+                  <i class="fa fa-chevron-left"></i> Android inline hook 浅析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/07/18/java-datainputstream-readutf/" rel="next" title="记 Java DataInputStream.readUTF() 的一个小坑">
+                  记 Java DataInputStream.readUTF() 的一个小坑 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#接收-stream-事件"><span class="nav-number">1.</span> <span class="nav-text">接收 stream 事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#错误事件"><span class="nav-number">2.</span> <span class="nav-text">错误事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用-stream"><span class="nav-number">3.</span> <span class="nav-text">使用 stream</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#两种-Stream"><span class="nav-number">4.</span> <span class="nav-text">两种 Stream</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Single-subscription-streams"><span class="nav-number">4.1.</span> <span class="nav-text">Single subscription streams</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Broadcast-streams"><span class="nav-number">4.2.</span> <span class="nav-text">Broadcast streams</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#处理-stream"><span class="nav-number">5.</span> <span class="nav-text">处理 stream</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#修改-stream"><span class="nav-number">6.</span> <span class="nav-text">修改 stream</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#transform-function"><span class="nav-number">6.1.</span> <span class="nav-text">transform() function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reading-and-decoding-a-file"><span class="nav-number">6.2.</span> <span class="nav-text">Reading and decoding a file</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-listen-method"><span class="nav-number">7.</span> <span class="nav-text">The listen() method</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他资源"><span class="nav-number">8.</span> <span class="nav-text">其他资源</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -419,29 +386,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -450,22 +409,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/07/16/dart-stream/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

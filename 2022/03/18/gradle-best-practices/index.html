@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,64 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="翻译自《Organizing Gradle Projects》，介绍了Gradle的若干最佳实践。">
-<meta name="keywords" content="Gradle">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="翻译自《Organizing Gradle Projects》，介绍了Gradle的若干最佳实践。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(译) Organizing Gradle Projects">
 <meta property="og:url" content="http://www.sunmoonblog.com/2022/03/18/gradle-best-practices/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="翻译自《Organizing Gradle Projects》，介绍了Gradle的若干最佳实践。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-03-19T12:14:46.251Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-18T02:22:33.000Z">
+<meta property="article:modified_time" content="2022-03-19T12:14:46.251Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Gradle">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="(译) Organizing Gradle Projects">
-<meta name="twitter:description" content="翻译自《Organizing Gradle Projects》，介绍了Gradle的若干最佳实践。">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2022/03/18/gradle-best-practices/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>(译) Organizing Gradle Projects | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2022/03/18/gradle-best-practices/","path":"2022/03/18/gradle-best-practices/","title":"(译) Organizing Gradle Projects"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>(译) Organizing Gradle Projects | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +85,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +97,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,61 +120,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E7%8B%AC%E5%AD%98%E6%94%BE%E4%B8%8D%E5%90%8C%E8%AF%AD%E8%A8%80%E7%9A%84%E6%BA%90%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">单独存放不同语言的源码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81%E5%88%86%E5%BC%80%E5%AD%98%E6%94%BE"><span class="nav-number">2.</span> <span class="nav-text">不同类型的测试代码分开存放</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%BD%E5%8F%AF%E8%83%BD%E4%BD%BF%E7%94%A8%E6%A0%87%E5%87%86%E7%BA%A6%E5%AE%9A"><span class="nav-number">3.</span> <span class="nav-text">尽可能使用标准约定</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89settings%E6%96%87%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">定义settings文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-buildSrc-%E6%8A%BD%E8%B1%A1%E9%80%BB%E8%BE%91"><span class="nav-number">5.</span> <span class="nav-text">使用 buildSrc 抽象逻辑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9C%A8-gradle-properties-%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AE%9A%E4%B9%89%E5%B1%9E%E6%80%A7"><span class="nav-number">6.</span> <span class="nav-text">在 gradle.properties 文件中定义属性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E8%A6%86%E7%9B%96%E4%BB%BB%E5%8A%A1%E8%BE%93%E5%87%BA"><span class="nav-number">7.</span> <span class="nav-text">避免覆盖任务输出</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84Gradle"><span class="nav-number">8.</span> <span class="nav-text">发布自定义的Gradle</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2022/03/18/gradle-best-practices/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="(译) Organizing Gradle Projects | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           (译) Organizing Gradle Projects
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-03-18 10:22:33" itemprop="dateCreated datePublished" datetime="2022-03-18T10:22:33+08:00">2022-03-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-19 20:14:46" itemprop="dateModified" datetime="2022-03-19T20:14:46+08:00">2022-03-19</time>
-              </span>
+      <time title="创建时间：2022-03-18 10:22:33" itemprop="dateCreated datePublished" datetime="2022-03-18T10:22:33+08:00">2022-03-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-03-19 20:14:46" itemprop="dateModified" datetime="2022-03-19T20:14:46+08:00">2022-03-19</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2022/03/18/gradle-best-practices/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2022/03/18/gradle-best-practices/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -222,19 +264,21 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>翻译自《Organizing Gradle Projects》，介绍了Gradle的若干最佳实践。</p>
+<span id="more"></span>
 
-      
-        <p>翻译自《Organizing Gradle Projects》，介绍了Gradle的若干最佳实践。<br><a id="more"></a></p>
 <p>每个软件工程的源代码和构建逻辑应该以有意义的方式来组织。本文介绍了若干最佳实践来实现可读性好、易维护的项目结构。同时也介绍了若干常见问题以及解决方法。</p>
 <h1 id="单独存放不同语言的源码"><a href="#单独存放不同语言的源码" class="headerlink" title="单独存放不同语言的源码"></a>单独存放不同语言的源码</h1><!--Separate language-specific source files-->
+
 <p>Gradle的编程语言插件建立了发现和编译源码的约定。比如，使用了Java插件的工程会自动编译<code>src/main/java</code>目录下的代码。其他语言的插件也遵循类似的模式。目录路径的最后一部分通常表明了对应的语言。</p>
 <p>某些编译器支持编译同一个源码目录中的不同语言写的代码。Groovy编译器可以处理混放在<code>src/main/groovy</code>目录下的Java和Groovy源码。Gradle建议按不同的语言来存放代码，以达到更好的构建性能。此外，the user and build can make stronger assumptions。</p>
-<p>The following source tree contains Java and Kotlin source files. Java source files live in src/main/java, whereas Kotlin source files live in src/main/kotlin.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── build.gradle</span><br><span class="line">└── src</span><br><span class="line">    └── main</span><br><span class="line">        ├── java</span><br><span class="line">        │   └── HelloWorld.java</span><br><span class="line">        └── kotlin</span><br><span class="line">            └── Utils.kt</span><br></pre></td></tr></table></figure>
-<h1 id="不同类型的测试代码分开存放"><a href="#不同类型的测试代码分开存放" class="headerlink" title="不同类型的测试代码分开存放"></a>不同类型的测试代码分开存放</h1><p>Have a look at the sample  <a href="https://docs.gradle.org/current/samples/sample_jvm_multi_project_with_additional_test_types.html" target="_blank" rel="noopener">sample</a> that demonstrates how a separate integration tests configuration can be added to a Java-based project.</p>
+<p>The following source tree contains Java and Kotlin source files. Java source files live in src&#x2F;main&#x2F;java, whereas Kotlin source files live in src&#x2F;main&#x2F;kotlin.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── build.gradle</span><br><span class="line">└── src</span><br><span class="line">    └── main</span><br><span class="line">        ├── java</span><br><span class="line">        │   └── HelloWorld.java</span><br><span class="line">        └── kotlin</span><br><span class="line">            └── Utils.kt</span><br></pre></td></tr></table></figure>
+
+<h1 id="不同类型的测试代码分开存放"><a href="#不同类型的测试代码分开存放" class="headerlink" title="不同类型的测试代码分开存放"></a>不同类型的测试代码分开存放</h1><p>Have a look at the sample  <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/samples/sample_jvm_multi_project_with_additional_test_types.html">sample</a> that demonstrates how a separate integration tests configuration can be added to a Java-based project.</p>
 <p>一个项目中有不同类型的测试代码，这个很常见。比如单元测试，集成测试，功能测试或冒烟测试。每种类型的测试代码应当放在专门的源码目录中(可选的)。分开存放对可维护性有好处，也能让你更关注特定类型的测试。</p>
-<p>这个<a href="https://docs.gradle.org/current/samples/sample_jvm_multi_project_with_additional_test_types.html" target="_blank" rel="noopener">sample</a>展示了如何在一个Java项目中添加不同的测试配置。</p>
-<h1 id="尽可能使用标准约定"><a href="#尽可能使用标准约定" class="headerlink" title="尽可能使用标准约定"></a>尽可能使用标准约定</h1><p>Gradle核心插件遵守软件工程范例<a href="https://en.wikipedia.org/wiki/Convention_over_configuration" target="_blank" rel="noopener">convention over configuration</a>。插件逻辑在特定上下文中为用户提供有意义的缺省值以及约定。以<a href="https://docs.gradle.org/current/userguide/java_plugin.html#java_plugin" target="_blank" rel="noopener">Java plugin</a>插件为例：</p>
+<p>这个<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/samples/sample_jvm_multi_project_with_additional_test_types.html">sample</a>展示了如何在一个Java项目中添加不同的测试配置。</p>
+<h1 id="尽可能使用标准约定"><a href="#尽可能使用标准约定" class="headerlink" title="尽可能使用标准约定"></a>尽可能使用标准约定</h1><p>Gradle核心插件遵守软件工程范例<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Convention_over_configuration">convention over configuration</a>。插件逻辑在特定上下文中为用户提供有意义的缺省值以及约定。以<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/java_plugin.html#java_plugin">Java plugin</a>插件为例：</p>
 <ul>
 <li><code>src/main/java</code>作为缺省的源码位置</li>
 <li>编译后的产物放在<code>build</code>目录</li>
@@ -243,22 +287,26 @@
 <h1 id="定义settings文件"><a href="#定义settings文件" class="headerlink" title="定义settings文件"></a>定义settings文件</h1><p>每次构建时，Gradle会尝试找到<code>settings.gradle</code>(Groovy DSL)或者<code>settings.gradle.kts</code>(Kotlin DSL)文件。基于这个目的，运行时会沿着目录树结构往上一直搜索到根目录。一旦找到settings文件后立即停止查找。</p>
 <p>一定要在根目录中添加一个<code>settings.gradle</code>以避免性能问题。这个建议对单工程构建和多工程构建都有效。该文件可以为空，也可以定义工程名。</p>
 <p>一个典型的带settings文件的Gradle工程结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── settings.gradle</span><br><span class="line">├── subproject-one</span><br><span class="line">│   └── build.gradle</span><br><span class="line">└── subproject-two</span><br><span class="line">    └── build.gradle</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── settings.gradle</span><br><span class="line">├── subproject-one</span><br><span class="line">│   └── build.gradle</span><br><span class="line">└── subproject-two</span><br><span class="line">    └── build.gradle</span><br></pre></td></tr></table></figure>
+
 <h1 id="使用-buildSrc-抽象逻辑"><a href="#使用-buildSrc-抽象逻辑" class="headerlink" title="使用 buildSrc 抽象逻辑"></a>使用 buildSrc 抽象逻辑</h1><p>复杂的构建逻辑通常适合封装成自定义任务或者二进制插件。自定义任务和二进制插件不应放到项目的构建脚本中。如果这些逻辑不需要在多个独立的项目中共享，那么可以使用<code>buildSrc</code>。</p>
-<p><code>buildSrc</code>目录视为一个<a href="https://docs.gradle.org/current/userguide/composite_builds.html#composite_build_intro" target="_blank" rel="noopener">included build</a>。一旦 Gradle 发现这个目录，它会自动编译和测试其中的代码并将其添加到构建脚本的classpath。对于多项目构建(multi-project builds)，只能有一个<code>buildSrc</code>目录，这个目录位于项目根目录。应优先使用<code>buildSrc</code>而不是插件(<a href="https://docs.gradle.org/current/userguide/plugins.html#sec:script_plugins" target="_blank" rel="noopener">script plugins</a>)，因为前者代码更容易维护、重构和测试。</p>
-<p><code>buildSrc</code>使用跟Java和Groovy项目相同的代码结构(<a href="https://docs.gradle.org/current/userguide/java_plugin.html#javalayout" target="_blank" rel="noopener">source code conventions</a>)。它可以直接访问Gradle API。<code>buildSrc</code>目录下的<code>build.gradle</code>脚本中可以添加其他依赖。</p>
+<p><code>buildSrc</code>目录视为一个<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/composite_builds.html#composite_build_intro">included build</a>。一旦 Gradle 发现这个目录，它会自动编译和测试其中的代码并将其添加到构建脚本的classpath。对于多项目构建(multi-project builds)，只能有一个<code>buildSrc</code>目录，这个目录位于项目根目录。应优先使用<code>buildSrc</code>而不是插件(<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/plugins.html#sec:script_plugins">script plugins</a>)，因为前者代码更容易维护、重构和测试。</p>
+<p><code>buildSrc</code>使用跟Java和Groovy项目相同的代码结构(<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/java_plugin.html#javalayout">source code conventions</a>)。它可以直接访问Gradle API。<code>buildSrc</code>目录下的<code>build.gradle</code>脚本中可以添加其他依赖。</p>
 <p><em>Example 1. Custom buildSrc build script</em></p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    testImplementation <span class="string">'junit:junit:4.13'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    testImplementation <span class="string">&#x27;junit:junit:4.13&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>一个包含<code>buildSrc</code>的工程，其项目结构如下。<code>buildSrc</code>下的代码使用跟应用代码类似的包。如果有额外的配置需要，<code>buildSrc</code>目录可以放一个可选的构建脚本(比如，使用插件或声明依赖)。</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── buildSrc</span><br><span class="line">│   ├── build.gradle</span><br><span class="line">│   └── src</span><br><span class="line">│       ├── main</span><br><span class="line">│       │   └── java</span><br><span class="line">│       │       └── com</span><br><span class="line">│       │           └── enterprise</span><br><span class="line">│       │               ├── Deploy.java</span><br><span class="line">│       │               └── DeploymentPlugin.java</span><br><span class="line">│       └── test</span><br><span class="line">│           └── java</span><br><span class="line">│               └── com</span><br><span class="line">│                   └── enterprise</span><br><span class="line">│                       └── DeploymentPluginTest.java</span><br><span class="line">├── settings.gradle</span><br><span class="line">├── subprojecto-one</span><br><span class="line">│   └── build.gradle.kts</span><br><span class="line">└── subproject-two</span><br><span class="line">    └── build.gradle.kts</span><br></pre></td></tr></table></figure>
-<p>注意<code>buildSrc</code>中的变更会引起整个项目变成out-of-date状态。因此，当进行小的增量变更时，<a href="https://docs.gradle.org/current/userguide/command_line_interface.html#sec:command_line_execution_options" target="_blank" rel="noopener">–no-rebuild command-line option</a>可加快编译速度。记住<code>buildSrc</code>修改完成后要定期进行全量构建。</p>
+
+<p>注意<code>buildSrc</code>中的变更会引起整个项目变成out-of-date状态。因此，当进行小的增量变更时，<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/command_line_interface.html#sec:command_line_execution_options">–no-rebuild command-line option</a>可加快编译速度。记住<code>buildSrc</code>修改完成后要定期进行全量构建。</p>
 <h1 id="在-gradle-properties-文件中定义属性"><a href="#在-gradle-properties-文件中定义属性" class="headerlink" title="在 gradle.properties 文件中定义属性"></a>在 gradle.properties 文件中定义属性</h1><p>Gradle中可以在构建脚本中定义属性，也可以在<code>gradle.properties</code>定义属性，或者在命令行参数中定义属性。</p>
 <p>命令行参数中定义属性在ad-hoc场景下很常见。比如，你想传特定的属性值来控制某次构建的运行时行为。构建脚本中的属性很容易带来维护性问题。<code>gradle.properties</code>用于将属性跟构建脚本分离。它适用于保存控制构建环境的属性。</p>
 <p>典型的工程中将<code>gradle.properties</code>文件放在根目录。另外，如果你想将其应用于所有构建任务的话，也可将该文件放在<code>GRADLE_USER_HOME</code>目录。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── gradle.properties</span><br><span class="line">└── settings.gradle</span><br><span class="line">├── subproject-a</span><br><span class="line">│   └── build.gradle</span><br><span class="line">└── subproject-b</span><br><span class="line">    └── build.gradle</span><br></pre></td></tr></table></figure>
-<h1 id="避免覆盖任务输出"><a href="#避免覆盖任务输出" class="headerlink" title="避免覆盖任务输出"></a>避免覆盖任务输出</h1><p>Task 应当定义输入和输出以利用 <a href="https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:up_to_date_checks" target="_blank" rel="noopener">incremental build functionality</a> 提升性能。当声明 task 的输出时，应当确认输出目录是独有的。</p>
-<p>混合或覆盖不同task的输出，会导致 up-to-date 检查过程复杂化，从而拖慢构建过程。另一方面，文件系统的变化可能让Gradle的构建缓存(<a href="https://docs.gradle.org/current/userguide/build_cache.html#build_cache" target="_blank" rel="noopener">build cache</a>)难以识别和缓存应当缓存的task。</p>
-<h1 id="发布自定义的Gradle"><a href="#发布自定义的Gradle" class="headerlink" title="发布自定义的Gradle"></a>发布自定义的Gradle</h1><p>企业常常想通过定义通用约定或规则来为所有的项目做标准化构建。你可以借助初始化脚本来实现这个功能。<a href="https://docs.gradle.org/current/userguide/init_scripts.html#init_scripts" target="_blank" rel="noopener">Initialization scripts</a>可以非常容易地为同一台机器上的各个项目应同一构建逻辑。比如，使用一个私有的repo以及其凭证。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── gradle.properties</span><br><span class="line">└── settings.gradle</span><br><span class="line">├── subproject-a</span><br><span class="line">│   └── build.gradle</span><br><span class="line">└── subproject-b</span><br><span class="line">    └── build.gradle</span><br></pre></td></tr></table></figure>
+
+<h1 id="避免覆盖任务输出"><a href="#避免覆盖任务输出" class="headerlink" title="避免覆盖任务输出"></a>避免覆盖任务输出</h1><p>Task 应当定义输入和输出以利用 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:up_to_date_checks">incremental build functionality</a> 提升性能。当声明 task 的输出时，应当确认输出目录是独有的。</p>
+<p>混合或覆盖不同task的输出，会导致 up-to-date 检查过程复杂化，从而拖慢构建过程。另一方面，文件系统的变化可能让Gradle的构建缓存(<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/build_cache.html#build_cache">build cache</a>)难以识别和缓存应当缓存的task。</p>
+<h1 id="发布自定义的Gradle"><a href="#发布自定义的Gradle" class="headerlink" title="发布自定义的Gradle"></a>发布自定义的Gradle</h1><p>企业常常想通过定义通用约定或规则来为所有的项目做标准化构建。你可以借助初始化脚本来实现这个功能。<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/init_scripts.html#init_scripts">Initialization scripts</a>可以非常容易地为同一台机器上的各个项目应同一构建逻辑。比如，使用一个私有的repo以及其凭证。</p>
 <p>这种方式有期缺点。首先，你必须跟公司的所有开发人员沟通标准化设置过程。另外，统一升级初始化脚本逻辑也是个挑战。</p>
 <p>发布自定义Gradle是个可行的解决方案。自定义的Gradle包含标准的Gradle发布版本，以及一个或多个自定义 initialization script。初始化脚本跟发布版本打包在一起，并且可应用到每次的构建上。开发者只需要将他们的 wraper 文件指向自定义Gradle的url。</p>
 <p>创建自定义Gradle发布版本的典型步骤如下：</p>
@@ -270,7 +318,7 @@
 <li>将所有项目的wrapper文件指向自定义Gradle发布版本的url</li>
 </ol>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#sec:build_sources" target="_blank" rel="noopener">Organizing Gradle Projects</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#sec:build_sources">Organizing Gradle Projects</a></li>
 </ul>
 
     </div>
@@ -279,130 +327,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/gradle/" rel="tag"># Gradle</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2022/03/18/gradle-buildsrc/" rel="prev" title="聊聊 Gradle buildSrc">
-      <i class="fa fa-chevron-left"></i> 聊聊 Gradle buildSrc
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/03/19/android-gradle-transform/" rel="next" title="Android Gradle Transform 简介">
-      Android Gradle Transform 简介 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/03/18/gradle-buildsrc/" rel="prev" title="聊聊 Gradle buildSrc">
+                  <i class="fa fa-chevron-left"></i> 聊聊 Gradle buildSrc
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/03/19/android-gradle-transform/" rel="next" title="Android Gradle Transform 简介">
+                  Android Gradle Transform 简介 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#单独存放不同语言的源码"><span class="nav-number">1.</span> <span class="nav-text">单独存放不同语言的源码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不同类型的测试代码分开存放"><span class="nav-number">2.</span> <span class="nav-text">不同类型的测试代码分开存放</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#尽可能使用标准约定"><span class="nav-number">3.</span> <span class="nav-text">尽可能使用标准约定</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#定义settings文件"><span class="nav-number">4.</span> <span class="nav-text">定义settings文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用-buildSrc-抽象逻辑"><span class="nav-number">5.</span> <span class="nav-text">使用 buildSrc 抽象逻辑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在-gradle-properties-文件中定义属性"><span class="nav-number">6.</span> <span class="nav-text">在 gradle.properties 文件中定义属性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#避免覆盖任务输出"><span class="nav-number">7.</span> <span class="nav-text">避免覆盖任务输出</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#发布自定义的Gradle"><span class="nav-number">8.</span> <span class="nav-text">发布自定义的Gradle</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -410,29 +373,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -441,22 +396,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2022/03/18/gradle-best-practices/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

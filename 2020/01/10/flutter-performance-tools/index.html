@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,21 +14,19 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="Flutter 提供了不少性能分析工具，但感觉相关文档不咋的，散落在官方的各个地方，对开发者不太友好。另外，有的工具目前只在 Android Studio 中有，比如 Flutter Performance；甚至有的工具只在 debug 模式下可用。本文对这些工具简单整理一下，便于做性能优化时查找和参考。">
-<meta name="keywords" content="Flutter">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Flutter 提供了不少性能分析工具，但感觉相关文档不咋的，散落在官方的各个地方，对开发者不太友好。另外，有的工具目前只在 Android Studio 中有，比如 Flutter Performance；甚至有的工具只在 debug 模式下可用。本文对这些工具简单整理一下，便于做性能优化时查找和参考。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flutter Performance 分析工具简介">
 <meta property="og:url" content="http://www.sunmoonblog.com/2020/01/10/flutter-performance-tools/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="Flutter 提供了不少性能分析工具，但感觉相关文档不咋的，散落在官方的各个地方，对开发者不太友好。另外，有的工具目前只在 Android Studio 中有，比如 Flutter Performance；甚至有的工具只在 debug 模式下可用。本文对这些工具简单整理一下，便于做性能优化时查找和参考。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15786503018684.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15786490815418.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15813940478063.jpg">
@@ -42,78 +41,52 @@
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15786490815418.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15788855830332.jpg">
 <meta property="og:image" content="http://www.sunmoonblog.com/images/15789021349152.jpg">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.046Z">
+<meta property="article:published_time" content="2020-01-10T09:33:56.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.046Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Flutter">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Flutter Performance 分析工具简介">
-<meta name="twitter:description" content="Flutter 提供了不少性能分析工具，但感觉相关文档不咋的，散落在官方的各个地方，对开发者不太友好。另外，有的工具目前只在 Android Studio 中有，比如 Flutter Performance；甚至有的工具只在 debug 模式下可用。本文对这些工具简单整理一下，便于做性能优化时查找和参考。">
 <meta name="twitter:image" content="http://www.sunmoonblog.com/images/15786503018684.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2020/01/10/flutter-performance-tools/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Flutter Performance 分析工具简介 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2020/01/10/flutter-performance-tools/","path":"2020/01/10/flutter-performance-tools/","title":"Flutter Performance 分析工具简介"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Flutter Performance 分析工具简介 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -127,19 +100,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -150,23 +112,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -174,61 +135,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Performance-Overlay"><span class="nav-number">1.</span> <span class="nav-text">Performance Overlay</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PerformanceOverlay%E6%8E%A7%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">PerformanceOverlay控件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Observatory-%E4%B9%8B-Timeline"><span class="nav-number">3.</span> <span class="nav-text">Observatory 之 Timeline</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DevTools-%E4%B9%8B-Timeline"><span class="nav-number">4.</span> <span class="nav-text">DevTools 之 Timeline</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A7%E6%B8%B2%E6%9F%93%E5%9B%BE%E8%A1%A8"><span class="nav-number">4.1.</span> <span class="nav-text">帧渲染图表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A7%E4%BA%8B%E4%BB%B6%E5%9B%BE%E8%A1%A8"><span class="nav-number">4.2.</span> <span class="nav-text">帧事件图表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-%E5%88%86%E6%9E%90%E5%99%A8"><span class="nav-number">4.3.</span> <span class="nav-text">CPU 分析器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Chrome-Tracing"><span class="nav-number">5.</span> <span class="nav-text">Chrome Tracing</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Widget-rebuild-profiler"><span class="nav-number">6.</span> <span class="nav-text">Widget rebuild profiler</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FPS"><span class="nav-number">7.</span> <span class="nav-text">FPS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%8F%82%E6%95%B0"><span class="nav-number">8.</span> <span class="nav-text">测试参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Debug-flags"><span class="nav-number">9.</span> <span class="nav-text">Debug flags</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#layers"><span class="nav-number">9.1.</span> <span class="nav-text">layers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#layout"><span class="nav-number">9.2.</span> <span class="nav-text">layout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#animation"><span class="nav-number">9.3.</span> <span class="nav-text">animation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#performance"><span class="nav-number">9.4.</span> <span class="nav-text">performance</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Flutter-Driver"><span class="nav-number">10.</span> <span class="nav-text">Flutter Driver</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="nav-number">11.</span> <span class="nav-text">一些小技巧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">12.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2020/01/10/flutter-performance-tools/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Flutter Performance 分析工具简介 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Flutter Performance 分析工具简介
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-01-10 17:33:56" itemprop="dateCreated datePublished" datetime="2020-01-10T17:33:56+08:00">2020-01-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2020-01-10 17:33:56" itemprop="dateCreated datePublished" datetime="2020-01-10T17:33:56+08:00">2020-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2020/01/10/flutter-performance-tools/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/01/10/flutter-performance-tools/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -237,10 +279,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>Flutter 提供了不少性能分析工具，但感觉相关文档不咋的，散落在官方的各个地方，对开发者不太友好。另外，有的工具目前只在 Android Studio 中有，比如 Flutter Performance；甚至有的工具只在 debug 模式下可用。本文对这些工具简单整理一下，便于做性能优化时查找和参考。</p>
-<a id="more"></a>
+<span id="more"></span>
+
 <h1 id="Performance-Overlay"><a href="#Performance-Overlay" class="headerlink" title="Performance Overlay"></a>Performance Overlay</h1><p>开启 Performance Overlay 有多种方式，最简单的几种包括：</p>
 <ul>
 <li>Android Studio &gt; Flutter Inspector &gt; Performance Overlay</li>
@@ -249,7 +290,7 @@
 </ul>
 <p><img src="/images/15786503018684.jpg" alt="-w477"></p>
 <p>性能图层用两张图表显示应用的耗时信息。每一张图表都代表当前线程的最近 300 帧表现。</p>
-<p><img src="/images/15786490815418.jpg" alt></p>
+<p><img src="/images/15786490815418.jpg"></p>
 <ul>
 <li>顶部的图形表示 GPU 线程所花费的时间</li>
 <li>底部的图表显示了 UI 线程所花费的时间</li>
@@ -261,14 +302,15 @@
 </ul>
 </li>
 </ul>
-<p>更多信息请参考 <a href="https://flutter.dev/docs/perf/rendering/ui-performance#flutters-threads" target="_blank" rel="noopener">Flutter 线程</a></p>
+<p>更多信息请参考 <a target="_blank" rel="noopener" href="https://flutter.dev/docs/perf/rendering/ui-performance#flutters-threads">Flutter 线程</a></p>
 <p>使用 Performance Overlay 可以对 UI 性能问题进行<strong>定性分析</strong>，大致判断到底是 Dart 代码执行过慢(布局慢)还是场景复杂无法快速渲染(渲染慢)。</p>
 <p>Performance Overlay 可用于 profile 模式。</p>
-<h1 id="PerformanceOverlay控件"><a href="#PerformanceOverlay控件" class="headerlink" title="PerformanceOverlay控件"></a><a href="https://api.flutter.dev/flutter/widgets/PerformanceOverlay-class.html" target="_blank" rel="noopener">PerformanceOverlay控件</a></h1><p><a href="https://api.flutter.dev/flutter/widgets/PerformanceOverlay-class.html" target="_blank" rel="noopener">PerformanceOverlay</a> 可以视为 Performance Overlay 的高级版本(Performance Overlay 正是基于 PerformanceOverlay 控件来实现的)。</p>
-<p>通过如下方式在代码中开启 <code>PerformanceOverlay</code> 控件。<a href="https://flutter.dev/docs/testing/code-debugging#performance-overlay" target="_blank" rel="noopener">参考</a>。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyApp</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> MaterialApp(</span><br><span class="line">      showPerformanceOverlay: <span class="keyword">true</span>,</span><br><span class="line">      title: <span class="string">'My Awesome App'</span>,</span><br><span class="line">      theme: ThemeData(</span><br><span class="line">        primarySwatch: Colors.blue,</span><br><span class="line">      ),</span><br><span class="line">      home: MyHomePage(title: <span class="string">'My Awesome App'</span>),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="PerformanceOverlay控件"><a href="#PerformanceOverlay控件" class="headerlink" title="PerformanceOverlay控件"></a><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/PerformanceOverlay-class.html">PerformanceOverlay控件</a></h1><p><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/PerformanceOverlay-class.html">PerformanceOverlay</a> 可以视为 Performance Overlay 的高级版本(Performance Overlay 正是基于 PerformanceOverlay 控件来实现的)。</p>
+<p>通过如下方式在代码中开启 <code>PerformanceOverlay</code> 控件。<a target="_blank" rel="noopener" href="https://flutter.dev/docs/testing/code-debugging#performance-overlay">参考</a>。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyApp</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> MaterialApp(</span><br><span class="line">      showPerformanceOverlay: <span class="keyword">true</span>,</span><br><span class="line">      title: <span class="string">&#x27;My Awesome App&#x27;</span>,</span><br><span class="line">      theme: ThemeData(</span><br><span class="line">        primarySwatch: Colors.blue,</span><br><span class="line">      ),</span><br><span class="line">      home: MyHomePage(title: <span class="string">&#x27;My Awesome App&#x27;</span>),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>如果没有使用 <code>MaterialApp</code> 等控件，可以自己调用  <code>PerformanceOverlay.allEnabled(checkerboardOffscreenLayers: true,);</code> 来实现类似效果。</p>
-<h1 id="Observatory-之-Timeline"><a href="#Observatory-之-Timeline" class="headerlink" title="Observatory 之 Timeline"></a><a href="https://dart-lang.github.io/observatory/" target="_blank" rel="noopener">Observatory</a> 之 Timeline</h1><p>Observatory 是 Dart SDK 提供的用于分析和调试 Dart 程序的工具。可以使用 Observatory 来观察 Dart VM 内部状态，获取应用的实时数据。主要功能包括：</p>
+<h1 id="Observatory-之-Timeline"><a href="#Observatory-之-Timeline" class="headerlink" title="Observatory 之 Timeline"></a><a target="_blank" rel="noopener" href="https://dart-lang.github.io/observatory/">Observatory</a> 之 Timeline</h1><p>Observatory 是 Dart SDK 提供的用于分析和调试 Dart 程序的工具。可以使用 Observatory 来观察 Dart VM 内部状态，获取应用的实时数据。主要功能包括：</p>
 <ul>
 <li>检查应用的耗时情况</li>
 <li>检查已分配内存</li>
@@ -284,15 +326,15 @@
 <li>点击 Flutter Developer</li>
 <li>操作应用</li>
 <li>点击 Refresh 加载数据</li>
-<li>w/s 放大， a/d (点?号可以看到全部的快捷键)</li>
+<li>w&#x2F;s 放大， a&#x2F;d (点?号可以看到全部的快捷键)</li>
 </ol>
-<p><img src="/images/15813940478063.jpg" alt></p>
+<p><img src="/images/15813940478063.jpg"></p>
 <p>刷新后可以在事件面板中检查和分析UI线程和GPU的耗时，以定位性能瓶颈。</p>
 <ul>
 <li>将 <code>debugProfileBuildsEnabled</code> 设置为 <code>true</code> 可以在 Observatory 中看到 构建 Widget 的耗时</li>
 <li>Save 后导出的 json 文件可以重新导入 Chrome 进行分析。Chrome 中输入 <code>chrome://tracing</code> 然后将 json 文件拖进去</li>
 </ul>
-<h1 id="DevTools-之-Timeline"><a href="#DevTools-之-Timeline" class="headerlink" title="DevTools 之 Timeline"></a>DevTools 之 Timeline</h1><p><a href="https://flutter.dev/docs/development/tools/devtools/timeline#frame-rendering-chart" target="_blank" rel="noopener">时间线视图</a>用于显示 Flutter 帧信息。它由三个部分组成。</p>
+<h1 id="DevTools-之-Timeline"><a href="#DevTools-之-Timeline" class="headerlink" title="DevTools 之 Timeline"></a>DevTools 之 Timeline</h1><p><a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/tools/devtools/timeline#frame-rendering-chart">时间线视图</a>用于显示 Flutter 帧信息。它由三个部分组成。</p>
 <ul>
 <li>帧渲染图表</li>
 <li>帧事件图表</li>
@@ -301,7 +343,7 @@
 <p>使用 Timeline 可以对 UI 性能问题进行<strong>定量分析</strong>，通过观察布局阶段和渲染阶段的耗时，进一步定位问题原因。</p>
 <p>Performance Overlay 可用于 profile 模式。</p>
 <h2 id="帧渲染图表"><a href="#帧渲染图表" class="headerlink" title="帧渲染图表"></a>帧渲染图表</h2><p>帧渲染图表跟 Performance Overlay 很类似。</p>
-<p><img src="/images/15786578717563.jpg" alt></p>
+<p><img src="/images/15786578717563.jpg"></p>
 <p>图表中的每个条形框都代表一帧，每帧中不同线程的执行情况以不同颜色表示。</p>
 <ul>
 <li>UI 线程执行 Dart VM 中的 Dart 代码。构建过于复杂的图层树可能导致这个线程变慢</li>
@@ -310,9 +352,9 @@
 <h2 id="帧事件图表"><a href="#帧事件图表" class="headerlink" title="帧事件图表"></a>帧事件图表</h2><p>在帧渲染图表中选中一帧后，帧事件图表中将显示具体事件及其耗时。</p>
 <p><img src="/images/15786583559211.jpg" alt="-w1274"></p>
 <ul>
-<li><a href="https://api.flutter.dev/flutter/widgets/debugProfileBuildsEnabled.html" target="_blank" rel="noopener">debugProfileBuildsEnabled</a> - 向 Timeline 事件中添加 build 信息</li>
-<li><a href="https://api.flutter.dev/flutter/rendering/debugProfilePaintsEnabled.html" target="_blank" rel="noopener">debugProfilePaintsEnabled</a> - 向 timeline 事件中添加 paint 信息</li>
-<li><a href="https://api.flutter.dev/flutter/widgets/debugPrintRebuildDirtyWidgets.html" target="_blank" rel="noopener">debugPrintRebuildDirtyWidgets</a> - 记录每帧重建的 widget</li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/debugProfileBuildsEnabled.html">debugProfileBuildsEnabled</a> - 向 Timeline 事件中添加 build 信息</li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugProfilePaintsEnabled.html">debugProfilePaintsEnabled</a> - 向 timeline 事件中添加 paint 信息</li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/debugPrintRebuildDirtyWidgets.html">debugPrintRebuildDirtyWidgets</a> - 记录每帧重建的 widget</li>
 </ul>
 <h2 id="CPU-分析器"><a href="#CPU-分析器" class="headerlink" title="CPU 分析器"></a>CPU 分析器</h2><ul>
 <li>采样率<ul>
@@ -341,89 +383,95 @@
 <p>chrome tracing 工具展示如下两个阶段的耗时：</p>
 <ul>
 <li>VSYNC</li>
-<li>GPURasterizer:Draw </li>
+<li>GPURasterizer:Draw</li>
 </ul>
 <p><img src="/images/15786563521810.jpg" alt="-w1147"></p>
 <p>(TODO 如何解读这些数据? 比 CPU 分析器更容易观察数据?)</p>
-<p><a href="https://api.flutter.dev/flutter/dart-developer/Timeline-class.html" target="_blank" rel="noopener">Timeline</a> 用于向时间线添加同步事件。使用方法很简单：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Timeline.startSync(<span class="string">"Doing Something"</span>);</span><br><span class="line">doSomething();</span><br><span class="line">Timeline.finishSync();</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/dart-developer/Timeline-class.html">Timeline</a> 用于向时间线添加同步事件。使用方法很简单：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Timeline.startSync(<span class="string">&quot;Doing Something&quot;</span>);</span><br><span class="line">doSomething();</span><br><span class="line">Timeline.finishSync();</span><br></pre></td></tr></table></figure>
+
 <p>或者：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Timeline.timeSync(<span class="string">"Doing Something"</span>, () &#123;</span><br><span class="line">  doSomething();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Timeline.timeSync(<span class="string">&quot;Doing Something&quot;</span>, () &#123;</span><br><span class="line">  doSomething();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
 <p>我们在代码中添加 “Doing Something”，</p>
 <p><img src="/images/15790537579215.jpg" alt="-w519"></p>
 <p>然后将 DevTools Timeline 导出的 timeline 文件重新导入到 Chrome Tracing 工具。从中我们可以找到 “Doing Something” 对应的事件，如下图：</p>
 <p><img src="/images/15790539789634.jpg" alt="-w900"></p>
-<h1 id="Widget-rebuild-profiler"><a href="#Widget-rebuild-profiler" class="headerlink" title="Widget rebuild profiler"></a><a href="https://flutter.cn/docs/development/tools/android-studio#show-performance-data" target="_blank" rel="noopener">Widget rebuild profiler</a></h1><p>Android Studio 中 View &gt; Tool Windows &gt; Flutter Performance 打开性能工具窗口，在 Widget rebuild stats 中勾选 Track widget rebuilds 来查看 widget 的重建信息。重建信息包括 Widget 名字、源码位置、上一帧中重建次数、当前页面中重建次数。此外，Widget 名字前面还会显示一个小图标。</p>
+<h1 id="Widget-rebuild-profiler"><a href="#Widget-rebuild-profiler" class="headerlink" title="Widget rebuild profiler"></a><a target="_blank" rel="noopener" href="https://flutter.cn/docs/development/tools/android-studio#show-performance-data">Widget rebuild profiler</a></h1><p>Android Studio 中 View &gt; Tool Windows &gt; Flutter Performance 打开性能工具窗口，在 Widget rebuild stats 中勾选 Track widget rebuilds 来查看 widget 的重建信息。重建信息包括 Widget 名字、源码位置、上一帧中重建次数、当前页面中重建次数。此外，Widget 名字前面还会显示一个小图标。</p>
 <p><img src="/images/15788975395660.jpg" alt="-w697"></p>
 <ul>
 <li>黄色旋转圆圈 - 重建次数过多</li>
 <li>灰色圆圈 - 未重建</li>
 <li>灰色旋转圆圈 其他情况</li>
 </ul>
-<p>这个功能的目的是让你了解 widget 是何时重建的，如果发生不符合预期的重建，就需要优化代码了。优化方法请参考 <a href="https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html#performance-considerations" target="_blank" rel="noopener">StatefulWidget 与性能</a> (译文见<a href="https://www.sunmoonblog.com/2020/01/10/stateful-widget-performance-considerations/">这里</a>)</p>
+<p>这个功能的目的是让你了解 widget 是何时重建的，如果发生不符合预期的重建，就需要优化代码了。优化方法请参考 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html#performance-considerations">StatefulWidget 与性能</a> (译文见<a href="https://www.sunmoonblog.com/2020/01/10/stateful-widget-performance-considerations/">这里</a>)</p>
 <p>Widget rebuild profiler 只能用于 debug 模式。</p>
 <h1 id="FPS"><a href="#FPS" class="headerlink" title="FPS"></a>FPS</h1><p>Performance Overlay 使用两张图来表示 UI线程 和 GPU线程的最近 300 帧表现。</p>
-<p><img src="/images/15786490815418.jpg" alt></p>
+<p><img src="/images/15786490815418.jpg"></p>
 <p>不过 FPS 对我们来说更直接。Android Studio Flutter Performance 中可以看到 FPS 值：</p>
 <p><img src="/images/15788855830332.jpg" alt="-w703"></p>
 <p>我们也可以使用 <code>WidgetsBinding.addTimingsCallback</code> 方法来自行统计 FPS。这里提供两个参考实现：</p>
 <ul>
-<li><a href="https://gist.github.com/yrom/ac4f30b26ee02ce3bd3a1d260bb9ffb4" target="_blank" rel="noopener">统计FPS</a></li>
-<li><a href="https://gist.github.com/410063005/3293c1faa78a01a3d0e7b4e2ce12d1af" target="_blank" rel="noopener">FpsWidget</a></li>
+<li><a target="_blank" rel="noopener" href="https://gist.github.com/yrom/ac4f30b26ee02ce3bd3a1d260bb9ffb4">统计FPS</a></li>
+<li><a target="_blank" rel="noopener" href="https://gist.github.com/410063005/3293c1faa78a01a3d0e7b4e2ce12d1af">FpsWidget</a></li>
 </ul>
-<h1 id="测试参数"><a href="#测试参数" class="headerlink" title="测试参数"></a><a href="https://flutter.dev/docs/testing/code-debugging" target="_blank" rel="noopener">测试参数</a></h1><p>刚入门 Flutter 开发时，你肯定会如何右上角那个刺眼的 debug 标志苦恼过。</p>
+<h1 id="测试参数"><a href="#测试参数" class="headerlink" title="测试参数"></a><a target="_blank" rel="noopener" href="https://flutter.dev/docs/testing/code-debugging">测试参数</a></h1><p>刚入门 Flutter 开发时，你肯定会如何右上角那个刺眼的 debug 标志苦恼过。</p>
 <p><img src="/images/15789021349152.jpg" alt="Debug logo -w320"></p>
 <p>方法很简单。将 <code>debugShowCheckedModeBanner</code> 参数设置为 <code>false</code> 即可。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MaterialApp(</span><br><span class="line"> debugShowCheckedModeBanner: <span class="keyword">false</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>Flutter 提供性能测试/调试参数，这些参数通常是布尔类型，只要在代码中打开相应的参数就可以开始进行性能测试。</p>
+
+<p>Flutter 提供性能测试&#x2F;调试参数，这些参数通常是布尔类型，只要在代码中打开相应的参数就可以开始进行性能测试。</p>
 <ul>
-<li><a href="https://api.flutter-io.cn/flutter/rendering/PerformanceOverlayLayer/checkerboardOffscreenLayers.html" target="_blank" rel="noopener">PerformanceOverlayLayer.checkerboardOffscreenLayers</a> 用于检查是否使用 <code>saveLayer</code>，详情请参考 <a href="https://flutter.dev/docs/perf/rendering/ui-performance#checking-for-offscreen-layers" target="_blank" rel="noopener">Checking for offscreen layers</a></li>
-<li><a href="https://api.flutter-io.cn/flutter/rendering/PerformanceOverlayLayer/checkerboardRasterCacheImages.html" target="_blank" rel="noopener">PerformanceOverlayLayer.checkerboardRasterCacheImages</a> 用于检查哪些图片被缓存，请情请参考 <a href="https://flutter.dev/docs/perf/rendering/ui-performance#checking-for-non-cached-images" target="_blank" rel="noopener">Checking for non-cached images</a></li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter-io.cn/flutter/rendering/PerformanceOverlayLayer/checkerboardOffscreenLayers.html">PerformanceOverlayLayer.checkerboardOffscreenLayers</a> 用于检查是否使用 <code>saveLayer</code>，详情请参考 <a target="_blank" rel="noopener" href="https://flutter.dev/docs/perf/rendering/ui-performance#checking-for-offscreen-layers">Checking for offscreen layers</a></li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter-io.cn/flutter/rendering/PerformanceOverlayLayer/checkerboardRasterCacheImages.html">PerformanceOverlayLayer.checkerboardRasterCacheImages</a> 用于检查哪些图片被缓存，请情请参考 <a target="_blank" rel="noopener" href="https://flutter.dev/docs/perf/rendering/ui-performance#checking-for-non-cached-images">Checking for non-cached images</a></li>
 </ul>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MaterialApp(</span><br><span class="line">  checkerboardOffscreenLayers: <span class="keyword">true</span>,</span><br><span class="line">  checkerboardRasterCacheImages: <span class="keyword">true</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
 <h1 id="Debug-flags"><a href="#Debug-flags" class="headerlink" title="Debug flags"></a>Debug flags</h1><h2 id="layers"><a href="#layers" class="headerlink" title="layers"></a>layers</h2><p>Flutter framework 的每一层都提供了函数来输出当前状态或事件到控制台(这些函数调用 <code>debugPrint</code>)。</p>
-<p>调用 <a href="https://api.flutter-io.cn/flutter/widgets/debugDumpApp.html" target="_blank" rel="noopener">debugDumpApp()</a> 输出 the state of the Widgets library。不应在 <code>build()</code> 方法中调用 <code>debugDumpApp()</code>，可以在调用 <code>runApp()</code> 后的任何时候调用 <code>debugDumpApp()</code>。调用 <a href="https://api.flutter-io.cn/flutter/widgets/Widget/debugFillProperties.html" target="_blank" rel="noopener">debugFillProperties()</a> 方法向 <code>debugDumpApp()</code> 的输出添加自定义信息。</p>
-<p>调用 <a href="https://api.flutter-io.cn/flutter/rendering/debugDumpRenderTree.html" target="_blank" rel="noopener">debugDumpRenderTree()</a> 方法来输出 rendering tree，用于分析布局问题。建议在 <a href="https://api.flutter-io.cn/flutter/scheduler/SchedulerBinding/addPersistentFrameCallback.html" target="_blank" rel="noopener">frame callback</a> 或 event handler 中调用 <code>debugDumpRenderTree()</code> 方法。分析布局问题时，关注的关键字段是 <code>size</code> 和 <code>constraints</code>。调用 <a href="https://api.flutter-io.cn/flutter/rendering/Layer/debugFillProperties.html" target="_blank" rel="noopener">debugFillProperties()</a> 方法向 <code>debugDumpRenderTree()</code> 的输出添加自定义信息。</p>
-<p>调用 <a href="https://api.flutter-io.cn/flutter/rendering/debugDumpLayerTree.html" target="_blank" rel="noopener">debugDumpLayerTree()</a> 方法来输出 layer tree，用于分析 compositing 问题。</p>
+<p>调用 <a target="_blank" rel="noopener" href="https://api.flutter-io.cn/flutter/widgets/debugDumpApp.html">debugDumpApp()</a> 输出 the state of the Widgets library。不应在 <code>build()</code> 方法中调用 <code>debugDumpApp()</code>，可以在调用 <code>runApp()</code> 后的任何时候调用 <code>debugDumpApp()</code>。调用 <a target="_blank" rel="noopener" href="https://api.flutter-io.cn/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties()</a> 方法向 <code>debugDumpApp()</code> 的输出添加自定义信息。</p>
+<p>调用 <a target="_blank" rel="noopener" href="https://api.flutter-io.cn/flutter/rendering/debugDumpRenderTree.html">debugDumpRenderTree()</a> 方法来输出 rendering tree，用于分析布局问题。建议在 <a target="_blank" rel="noopener" href="https://api.flutter-io.cn/flutter/scheduler/SchedulerBinding/addPersistentFrameCallback.html">frame callback</a> 或 event handler 中调用 <code>debugDumpRenderTree()</code> 方法。分析布局问题时，关注的关键字段是 <code>size</code> 和 <code>constraints</code>。调用 <a target="_blank" rel="noopener" href="https://api.flutter-io.cn/flutter/rendering/Layer/debugFillProperties.html">debugFillProperties()</a> 方法向 <code>debugDumpRenderTree()</code> 的输出添加自定义信息。</p>
+<p>调用 <a target="_blank" rel="noopener" href="https://api.flutter-io.cn/flutter/rendering/debugDumpLayerTree.html">debugDumpLayerTree()</a> 方法来输出 layer tree，用于分析 compositing 问题。</p>
 <blockquote>
 <p>The RepaintBoundary widget, which creates a RenderRepaintBoundary in the render tree, creates a new layer in the layer tree. This is used to reduce how much needs to be repainted.</p>
 </blockquote>
-<p>可以使用 <code>RepaintBoundary</code> 来在 render tree 中创建 <code>RenderRepaintBoundary</code> ，即，在 layer tree 中创建新的 layer。这种方法可以减少重绘工作。详细可参考 <a href="https://juejin.im/post/5deda528f265da339f7ce93c" target="_blank" rel="noopener">说说Flutter中的RepaintBoundary - 掘金</a>。</p>
-<p>调用 <a href="https://api.flutter.dev/flutter/rendering/debugDumpSemanticsTree.html" target="_blank" rel="noopener">debugDumpSemanticsTree()</a> 方法来输出 semantics tree (这棵树表示 system accessibility APIs)。暂时用不上，略过。</p>
-<p>调用 <a href="https://api.flutter.dev/flutter/scheduler/debugPrintBeginFrameBanner.html" target="_blank" rel="noopener">debugPrintBeginFrameBanner</a> 和 <a href="https://api.flutter.dev/flutter/scheduler/debugPrintEndFrameBanner.html" target="_blank" rel="noopener">debugPrintEndFrameBanner</a> 方法来输出一帧的开始和结束。</p>
+<p>可以使用 <code>RepaintBoundary</code> 来在 render tree 中创建 <code>RenderRepaintBoundary</code> ，即，在 layer tree 中创建新的 layer。这种方法可以减少重绘工作。详细可参考 <a target="_blank" rel="noopener" href="https://juejin.im/post/5deda528f265da339f7ce93c">说说Flutter中的RepaintBoundary - 掘金</a>。</p>
+<p>调用 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugDumpSemanticsTree.html">debugDumpSemanticsTree()</a> 方法来输出 semantics tree (这棵树表示 system accessibility APIs)。暂时用不上，略过。</p>
+<p>调用 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/scheduler/debugPrintBeginFrameBanner.html">debugPrintBeginFrameBanner</a> 和 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/scheduler/debugPrintEndFrameBanner.html">debugPrintEndFrameBanner</a> 方法来输出一帧的开始和结束。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">  runApp(DemoApp());</span><br><span class="line">  debugPrintBeginFrameBanner = <span class="keyword">true</span>;</span><br><span class="line">  debugPrintEndFrameBanner = <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="layout"><a href="#layout" class="headerlink" title="layout"></a>layout</h2><p><a href="https://api.flutter.dev/flutter/rendering/debugPaintSizeEnabled.html" target="_blank" rel="noopener">debugPaintSizeEnabled</a> 用于调试布局问题。其用法如下：</p>
+
+<h2 id="layout"><a href="#layout" class="headerlink" title="layout"></a>layout</h2><p><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugPaintSizeEnabled.html">debugPaintSizeEnabled</a> 用于调试布局问题。其用法如下：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">    debugPaintSizeEnabled = <span class="keyword">true</span>;</span><br><span class="line">    runApp(DemoApp());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>box - 所有的 box 外都显示一个亮蓝绿色边界</li>
 <li>padding - 以浅蓝色显示 <code>Padding</code> 等控件 (带一个深蓝色 box)</li>
 <li>alignment - 包括 <code>Center</code> 和 <code>Align</code> 等控件，以黄色箭头显示</li>
 <li>spacer - 以灰色显示，比如没有子节点的 <code>Container</code> 就属于这一类</li>
 </ul>
-<p><a href="https://api.flutter.dev/flutter/rendering/debugPaintBaselinesEnabled.html" target="_blank" rel="noopener">debugPaintBaselinesEnabled</a> 的作用类似，它显示的是对象的基线。</p>
-<p><a href="https://api.flutter.dev/flutter/rendering/debugPaintPointersEnabled.html" target="_blank" rel="noopener">debugPaintPointersEnabled</a> 用于开启一个特殊的模式：该模式下被点击的对象以蓝绿色显示。这个功能用于检查 hit test 是否正确。</p>
+<p><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugPaintBaselinesEnabled.html">debugPaintBaselinesEnabled</a> 的作用类似，它显示的是对象的基线。</p>
+<p><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugPaintPointersEnabled.html">debugPaintPointersEnabled</a> 用于开启一个特殊的模式：该模式下被点击的对象以蓝绿色显示。这个功能用于检查 hit test 是否正确。</p>
 <p>还有几个用于调试 compositor layer 的 flag，</p>
 <ul>
-<li><a href="https://api.flutter.dev/flutter/rendering/debugPaintLayerBordersEnabled.html" target="_blank" rel="noopener">debugPaintLayerBordersEnabled</a> - 以橙色显示每个 layer 的边界，用于检查是否需要使用 <code>RepaintBoundary</code> 控件</li>
-<li><a href="https://api.flutter.dev/flutter/rendering/debugRepaintRainbowEnabled.html" target="_blank" rel="noopener">debugRepaintRainbowEnabled</a> - 每个 layer 重绘时会叠加上不同的颜色。使用技巧：如果一个静态的 widget 颜色出现变化，可以考虑给它加上 <code>RepaintBoundary</code></li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugPaintLayerBordersEnabled.html">debugPaintLayerBordersEnabled</a> - 以橙色显示每个 layer 的边界，用于检查是否需要使用 <code>RepaintBoundary</code> 控件</li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugRepaintRainbowEnabled.html">debugRepaintRainbowEnabled</a> - 每个 layer 重绘时会叠加上不同的颜色。使用技巧：如果一个静态的 widget 颜色出现变化，可以考虑给它加上 <code>RepaintBoundary</code></li>
 <li>debugPrintScheduleBuildForStacks - 为什么被构建</li>
 <li>debugPrintRebuildDirtyWidgets - 什么组件被重新构建了</li>
 <li>debugProfileBuildsEnabled - 在观测台里显示构建树</li>
-<li><a href="https://api.flutter.dev/flutter/rendering/debugPaintLayerBordersEnabled.html" target="_blank" rel="noopener">debugPaintLayerBordersEnabled</a> - 查看 layer 界线</li>
-<li><a href="https://api.flutter.dev/flutter/widgets/debugProfileBuildsEnabled.html" target="_blank" rel="noopener">debugProfileBuildsEnabled</a> - Adds Timeline events for every Widget built.</li>
-<li><a href="https://api.flutter.dev/flutter/rendering/debugProfilePaintsEnabled.html" target="_blank" rel="noopener">debugProfilePaintsEnabled</a></li>
-<li><a href="https://api.flutter.dev/flutter/widgets/debugPrintRebuildDirtyWidgets.html" target="_blank" rel="noopener">debugPrintRebuildDirtyWidgets</a><ul>
-<li>结合 <a href="https://api.flutter.dev/flutter/widgets/debugPrintScheduleBuildForStacks.html" target="_blank" rel="noopener">debugPrintScheduleBuildForStacks</a>，可以观察 widget 的 dirty/clean 生命周期</li>
-<li>结合 <a href="https://api.flutter.dev/flutter/widgets/debugProfileBuildsEnabled.html" target="_blank" rel="noopener">debugProfileBuildsEnabled</a>，可以在 DevTools Timeline 中观察到详细事件信息</li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugPaintLayerBordersEnabled.html">debugPaintLayerBordersEnabled</a> - 查看 layer 界线</li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/debugProfileBuildsEnabled.html">debugProfileBuildsEnabled</a> - Adds Timeline events for every Widget built.</li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugProfilePaintsEnabled.html">debugProfilePaintsEnabled</a></li>
+<li><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/debugPrintRebuildDirtyWidgets.html">debugPrintRebuildDirtyWidgets</a><ul>
+<li>结合 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/debugPrintScheduleBuildForStacks.html">debugPrintScheduleBuildForStacks</a>，可以观察 widget 的 dirty&#x2F;clean 生命周期</li>
+<li>结合 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/debugProfileBuildsEnabled.html">debugProfileBuildsEnabled</a>，可以在 DevTools Timeline 中观察到详细事件信息</li>
 </ul>
 </li>
 </ul>
 <p>注意：所有这些以 debug 开头的 flag 均只能工作于 debug 模式。</p>
-<h2 id="animation"><a href="#animation" class="headerlink" title="animation"></a>animation</h2><p>调试动画的最有效方式是减慢其速度。可以使用 DevTool 中 <a href="https://flutter.dev/docs/development/tools/devtools/inspector" target="_blank" rel="noopener">Inspector view</a> 的 Slow Animations 按钮来减慢。可以使用 <a href="https://api.flutter.dev/flutter/scheduler/timeDilation.html" target="_blank" rel="noopener">timeDilation</a> 来更精确地控制动画速度。</p>
-<h2 id="performance"><a href="#performance" class="headerlink" title="performance"></a>performance</h2><p><a href="https://api.flutter.dev/flutter/rendering/debugPrintMarkNeedsLayoutStacks.html" target="_blank" rel="noopener">debugPrintMarkNeedsLayoutStacks</a> - 如果 layout 次数比预期中的要多，可以通过这个 flag 来观察 render box 被置为 dirty 的原因。</p>
+<h2 id="animation"><a href="#animation" class="headerlink" title="animation"></a>animation</h2><p>调试动画的最有效方式是减慢其速度。可以使用 DevTool 中 <a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/tools/devtools/inspector">Inspector view</a> 的 Slow Animations 按钮来减慢。可以使用 <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/scheduler/timeDilation.html">timeDilation</a> 来更精确地控制动画速度。</p>
+<h2 id="performance"><a href="#performance" class="headerlink" title="performance"></a>performance</h2><p><a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/rendering/debugPrintMarkNeedsLayoutStacks.html">debugPrintMarkNeedsLayoutStacks</a> - 如果 layout 次数比预期中的要多，可以通过这个 flag 来观察 render box 被置为 dirty 的原因。</p>
 <h1 id="Flutter-Driver"><a href="#Flutter-Driver" class="headerlink" title="Flutter Driver"></a>Flutter Driver</h1><p>TODO</p>
 <ul>
-<li><a href="https://flutter.cn/docs/perf/rendering/ui-performance#benchmarking" target="_blank" rel="noopener">https://flutter.cn/docs/perf/rendering/ui-performance#benchmarking</a></li>
+<li><a target="_blank" rel="noopener" href="https://flutter.cn/docs/perf/rendering/ui-performance#benchmarking">https://flutter.cn/docs/perf/rendering/ui-performance#benchmarking</a></li>
 </ul>
 <h1 id="一些小技巧"><a href="#一些小技巧" class="headerlink" title="一些小技巧"></a>一些小技巧</h1><ul>
 <li>检查 Performance Overlay</li>
@@ -437,10 +485,10 @@
 <li>想办法减少 widget 重建</li>
 </ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://flutter.dev/docs/testing/code-debugging" target="_blank" rel="noopener">code-debugging</a></li>
-<li><a href="https://flutter.dev/docs/testing/debugging" target="_blank" rel="noopener">debugging</a></li>
-<li><a href="https://flutter.dev/docs/perf/rendering/ui-performance" target="_blank" rel="noopener">ui-performance</a></li>
-<li><a href="https://medium.com/flutter/performance-testing-of-flutter-apps-df7669bb7df7" target="_blank" rel="noopener">Performance testing of Flutter apps - Flutter - Medium</a></li>
+<li><a target="_blank" rel="noopener" href="https://flutter.dev/docs/testing/code-debugging">code-debugging</a></li>
+<li><a target="_blank" rel="noopener" href="https://flutter.dev/docs/testing/debugging">debugging</a></li>
+<li><a target="_blank" rel="noopener" href="https://flutter.dev/docs/perf/rendering/ui-performance">ui-performance</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/flutter/performance-testing-of-flutter-apps-df7669bb7df7">Performance testing of Flutter apps - Flutter - Medium</a></li>
 </ul>
 
     </div>
@@ -449,130 +497,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/flutter/" rel="tag"># Flutter</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/01/10/stateful-widget-performance-considerations/" rel="prev" title="(译) StatefulWidget 与性能">
-      <i class="fa fa-chevron-left"></i> (译) StatefulWidget 与性能
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/01/20/flutter-draw-frame/" rel="next" title="Flutter drawFrame()">
-      Flutter drawFrame() <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/01/10/stateful-widget-performance-considerations/" rel="prev" title="(译) StatefulWidget 与性能">
+                  <i class="fa fa-chevron-left"></i> (译) StatefulWidget 与性能
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/01/20/flutter-draw-frame/" rel="next" title="Flutter drawFrame()">
+                  Flutter drawFrame() <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Performance-Overlay"><span class="nav-number">1.</span> <span class="nav-text">Performance Overlay</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PerformanceOverlay控件"><span class="nav-number">2.</span> <span class="nav-text">PerformanceOverlay控件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Observatory-之-Timeline"><span class="nav-number">3.</span> <span class="nav-text">Observatory 之 Timeline</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DevTools-之-Timeline"><span class="nav-number">4.</span> <span class="nav-text">DevTools 之 Timeline</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#帧渲染图表"><span class="nav-number">4.1.</span> <span class="nav-text">帧渲染图表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#帧事件图表"><span class="nav-number">4.2.</span> <span class="nav-text">帧事件图表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-分析器"><span class="nav-number">4.3.</span> <span class="nav-text">CPU 分析器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Chrome-Tracing"><span class="nav-number">5.</span> <span class="nav-text">Chrome Tracing</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Widget-rebuild-profiler"><span class="nav-number">6.</span> <span class="nav-text">Widget rebuild profiler</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FPS"><span class="nav-number">7.</span> <span class="nav-text">FPS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#测试参数"><span class="nav-number">8.</span> <span class="nav-text">测试参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Debug-flags"><span class="nav-number">9.</span> <span class="nav-text">Debug flags</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#layers"><span class="nav-number">9.1.</span> <span class="nav-text">layers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#layout"><span class="nav-number">9.2.</span> <span class="nav-text">layout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#animation"><span class="nav-number">9.3.</span> <span class="nav-text">animation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#performance"><span class="nav-number">9.4.</span> <span class="nav-text">performance</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Flutter-Driver"><span class="nav-number">10.</span> <span class="nav-text">Flutter Driver</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些小技巧"><span class="nav-number">11.</span> <span class="nav-text">一些小技巧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">12.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -580,29 +543,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -611,22 +566,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2020/01/10/flutter-performance-tools/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

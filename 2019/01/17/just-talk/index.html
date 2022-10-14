@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,64 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="关于一个空指针问题的思考。纯属个人观点，如有雷同，绝对不是抄袭。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="关于一个空指针问题的思考。纯属个人观点，如有雷同，绝对不是抄袭。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="关于空指针的一点思考">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/01/17/just-talk/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="关于一个空指针问题的思考。纯属个人观点，如有雷同，绝对不是抄袭。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.995Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-01-17T03:28:00.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.995Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关于空指针的一点思考">
-<meta name="twitter:description" content="关于一个空指针问题的思考。纯属个人观点，如有雷同，绝对不是抄袭。">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/01/17/just-talk/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>关于空指针的一点思考 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/01/17/just-talk/","path":"2019/01/17/just-talk/","title":"关于空指针的一点思考"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>关于空指针的一点思考 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +85,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +97,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,61 +120,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%82%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">观点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">案例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A4%E7%A9%BA"><span class="nav-number">3.</span> <span class="nav-text">判空</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/01/17/just-talk/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="关于空指针的一点思考 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           关于空指针的一点思考
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-01-17 11:28:00" itemprop="dateCreated datePublished" datetime="2019-01-17T11:28:00+08:00">2019-01-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-01-17 11:28:00" itemprop="dateCreated datePublished" datetime="2019-01-17T11:28:00+08:00">2019-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/01/17/just-talk/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/01/17/just-talk/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -222,16 +264,19 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-        <p>关于一个空指针问题的思考。纯属个人观点，如有雷同，绝对不是抄袭。<br><a id="more"></a></p>
+        <p>关于一个空指针问题的思考。纯属个人观点，如有雷同，绝对不是抄袭。</p>
+<span id="more"></span>
 <h1 id="观点"><a href="#观点" class="headerlink" title="观点"></a>观点</h1><p>Java 空指针很好，它省内存。Java 空指针也很让人恼火，它是 Android 应用 crash 的最主要原因。另一个 crash 的主要原因可能是数组越界。</p>
-<p>看着 crash 率上涨，我们恨不得将空指针和数组越界从地球上抹去。Java 不是号称比 C/C++ 更安全吗。但从 crash 的角度来看，Java 似乎并没有更安全啊！</p>
-<p>对此我的理解是，Java 的所谓的更安全，其含义在于这空指针和数组越界是程序错误，是程序员必须去修复的程序错误！既然错了，那停止运行就是最正确的策略。而不是像 C/C++ 一样，空指针和数组越界，程序可能是停止运行，也可能是继续莫名奇妙地继续运行。</p>
-<p>你分析为什么 C/C++ 程序为什么莫名其妙地运行，耗时耗力，到最后却发现是空指针(野指针)或者数组越界。你会真心觉得 Java 遇到空指针和数组越界后让程序直接停止运行是更为明智的做法！</p>
+<p>看着 crash 率上涨，我们恨不得将空指针和数组越界从地球上抹去。Java 不是号称比 C&#x2F;C++ 更安全吗。但从 crash 的角度来看，Java 似乎并没有更安全啊！</p>
+<p>对此我的理解是，Java 的所谓的更安全，其含义在于这空指针和数组越界是程序错误，是程序员必须去修复的程序错误！既然错了，那停止运行就是最正确的策略。而不是像 C&#x2F;C++ 一样，空指针和数组越界，程序可能是停止运行，也可能是继续莫名奇妙地继续运行。</p>
+<p>你分析为什么 C&#x2F;C++ 程序为什么莫名其妙地运行，耗时耗力，到最后却发现是空指针(野指针)或者数组越界。你会真心觉得 Java 遇到空指针和数组越界后让程序直接停止运行是更为明智的做法！</p>
 <h1 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h1><p><code>loadImage()</code> 是我们 Android 项目中加载图片的工具方法。分别是修改前和修改后的代码。</p>
-<p>修改前：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">loadImage</span><span class="params">(Context context, String url, <span class="keyword">int</span> placeholder, ImageView imageView)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (context != <span class="keyword">null</span>) &#123;</span><br><span class="line">        Glide.with(context)....</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>修改后：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">loadImage</span><span class="params">(@NonNull Context context, String url, <span class="keyword">int</span> placeholder, ImageView imageView)</span> </span>&#123;</span><br><span class="line">    Glide.with(context)....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>修改前：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">loadImage</span><span class="params">(Context context, String url, <span class="type">int</span> placeholder, ImageView imageView)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (context != <span class="literal">null</span>) &#123;</span><br><span class="line">        Glide.with(context)....</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改后：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">loadImage</span><span class="params">(<span class="meta">@NonNull</span> Context context, String url, <span class="type">int</span> placeholder, ImageView imageView)</span> &#123;</span><br><span class="line">    Glide.with(context)....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>坏消息的是修改后的代码引起 crash 率明显上涨，好消息是这些 crash 集中在同一处代码。这是否说明修改后的代码不如修改前的呢？单从 crash 率来看，修改后的确不如修改后安全。</p>
 <p>修改前的代码有对 context 判空，不会 crash，看似非常安全。我们思考一下它有什么问题呢。</p>
 <p>第一，为什么会出现传空 context 呢？</p>
@@ -244,14 +289,16 @@
 </ul>
 <p>当然不能否认 Android SDK 也确实有少量坑，比如在没有跟 Activity 关联的 Fragent 中调用 <code>getContext()</code> 时会返回 null。但对于 Fragment 这一情形，我们应该选择调用 <code>loadImage(fragment)</code> 而不是 <code>loadImage(fragment.getContext())</code>。</p>
 <p>第二，万一传了空 context 呢？</p>
-<p>很显然这时并不会加载图片。不加载图片且没有任何日志，这是最糟糕的情形！这其实跟 C/C++ 中空指针/野指针导致程序莫名其妙运行没有本质的区别。</p>
+<p>很显然这时并不会加载图片。不加载图片且没有任何日志，这是最糟糕的情形！这其实跟 C&#x2F;C++ 中空指针&#x2F;野指针导致程序莫名其妙运行没有本质的区别。</p>
 <p>用户不清楚发生了什么，只会反馈 app 中有个地方看不到图片。开发就惨了，<strong>这个问题不好复现，也不容易跟踪</strong>。</p>
 <p>一些思考：</p>
 <p>从修改后的代码比修改前的代码 crash 率高这一点来看，我们的代码中有一些地方传入的空的 context。空 context 本身并不可怕。可怕的是，我们并不确定是什么时候以及在哪里传入的。引起的问题轻则导致不加载图片，重则导致各种诡异事件。比起诡异，我更喜欢看似严重但更为直观明了的 crash，因为 crash 揭露了问题的本质！</p>
 <p>当然以上说得过于理想，现实是 crash 率也是一个重要质量指标。折衷的做法可能是 <code>loadImage()</code> 对 context 判空并添加一些上报日志的机制，既不 crash 也能找到问题根源。</p>
 <h1 id="判空"><a href="#判空" class="headerlink" title="判空"></a>判空</h1><p>我们经常有这样的代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Util</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (str != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String myName = ...</span><br><span class="line">        <span class="keyword">if</span> (myName != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ....</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Util</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">foo</span><span class="params">(String str)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (str != <span class="literal">null</span>) &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Customer</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">bar</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">myName</span> <span class="operator">=</span> ...</span><br><span class="line">        <span class="keyword">if</span> (myName != <span class="literal">null</span>) &#123;</span><br><span class="line">            ....</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这个代码中 <code>foo()</code> 很安全，因为它一定不会 crash。</p>
 <p>但它也很丑陋，<code>bar()</code> 和 <code>foo()</code> 两处都有判空。问题的表面现象是 <code>foo()</code> 明显不信任 <code>bar()</code>，担心它传入一个 <code>null</code>。而问题的实质是 </p>
 <ul>
@@ -266,7 +313,7 @@
 </ul>
 <p>(这就好比你有好几块表，有的是11点，有的是12点，你会糊涂么？)</p>
 <p>当然你也可以所有地方加判空，不去进行任何思考，让负担从大脑转移到双手。</p>
-<p>Guava 库中有一篇 wiki <a href="https://github.com/google/guava/wiki/UsingAndAvoidingNullExplained" target="_blank" rel="noopener">UsingAndAvoidingNullExplained · google/guava Wiki</a>是专门讨论 Java 中 null 问题的，很值得一看。Guava 中也专门提供 <a href="https://google.github.io/guava/releases/snapshot/api/docs/com/google/common/base/Optional.html" target="_blank" rel="noopener">Optional</a> 工具类用于处理 null 问题。</p>
+<p>Guava 库中有一篇 wiki <a target="_blank" rel="noopener" href="https://github.com/google/guava/wiki/UsingAndAvoidingNullExplained">UsingAndAvoidingNullExplained · google&#x2F;guava Wiki</a>是专门讨论 Java 中 null 问题的，很值得一看。Guava 中也专门提供 <a target="_blank" rel="noopener" href="https://google.github.io/guava/releases/snapshot/api/docs/com/google/common/base/Optional.html">Optional</a> 工具类用于处理 null 问题。</p>
 <p>可以做一个非常简单的约定：</p>
 <ul>
 <li>公开方法(public)，不允许 null 参数</li>
@@ -279,130 +326,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/android/" rel="tag"># Android</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/01/14/android-large-heap/" rel="prev" title="largeHeap属性的作用">
-      <i class="fa fa-chevron-left"></i> largeHeap属性的作用
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/01/17/make-anki-card/" rel="next" title="如何制作 Anki 卡片">
-      如何制作 Anki 卡片 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/01/14/android-large-heap/" rel="prev" title="largeHeap属性的作用">
+                  <i class="fa fa-chevron-left"></i> largeHeap属性的作用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/01/17/make-anki-card/" rel="next" title="如何制作 Anki 卡片">
+                  如何制作 Anki 卡片 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#观点"><span class="nav-number">1.</span> <span class="nav-text">观点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#案例"><span class="nav-number">2.</span> <span class="nav-text">案例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#判空"><span class="nav-number">3.</span> <span class="nav-text">判空</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -410,29 +372,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -441,22 +395,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/01/17/just-talk/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

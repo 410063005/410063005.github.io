@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,92 +14,64 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="翻译自Manage Your App’s Memory | Android Developers。介绍了如何管理应用的内存。">
-<meta name="keywords" content="Android">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="翻译自Manage Your App’s Memory | Android Developers。介绍了如何管理应用的内存。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(译)Manage Your App&#39;s Memory">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/01/10/manage-your-memory/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="翻译自Manage Your App’s Memory | Android Developers。介绍了如何管理应用的内存。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-13T02:18:58.994Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-01-10T09:08:28.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:58.994Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="(译)Manage Your App&#39;s Memory">
-<meta name="twitter:description" content="翻译自Manage Your App’s Memory | Android Developers。介绍了如何管理应用的内存。">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/01/10/manage-your-memory/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>(译)Manage Your App's Memory | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/01/10/manage-your-memory/","path":"2019/01/10/manage-your-memory/","title":"(译)Manage Your App's Memory"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>(译)Manage Your App's Memory | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -112,19 +85,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,23 +97,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -159,179 +120,18 @@
   </div>
 
 </div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/01/10/manage-your-memory/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sunmoon的博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          (译)Manage Your App's Memory
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-01-10 17:08:28" itemprop="dateCreated datePublished" datetime="2019-01-10T17:08:28+08:00">2019-01-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>翻译自<a href="https://developer.android.com/topic/performance/memory.html" target="_blank" rel="noopener">Manage Your App’s Memory | Android Developers</a>。介绍了如何管理应用的内存。<br><a id="more"></a></p>
-<p>在任何软件开发中RAM都是宝贵的资源，而在移动操作系统中由于内存受限所以更加宝贵。虽然ART和Davik虚拟机都能回收内存，但并不表示你可以忽略内存的分配和回收的时机和位置。你仍然需要避免内存泄漏，并生命周期回调中的恰当时间释放对象引用。</p>
-<h2 id="监视可用内存和已使用内存"><a href="#监视可用内存和已使用内存" class="headerlink" title="监视可用内存和已使用内存"></a>监视可用内存和已使用内存</h2><p>Memory Profiler可以帮助诊断内存问题：</p>
-<ol>
-<li>观察分配了多少内存</li>
-<li>发起内存回收，导出Java堆</li>
-<li>记录内存分配并检查分配的对象</li>
-</ol>
-<h2 id="响应并释放内存"><a href="#响应并释放内存" class="headerlink" title="响应并释放内存"></a>响应并释放内存</h2><p> <a href="https://developer.android.com/topic/performance/memory-overview.html" target="_blank" rel="noopener">Overview of Android Memory Management</a>中提到Android可以从应用中以多种方式回收内存，必要时直接杀死应用进程以给更高优先级的任务分配内存。</p>
-<p><a href="https://www.youtube.com/watch?v=x8Hddx1eOZo&amp;index=5&amp;list=PLWz5rJ2EKKc9CBxr3BVjPTPoDPLdPIFCE" target="_blank" rel="noopener">(42) Trimming and Sharing Memory (Android Performance Patterns Season 3 ep5) - YouTube</a></p>
-<p>使用<a href="https://developer.android.com/reference/android/content/ComponentCallbacks2.html" target="_blank" rel="noopener">ComponentCallbacks2</a>接口。该接口中的<code>onTrimMemory()</code>回调方法允许应用在前台或后台监听内存相关事件，应用可响应这些事件来回收内存。代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> android.content.ComponentCallbacks2;</span><br><span class="line"><span class="comment">// Other import statements ...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">ComponentCallbacks2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Other activity code ...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Release memory when the UI becomes hidden or when system resources become low.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> level the memory-related event that was raised.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTrimMemory</span><span class="params">(<span class="keyword">int</span> level)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Determine which lifecycle or system event was raised.</span></span><br><span class="line">        <span class="keyword">switch</span> (level) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                   Release any UI objects that currently hold memory.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                   The user interface has moved to the background.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:</span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:</span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                   Release any memory that your app doesn't need to run.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                   The device is running low on memory while the app is running.</span></span><br><span class="line"><span class="comment">                   The event raised indicates the severity of the memory-related event.</span></span><br><span class="line"><span class="comment">                   If the event is TRIM_MEMORY_RUNNING_CRITICAL, then the system will</span></span><br><span class="line"><span class="comment">                   begin killing background processes.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:</span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_MODERATE:</span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_COMPLETE:</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                   Release as much memory as the process can.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                   The app is on the LRU list and the system is running low on memory.</span></span><br><span class="line"><span class="comment">                   The event raised indicates where the app sits within the LRU list.</span></span><br><span class="line"><span class="comment">                   If the event is TRIM_MEMORY_COMPLETE, the process will be one of</span></span><br><span class="line"><span class="comment">                   the first to be terminated.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                  Release any non-critical data structures.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                  The app received an unrecognized memory level value</span></span><br><span class="line"><span class="comment">                  from the system. Treat this as a generic low-memory message.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>API level 14中添加的<code>onTrimMemory()</code>方法，而之前版本中可使用<code>onLowMemory()</code>方法。</p>
-<h2 id="检查可供使用的内存"><a href="#检查可供使用的内存" class="headerlink" title="检查可供使用的内存"></a>检查可供使用的内存</h2><p>Android为分配给每个应用的堆大小设置了设置，以允许多个进程运行。基于当前设备有多少内存，这个值大小会有所不同。当应用的堆大小到达上限时继续分配内存，系统会抛出<code>OutOfMemoryError</code>。</p>
-<p>使用<code>getMemoryInfo()</code>查询当前设备上的可用内存，该方法返回<code>ActivityManager.MemoryInfo</code>对象。该对象描述了设备当前内存状态，包括可用内存、总内存以及内存阈值——系统在什么内存状态下开始杀应用进程。<code>lowMemory</code>字段表示设备内存是否过低。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomethingMemoryIntensive</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Before doing something that requires a lot of memory,</span></span><br><span class="line">    <span class="comment">// check to see whether the device is in a low memory state.</span></span><br><span class="line">    ActivityManager.MemoryInfo memoryInfo = getAvailableMemory();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!memoryInfo.lowMemory) &#123;</span><br><span class="line">        <span class="comment">// Do memory intensive work ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Get a MemoryInfo object for the device's current memory status.</span></span><br><span class="line"><span class="keyword">private</span> ActivityManager.<span class="function">MemoryInfo <span class="title">getAvailableMemory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ActivityManager activityManager = (ActivityManager) <span class="keyword">this</span>.getSystemService(ACTIVITY_SERVICE);</span><br><span class="line">    ActivityManager.MemoryInfo memoryInfo = <span class="keyword">new</span> ActivityManager.MemoryInfo();</span><br><span class="line">    activityManager.getMemoryInfo(memoryInfo);</span><br><span class="line">    <span class="keyword">return</span> memoryInfo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="更多地使用节省内存的代码结构"><a href="#更多地使用节省内存的代码结构" class="headerlink" title="更多地使用节省内存的代码结构"></a>更多地使用节省内存的代码结构</h2><h3 id="少用Service"><a href="#少用Service" class="headerlink" title="少用Service"></a>少用Service</h3><p>让一个不必要的service运行是Andrdoid应用最糟糕的内存问题。</p>
-<p>启动service之后，系统总是会让该service所在进程保持运行。这种行为让service进程非常昂贵，因为它占用的内存无法分给其它进程。这导致LRU缓存中的cached process变少。</p>
-<p>建议使用<a href="https://developer.android.com/reference/android/app/job/JobScheduler.html" target="_blank" rel="noopener">JobScheduler</a>代替service。如果一定要使用service，请优先使用<a href="https://developer.android.com/reference/android/app/IntentService.html" target="_blank" rel="noopener">IntentService</a></p>
-<h2 id="使用优化的数据结构"><a href="#使用优化的数据结构" class="headerlink" title="使用优化的数据结构"></a>使用优化的数据结构</h2><p>Java语言中的一些类并没有专门为移动设备优化。比如<a href="https://developer.android.com/reference/java/util/HashMap.html" target="_blank" rel="noopener">HashMap</a>使用内存的效率就很低。</p>
-<p>Android框架提供</p>
-<ul>
-<li><a href="https://developer.android.com/reference/android/util/SparseArray.html" target="_blank" rel="noopener">SparseArray</a></li>
-<li><a href="https://developer.android.com/reference/android/util/SparseBooleanArray.html" target="_blank" rel="noopener">SparseBooleanArray</a></li>
-<li><a href="https://developer.android.com/reference/android/support/v4/util/LongSparseArray.html" target="_blank" rel="noopener">LongSparseArray</a></li>
-</ul>
-<h3 id="少用抽象"><a href="#少用抽象" class="headerlink" title="少用抽象"></a>少用抽象</h3><p>抽象是个好的编程实践，可以增加代码灵活性，更容易维护。但抽象是有代价的，需要执行更多的代码，需要更多执行时间，更多内存空间来加载。所以如果没有足够的好处，不要使用抽象。</p>
-<p>enum通常比常量多占用两倍内存，所以Android应用中一定要避免enum。</p>
-<h3 id="使用nano-protobuf"><a href="#使用nano-protobuf" class="headerlink" title="使用nano protobuf"></a>使用nano protobuf</h3><p>常规的protobuf生成非常冗余松散的代码，会导致内存增加，APK包大小增加，拖慢执行速度。所以请用nano protobuf代替。</p>
-<h3 id="避免内存抖动"><a href="#避免内存抖动" class="headerlink" title="避免内存抖动"></a>避免内存抖动</h3><p>GC通常不会影响应用性能。但短时间内大量发生GC会消耗帧时间。</p>
-<p>内存抖动是指短时间内分配了大量临时对象。比如在<code>for</code>循环中创建许多临时对象。或者在View的<code>onDraw()</code>中创建<code>Paint</code>或<code>Bitmap</code>。这些情形下，应用会以非常快的速度创建很多对象。它们迅速占用可用内存，导致必须GC。</p>
-<h2 id="去掉占用内存过多的资源和库"><a href="#去掉占用内存过多的资源和库" class="headerlink" title="去掉占用内存过多的资源和库"></a>去掉占用内存过多的资源和库</h2><p>有些资源和库会在你不知情的情况下增加内存占用。检查APK中可能影响内存使用的第三方库和资源。从代码中去掉冗余，不必要以及过于臃肿的组件、资源和库。</p>
-<h3 id="减少包大小"><a href="#减少包大小" class="headerlink" title="减少包大小"></a>减少包大小</h3><p>减少包大小的同时也可以减少内存占用。关于减少包大小的更多信息见<a href="https://developer.android.com/topic/performance/reduce-apk-size.html" target="_blank" rel="noopener">Reduce APK Size</a></p>
-<h3 id="使用Dagger-2"><a href="#使用Dagger-2" class="headerlink" title="使用Dagger 2"></a>使用Dagger 2</h3><p>使用依赖注入框架可以简化代码，并提供响应式环境以便于测试和配置。如果需要使用依赖注入，建议使用<a href="http://google.github.io/dagger/" target="_blank" rel="noopener">Dagger 2</a>。因为它不使用反射。其他一些依赖注入框架使用反射，会对代码中的注解进行扫描。该过程占用相当多的CPU和内存，当应用启动时会产生明显延迟。</p>
-<h3 id="慎用第三方库"><a href="#慎用第三方库" class="headerlink" title="慎用第三方库"></a>慎用第三方库</h3><p>很多外部库通常不是专门为移动设备环境开发的，所以用于移动客户端时非常低效。虽然<a href="https://developer.android.com/tools/help/proguard.html" target="_blank" rel="noopener">ProGuard</a>可以移除不必要的API和资源，但它并不能移除库内部的大部分依赖。而你想使用的功能很可能只是库当中的一小部分。当你使用第三方库中的Activity子类时，这通常都是问题。使用反射的第三方库(很常见)也意味着你需要不少时间去调整ProGuard配置。</p>
-
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/android/" rel="tag"># Android</a>
-          </div>
-
         
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/01/10/app-startup-speed2/" rel="prev" title="应用启动速度优化(二)">
-      <i class="fa fa-chevron-left"></i> 应用启动速度优化(二)
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/01/10/memory-profile-1/" rel="next" title="(译)Memory Profiler">
-      (译)Memory Profiler <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
   
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
 
   <aside class="sidebar">
-    <div class="sidebar-inner">
 
-      <ul class="sidebar-nav motion-element">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
         </li>
@@ -340,29 +140,29 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#监视可用内存和已使用内存"><span class="nav-number">1.</span> <span class="nav-text">监视可用内存和已使用内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#响应并释放内存"><span class="nav-number">2.</span> <span class="nav-text">响应并释放内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#检查可供使用的内存"><span class="nav-number">3.</span> <span class="nav-text">检查可供使用的内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更多地使用节省内存的代码结构"><span class="nav-number">4.</span> <span class="nav-text">更多地使用节省内存的代码结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#少用Service"><span class="nav-number">4.1.</span> <span class="nav-text">少用Service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用优化的数据结构"><span class="nav-number">5.</span> <span class="nav-text">使用优化的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#少用抽象"><span class="nav-number">5.1.</span> <span class="nav-text">少用抽象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用nano-protobuf"><span class="nav-number">5.2.</span> <span class="nav-text">使用nano protobuf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#避免内存抖动"><span class="nav-number">5.3.</span> <span class="nav-text">避免内存抖动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#去掉占用内存过多的资源和库"><span class="nav-number">6.</span> <span class="nav-text">去掉占用内存过多的资源和库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#减少包大小"><span class="nav-number">6.1.</span> <span class="nav-text">减少包大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Dagger-2"><span class="nav-number">6.2.</span> <span class="nav-text">使用Dagger 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#慎用第三方库"><span class="nav-number">6.3.</span> <span class="nav-text">慎用第三方库</span></a></li></ol></li></ol></div>
-      </div>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E8%A7%86%E5%8F%AF%E7%94%A8%E5%86%85%E5%AD%98%E5%92%8C%E5%B7%B2%E4%BD%BF%E7%94%A8%E5%86%85%E5%AD%98"><span class="nav-number">1.</span> <span class="nav-text">监视可用内存和已使用内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E5%B9%B6%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98"><span class="nav-number">2.</span> <span class="nav-text">响应并释放内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%8F%AF%E4%BE%9B%E4%BD%BF%E7%94%A8%E7%9A%84%E5%86%85%E5%AD%98"><span class="nav-number">3.</span> <span class="nav-text">检查可供使用的内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A%E5%9C%B0%E4%BD%BF%E7%94%A8%E8%8A%82%E7%9C%81%E5%86%85%E5%AD%98%E7%9A%84%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84"><span class="nav-number">4.</span> <span class="nav-text">更多地使用节省内存的代码结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%91%E7%94%A8Service"><span class="nav-number">4.1.</span> <span class="nav-text">少用Service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%BC%98%E5%8C%96%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">使用优化的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%91%E7%94%A8%E6%8A%BD%E8%B1%A1"><span class="nav-number">5.1.</span> <span class="nav-text">少用抽象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8nano-protobuf"><span class="nav-number">5.2.</span> <span class="nav-text">使用nano protobuf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E6%8A%96%E5%8A%A8"><span class="nav-number">5.3.</span> <span class="nav-text">避免内存抖动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%BB%E6%8E%89%E5%8D%A0%E7%94%A8%E5%86%85%E5%AD%98%E8%BF%87%E5%A4%9A%E7%9A%84%E8%B5%84%E6%BA%90%E5%92%8C%E5%BA%93"><span class="nav-number">6.</span> <span class="nav-text">去掉占用内存过多的资源和库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%8F%E5%B0%91%E5%8C%85%E5%A4%A7%E5%B0%8F"><span class="nav-number">6.1.</span> <span class="nav-text">减少包大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Dagger-2"><span class="nav-number">6.2.</span> <span class="nav-text">使用Dagger 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%85%8E%E7%94%A8%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93"><span class="nav-number">6.3.</span> <span class="nav-text">慎用第三方库</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
   <p class="site-author-name" itemprop="name">Sunmoon</p>
   <div class="site-description" itemprop="description">移动开发 Android 生活</div>
 </div>
-<div class="site-state-wrap motion-element">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
+        <a href="/archives/">
           <span class="site-state-item-count">158</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -370,26 +170,185 @@
 
 
 
+        </div>
       </div>
-
     </div>
   </aside>
-  <div id="sidebar-dimmer"></div>
+  <div class="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
+    </header>
 
-    <footer class="footer">
-      <div class="footer-inner">
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/01/10/manage-your-memory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunmoon">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="(译)Manage Your App's Memory | Sunmoon的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (译)Manage Your App's Memory
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-01-10 17:08:28" itemprop="dateCreated datePublished" datetime="2019-01-10T17:08:28+08:00">2019-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:58" itemprop="dateModified" datetime="2020-11-13T10:18:58+08:00">2020-11-13</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/01/10/manage-your-memory/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/01/10/manage-your-memory/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>翻译自<a target="_blank" rel="noopener" href="https://developer.android.com/topic/performance/memory.html">Manage Your App’s Memory | Android Developers</a>。介绍了如何管理应用的内存。</p>
+<span id="more"></span>
+
+<p>在任何软件开发中RAM都是宝贵的资源，而在移动操作系统中由于内存受限所以更加宝贵。虽然ART和Davik虚拟机都能回收内存，但并不表示你可以忽略内存的分配和回收的时机和位置。你仍然需要避免内存泄漏，并生命周期回调中的恰当时间释放对象引用。</p>
+<h2 id="监视可用内存和已使用内存"><a href="#监视可用内存和已使用内存" class="headerlink" title="监视可用内存和已使用内存"></a>监视可用内存和已使用内存</h2><p>Memory Profiler可以帮助诊断内存问题：</p>
+<ol>
+<li>观察分配了多少内存</li>
+<li>发起内存回收，导出Java堆</li>
+<li>记录内存分配并检查分配的对象</li>
+</ol>
+<h2 id="响应并释放内存"><a href="#响应并释放内存" class="headerlink" title="响应并释放内存"></a>响应并释放内存</h2><p> <a target="_blank" rel="noopener" href="https://developer.android.com/topic/performance/memory-overview.html">Overview of Android Memory Management</a>中提到Android可以从应用中以多种方式回收内存，必要时直接杀死应用进程以给更高优先级的任务分配内存。</p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=x8Hddx1eOZo&index=5&list=PLWz5rJ2EKKc9CBxr3BVjPTPoDPLdPIFCE">(42) Trimming and Sharing Memory (Android Performance Patterns Season 3 ep5) - YouTube</a></p>
+<p>使用<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/content/ComponentCallbacks2.html">ComponentCallbacks2</a>接口。该接口中的<code>onTrimMemory()</code>回调方法允许应用在前台或后台监听内存相关事件，应用可响应这些事件来回收内存。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> android.content.ComponentCallbacks2;</span><br><span class="line"><span class="comment">// Other import statements ...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MainActivity</span> <span class="keyword">extends</span> <span class="title class_">AppCompatActivity</span></span><br><span class="line">    <span class="keyword">implements</span> <span class="title class_">ComponentCallbacks2</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Other activity code ...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Release memory when the UI becomes hidden or when system resources become low.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> level the memory-related event that was raised.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onTrimMemory</span><span class="params">(<span class="type">int</span> level)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Determine which lifecycle or system event was raised.</span></span><br><span class="line">        <span class="keyword">switch</span> (level) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                   Release any UI objects that currently hold memory.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                   The user interface has moved to the background.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:</span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:</span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                   Release any memory that your app doesn&#x27;t need to run.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                   The device is running low on memory while the app is running.</span></span><br><span class="line"><span class="comment">                   The event raised indicates the severity of the memory-related event.</span></span><br><span class="line"><span class="comment">                   If the event is TRIM_MEMORY_RUNNING_CRITICAL, then the system will</span></span><br><span class="line"><span class="comment">                   begin killing background processes.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:</span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_MODERATE:</span><br><span class="line">            <span class="keyword">case</span> ComponentCallbacks2.TRIM_MEMORY_COMPLETE:</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                   Release as much memory as the process can.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                   The app is on the LRU list and the system is running low on memory.</span></span><br><span class="line"><span class="comment">                   The event raised indicates where the app sits within the LRU list.</span></span><br><span class="line"><span class="comment">                   If the event is TRIM_MEMORY_COMPLETE, the process will be one of</span></span><br><span class="line"><span class="comment">                   the first to be terminated.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                  Release any non-critical data structures.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                  The app received an unrecognized memory level value</span></span><br><span class="line"><span class="comment">                  from the system. Treat this as a generic low-memory message.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>API level 14中添加的<code>onTrimMemory()</code>方法，而之前版本中可使用<code>onLowMemory()</code>方法。</p>
+<h2 id="检查可供使用的内存"><a href="#检查可供使用的内存" class="headerlink" title="检查可供使用的内存"></a>检查可供使用的内存</h2><p>Android为分配给每个应用的堆大小设置了设置，以允许多个进程运行。基于当前设备有多少内存，这个值大小会有所不同。当应用的堆大小到达上限时继续分配内存，系统会抛出<code>OutOfMemoryError</code>。</p>
+<p>使用<code>getMemoryInfo()</code>查询当前设备上的可用内存，该方法返回<code>ActivityManager.MemoryInfo</code>对象。该对象描述了设备当前内存状态，包括可用内存、总内存以及内存阈值——系统在什么内存状态下开始杀应用进程。<code>lowMemory</code>字段表示设备内存是否过低。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doSomethingMemoryIntensive</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Before doing something that requires a lot of memory,</span></span><br><span class="line">    <span class="comment">// check to see whether the device is in a low memory state.</span></span><br><span class="line">    ActivityManager.<span class="type">MemoryInfo</span> <span class="variable">memoryInfo</span> <span class="operator">=</span> getAvailableMemory();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!memoryInfo.lowMemory) &#123;</span><br><span class="line">        <span class="comment">// Do memory intensive work ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Get a MemoryInfo object for the device&#x27;s current memory status.</span></span><br><span class="line"><span class="keyword">private</span> ActivityManager.MemoryInfo <span class="title function_">getAvailableMemory</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">ActivityManager</span> <span class="variable">activityManager</span> <span class="operator">=</span> (ActivityManager) <span class="built_in">this</span>.getSystemService(ACTIVITY_SERVICE);</span><br><span class="line">    ActivityManager.<span class="type">MemoryInfo</span> <span class="variable">memoryInfo</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ActivityManager</span>.MemoryInfo();</span><br><span class="line">    activityManager.getMemoryInfo(memoryInfo);</span><br><span class="line">    <span class="keyword">return</span> memoryInfo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="更多地使用节省内存的代码结构"><a href="#更多地使用节省内存的代码结构" class="headerlink" title="更多地使用节省内存的代码结构"></a>更多地使用节省内存的代码结构</h2><h3 id="少用Service"><a href="#少用Service" class="headerlink" title="少用Service"></a>少用Service</h3><p>让一个不必要的service运行是Andrdoid应用最糟糕的内存问题。</p>
+<p>启动service之后，系统总是会让该service所在进程保持运行。这种行为让service进程非常昂贵，因为它占用的内存无法分给其它进程。这导致LRU缓存中的cached process变少。</p>
+<p>建议使用<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/app/job/JobScheduler.html">JobScheduler</a>代替service。如果一定要使用service，请优先使用<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/app/IntentService.html">IntentService</a></p>
+<h2 id="使用优化的数据结构"><a href="#使用优化的数据结构" class="headerlink" title="使用优化的数据结构"></a>使用优化的数据结构</h2><p>Java语言中的一些类并没有专门为移动设备优化。比如<a target="_blank" rel="noopener" href="https://developer.android.com/reference/java/util/HashMap.html">HashMap</a>使用内存的效率就很低。</p>
+<p>Android框架提供</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/util/SparseArray.html">SparseArray</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/util/SparseBooleanArray.html">SparseBooleanArray</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/support/v4/util/LongSparseArray.html">LongSparseArray</a></li>
+</ul>
+<h3 id="少用抽象"><a href="#少用抽象" class="headerlink" title="少用抽象"></a>少用抽象</h3><p>抽象是个好的编程实践，可以增加代码灵活性，更容易维护。但抽象是有代价的，需要执行更多的代码，需要更多执行时间，更多内存空间来加载。所以如果没有足够的好处，不要使用抽象。</p>
+<p>enum通常比常量多占用两倍内存，所以Android应用中一定要避免enum。</p>
+<h3 id="使用nano-protobuf"><a href="#使用nano-protobuf" class="headerlink" title="使用nano protobuf"></a>使用nano protobuf</h3><p>常规的protobuf生成非常冗余松散的代码，会导致内存增加，APK包大小增加，拖慢执行速度。所以请用nano protobuf代替。</p>
+<h3 id="避免内存抖动"><a href="#避免内存抖动" class="headerlink" title="避免内存抖动"></a>避免内存抖动</h3><p>GC通常不会影响应用性能。但短时间内大量发生GC会消耗帧时间。</p>
+<p>内存抖动是指短时间内分配了大量临时对象。比如在<code>for</code>循环中创建许多临时对象。或者在View的<code>onDraw()</code>中创建<code>Paint</code>或<code>Bitmap</code>。这些情形下，应用会以非常快的速度创建很多对象。它们迅速占用可用内存，导致必须GC。</p>
+<h2 id="去掉占用内存过多的资源和库"><a href="#去掉占用内存过多的资源和库" class="headerlink" title="去掉占用内存过多的资源和库"></a>去掉占用内存过多的资源和库</h2><p>有些资源和库会在你不知情的情况下增加内存占用。检查APK中可能影响内存使用的第三方库和资源。从代码中去掉冗余，不必要以及过于臃肿的组件、资源和库。</p>
+<h3 id="减少包大小"><a href="#减少包大小" class="headerlink" title="减少包大小"></a>减少包大小</h3><p>减少包大小的同时也可以减少内存占用。关于减少包大小的更多信息见<a target="_blank" rel="noopener" href="https://developer.android.com/topic/performance/reduce-apk-size.html">Reduce APK Size</a></p>
+<h3 id="使用Dagger-2"><a href="#使用Dagger-2" class="headerlink" title="使用Dagger 2"></a>使用Dagger 2</h3><p>使用依赖注入框架可以简化代码，并提供响应式环境以便于测试和配置。如果需要使用依赖注入，建议使用<a target="_blank" rel="noopener" href="http://google.github.io/dagger/">Dagger 2</a>。因为它不使用反射。其他一些依赖注入框架使用反射，会对代码中的注解进行扫描。该过程占用相当多的CPU和内存，当应用启动时会产生明显延迟。</p>
+<h3 id="慎用第三方库"><a href="#慎用第三方库" class="headerlink" title="慎用第三方库"></a>慎用第三方库</h3><p>很多外部库通常不是专门为移动设备环境开发的，所以用于移动客户端时非常低效。虽然<a target="_blank" rel="noopener" href="https://developer.android.com/tools/help/proguard.html">ProGuard</a>可以移除不必要的API和资源，但它并不能移除库内部的大部分依赖。而你想使用的功能很可能只是库当中的一小部分。当你使用第三方库中的Activity子类时，这通常都是问题。使用反射的第三方库(很常见)也意味着你需要不少时间去调整ProGuard配置。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># Android</a>
+          </div>
+
         
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/01/10/app-startup-speed2/" rel="prev" title="应用启动速度优化(二)">
+                  <i class="fa fa-chevron-left"></i> 应用启动速度优化(二)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/01/10/memory-profile-1/" rel="next" title="(译)Memory Profiler">
+                  (译)Memory Profiler <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -397,29 +356,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -428,22 +379,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/01/10/manage-your-memory/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

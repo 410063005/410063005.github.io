@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,21 +14,19 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="AppCode 好用是好用，但这性能比起 Xcode 让人很无语。不过，AppCode 的性能是可以优化的。">
-<meta name="keywords" content="iOS">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="AppCode 好用是好用，但这性能比起 Xcode 让人很无语。不过，AppCode 的性能是可以优化的。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="提升 AppCode 性能的几个小技巧">
 <meta property="og:url" content="http://www.sunmoonblog.com/2021/05/01/enhance-appcode-performane/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="AppCode 好用是好用，但这性能比起 Xcode 让人很无语。不过，AppCode 的性能是可以优化的。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198615366659.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198618640390.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198617067248.jpg">
@@ -40,78 +39,52 @@
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198716155390.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198719580894.jpg">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198720197701.jpg">
-<meta property="og:updated_time" content="2021-11-07T13:17:58.166Z">
+<meta property="article:published_time" content="2021-05-01T09:18:18.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:17:58.166Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="iOS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="提升 AppCode 性能的几个小技巧">
-<meta name="twitter:description" content="AppCode 好用是好用，但这性能比起 Xcode 让人很无语。不过，AppCode 的性能是可以优化的。">
 <meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198615366659.jpg">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2021/05/01/enhance-appcode-performane/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>提升 AppCode 性能的几个小技巧 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2021/05/01/enhance-appcode-performane/","path":"2021/05/01/enhance-appcode-performane/","title":"提升 AppCode 性能的几个小技巧"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>提升 AppCode 性能的几个小技巧 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -125,19 +98,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -148,23 +110,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -172,61 +133,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A0%E5%A4%A7%E5%86%85%E5%AD%98"><span class="nav-number">1.</span> <span class="nav-text">加大内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%BC%80%E5%86%85%E5%AD%98%E6%8C%87%E7%A4%BA%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">打开内存指示器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%A4%A7%E5%A0%86%E5%86%85%E5%AD%98"><span class="nav-number">1.2.</span> <span class="nav-text">加大堆内存</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8F%90%E5%8D%87%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E9%80%9F%E5%BA%A6"><span class="nav-number">2.</span> <span class="nav-text">提升代码分析速度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E6%95%B4%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5%E9%A1%B9"><span class="nav-number">2.1.</span> <span class="nav-text">调整代码检查项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E6%95%B4%E6%A3%80%E6%9F%A5%E7%BA%A7%E5%88%AB"><span class="nav-number">2.2.</span> <span class="nav-text">调整检查级别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8F%90%E5%8D%87%E7%B4%A2%E5%BC%95%E9%80%9F%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">提升索引速度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7"><span class="nav-number">4.</span> <span class="nav-text">其他优化技巧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2021/05/01/enhance-appcode-performane/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="提升 AppCode 性能的几个小技巧 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           提升 AppCode 性能的几个小技巧
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-01 17:18:18" itemprop="dateCreated datePublished" datetime="2021-05-01T17:18:18+08:00">2021-05-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-07 21:17:58" itemprop="dateModified" datetime="2021-11-07T21:17:58+08:00">2021-11-07</time>
-              </span>
+      <time title="创建时间：2021-05-01 17:18:18" itemprop="dateCreated datePublished" datetime="2021-05-01T17:18:18+08:00">2021-05-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-11-07 21:17:58" itemprop="dateModified" datetime="2021-11-07T21:17:58+08:00">2021-11-07</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2021/05/01/enhance-appcode-performane/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2021/05/01/enhance-appcode-performane/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -235,12 +277,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <p>AppCode 好用是好用，但这性能比起 Xcode 让人很无语。不过，AppCode 的性能是可以优化的。 </p>
+<span id="more"></span>
 
-      
-        <p>AppCode 好用是好用，但这性能比起 Xcode 让人很无语。不过，AppCode 的性能是可以优化的。<br><a id="more"></a></p>
 <p>最近的开发过程中发现 AppCode 占了 5GB 内存却仍然卡得干不了活，忍无可忍之下了解了一下如何优化 AppCode 性能。主要的参考资料来自 AppCode 官网。</p>
 <ul>
-<li><a href="https://www.jetbrains.com/help/objc/performance-tuning-tips.html" target="_blank" rel="noopener">Enhance performance | AppCode</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jetbrains.com/help/objc/performance-tuning-tips.html">Enhance performance | AppCode</a></li>
 </ul>
 <p>资料中提到几个点总结下来就是：</p>
 <ul>
@@ -254,7 +296,7 @@
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198615366659.jpg" alt="-w267"></p>
 <p>我的内存指示器已打开，显示 “264 of 6131M”。内存状态良好。</p>
 <p>注意：当可用的堆内存大小低于最大堆内存的5%时，会有低内存告警。</p>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198618640390.jpg" alt></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198618640390.jpg"></p>
 <h2 id="加大堆内存"><a href="#加大堆内存" class="headerlink" title="加大堆内存"></a>加大堆内存</h2><p>从 AppCode 顶部菜单中 <strong>Help | Change Memory Settings</strong> 调整堆内存大小。</p>
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198617067248.jpg" alt="-w875"></p>
 <p>我的 MacBook 内存大小 16G，已经给 AppCode 分了 6144 MB。已经相当奢侈，不能再加了。(即便 6G 内存，AppCode 还是卡，所以就我遇到的问题而言，瓶颈并不在内存)</p>
@@ -267,7 +309,7 @@
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198622243684.jpg" alt="-w992"></p>
 <p>其实我们可以放心大胆地全关，因为完全可以在需要时通过 <strong>Code | Inspect Code</strong> 命令来检查。</p>
 <h2 id="调整检查级别"><a href="#调整检查级别" class="headerlink" title="调整检查级别"></a>调整检查级别</h2><p>此外，还可以使用 <strong>Code | Configure Current File Analysis</strong> 命令调整当前已打开文件的检查级别。</p>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198625862232.jpg" alt></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198625862232.jpg"></p>
 <p>分三种级别：</p>
 <ul>
 <li>None - 不检查</li>
@@ -279,7 +321,7 @@
 <p>另外，某些文件因过太大或是位于远程机器，索引的代价非常大。所以也应将这些文件排除在外。</p>
 <p>排除文件或目录的方法很简单，在 <strong>Project</strong> 窗口将工程切换到 <strong>Files</strong> 视图，右击想要排除的文件，然后选择 <strong>Mark Directory as | Excluded</strong> </p>
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198705760997.jpg" alt="-w321"></p>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198713192648.jpg" alt></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198713192648.jpg"></p>
 <hr>
 <p>回到前面我提到分配6G内存的情况下 AppCode 仍然卡顿的问题，发现卡顿时 AppCode 一直在索引。检查后发现 <font color="red">AppCode 打开该工程后，索引范围是当前用户的所有文件</font>(即整个 <code>/Users/username/</code> 目录。发现 AppCode 打开其他工程时只会索引当前工程目录中的文件，所以这是 AppCode 的 bug？)。对数量巨大的文件进行索引，几个小时也完成不了吧？</p>
 <p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198709164361.jpg" alt="-w318"></p>
@@ -288,7 +330,7 @@
 <ul>
 <li>关闭 AppCode 中不必要的插件。AppCode 默认加载了很多插件，我们可以关闭不需要的插件以减少内存占用、提升速度</li>
 </ul>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198717657700.jpg" alt></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2021/05/01/16198717657700.jpg"></p>
 <ul>
 <li>保证 AppCode 和 Xcode 版本兼容。如下图，这是我自己遇到的一个情况：AppCode 提示当前 Xcode 版本为 12.4，版本过高。</li>
 </ul>
@@ -307,130 +349,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/ios/" rel="tag"># iOS</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2021/03/06/variables-debug-info/" rel="prev" title="20210306 问题小记">
-      <i class="fa fa-chevron-left"></i> 20210306 问题小记
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/07/20/oc-weakify/" rel="next" title="关于 OC 中的 @weakify">
-      关于 OC 中的 @weakify <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/03/06/variables-debug-info/" rel="prev" title="20210306 问题小记">
+                  <i class="fa fa-chevron-left"></i> 20210306 问题小记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/07/20/oc-weakify/" rel="next" title="关于 OC 中的 @weakify">
+                  关于 OC 中的 @weakify <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#加大内存"><span class="nav-number">1.</span> <span class="nav-text">加大内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#打开内存指示器"><span class="nav-number">1.1.</span> <span class="nav-text">打开内存指示器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加大堆内存"><span class="nav-number">1.2.</span> <span class="nav-text">加大堆内存</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提升代码分析速度"><span class="nav-number">2.</span> <span class="nav-text">提升代码分析速度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调整代码检查项"><span class="nav-number">2.1.</span> <span class="nav-text">调整代码检查项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调整检查级别"><span class="nav-number">2.2.</span> <span class="nav-text">调整检查级别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提升索引速度"><span class="nav-number">3.</span> <span class="nav-text">提升索引速度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他优化技巧"><span class="nav-number">4.</span> <span class="nav-text">其他优化技巧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -438,29 +395,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -469,22 +418,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2021/05/01/enhance-appcode-performane/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>

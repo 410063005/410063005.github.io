@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,94 +14,66 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmoonblog.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-  <meta name="description" content="Kotlin 的 run, with, let, also 和 apply 方法经常傻傻分不清？翻译一篇不错的文章，教你掌握这些方法的简单技巧。">
-<meta name="keywords" content="Kotlin">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmoonblog.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Kotlin 的 run, with, let, also 和 apply 方法经常傻傻分不清？翻译一篇不错的文章，教你掌握这些方法的简单技巧。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法">
 <meta property="og:url" content="http://www.sunmoonblog.com/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/index.html">
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="Kotlin 的 run, with, let, also 和 apply 方法经常傻傻分不清？翻译一篇不错的文章，教你掌握这些方法的简单技巧。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/1_pLNnrvgvmG6Mdi0Yw3mdPQ.png">
-<meta property="og:updated_time" content="2020-11-13T02:18:59.042Z">
+<meta property="article:published_time" content="2019-06-24T07:48:46.000Z">
+<meta property="article:modified_time" content="2020-11-13T02:18:59.042Z">
+<meta property="article:author" content="Sunmoon">
+<meta property="article:tag" content="Kotlin">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="(译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法">
-<meta name="twitter:description" content="Kotlin 的 run, with, let, also 和 apply 方法经常傻傻分不清？翻译一篇不错的文章，教你掌握这些方法的简单技巧。">
 <meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/1_pLNnrvgvmG6Mdi0Yw3mdPQ.png">
+
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>(译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法 | Sunmoon的博客</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.sunmoonblog.com/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/","path":"2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/","title":"(译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>(译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法 | Sunmoon的博客</title>
   
 
 
 
 
 
-
+<link rel="dns-prefetch" href="lcs.sunmoonblog.com">
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Sunmoon的博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Sunmoon的博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
+      <p class="site-title">Sunmoon的博客</p>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">点点滴滴</p>
   </div>
@@ -114,19 +87,8 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
+  <ul class="main-menu menu">
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -137,23 +99,22 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
 
@@ -161,61 +122,142 @@
   </div>
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Scoping-functions"><span class="nav-number">1.</span> <span class="nav-text">Scoping functions</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-attributes-of-scoping-functions"><span class="nav-number">2.</span> <span class="nav-text">3 attributes of scoping functions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Normal-vs-extension-function"><span class="nav-number">2.1.</span> <span class="nav-text">1. Normal vs. extension function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-This-vs-it-argument"><span class="nav-number">2.2.</span> <span class="nav-text">2. This vs. it argument</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Return-this-vs-other-type"><span class="nav-number">2.3.</span> <span class="nav-text">3. Return this vs. other type</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Looking-at-all-attributes"><span class="nav-number">3.</span> <span class="nav-text">Looking at all attributes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Function-selections"><span class="nav-number">4.</span> <span class="nav-text">Function selections</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunmoon</p>
+  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content post posts-expand">
-            
+    <div class="main-inner post posts-expand">
 
-    
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.sunmoonblog.com/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Sunmoon">
-      <meta itemprop="description" content="移动开发 Android 生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Sunmoon的博客">
+      <meta itemprop="description" content="移动开发 Android 生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="(译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法 | Sunmoon的博客">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           (译) 掌握 Kotlin 的 run, with, let, also 以及 apply 方法
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-06-24 15:48:46" itemprop="dateCreated datePublished" datetime="2019-06-24T15:48:46+08:00">2019-06-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
-              </span>
+      <time title="创建时间：2019-06-24 15:48:46" itemprop="dateCreated datePublished" datetime="2019-06-24T15:48:46+08:00">2019-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-13 10:18:59" itemprop="dateModified" datetime="2020-11-13T10:18:59+08:00">2020-11-13</time>
+    </span>
 
-          
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
 
         </div>
       </header>
@@ -224,42 +266,50 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-        <p>Kotlin 的 <code>run</code>, <code>with</code>, <code>let</code>, <code>also</code> 和 <code>apply</code> 方法经常傻傻分不清？翻译一篇不错的文章，教你掌握这些方法的简单技巧。<br><a id="more"></a><br>翻译自 <a href="https://medium.com/@elye.project/mastering-kotlin-standard-functions-run-with-let-also-and-apply-9cd334b0ef84" target="_blank" rel="noopener">Mastering Kotlin standard functions: run, with, let, also and apply</a></p>
-<p>Kotlin 的一些<a href="https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/util/Standard.kt" target="_blank" rel="noopener">标准函数</a>如此相似以至我们有时搞不清该用哪个。我在本文中介绍一种简单的方法来明确地区分它们。</p>
+        <p>Kotlin 的 <code>run</code>, <code>with</code>, <code>let</code>, <code>also</code> 和 <code>apply</code> 方法经常傻傻分不清？翻译一篇不错的文章，教你掌握这些方法的简单技巧。</p>
+<span id="more"></span>
+<p>翻译自 <a target="_blank" rel="noopener" href="https://medium.com/@elye.project/mastering-kotlin-standard-functions-run-with-let-also-and-apply-9cd334b0ef84">Mastering Kotlin standard functions: run, with, let, also and apply</a></p>
+<p>Kotlin 的一些<a target="_blank" rel="noopener" href="https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/util/Standard.kt">标准函数</a>如此相似以至我们有时搞不清该用哪个。我在本文中介绍一种简单的方法来明确地区分它们。</p>
 <h1 id="Scoping-functions"><a href="#Scoping-functions" class="headerlink" title="Scoping functions"></a>Scoping functions</h1><p>我重点关注的的函数是 <code>run</code>, <code>with</code>, <code>T.run</code>, <code>T.let</code>, <code>T.also</code> 以及 <code>T.apply</code>。我将这些函数称为 scoping functions，因为它们的主要功能是为调用函数提供一个 inner scope。</p>
 <p>展示 scoping 的最简单方法是调用 <code>run</code> 函数：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> mood = <span class="string">"I am sad"</span></span><br><span class="line"></span><br><span class="line">    run &#123;</span><br><span class="line">        <span class="keyword">val</span> mood = <span class="string">"I am happy"</span></span><br><span class="line">        println(mood) <span class="comment">// I am happy</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(mood)  <span class="comment">// I am sad</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> mood = <span class="string">&quot;I am sad&quot;</span></span><br><span class="line"></span><br><span class="line">    run &#123;</span><br><span class="line">        <span class="keyword">val</span> mood = <span class="string">&quot;I am happy&quot;</span></span><br><span class="line">        println(mood) <span class="comment">// I am happy</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(mood)  <span class="comment">// I am sad</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>在 test 函数内部，可以使用了一个单独的 scope。在这个单独的 scope 中 <code>mood</code> 在打印前被重新定义为 <code>I am happy</code>，重定义和打印都在 <code>run</code> 指定的 scope 中。</p>
 <p>仅仅使用 scoping 函数作用并不大。它还有另外一个好处：即，有返回值。<code>run</code> 函数返回当前 scope 中的最近的一个对象。</p>
 <p>这让代码看起来很干净。下面代码中我们可以对两种 view 调用 <code>show()</code>，而不必将代码写两次：</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run &#123;</span><br><span class="line">    <span class="keyword">if</span> (firstTimeView) introView <span class="keyword">else</span> normalView</span><br><span class="line">&#125;.show()</span><br></pre></td></tr></table></figure>
+
 <h1 id="3-attributes-of-scoping-functions"><a href="#3-attributes-of-scoping-functions" class="headerlink" title="3 attributes of scoping functions"></a>3 attributes of scoping functions</h1><p>To make scoping functions more interesting, let me categorize their behavior with 3 attributes. I will use these attributes to distinguish them from each others.</p>
 <h2 id="1-Normal-vs-extension-function"><a href="#1-Normal-vs-extension-function" class="headerlink" title="1. Normal vs. extension function"></a>1. Normal vs. extension function</h2><p><code>with</code> 函数和 <code>T.run</code> 函数非常相似。看如下代码：</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">with(webview.settings) &#123;</span><br><span class="line">    javaScriptEnabled = <span class="literal">true</span></span><br><span class="line">    databaseEnabled = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// similarly</span></span><br><span class="line">webview.settings.run &#123;</span><br><span class="line">    javaScriptEnabled = <span class="literal">true</span></span><br><span class="line">    databaseEnabled = <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>但其实二者是有区别的。<code>with</code> 是一个普通函数，而 <code>T.run</code> 是扩展函数。</p>
 <p>所以问题是，该优先使用哪一个呢？</p>
 <p>假设 <code>webview.settings</code> 可能为 <code>null</code>，有如下代码：</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Yack!</span></span><br><span class="line">with(webview.settings) &#123;</span><br><span class="line">      <span class="keyword">this</span>?.javaScriptEnabled = <span class="literal">true</span></span><br><span class="line">      <span class="keyword">this</span>?.databaseEnabled = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Nice.</span></span><br><span class="line">webview.settings?.run &#123;</span><br><span class="line">    javaScriptEnabled = <span class="literal">true</span></span><br><span class="line">    databaseEnabled = <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>在这个案例中，显然 <code>T.run</code> 扩展方法更好，因为我们可以在使用前检查 <code>webview.settings</code> 是否为空。</p>
 <h2 id="2-This-vs-it-argument"><a href="#2-This-vs-it-argument" class="headerlink" title="2. This vs. it argument"></a>2. This vs. it argument</h2><p><code>T.run</code> 和 <code>T.let</code> 也很相似，唯一不同是它们接收参数的方式。如下代码实现了相同的逻辑：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">stringVariable?.run &#123;</span><br><span class="line">      println(<span class="string">"The length of this String is <span class="variable">$length</span>"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Similarly.</span></span><br><span class="line">stringVariable?.let &#123;</span><br><span class="line">      println(<span class="string">"The length of this String is <span class="subst">$&#123;it.length&#125;</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果看 <code>T.run</code> 函数签名，你会注意到 <code>T.run</code> 只是调用 <code>block: T.()</code> 的扩展函数。所以在其 scope 中，可以使用 <code>this</code> 来访问 <code>T</code> 对象本身。Kotlin 编程语言中，大部分时候可以忽略 <code>this</code>。所以这个例子中，可以在 <code>println</code> 语句中使用 <code>$length</code> 来代替 <code>${this.length}</code>。我将之称为将 this 作为参数。(原文 I call this as sending in this as argument.) </p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">stringVariable?.run &#123;</span><br><span class="line">      println(<span class="string">&quot;The length of this String is <span class="variable">$length</span>&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Similarly.</span></span><br><span class="line">stringVariable?.let &#123;</span><br><span class="line">      println(<span class="string">&quot;The length of this String is <span class="subst">$&#123;it.length&#125;</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果看 <code>T.run</code> 函数签名，你会注意到 <code>T.run</code> 只是调用 <code>block: T.()</code> 的扩展函数。所以在其 scope 中，可以使用 <code>this</code> 来访问 <code>T</code> 对象本身。Kotlin 编程语言中，大部分时候可以忽略 <code>this</code>。所以这个例子中，可以在 <code>println</code> 语句中使用 <code>$length</code> 来代替 <code>$&#123;this.length&#125;</code>。我将之称为将 this 作为参数。(原文 I call this as sending in this as argument.) </p>
 <p>但是看 <code>T.let</code> 函数签名，你会注意到 <code>T.let</code> 将自身传到 <code>block: (T)</code> 函数中。这很像一个 lambda 参数。可以使用 <code>it</code> 在 scope 中访问这个参数。我将之称为将 it 作为参数。(原文 So I call this as sending in it as argument.)</p>
 <p>所以看起来 <code>T.run</code> 比 <code>T.let</code> 更好，因为代码更简单。但 <code>T.let</code> 函数有如下好处：</p>
 <ul>
-<li><code>T.let</code> 提供使用指定的 <code>it</code> 变量来更明确地区分是访问 <code>it</code> 的函数/成员还是访问外部类的函数/成员</li>
+<li><code>T.let</code> 提供使用指定的 <code>it</code> 变量来更明确地区分是访问 <code>it</code> 的函数&#x2F;成员还是访问外部类的函数&#x2F;成员</li>
 <li>在 <code>this</code> 不能被省略的场景下，<code>it</code> 作为函数的参数，它比 <code>this</code> 更简短</li>
 <li><code>T.let</code> 允许为参数指定更有意义更明确的名字，而非 <code>it</code> 或 <code>this</code></li>
 </ul>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">stringVariable?.let &#123;</span><br><span class="line">      nonNullString -&gt;</span><br><span class="line">      println(<span class="string">"The non null string is <span class="variable">$nonNullString</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">stringVariable?.let &#123;</span><br><span class="line">      nonNullString -&gt;</span><br><span class="line">      println(<span class="string">&quot;The non null string is <span class="variable">$nonNullString</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="3-Return-this-vs-other-type"><a href="#3-Return-this-vs-other-type" class="headerlink" title="3. Return this vs. other type"></a>3. Return this vs. other type</h2><p>现在来看 <code>T.let</code> 和 <code>T.also</code>，如果我们从函数 scope 的角度来看它们的话，发现二者是一样的。</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">stringVariable?.let &#123;</span><br><span class="line">      println(<span class="string">"The length of this String is <span class="subst">$&#123;it.length&#125;</span>"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Exactly the same as below</span></span><br><span class="line">stringVariable?.also &#123;</span><br><span class="line">      println(<span class="string">"The length of this String is <span class="subst">$&#123;it.length&#125;</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">stringVariable?.let &#123;</span><br><span class="line">      println(<span class="string">&quot;The length of this String is <span class="subst">$&#123;it.length&#125;</span>&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Exactly the same as below</span></span><br><span class="line">stringVariable?.also &#123;</span><br><span class="line">      println(<span class="string">&quot;The length of this String is <span class="subst">$&#123;it.length&#125;</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>但是它们的返回值有细微的不同之处。<code>T.let</code> 返回值的类型不同于 <code>T</code>，而 <code>T.also</code> 返回 <code>T</code> 对象本身。</p>
 <p>二者在链式调用中都很有用。<code>T.let</code> 返回你 evolve the operation，而<code>T.also</code> 允许你对同一变量进行操作。</p>
 <p>如下是简单示例。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">val original = &quot;abc&quot;</span><br><span class="line">// Evolve the value and send to the next chain</span><br><span class="line">original.let &#123;</span><br><span class="line">    println(&quot;The original String is $it&quot;) // &quot;abc&quot;</span><br><span class="line">    it.reversed() // evolve it as parameter to send to next let</span><br><span class="line">&#125;.let &#123;</span><br><span class="line">    println(&quot;The reverse String is $it&quot;) // &quot;cba&quot;</span><br><span class="line">    it.length  // can be evolve to other type</span><br><span class="line">&#125;.let &#123;</span><br><span class="line">    println(&quot;The length of the String is $it&quot;) // 3</span><br><span class="line">&#125;</span><br><span class="line">// Wrong</span><br><span class="line">// Same value is sent in the chain (printed answer is wrong)</span><br><span class="line">original.also &#123;</span><br><span class="line">    println(&quot;The original String is $it&quot;) // &quot;abc&quot;</span><br><span class="line">    it.reversed() // even if we evolve it, it is useless</span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(&quot;The reverse String is $&#123;it&#125;&quot;) // &quot;abc&quot;</span><br><span class="line">    it.length  // even if we evolve it, it is useless</span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(&quot;The length of the String is $&#123;it&#125;&quot;) // &quot;abc&quot;</span><br><span class="line">&#125;</span><br><span class="line">// Corrected for also (i.e. manipulate as original string</span><br><span class="line">// Same value is sent in the chain </span><br><span class="line">original.also &#123;</span><br><span class="line">    println(&quot;The original String is $it&quot;) // &quot;abc&quot;</span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(&quot;The reverse String is $&#123;it.reversed()&#125;&quot;) // &quot;cba&quot;</span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(&quot;The length of the String is $&#123;it.length&#125;&quot;) // 3</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">val original = &quot;abc&quot;</span><br><span class="line">// Evolve the value and send to the next chain</span><br><span class="line">original.let &#123;</span><br><span class="line">    println(&quot;The original String is $it&quot;) // &quot;abc&quot;</span><br><span class="line">    it.reversed() // evolve it as parameter to send to next let</span><br><span class="line">&#125;.let &#123;</span><br><span class="line">    println(&quot;The reverse String is $it&quot;) // &quot;cba&quot;</span><br><span class="line">    it.length  // can be evolve to other type</span><br><span class="line">&#125;.let &#123;</span><br><span class="line">    println(&quot;The length of the String is $it&quot;) // 3</span><br><span class="line">&#125;</span><br><span class="line">// Wrong</span><br><span class="line">// Same value is sent in the chain (printed answer is wrong)</span><br><span class="line">original.also &#123;</span><br><span class="line">    println(&quot;The original String is $it&quot;) // &quot;abc&quot;</span><br><span class="line">    it.reversed() // even if we evolve it, it is useless</span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(&quot;The reverse String is $&#123;it&#125;&quot;) // &quot;abc&quot;</span><br><span class="line">    it.length  // even if we evolve it, it is useless</span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(&quot;The length of the String is $&#123;it&#125;&quot;) // &quot;abc&quot;</span><br><span class="line">&#125;</span><br><span class="line">// Corrected for also (i.e. manipulate as original string</span><br><span class="line">// Same value is sent in the chain </span><br><span class="line">original.also &#123;</span><br><span class="line">    println(&quot;The original String is $it&quot;) // &quot;abc&quot;</span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(&quot;The reverse String is $&#123;it.reversed()&#125;&quot;) // &quot;cba&quot;</span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(&quot;The length of the String is $&#123;it.length&#125;&quot;) // 3</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>上面代码中 <code>T.also</code> 看起来没有意义，因为可以很容易将其前后的语句封装成一个方法。但仔细思考会发现它有如下好处： </p>
 <ul>
 <li>它可清晰地分离对同一个对象的不同操作，从而有更小的方法</li>
@@ -267,7 +317,8 @@
 </ul>
 <p>当两者结合使用时，非常强大。如下：</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Normal approach</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">makeDir</span><span class="params">(path: <span class="type">String</span>)</span></span>: File  &#123;</span><br><span class="line">    <span class="keyword">val</span> result = File(path)</span><br><span class="line">    result.mkdirs()</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Improved approach</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">makeDir</span><span class="params">(path: <span class="type">String</span>)</span></span> = path.let&#123; File(it) &#125;.also&#123; it.mkdirs() &#125;</span><br></pre></td></tr></table></figure>
-<p>(个人感觉这里没有必要使用 <code>let</code>，直接 <code>= File(path).also { it.mkdirs() }</code> 不是更好 )</p>
+
+<p>(个人感觉这里没有必要使用 <code>let</code>，直接 <code> = File(path).also &#123; it.mkdirs() &#125;</code> 不是更好 )</p>
 <h1 id="Looking-at-all-attributes"><a href="#Looking-at-all-attributes" class="headerlink" title="Looking at all attributes"></a>Looking at all attributes</h1><p>By looking at the 3 attributes, we could pretty much know the function behavior. Let me illustrate on the T.apply function, as it has not be mentioned above. The 3 attributes of T.apply is as below…</p>
 <p>通过3个属性可以更好地了解函数行为。这里演示 <code>T.apply()</code> 的用法，因为上面没有提到这个函数。<code>T.apply()</code> 函数的3个属性如下：</p>
 <ul>
@@ -277,10 +328,12 @@
 </ul>
 <p>所以可以按如下方式使用该方法：</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Normal approach</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">createInstance</span><span class="params">(args: <span class="type">Bundle</span>)</span></span> : MyFragment &#123;</span><br><span class="line">    <span class="keyword">val</span> fragment = MyFragment()</span><br><span class="line">    fragment.arguments = args</span><br><span class="line">    <span class="keyword">return</span> fragment</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Improved approach</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">createInstance</span><span class="params">(args: <span class="type">Bundle</span>)</span></span> </span><br><span class="line">              = MyFragment().apply &#123; arguments = args &#125;</span><br></pre></td></tr></table></figure>
+
 <p>我们甚至可以将不支持链式调用的对象创建过程变成链式调用：</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Normal approach</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">createIntent</span><span class="params">(intentData: <span class="type">String</span>, intentAction: <span class="type">String</span>)</span></span>: Intent &#123;</span><br><span class="line">    <span class="keyword">val</span> intent = Intent()</span><br><span class="line">    intent.action = intentAction</span><br><span class="line">    intent.<span class="keyword">data</span>=Uri.parse(intentData)</span><br><span class="line">    <span class="keyword">return</span> intent</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Improved approach, chaining</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">createIntent</span><span class="params">(intentData: <span class="type">String</span>, intentAction: <span class="type">String</span>)</span></span> =</span><br><span class="line">        Intent().apply &#123; action = intentAction &#125;</span><br><span class="line">                .apply &#123; <span class="keyword">data</span> = Uri.parse(intentData) &#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="Function-selections"><a href="#Function-selections" class="headerlink" title="Function selections"></a>Function selections</h1><p>所以我们可以根据这3个属性将函数分类。并且基于这个分类，得到了下图中的决策树，它可以帮我们选择需要使用的方法：</p>
-<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/1_pLNnrvgvmG6Mdi0Yw3mdPQ.png" alt></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/201906/1_pLNnrvgvmG6Mdi0Yw3mdPQ.png"></p>
 <p>希望这个决策树可以让你更清晰地区分这几个函数，更容易做出选择，并且熟练掌握它们的用法。</p>
 <p>你也可以在回复中给我提供一些实际项目中的好例子。希望听到你的回音。你将帮到别人。</p>
 <p>希望你喜欢这篇文章，希望这篇文章对你有帮助。欢迎分享。</p>
@@ -291,130 +344,45 @@
     
     
 
-      <footer class="post-footer">
+    <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/kotlin/" rel="tag"># Kotlin</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/06/20/extend-view-touchable-area/" rel="prev" title="Android 小技巧之扩大点击区域">
-      <i class="fa fa-chevron-left"></i> Android 小技巧之扩大点击区域
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/07/09/glide-transform/" rel="next" title="Glide transform 问题分析">
-      Glide transform 问题分析 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/06/20/extend-view-touchable-area/" rel="prev" title="Android 小技巧之扩大点击区域">
+                  <i class="fa fa-chevron-left"></i> Android 小技巧之扩大点击区域
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/07/09/glide-transform/" rel="next" title="Glide transform 问题分析">
+                  Glide transform 问题分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Scoping-functions"><span class="nav-number">1.</span> <span class="nav-text">Scoping functions</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-attributes-of-scoping-functions"><span class="nav-number">2.</span> <span class="nav-text">3 attributes of scoping functions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Normal-vs-extension-function"><span class="nav-number">2.1.</span> <span class="nav-text">1. Normal vs. extension function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-This-vs-it-argument"><span class="nav-number">2.2.</span> <span class="nav-text">2. This vs. it argument</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Return-this-vs-other-type"><span class="nav-number">2.3.</span> <span class="nav-text">3. Return this vs. other type</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Looking-at-all-attributes"><span class="nav-number">3.</span> <span class="nav-text">Looking at all attributes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Function-selections"><span class="nav-number">4.</span> <span class="nav-text">Function selections</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunmoon</p>
-  <div class="site-description" itemprop="description">移动开发 Android 生活</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">158</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
+    </footer>
+  </article>
 </div>
 
 
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
 
-        
-  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备2022057133号-1 </a>
   </div>
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
@@ -422,29 +390,21 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Sunmoon</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/muse.js"></script>
-<script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -453,22 +413,17 @@
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2019/06/24/mastering-kotlin-standard-functions-run-with-let-also-and-apply/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
 </html>
