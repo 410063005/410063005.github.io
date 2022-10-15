@@ -66,6 +66,9 @@
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
@@ -89,7 +92,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -163,9 +166,13 @@
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -250,13 +257,21 @@
     <span class="post-meta-item-icon">
       <i class="far fa-comment"></i>
     </span>
-    <span class="post-meta-item-text">Waline：</span>
+    <span class="post-meta-item-text">评论：</span>
   
     <a title="waline" href="/2022/05/23/puppeteer-in-practice/#waline" itemprop="discussionUrl">
       <span class="post-comments-count waline-comment-count" data-path="/2022/05/23/puppeteer-in-practice/" itemprop="commentCount"></span>
     </a>
   </span>
   
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/2022/05/23/puppeteer-in-practice/"></span>
+    </span>
   
 </div>
 
@@ -273,7 +288,7 @@
 <h1 id="安装-puppeteer-失败"><a href="#安装-puppeteer-失败" class="headerlink" title="安装 puppeteer 失败"></a>安装 puppeteer 失败</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">$ npm i puppeteer</span><br><span class="line">&gt; puppeteer@14.1.1 install /home/gitlab-runner/builds/deaaa930/0/project-abc/node_modules/puppeteer</span><br><span class="line">&gt; node install.js</span><br><span class="line">ERROR: Failed to set up Chromium r991974! Set &quot;PUPPETEER_SKIP_DOWNLOAD&quot; env variable to skip download.</span><br><span class="line">Error: connect ETIMEDOUT 172.217.31.16:443</span><br><span class="line">    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1144:16) &#123;</span><br><span class="line">  errno: &#x27;ETIMEDOUT&#x27;,</span><br><span class="line">  code: &#x27;ETIMEDOUT&#x27;,</span><br><span class="line">  syscall: &#x27;connect&#x27;,</span><br><span class="line">  address: &#x27;172.217.31.16&#x27;,</span><br><span class="line">  port: 443</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">npm WARN notsup Unsupported engine for puppeteer@14.1.1: wanted: &#123;&quot;node&quot;:&quot;&gt;=14.1.0&quot;&#125; (current: &#123;&quot;node&quot;:&quot;12.22.7&quot;,&quot;npm&quot;:&quot;6.14.15&quot;&#125;)</span><br><span class="line">npm WARN notsup Not compatible with your version of node/npm: puppeteer@14.1.1</span><br><span class="line">npm WARN enoent ENOENT: no such file or directory, open &#x27;/home/gitlab-runner/builds/deaaa930/0/project-abc/package.json&#x27;</span><br><span class="line">npm WARN project-abc No description</span><br><span class="line">npm WARN project-abc No repository field.</span><br><span class="line">npm WARN project-abc No README data</span><br><span class="line">npm WARN project-abc No license field.</span><br><span class="line">npm ERR! code ELIFECYCLE</span><br><span class="line">npm ERR! errno 1</span><br><span class="line">npm ERR! puppeteer@14.1.1 install: `node install.js`</span><br><span class="line">npm ERR! Exit status 1</span><br><span class="line">npm ERR! </span><br><span class="line">npm ERR! Failed at the puppeteer@14.1.1 install script.</span><br></pre></td></tr></table></figure>
 
 <p>看错误日志是在执行 <code>npm i puppeteer</code> 时出现失败，猜测是当时出现网络故障。</p>
-<p>解决办法：实际上已经在 gitlab runner 所在的机器上全局安装过 <a href="mailto:&#x70;&#117;&#x70;&#x70;&#101;&#x74;&#x65;&#101;&#114;&#64;&#49;&#52;&#46;&#49;&#x2e;&#49;">&#x70;&#117;&#x70;&#x70;&#101;&#x74;&#x65;&#101;&#114;&#64;&#49;&#52;&#46;&#49;&#x2e;&#49;</a>，且设置了 gitlab CI 缓存，所以没必要每次构建时都重新安装。<code>.gitlab-ci.yml</code> 优化如下。</p>
+<p>解决办法：实际上已经在 gitlab runner 所在的机器上全局安装过 <a href="mailto:&#112;&#x75;&#112;&#x70;&#101;&#116;&#x65;&#x65;&#114;&#x40;&#x31;&#52;&#46;&#x31;&#46;&#49;">&#112;&#x75;&#112;&#x70;&#101;&#116;&#x65;&#x65;&#114;&#x40;&#x31;&#52;&#46;&#x31;&#46;&#49;</a>，且设置了 gitlab CI 缓存，所以没必要每次构建时都重新安装。<code>.gitlab-ci.yml</code> 优化如下。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">stages:</span><br><span class="line">  - build</span><br><span class="line">  - test</span><br><span class="line">  - deploy</span><br><span class="line"></span><br><span class="line">before_script:</span><br><span class="line">  #- whoami</span><br><span class="line">  - npm list puppeteer</span><br><span class="line">  - npm list puppeteer || npm install puppeteer@14.1.1  </span><br><span class="line"></span><br><span class="line">bugly:</span><br><span class="line">  stage: build</span><br><span class="line">  cache:</span><br><span class="line">    key: $&#123;CI_BUILD_REF_NAME&#125;</span><br><span class="line">    paths:</span><br><span class="line">      - node_modules/</span><br><span class="line">  script:</span><br><span class="line">    ./bugly.sh &quot;$&#123;IS_PRD&#125;&quot;</span><br><span class="line">  tags:</span><br><span class="line">    - android</span><br><span class="line">  only:</span><br><span class="line">    - bugly-trigger</span><br><span class="line">  allow_failure: true</span><br></pre></td></tr></table></figure>
 
 <p>优化后的另一个意想不到的好处是 gitlab CI速度加快了 (省去了安装 重新安装 puppeteer 的过程)</p>
@@ -391,7 +406,7 @@
 
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2022/05/23/puppeteer-in-practice/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"lcs.sunmoonblog.com","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2022/05/23/puppeteer-in-practice/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
