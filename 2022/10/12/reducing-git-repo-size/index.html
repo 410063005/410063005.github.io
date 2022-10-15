@@ -27,15 +27,15 @@
 <meta property="og:site_name" content="Sunmoon的博客">
 <meta property="og:description" content="网上同类文章比较多，不过正好有个项目自己需要动手实践一把，记录之。纸上得来终觉浅，绝知此事要躬行。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://www.sunmoonblog.com/images/16655834905586.jpg">
-<meta property="og:image" content="http://www.sunmoonblog.com/images/16655880382380.jpg">
-<meta property="og:image" content="http://www.sunmoonblog.com/images/16656629733856.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/10/15/16655834905586.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/10/15/16655880382380.jpg">
+<meta property="og:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/10/15/16656629733856.jpg">
 <meta property="article:published_time" content="2022-10-12T13:12:16.000Z">
-<meta property="article:modified_time" content="2022-10-15T15:30:46.371Z">
+<meta property="article:modified_time" content="2022-10-15T15:47:35.025Z">
 <meta property="article:author" content="Sunmoon">
 <meta property="article:tag" content="Git">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://www.sunmoonblog.com/images/16655834905586.jpg">
+<meta name="twitter:image" content="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/10/15/16655834905586.jpg">
 
 
 <link rel="canonical" href="http://www.sunmoonblog.com/2022/10/12/reducing-git-repo-size/">
@@ -248,7 +248,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-15 23:30:46" itemprop="dateModified" datetime="2022-10-15T23:30:46+08:00">2022-10-15</time>
+      <time title="修改时间：2022-10-15 23:47:35" itemprop="dateModified" datetime="2022-10-15T23:47:35+08:00">2022-10-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -331,7 +331,7 @@
 </ul>
 <p>值得一提的是，<code>Podfile</code>和<code>Podfile.lock</code>必须纳入版本控制。</p>
 <p>我们按官方建议将Pods目录纳入版本控制。早期Git仓库体积不是问题，两年后的今天仓库体积大小增加到3GB。</p>
-<p><img src="/images/16655834905586.jpg" alt="-w980"></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/10/15/16655834905586.jpg" alt="-w980"></p>
 <p>仓库体积过大带来一系列问题：</p>
 <ul>
 <li>影响CI性能(代码都拉不下来，C什么I？)</li>
@@ -386,7 +386,7 @@
 <li>另一个变化是仓库大小大大减小。</li>
 </ul>
 <p><code>git count-objects -vH</code>查看瘦身前后的仓库大小。从原来的2.04G减少到现在的93M，优化效果非常明显。</p>
-<p><img src="/images/16655880382380.jpg"></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/10/15/16655880382380.jpg"></p>
 <h2 id="更新-gitignore"><a href="#更新-gitignore" class="headerlink" title="更新.gitignore"></a>更新.gitignore</h2><p>为了防止 <code>Pods</code> 目录再次被提交到仓库。我们在 <code>.gitignore</code> 文件中添加新的配置项：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">**/Pods/</span><br></pre></td></tr></table></figure>
 
@@ -398,7 +398,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push --mirror &lt;新仓库&gt;</span><br></pre></td></tr></table></figure>
 
 <h1 id="优化效果"><a href="#优化效果" class="headerlink" title="优化效果"></a>优化效果</h1><p>不得不说瘦身后的仓库用起来清爽多了！</p>
-<p><img src="/images/16656629733856.jpg"></p>
+<p><img src="https://blog-1251688504.cos.ap-shanghai.myqcloud.com/2022/10/15/16656629733856.jpg"></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/oloroso/p/13367120.html">删除 git 仓库中无用大文件 - 乌合之众 - 博客园</a></li>
 <li><a target="_blank" rel="noopener" href="https://juejin.cn/post/7011545611551899662">对 Git 仓库进行瘦身 - 掘金</a></li>
